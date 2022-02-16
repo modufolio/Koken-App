@@ -1,0 +1,122 @@
+<header class="content page">
+
+	<span class="wrap first">
+
+		<koken:breadcrumbs separator="/" />
+
+	</span>
+
+	<span class="right">
+
+		<koken:if true="album.public">
+
+			<span class="wrap first">
+
+				<ul class="detail-nav">
+					<li>
+						<koken:previous>
+							<koken:link class="larr" title="Previous">Previous</koken:link>
+						<koken:else>
+							<a class="larr disabled" title="Previous">Previous</a>
+						</koken:previous>
+					</li>
+					<li><span class="spacer">/</span></li>
+					<li>
+						<koken:parent>
+							<koken:link>
+								{{ album.title }}
+							</koken:link>
+						<koken:else>
+							<koken:link to="albums" title="All {{ labels.album.plural }}">All {{ labels.album.plural case="lower" }}</koken:link>
+						</koken:parent>
+					</li>
+					<li><span class="spacer">/</span></li>
+					<li>
+						<koken:next>
+							<koken:link class="rarr" title="Next">Next</koken:link>
+						<koken:else>
+							<a class="rarr disabled" title="Next">Next</a>
+						</koken:next>
+					</li>
+				</ul>
+
+			</span>
+
+			<koken:if true="settings.album_detail_show_share">
+
+				<span class="edge_left share">
+
+					<span class="wrap last">
+
+						<koken:include file="layouts/share_album.html" />
+
+					</span>
+
+				</span>
+
+			</koken:if>
+
+		</koken:if>
+
+	</span>
+
+</header>
+
+<div class="head_title">
+
+	<h2>
+		{{ album.title }}
+		<koken:filtered>
+			&nbsp;<span class="filter_count">{{ filter.count }} of {{ album.counts.total }} / <koken:link title="View {{ album.title }}">View all</koken:link></span>
+		</koken:filtered>
+	</h2>
+
+	<koken:if true="settings.show_album_desc">
+		{{ album.description paragraphs="true" }}
+	</koken:if>
+
+	<koken:if true="settings.albums_detail_show_cats">
+
+		<div class="meta">
+
+			<koken:topics>
+				<div id="album_topics">
+					<p class="meta-links">
+						Read more in
+						<koken:loop separator=", ">
+							<koken:link class="norm" title="View {{ title }}">
+								{{ title }}
+							</koken:link>
+						</koken:loop>
+					</p>
+				</div>
+			</koken:topics>
+
+			<koken:categories>
+				<div id="album_categories">
+					<p class="meta-links">
+						See more in
+						<koken:loop separator=", ">
+							<koken:link class="norm" title="View all {{ labels.album.plural case='lower' }} in {{ category.title }}">
+								{{ category.title }}
+							</koken:link>
+						</koken:loop>
+					</p>
+				</div>
+			</koken:categories>
+
+			<koken:tags>
+				<div id="album_tags">
+					<p class="meta-links">
+						<koken:loop separator="">
+							<koken:link class="tag" title="View all {{ labels.album.plural case='lower' }} in {{ tag.title }}">{{ tag.title }}</koken:link>
+						</koken:loop>
+					</p>
+				</div>
+			</koken:tags>
+
+		</div>
+
+	</koken:if>
+
+</div>

@@ -1,0 +1,312 @@
+{
+	"name": "Shortcodes",
+	"version": "1.0",
+	"description": "Built-in shortcodes",
+	"demo": "http://koken.me",
+	"author": {
+		"name": "Koken",
+		"link": "http://koken.me"
+	},
+
+	"oembeds": {
+		"twitter": {
+			"title": "Twitter",
+			"endpoint": "https://api.twitter.com/1/statuses/oembed.json",
+			"regex": "https?://(www\\.)?twitter.com/.*/status(es)?/\\d+",
+			"icon": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDowQTgwMTE3NDA3MjA2ODExODA4Mzk4RDI3RDIwODg4MiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDowMkMyMERBRTQyRUIxMUUxOEI5MEE1MTY2N0VBMzA1NiIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpGRDhFNDRCQTQyRUExMUUxOEI5MEE1MTY2N0VBMzA1NiIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjk3MDc3Njg4MTUyMDY4MTE4MDgzOThEMjdEMjA4ODgyIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjBBODAxMTc0MDcyMDY4MTE4MDgzOThEMjdEMjA4ODgyIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+6etkSgAAAdtJREFUeNqUkj9Mk1EUxX9fW9qCgKUISIDEREwZMDq5EZMaE00cWYiJLC7sDg4ODMTJwUliog6MJLpgQqPBgDHxz8hiogIaKSWKAf9BKS2f5/JaqQLDd5M3vPfOOffc8553YuR+PzCklSZYPdMajRj56qWL6eMd7YHYc9lc+t7jSUwgnWhpJ5ffH1j0IV8Ez4NYGCKeOzeOcU2AjRJslhwwKlBcp4bb0tmnn3BYIlvah2LQVufujGO1I1ASYK0AqSg8XYbaOHQ2wPdNaN6G4VPwTQ4HX0tEjZNxJ2IVqggUBcz9ggdn4MpReLkArz7C9V4HbBbpUR/MLsHXDShsVzmwOc32my9OuU8CE60wLXA8vJtHVO2upWBMwn7yPwc1IWd9Zsld2P58595Qz2qEy8fgd6FKwBxYJm2a+847WMkf/Hzjc3D7vZpFqwTWFVb2h4Jah1XNdkNh+fuQC+pydx66W93IfzOwi3MJJ5JqgoHu3ZQrZU/cPyWy8qkVy/ern1Hoh5+VeA+cPgJh71/iVBZuvRVZ8yfqnLuKwx2BevsgSvXmB40wK8HyJzEbNXqFZD2c7IJDsb3OImUcjbpsbCFwWYiZ5dxiYGKZkzEHoy+eP7HNhYAaGeP+EWAAZKeL6qDa5ucAAAAASUVORK5CYII="
+		},
+		"vimeo": {
+			"title": "Vimeo",
+			"endpoint": "https://vimeo.com/api/oembed.json",
+			"regex": "https?://(www\\.)?vimeo.com/.*",
+			"icon": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDowQTgwMTE3NDA3MjA2ODExODA4Mzk4RDI3RDIwODg4MiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpBRUVDMzdDODQyRUExMUUxOEI5MEE1MTY2N0VBMzA1NiIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpBRUVDMzdDNzQyRUExMUUxOEI5MEE1MTY2N0VBMzA1NiIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjk3MDc3Njg4MTUyMDY4MTE4MDgzOThEMjdEMjA4ODgyIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjBBODAxMTc0MDcyMDY4MTE4MDgzOThEMjdEMjA4ODgyIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+nR100AAAAkVJREFUeNqUU01rE2EQfvZ7k+w2nzZq7KEnDyIGij2IFIwUPYlovXjxoBf9Az158yIIHqsXQUTwUPEglfiBFRXBS0D8OKhVS9TYZmPSkO426bu7zruJ22h7yQuz7MzO88wz884KuHh7CsB5sgIGO0/JZmQOnjh0oDCczQyEXl6yCs/nX4ETFFgsiS8rDL4PVBsM9aaLTEJGOi4FyRbFqg0XjPlIJyTsyCiIEIZjRf60mYeW42Kx0saJtIInh5PIdFw0WwzlX22MEvHLIyn8PDWMk9sUfKcYx/ATENRXXJQX27iy18TV8TjGMyqm6X3ZYsj5AuYm08gnFaQ0EZfH4vhdY+jhuwRWtYN7kylMZFVQscD2E4lNCrZrAm5+XA3jEkcQ2nP9DQLTFHG6aCF/pwLL6VKPGBJilFOyGW68b4XDe1xeg6oKYH4fQcSQEc0qcCUBdz/bYfIYqXBsD2d2xwKfF730egWGKcPtb4HahKxLiJKSuYXVkOD4qI59moRze4zAv/6mibeNDiKmRAR9CjgbZ9diCua/rcFh3Y8X8kN4NJWFSsre0Zymn9VhpGhOgvCvAo/64ca3wiN7+NUJVXCwZbs4NrsEaUiEYojw0MsPW/C7FsyDrutaqRkSLNTXcfBWBVXBh5HVAKreny//v6I6beALUnD2QTWQef+TjfWYgHhOgygLm1Z6E4FIkhMjGmZ/OMHF67tobaPyluC/LRTbjdpGhPJEmry5U4eZ06EaW4N7mCJXMFP7UOLO0QF/5yLH/hFgAKoL4jVVBte8AAAAAElFTkSuQmCC",
+			"has_thumbnail": true
+		},
+		"flickr": {
+			"title": "Flickr",
+			"endpoint": "https://www.flickr.com/services/oembed/?format=json",
+			"regex": "https?://(www\\.)?flickr.com/photos/.*/\\d+(/in/.*)?/?",
+			"icon": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDowQTgwMTE3NDA3MjA2ODExODA4Mzk4RDI3RDIwODg4MiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpGNDUzRjNFQzQyRUExMUUxOEI5MEE1MTY2N0VBMzA1NiIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpGNDUzRjNFQjQyRUExMUUxOEI5MEE1MTY2N0VBMzA1NiIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjk3MDc3Njg4MTUyMDY4MTE4MDgzOThEMjdEMjA4ODgyIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjBBODAxMTc0MDcyMDY4MTE4MDgzOThEMjdEMjA4ODgyIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+74flRQAAAetJREFUeNqkk79rE2EYxz93F5tcjbWmTaK1Kv7IEEUUHSwWaQwU2sHJdlMo6pJBcHEQ/wBHxzq4BJysdBMyaYZmKAoNpUYrShtSg0lTapO0ueRyd94b2tJoHQ6/8LwvzwvfD+/D932leDw+BsTsiuJM7+yadAlzJBKJBoNBR+5CoRBNJpMIQDQQCGCapiOA8AivLFbLsnCqHY/rT8CnfJO5nM5w2E2wq8Vncz6P9m0V9ykf3qsn2kCuvc2j1xu8zej097h4PF3m3nWVWGaW+ocV1KPdbKym+XWlj/4nw+0AcYNniSrpAtyNHEE34MaFQ0zNrHNx2eDO+CCWfSi5FLLv5ylNzdEzdrkFkHdIL1NbhPo8LP7Q+ZJrkC3qnD+pMu07i7G0hvm91Nr9p4+x9ib99wiGHUKxpFOpmhiGhbtDwlDgcL2J+XMdq9GEAwq6BIrXvQvYTeHBoEomp6FtGq3askGfVzRuLS9QL1cwazX0SpX8whK+25faUxB6OuqlVC3zalajU5GpNk1iQ52Mho7z9cUMHtWNVmvgvz9A90h4/xSej3fx8OZBPmZ1hkId2zEO4J+4hrZYxHOuF8ke458xCp3pVVq1V5IsoYb3f+oy/ykBSNgfw7Fx25MQI0ymUinRjDhkJIT3twADACntwSDzZdkyAAAAAElFTkSuQmCC",
+			"has_thumbnail": true
+		},
+		"hulu": {
+			"title": "Hulu",
+			"endpoint": "http://www.hulu.com/api/oembed.json",
+			"regex": "https?://(www\\.)?hulu.com/watch/\\d+(/.*)?",
+			"icon": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6OEM5NzY1REZGRDAzMTFFMkJBODQ4M0E1OUQ1QUU0MUEiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6OEM5NzY1RTBGRDAzMTFFMkJBODQ4M0E1OUQ1QUU0MUEiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo4Qzk3NjVEREZEMDMxMUUyQkE4NDgzQTU5RDVBRTQxQSIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo4Qzk3NjVERUZEMDMxMUUyQkE4NDgzQTU5RDVBRTQxQSIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Ps9JLjAAAADhUExURf///4m+OmerMmqsNIvAO4a9OoG6OX+4OIS7OXOyNnazNnGwNWytNW6vNX23OXq2N3i1NoO6Ve315e725e/25ebx2Iu/UXu2Ovn89nOyN9bpxcHdpH24On+5O4G6PNvrynezSne0OYq+XNXov5vIZ3GwN4q/O4u/O5LCX2utNdboxIzAXOz15fj79KnPf9vrxpfGVvL47OPw1I7BXYC5UdXoxKbOg3WyQe715WmsNKvQhKnQhHWzN9vrxX23TNnqx3CwO3m1OpTEUY/BU6jPg73bntrrxYO7PJrHWm+vNm2uNnTOWa8AAACpSURBVHjaVMZ5MwJhAMDhn7LHe+29FBWK3EQHnUQHvv8H6h0zO9M+fz18Xx/u67I9KKPlOE7v58sp0PR9P2PuF2i4rpvx7BY49jwvZeMVWAZBkPLymuedS9uAizAMU/49Htkzi6Londrp+gye7KlLKRM+pLyBiT1XQoiEEyH6MLXnVymVcKfUPazs+TPGPDA0pg0je2611oN4ofVnHL/ZM66WcV4p2wkwAPjDD3+PQPYnAAAAAElFTkSuQmCC",
+			"has_thumbnail": true
+		},
+		"youtube": {
+			"title": "YouTube",
+			"endpoint": "https://www.youtube.com/oembed?maxwidth=1920&maxheight=1080&format=json",
+			"regex": "https?://(www\\.)?(youtu.be|youtube.com/(watch|playlist)).*",
+			"icon": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDowQTgwMTE3NDA3MjA2ODExODA4Mzk4RDI3RDIwODg4MiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDo5NUU3ODYzNTQyRUExMUUxOEI5MEE1MTY2N0VBMzA1NiIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo5NUU3ODYzNDQyRUExMUUxOEI5MEE1MTY2N0VBMzA1NiIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjk3MDc3Njg4MTUyMDY4MTE4MDgzOThEMjdEMjA4ODgyIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjBBODAxMTc0MDcyMDY4MTE4MDgzOThEMjdEMjA4ODgyIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+5PBKfQAAAiRJREFUeNqcU89rE0EU/vZnuzXG2Ehae89ByK0HD17CClIvXrRgQA8BESUnLx6sItSDIgXBQo0HjRcloDlbiGlyEP8FA4EingyJKc262c0mk3XeJNkkVA/6lsfMznvf937NSM+AKwBuczXxb7LH9YVK4Mvr583o0onhsdOF33EhzenAsXlAkv6I/lk/NAvvSyACM6owsP19YRg0LBhPduBs3gc6LcgRA9DUIwTRcIQWUxYgisoGQpntQjcvIFz8DO3GHfTqHbDWL/heL/AhJQyJPAzLADbSPhNHkqZj4WYGkeIXKOcugv04BFxv4jdgUwTEyoFC+X5a5NgSjm89h7HxGMzxAj+M/NQxwTgyBrMEg4MD2JsP0PtYgHJyYeI3TeCPMhB7/onV89B59RLO9hZkmUEOG0PL2G8mg3EPqHZVgbdXhPXwHlD/DjXEx6mSGwew6dTYhECeM4KUFG0ezt1bfHIKpNOn/noPBIYCrq+s+F8XF/E/cqbVgkrgdDp9xNjv92HbNrrdLnRdRygU4pXMXqhcLjcsoVqtolwu82bJgZHxnqRSKWQyGeTzeWSzWUGkaZqwJZPJSQ8sy8Lrs6swFCUg+Na2sHr9GjZSV/Ho7Ts0Gg3EYjGUSiV4fEKu6wYEu+12e+3N8rJI1/eHY3QkFfXiJzz9UEClUkGtVkOz2UQ8HheZ0D9hpUQicWn0nNem6yMiSpWUSqP6pdmJ7NJz/i3AADoLBkzWWCVcAAAAAElFTkSuQmCC",
+			"has_thumbnail": true
+		},
+		"instagram": {
+			"title": "Instagram",
+			"endpoint": "https://api.instagram.com/oembed/",
+			"regex": "https?://(www\\.)?(instagr.am|instagram.com)/p/.*",
+			"icon": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDowQTgwMTE3NDA3MjA2ODExODA4Mzk4RDI3RDIwODg4MiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDo0NjAxNEU1NjQyRUExMUUxOEI5MEE1MTY2N0VBMzA1NiIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo0NjAxNEU1NTQyRUExMUUxOEI5MEE1MTY2N0VBMzA1NiIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjk3MDc3Njg4MTUyMDY4MTE4MDgzOThEMjdEMjA4ODgyIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjBBODAxMTc0MDcyMDY4MTE4MDgzOThEMjdEMjA4ODgyIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8++UbndwAAArdJREFUeNqUk0tME1EUhr+ZDoW2tBS0vLQCkqgLE4X4DBoBFxIXBqNCQI0rF8TEhS5MNC4MLkxcGRb4jonxFVApKBJNZCG+giJddAEoUEEWAikI9t2OMxeKJLrhZE7mPv7vv3fmniud2lN0EKjTspylxWstGxVVVU+szywoNRFkcHMa7nAxiqEYJjo5vtLwX1JjGBkZLXf3fJEVSZJKDcEwUSlELBIiHAkTisYxBkP4ff5/4BPX28X70pFydFbRO9FIBEWJEY/HialxpKkh+NFP0+CMEGdazazJyiDLZsFss6NqY+FAUMwJg0g4jCLFtb3FUIb7yQp+Zn/tYXz+KMHfs+QsT+Pp4wc4fk5SX7lJgNOTE3MGssXIwO9pCECwM0Ce00pZ5TFOnbuIxWpjwjeprTbL5frzdHe94nV3LynaQnrorJLqsLKv7igGay5Njx5SuruCutMXKCutITcnh9Rlybzpc3O24SZ3Lp7hZXsL1TW1xGbGaG2+i6wYZBwZNpwrsvF6h/H0DeFcvY5u93s8X0doedeLkreW6YAk5rxer9DqjM4q8wcjjkZ7SLXbGR8fIxhSCclx+j99YSZ7Pct2HSLZZNbPUGgRv3L+J4q2Npi/yklBpo3v3zyoRgujz64ip6Tz7cVtMvIzKdx7gOH8PKGd55EThaHn9i2baWtzcf/GFaKzPuQkI/6JAZga5NbJI7S6ngiNurAL/n6CnhuKNuLxeGhtacJ1twGf7xfJaQ7Mcpjme9cozHMKTUK/yGAujCkpVFVX8eFtF89dLYz7psS4I91OWclWtpXsEJrFIQzUWAQ1HkOWDVhsNnaWlVNUXEzAP1fKJrOZ1DS7gLXyFVqdSRh0DPX1VBRoDcmQtOBs0u6RyZro+YnN+tHqicSCGqM3O3SDxq6PbrSsWOJ17tDZPwIMAKAIId5/sWegAAAAAElFTkSuQmCC",
+			"has_thumbnail": true
+		},
+		"soundcloud": {
+			"title": "SoundCloud",
+			"endpoint": "http://soundcloud.com/oembed?format=json",
+			"regex": "https?://(www\\.)?(snd.sc|soundcloud.com)/.*",
+			"icon": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDowQTgwMTE3NDA3MjA2ODExODA4Mzk4RDI3RDIwODg4MiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpCOEFBODlBNTQyRUExMUUxOEI5MEE1MTY2N0VBMzA1NiIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpCOEFBODlBNDQyRUExMUUxOEI5MEE1MTY2N0VBMzA1NiIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjk3MDc3Njg4MTUyMDY4MTE4MDgzOThEMjdEMjA4ODgyIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjBBODAxMTc0MDcyMDY4MTE4MDgzOThEMjdEMjA4ODgyIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+2GN8kQAAAadJREFUeNqskstLAlEYxc/IWL5STEUZ05IMkgiiFhG0CBfRNoi2LYIgalXr+g9aB+3btIgoCHERUREElUTRg4TEHuhkOmNND0bHZu6I9gBhqAPfcO985/zgfvdSq4MYATApVxjatCXXIq2E+0cnwi5/UFP6MRkP760sQQGEXQ0WgE1oApCMnKXJ7uMVmlXOqACp8KsvvvN4yd4glzqBVCyArjPB5myHnekCKKri05GvbKhUQUTu7ggP6RjyIgff/BX0zmY0zZ1DMBmRuz+uer8B5CCfOkPyYg1ioBvMVBTWvnHoHQGITwnQdj88Y8vgM5d4Zi+JvwLg2Qskrzbw5m6BZ2YX9b4eEvwpApmO4tXbhuxD7Asgew3P7B7q/T2oYzprzs7Q2g/n8AJ4Ll4FSJIIndEG6Y1HMZ8ijQJ3r85X/qf0vko4XYfZ6CFrSn6JpYHeEPh8AlazF7xwC4vBDeGdRYOJAfecQKkkyc4qwGr2wWYLYHN7R71Guz1ISlGjM6Q+lLLZ4eqoeSQd/qh/AUTSGVZzsJyJKDNY3D88UDZDGhkRJfspwAB1L5mvsJynLQAAAABJRU5ErkJggg=="
+		}
+	},
+
+	"shortcodes": {
+
+		"koken_photo": {
+
+			"icon": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAxOC4wLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+DQo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkxheWVyXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4Ig0KCSB2aWV3Qm94PSIwIDAgMTQgMTQiIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDE0IDE0IiB4bWw6c3BhY2U9InByZXNlcnZlIj4NCjxwYXRoIGZpbGw9IiNGRkZGRkYiIGQ9Ik0xMywySDFDMC41LDIsMCwyLjUsMCwzdjhjMCwwLjUsMC41LDEsMSwxaDEyYzAuNSwwLDEtMC41LDEtMVYzQzE0LDIuNSwxMy41LDIsMTMsMnogTTAuOCw0LjUNCgljMC0wLjksMC44LTEuNywxLjctMS43YzAuOSwwLDEuNywwLjgsMS43LDEuN1MzLjQsNi4yLDIuNSw2LjJDMS42LDYuMiwwLjgsNS40LDAuOCw0LjV6IE0xMywxMUgxVjguMUMxLDguMSwyLjUsOSw0LDkNCglzNC41LTMuNyw0LjUtMy43YzMsMCw0LjUsMi45LDQuNSwyLjlWMTF6Ii8+DQo8L3N2Zz4NCg==",
+			"media_row_icon": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAxOC4wLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+DQo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkxheWVyXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4Ig0KCSB2aWV3Qm94PSIwIDAgMTQgMTQiIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDE0IDE0IiB4bWw6c3BhY2U9InByZXNlcnZlIj4NCjxwYXRoIGZpbGw9IiM3MDcwNzEiIGQ9Ik0xMywySDFDMC41LDIsMCwyLjUsMCwzdjhjMCwwLjUsMC41LDEsMSwxaDEyYzAuNSwwLDEtMC41LDEtMVYzQzE0LDIuNSwxMy41LDIsMTMsMnogTTAuOCw0LjUNCgljMC0wLjksMC44LTEuNywxLjctMS43YzAuOSwwLDEuNywwLjgsMS43LDEuN1MzLjQsNi4yLDIuNSw2LjJDMS42LDYuMiwwLjgsNS40LDAuOCw0LjV6IE0xMywxMUgxVjguMUMxLDguMSwyLjUsOSw0LDkNCglzNC41LTMuNyw0LjUtMy43YzMsMCw0LjUsMi45LDQuNSwyLjlWMTF6Ii8+DQo8L3N2Zz4NCg==",
+			"media": "photo",
+			"supports_linking": true,
+
+			"data": {
+
+				"caption": {
+					"label": "Caption",
+					"type": "select",
+					"options": [
+						{ "label": "Show title and caption", "value": "both" },
+						{ "label": "Show title only", "value": "title" },
+						{ "label": "Show caption only", "value": "caption" },
+						{ "label": "Do not show", "value": "none" }
+					]
+				}
+
+			},
+
+			"title": "Insert library photo",
+			"title_alt": "Edit library photo",
+			"description": "Command or Control click to select multiple items",
+			"description_alt": "Replace photo, display a caption or assign a hyperlink"
+
+		},
+
+		"koken_video": {
+
+			"icon": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAxOC4wLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+DQo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkxheWVyXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4Ig0KCSB2aWV3Qm94PSIwIDAgMTQgMTQiIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDE0IDE0IiB4bWw6c3BhY2U9InByZXNlcnZlIj4NCjxnPg0KCTxnPg0KCQk8cGF0aCBmaWxsPSIjRkZGRkZGIiBkPSJNMCwydjEwaDE0VjJIMHogTTUsMTBWNGw0LjUsM0w1LDEweiIvPg0KCTwvZz4NCjwvZz4NCjwvc3ZnPg0K",
+			"media_row_icon": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAxOC4wLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+DQo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkxheWVyXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4Ig0KCSB2aWV3Qm94PSIwIDAgMTQgMTQiIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDE0IDE0IiB4bWw6c3BhY2U9InByZXNlcnZlIj4NCjxnPg0KCTxnPg0KCQk8cGF0aCBmaWxsPSIjNzA3MDcxIiBkPSJNMCwydjEwaDE0VjJIMHogTTUsMTBWNGw0LjUsM0w1LDEweiIvPg0KCTwvZz4NCjwvZz4NCjwvc3ZnPg0K",
+			"media": "video",
+			"supports_linking": false,
+
+			"data": {
+
+				"caption": {
+					"label": "Caption",
+					"type": "select",
+					"options": [
+						{ "label": "Show title and caption", "value": "both" },
+						{ "label": "Show title only", "value": "title" },
+						{ "label": "Show caption only", "value": "caption" },
+						{ "label": "Do not show", "value": "none" }
+					]
+				}
+
+			},
+
+			"title": "Insert video",
+			"title_alt": "Edit video",
+			"description": "Command or Control click to select multiple items",
+			"description_alt": "Replace video, display a caption or assign a hyperlink"
+
+		},
+
+		"koken_slideshow": {
+
+			"icon": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAxOC4wLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+DQo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkxheWVyXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4Ig0KCSB2aWV3Qm94PSIwIDAgMTQgMTQiIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDE0IDE0IiB4bWw6c3BhY2U9InByZXNlcnZlIj4NCjxyZWN0IHk9IjIiIGZpbGw9IiNGRkZGRkYiIHdpZHRoPSIxNCIgaGVpZ2h0PSI4Ii8+DQo8cmVjdCB4PSI2LjEiIHk9IjEiIGZpbGw9IiNGRkZGRkYiIHdpZHRoPSIyIiBoZWlnaHQ9IjEiLz4NCjxwb2x5Z29uIGZpbGw9IiNGRkZGRkYiIHBvaW50cz0iNy4xLDExLjMgOSwxMi4zIDEwLjksMTIuMyA3LjEsMTAuNCAzLjMsMTIuMyA1LjIsMTIuMyAiLz4NCjwvc3ZnPg0K",
+			"media_row_icon": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAxOC4wLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+DQo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkxheWVyXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4Ig0KCSB2aWV3Qm94PSIwIDAgMTQgMTQiIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDE0IDE0IiB4bWw6c3BhY2U9InByZXNlcnZlIj4NCjxnPg0KCTxyZWN0IHk9IjIuMSIgZmlsbD0iIzcwNzA3MSIgd2lkdGg9IjE0IiBoZWlnaHQ9IjgiLz4NCgk8cmVjdCB4PSI2LjEiIHk9IjEuMSIgZmlsbD0iIzcwNzA3MSIgd2lkdGg9IjIiIGhlaWdodD0iMSIvPg0KCTxwb2x5Z29uIGZpbGw9IiM3MDcwNzEiIHBvaW50cz0iNy4xLDExLjUgOSwxMi40IDEwLjksMTIuNCA3LjEsMTAuNSAzLjMsMTIuNCA1LjIsMTIuNCAJIi8+DQo8L2c+DQo8L3N2Zz4NCg==",
+			"media": "collection",
+			"title": "Insert slideshow",
+			"title_alt": "Edit slideshow",
+			"description": "Display individual photos or an album as a slideshow",
+			"description_alt": "Assign new collection, display a caption or edit hyperlinks",
+
+			"data": {
+
+				"caption": {
+					"label": "Caption",
+					"type": "select",
+					"options": [
+						{ "label": "Do not show", "value": "none" },
+						{ "label": "Show title only", "value": "title" },
+						{ "label": "Show caption only", "value": "caption" },
+						{ "label": "Show title and caption", "value": "both" }
+					]
+				},
+
+				"link_to": {
+					"label": "Click action",
+					"type": "select",
+					"options": [
+						{ "label": "Use theme setting", "value": "default" },
+						{ "label": "Do nothing", "value": "false" },
+						{ "label": "Advance slideshow", "value": "advance" },
+						{ "label": "Load content page", "value": "content" },
+						{ "label": "Load album page", "value": "album" },
+						{ "label": "Open lightbox", "value": "lightbox" },
+						{ "label": "Toggle playback", "value": "playback" }
+					]
+				}
+
+			}
+
+		},
+
+		"koken_upload": {
+
+			"icon": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAxOC4wLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+DQo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkxheWVyXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4Ig0KCSB2aWV3Qm94PSIwIDAgMTQgMTQiIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDE0IDE0IiB4bWw6c3BhY2U9InByZXNlcnZlIj4NCjxwb2x5Z29uIGZpbGw9IiNGRkZGRkYiIHBvaW50cz0iNywyIDEuNCw4IDQuNSw4IDQuNSwxMiA5LjUsMTIgOS41LDggMTIuNiw4ICIvPg0KPC9zdmc+DQo=",
+			"media_row_icon": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAxOC4wLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+DQo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkxheWVyXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4Ig0KCSB2aWV3Qm94PSIwIDAgMTQgMTQiIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDE0IDE0IiB4bWw6c3BhY2U9InByZXNlcnZlIj4NCjxwb2x5Z29uIGZpbGw9IiM3MDcwNzEiIHBvaW50cz0iNywyIDEuNCw4IDQuNSw4IDQuNSwxMiA5LjUsMTIgOS41LDggMTIuNiw4ICIvPg0KPC9zdmc+DQo=",
+			"media": "upload",
+			"title": "Upload and insert image",
+			"title_alt": "Edit uploaded image",
+			"description": "Upload and insert an image into this essay/page",
+			"description_alt": "Replace image, display a caption or assign a hyperlink",
+
+			"data": {
+				"title": {
+					"label": "Title",
+					"type": "string",
+					"placeholder": "Enter an image title"
+				},
+				"caption": {
+					"label": "Caption",
+					"type": "string",
+					"placeholder": "Enter an image caption"
+				},
+				"link": {
+					"label": "Link",
+					"type": "string",
+					"placeholder": "http://koken.me",
+					"validation": {
+						"type": "url",
+						"allow_empty": true
+					}
+				},
+				"target": {
+					"label": "Link target",
+					"type": "select",
+					"options": [
+						{ "label": "Same window", "value": "none" },
+						{ "label": "New window", "value": "_blank" }
+					]
+				}
+			}
+
+		},
+
+		"koken_code": {
+
+			"icon": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAxOC4wLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+DQo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkxheWVyXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4Ig0KCSB2aWV3Qm94PSIwIDAgMTggMTQiIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDE4IDE0IiB4bWw6c3BhY2U9InByZXNlcnZlIj4NCjxwYXRoIGlkPSJodG1sLWNvZGUtaWNvbiIgZmlsbD0iI0ZGRkZGRiIgZD0iTTEwLjEsMmgxLjdMOCwxMkg2LjNMMTAuMSwyeiBNMTcuNyw3LjdsLTQuOSwyLjhWOC43bDIuOS0xLjZsLTIuOS0xLjZWMy44bDQuOSwyLjhWNy43DQoJeiBNMC4zLDYuNmw0LjktMi44djEuN0wyLjQsNy4xbDIuOSwxLjZ2MS43TDAuMyw3LjdWNi42eiIvPg0KPC9zdmc+DQo=",
+			"media_row_icon": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAxOC4wLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+DQo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkxheWVyXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4Ig0KCSB2aWV3Qm94PSIwIDAgMTggMTQiIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDE4IDE0IiB4bWw6c3BhY2U9InByZXNlcnZlIj4NCjxwYXRoIGlkPSJodG1sLWNvZGUtaWNvbiIgZmlsbD0iIzcwNzA3MSIgZD0iTTEwLjEsMS44aDEuN0w4LDExLjhINi4zTDEwLjEsMS44eiBNMTcuNyw3LjVsLTQuOSwyLjhWOC41bDIuOS0xLjZsLTIuOS0xLjZWMy42DQoJbDQuOSwyLjhWNy41eiBNMC4zLDYuM2w0LjktMi44djEuN0wyLjQsNi45bDIuOSwxLjZ2MS43TDAuMyw3LjVWNi4zeiIvPg0KPC9zdmc+DQo=",
+			"title": "Insert custom code",
+			"description": "Insert JavaScript or HTML code into this essay/page",
+
+			"data": {
+				"code": {
+					"type": "code",
+					"placeholder": "Insert HTML/JS code here."
+				}
+			}
+
+		},
+
+		"read_more": {
+
+			"icon": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAxOC4wLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+DQo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkxheWVyXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4Ig0KCSB2aWV3Qm94PSIwIDAgMTkgMTQiIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDE5IDE0IiB4bWw6c3BhY2U9InByZXNlcnZlIj4NCjxnPg0KCTxjaXJjbGUgZmlsbD0iI0ZGRkZGRiIgY3g9IjIuMyIgY3k9IjciIHI9IjIiLz4NCgk8Y2lyY2xlIGZpbGw9IiNGRkZGRkYiIGN4PSI5LjUiIGN5PSI3IiByPSIyIi8+DQoJPGNpcmNsZSBmaWxsPSIjRkZGRkZGIiBjeD0iMTYuNyIgY3k9IjciIHI9IjIiLz4NCjwvZz4NCjwvc3ZnPg0K",
+			"media_row_icon": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAxOC4wLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+DQo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkxheWVyXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4Ig0KCSB2aWV3Qm94PSIwIDAgMTggMTQiIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDE4IDE0IiB4bWw6c3BhY2U9InByZXNlcnZlIj4NCjxjaXJjbGUgZmlsbD0iIzcwNzA3MSIgY3g9IjIiIGN5PSI3IiByPSIyIi8+DQo8Y2lyY2xlIGZpbGw9IiM3MDcwNzEiIGN4PSI5IiBjeT0iNyIgcj0iMiIvPg0KPGNpcmNsZSBmaWxsPSIjNzA3MDcxIiBjeD0iMTYiIGN5PSI3IiByPSIyIi8+DQo8L3N2Zz4NCg==",
+			"title": "Insert read more",
+			"title_alt": "Edit the read more label",
+			"description": "Add a page break",
+			"description_alt": "Modify the text shown in the read more link",
+			"essays_only": true,
+
+			"data": {
+				"label": {
+					"label": "Label",
+					"type": "string",
+					"value": "Read more"
+				}
+			}
+		},
+
+		"koken_contact_form": {
+			"icon": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IURPQ1RZUEUgc3ZnIFBVQkxJQyAiLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4iICJodHRwOi8vd3d3LnczLm9yZy9HcmFwaGljcy9TVkcvMS4xL0RURC9zdmcxMS5kdGQiPjxzdmcgdmVyc2lvbj0iMS4xIiBpZD0iTGF5ZXJfMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeD0iMHB4IiB5PSIwcHgiIHdpZHRoPSIzMDBweCIgaGVpZ2h0PSIxNTBweCIgdmlld0JveD0iMCAwIDMwMCAxNTAiIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDMwMCAxNTAiIHhtbDpzcGFjZT0icHJlc2VydmUiPjxnIGlkPSJlbnZlbG9wZV8yXyI+PHBhdGggaWQ9InBhdGhfM18iIGZpbGw9IiNGRkZGRkYiIGQ9Ik0xNTIuOCw4Ny44Yy0xLjgsMS41LTQuOCwxLjUtNi43LDBMMzkuMywyLjdDMzcuNSwxLjIsMzguMSwwLDQwLjcsMGgyMTcuNWMyLjYsMCwzLjIsMS4yLDEuNCwyLjdMMTUyLjgsODcuOHogTTE1Mi44LDExNy4zYy0xLjgsMS41LTQuOCwxLjUtNi43LDBMMTE1LDkyLjdjLTEuOC0xLjUtNC44LTEuNS02LjcsMGwtNjksNTQuN2MtMS44LDEuNS0xLjIsMi43LDEuNCwyLjdoMjE3LjVjMi42LDAsMy4yLTEuMiwxLjQtMi43bC02OS01NC43Yy0xLjgtMS41LTQuOC0xLjUtNi43LDBMMTUyLjgsMTE3LjN6IE0yMDkuNiw3Mi4zYy0xLjgsMS41LTEuOCwzLjgsMCw1LjNsNTAuMSwzOS43YzEuOCwxLjUsMy4zLDEsMy4zLTEuMVYzMy44YzAtMi4xLTEuNS0yLjYtMy4zLTEuMUwyMDkuNiw3Mi4zeiBNMzkuMywzMi43Yy0xLjgtMS41LTMuMy0xLTMuMywxLjF2ODIuNWMwLDIuMSwxLjUsMi42LDMuMywxLjFsNTAuMS0zOS43YzEuOC0xLjUsMS44LTMuOCwwLTUuM0wzOS4zLDMyLjd6Ii8+PC9nPjwvc3ZnPg==",
+			"media_row_icon": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IURPQ1RZUEUgc3ZnIFBVQkxJQyAiLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4iICJodHRwOi8vd3d3LnczLm9yZy9HcmFwaGljcy9TVkcvMS4xL0RURC9zdmcxMS5kdGQiPjxzdmcgdmVyc2lvbj0iMS4xIiBpZD0iTGF5ZXJfMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeD0iMHB4IiB5PSIwcHgiIHdpZHRoPSIzMDBweCIgaGVpZ2h0PSIyMDBweCIgdmlld0JveD0iMCAwIDMwMCAyMDAiIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDMwMCAyMDAiIHhtbDpzcGFjZT0icHJlc2VydmUiPjxnIGlkPSJlbnZlbG9wZV8yXyI+PHBhdGggaWQ9InBhdGhfM18iIGZpbGw9IiM3MDcwNzAiIGQ9Ik0xNTQuNCwxMTYuMWMtMi40LDEuOS02LjQsMS45LTguOCwwTDQuNCwzLjVDMiwxLjYsMi44LDAsNi4yLDBoMjg3LjVjMy40LDAsNC4zLDEuNiwxLjgsMy41TDE1NC40LDExNi4xeiBNMTU0LjQsMTU1LjJjLTIuNCwxLjktNi40LDEuOS04LjgsMGwtNDEuMi0zMi43Yy0yLjQtMS45LTYuNC0xLjktOC44LDBMNC40LDE5NC44Yy0yLjQsMS45LTEuNiwzLjUsMS44LDMuNWgyODcuNWMzLjQsMCw0LjMtMS42LDEuOC0zLjVsLTkxLjItNzIuM2MtMi40LTEuOS02LjQtMS45LTguOCwwTDE1NC40LDE1NS4yeiBNMjI5LjQsOTUuN2MtMi40LDEuOS0yLjQsNS4xLDAsN2w2Ni4yLDUyLjVjMi40LDEuOSw0LjQsMS4zLDQuNC0xLjVWNDQuNmMwLTIuNy0yLTMuNC00LjQtMS41TDIyOS40LDk1Ljd6IE00LjQsNDMuMkMyLDQxLjIsMCw0MS45LDAsNDQuNnYxMDkuMWMwLDIuNywyLDMuNCw0LjQsMS41bDY2LjItNTIuNWMyLjQtMS45LDIuNC01LjEsMC03TDQuNCw0My4yeiIvPjwvZz48L3N2Zz4=",
+			"title": "Insert contact form",
+			"title_alt": "Edit the contact form",
+			"description": "Add a contact form to receive emails from site visitors",
+			"description_alt": "Edit contact form fields and labels",
+			"pages_only": true,
+			"media_row_label": "Contact form",
+
+			"data": {
+				"fields": {
+					"label": "Fields",
+					"type": "fields_array",
+					"fields": [
+						{
+							"key": "label",
+							"label": "Label",
+							"type": "string"
+						},
+						{
+							"key": "type",
+							"label": "Type",
+							"type": "select",
+							"options": [
+								{"label": "Text input", "value": "text"},
+								{"label": "Text area", "value": "textarea"},
+								{"label": "Email address", "value": "email"},
+								{"label": "Phone number", "value": "tel"},
+								{"label": "Checkbox", "value": "checkbox"}
+							]
+						},
+						{
+							"key": "required",
+							"label": "Required",
+							"type": "boolean",
+							"hidden": {
+								"index": 1,
+								"equals": "checkbox"
+							}
+						}
+					],
+					"value": [
+						["Your email address", "email", true],
+						["Your message", "textarea", true]
+					]
+				},
+
+				"recaptcha": {
+					"label": "Captcha",
+					"type": "recaptcha",
+					"fields": [
+						{ "key": "enabled" },
+						{ "key": "site_key", "placeholder": "Site key" },
+						{ "key": "secert_key", "placeholder": "Secret key" }
+					],
+					"value": [false, "", ""]
+				},
+
+				"button_label": {
+					"label": "Button label",
+					"type": "string",
+					"value": "Send"
+				},
+				"success_message": {
+					"label": "Success message",
+					"type": "string",
+					"value": "Your message has been sent."
+				}
+			}
+		}
+
+	}
+}

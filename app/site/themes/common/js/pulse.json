@@ -1,0 +1,142 @@
+{
+	"Dimensions": {
+		"icon": "dimensions",
+		"settings": {
+			"size": {
+				"label": "Size",
+				"type": "select",
+				"options": [
+					{ "label": "4:3", "value": "4:3" },
+					{ "label": "3:4", "value": "3:4" },
+					{ "label": "3:2", "value": "3:2" },
+					{ "label": "2:3", "value": "2:3" },
+					{ "label": "2:1", "value": "2:1" },
+					{ "label": "1:1", "value": "1:1" },
+					{ "label": "16:9", "value": "16:9" },
+					{ "label": "Auto", "value": "auto" },
+					{ "label": "Expand", "value": "expand" }
+				],
+				"value": "3:2"
+			}
+		}
+	},
+
+	"Playback": {
+		"icon": "playback",
+		"settings": {
+			"autostart": {
+				"label": "Auto",
+				"type": "boolean",
+				"value": true
+			},
+			"loop": {
+				"label": "Loop",
+				"type": "boolean",
+				"value": true
+			},
+			"random": {
+				"label": "Random",
+				"type": "boolean",
+				"value": false
+			},
+			"speed": {
+				"label": "Speed",
+				"type": "slider",
+				"min": 0,
+				"max": 20,
+				"step": 1,
+				"value": 3,
+				"suffix": "sec",
+				"dependencies": {
+					"evaluate": "all",
+					"conditions": [
+						{
+							"option": "autostart",
+							"equals": true
+						}
+					]
+				}
+			}
+		}
+	},
+
+	"Images": {
+		"icon": "img",
+		"settings": {
+			"link_to": {
+				"label": "Click action",
+				"type": "select",
+				"options": [
+					{ "label": "Do nothing", "value": "false" },
+					{ "label": "Advance slideshow", "value": "advance" },
+					{ "label": "Load content page", "value": "content" },
+					{ "label": "Open lightbox", "value": "lightbox" },
+					{ "label": "Toggle playback", "value": "playback" }
+				],
+				"value": "false"
+			},
+			"crop": {
+				"label": "Crop",
+				"type": "select",
+				"options": [
+					{ "label": "None", "value": "none" },
+					{ "label": "Fill", "value": "fill" },
+					{ "label": "Adaptive", "value": "adaptive" },
+					{ "label": "Landscape", "value": "landscape" },
+					{ "label": "Portrait", "value": "portrait" }
+				],
+				"value": "none"
+			}
+		}
+	},
+
+	"Transition": {
+		"icon": "transition",
+		"settings": {
+			"transition_type": {
+				"label": "Style",
+				"type": "select",
+				"options": [
+					{ "label": "None", "value": "none" },
+					{ "label": "Dissolve", "value": "dissolve" },
+					{ "label": "Fade", "value": "fade" }
+				],
+				"value": "dissolve"
+			},
+			"transition_duration": {
+				"label": "Duration",
+				"type": "slider",
+				"min": 0,
+				"max": 5,
+				"step": "0.25",
+				"value": 1,
+				"suffix": "sec",
+				"dependencies": {
+					"evaluate": "all",
+					"conditions": [
+						{
+							"option": "transition_type",
+							"not": "none"
+						}
+					]
+				}
+			},
+			"transition_easing": {
+				"label": "Easing",
+				"type": "select",
+				"options": [
+					{ "label": "None", "value": "linear" },
+					{ "label": "Ease in", "value": "ease-in" },
+					{ "label": "Ease out", "value": "ease-out" },
+					{ "label": "Ease in and out", "value": "ease-in-out" }
+				],
+				"value": "ease-in-out"
+			},
+			"swipe": {
+				"label": "Allow swiping",
+				"type": "boolean",
+				"value": true
+			}
+		}
+	}
+}

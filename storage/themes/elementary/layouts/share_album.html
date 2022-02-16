@@ -1,0 +1,26 @@
+<div class="share_content">
+
+<span class="share_button">Share</span>
+
+	<div class="kshare">
+		<input type="text" class="kshare-input" value="{{ album.url }}" />
+		<ul class="kshare-items">
+			<li>
+	    		<koken:if empty="profile.twitter"><a href="https://twitter.com/intent/tweet?text={{ album.title url_encode="true" }}&url={{ album.url url_encode="true" }}" class="share-twitter" title="Share {{ album.title url_encode="true" }} on Twitter"><koken:else><a href="https://twitter.com/intent/tweet?text={{ album.title url_encode="true" }}&url={{ album.url url_encode="true" }}&via={{ profile.twitter }}" class="share-twitter" title="Share {{ album.title url_encode="true" }} on Twitter"></koken:if><i class="kicon-twitter"></i></a>
+	    	</li>
+	    	<li>
+	   			 <a href="https://www.facebook.com/sharer.php?u={{ album.url url_encode="true" }}" class="share-facebook" title="Share {{ album.title url_encode="true" }} on Facebook"><i class="kicon-facebook"></i></a>
+	   		</li>
+	   		<li>
+	    		<a href="http://pinterest.com/pin/create/button/?url={{ album.url url_encode="true" }}&media={{ album.covers.first.presets.large.url url_encode="true" }}&description={{ album.title url_encode="true" }}" class="share-pinterest" title="Share {{ album.title url_encode="true" }} on Pinterest"><i class="kicon-pinterest"></i></a>
+	    	</li>
+	    	<li>
+	    		<a href="https://www.tumblr.com/widgets/share/tool?posttype=photo&canonicalUrl={{ album.url url_encode="true" }}&content={{ album.covers.first.presets.large.url url_encode="true" find="," replace="/"}}&caption=%3Cp%3E%3Cstrong%3E%3Ca href=&quot;{{ album.url url_encode="true" }}&quot; title=&quot;{{ album.title }}&quot;%3E{{ album.title }}%3C/a%3E%3C/strong%3E%3C/p%3E%3Cp%3E{{ album.description url_encode="true" }}%3C/p%3E" class="share-tumblr" title="Share {{ album.title url_encode="true" }} on Tumblr"><i class="kicon-tumblr"></i></a>
+	    	</li>
+	    	<li>
+	    		<a href="https://plus.google.com/share?url={{ album.url url_encode="true" }}" class="share-google" title="Share {{ album.title url_encode="true" }} on Google+"><i class="kicon-gplus"></i></a>
+	    	</li>
+	    </ul>
+	</div>
+
+</div>

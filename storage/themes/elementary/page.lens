@@ -1,0 +1,58 @@
+<koken:include file="layouts/header.html" />
+
+	<koken:load>
+
+		<koken:head>
+			<meta property="og:site_name" content="{{ site.title }}" />
+			<meta property="og:title" content="{{ page.title strip_html='true' }}" />
+			<meta property="og:description" content="{{ page.excerpt strip_html='true' }}" />
+			<meta property="og:url" content="{{ page.url }}" />
+			<meta property="og:type" content="website" />
+			<koken:featured_image>
+			<meta property="og:image" content="{{ content.presets.medium_large.url }}" />
+			<meta property="og:image:width" content="{{ content.presets.medium_large.width }}" />
+			<meta property="og:image:height" content="{{ content.presets.medium_large.height }}" />
+			</koken:featured_image>
+			<meta name="medium" content="article" />
+			<koken:not empty="profile.twitter">
+				<koken:featured_image>
+				<meta name="twitter:card" content="summary_large_image" />
+				<meta name="twitter:site" content="@{{ profile.twitter }}" />
+				<meta name="twitter:creator" content="@{{ profile.twitter }}" />
+				<meta name="twitter:image" content="{{ content.presets.medium_large.url }}" />
+				</koken:featured_image>
+			</koken:not>
+		</koken:head>
+
+		<article>
+
+			<header>
+				<h2>
+					{{ page.title }}
+				</h2>
+			</header>
+
+			{{ page.content }}
+
+			<footer>
+
+				<koken:topics>
+					<div id="page_topics">
+						<p class="meta-links">
+							See more in
+							<koken:loop separator=", ">
+								<koken:link class="norm" title="View {{ album.title }}">
+									{{ album.title }}
+								</koken:link>
+							</koken:loop>
+						</p>
+					</div>
+				</koken:topics>
+
+			</footer>
+
+		</article>
+
+	</koken:load>
+
+<koken:include file="layouts/footer.html" />

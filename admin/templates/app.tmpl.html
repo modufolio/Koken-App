@@ -1,0 +1,1258 @@
+<!-- @BEGIN App Interface Template -->
+<script id="app_interface" type="text/html">
+
+	<div id="app" data-bind="css: { update: update_available() }">
+
+		<div id="upload-queue">
+   			<div class="w">
+     			<div class="upload-msg"></div>
+ 				<div class="bar">
+	   				<div class="upload-bar-bg">
+	     				<div class="upload-bar-all-prog"><span></span></div>
+	   				</div>
+     			</div>
+   			</div>
+ 		</div>
+
+  		<header>
+
+  			<div class="hoffx">
+
+				<div id="console-logo"><img src="images/koken_logo.svg" height="38" width="38" /></div>
+
+				<nav id="main-nav">
+	    			<ul>
+		            	<li>
+			              <a class="head-link library-interface" href="#/library" title="Library" data-bind="css: { 'selected': interface() === 'library' }"><span>Library</span></a>
+			            </li>
+			            <li>
+			              <a class="head-link text-interface" href="#/text/type:essay" title="Text" data-bind="css: { 'selected': interface() === 'text' }"><span>Text</span></a>
+			            </li>
+			            <li>
+			              <a class="head-link site-interface" href="#/site" title="Site" data-bind="css: { 'selected': interface() === 'site' }"><span>Site</span></a>
+			            </li>
+			            <li>
+			              <a class="head-link settings-interface" href="#/settings" title="Settings" data-bind="css: { 'selected': interface() === 'settings' }"><span>Settings</span></a>
+			            </li>
+			            <!-- ko foreach: channels -->
+			            <li>
+
+			              <a class="head-link" data-bind="attr: { href: '#/' + $data.id, title: $data.title || '', id: 'n-' + $data.id }, css: { 'selected': $root.hash().indexOf('/' + $data.id) !== -1 }"><span data-bind="text: $data.name"></span></a>
+			            </li>
+			            <!-- /ko -->
+		    		</ul>
+				</nav>
+
+	    		<div>
+
+	      			<div class="hr-links fright" data-event="toggle_dropdown" data-dropdown="user">
+	            		<a class="head-link" href="#" data-bind="attr: { title: 'Hello ' + user.first_name() }"><span data-bind="text: user.first_name"></span> <span data-bind="text: user.last_name"></span></a>
+	      			</div>
+	      			<!-- ko with: dropdowns.user -->
+						<!-- ko template: 'dropdown_mu' --><!-- /ko -->
+					<!-- /ko -->
+
+					<div class="hr-links fright" style="margin-right:25px;">
+	    				<a class="head-link" data-bind="attr: { href: base_path() }" onclick="return !window.open(this.href);">View site</a>
+	    			</div>
+
+	    		</div>
+
+	    	</div>
+
+  		</header> <!-- /header -->
+
+  		<!-- special alert row -->
+  		<div id="alert-row" class="alert-row-norm" data-bind="visible: update_available">
+  			<div class="hoffx">
+  				<a class="close" href="#" data-bind="event: { click: function() { this.observers.update_available(false); } }" title="Close alert"><span></span></a>
+  				<span class="msg success">Version <span data-bind="text: update_available"></span> is now available for download.</span>&nbsp;&nbsp;&nbsp;<a href="#" class="button thin" data-event="ignore_release">Ignore release</a>&nbsp;&nbsp;&nbsp;or&nbsp;&nbsp;&nbsp;<a href="#" class="button thin c0" title="" data-event="install_release">Install now</a>
+  			</div>
+  		</div>
+
+  		<div data-bind="visible: modal.active, attr: { class: modal.current() + ' modal-bg'}">
+			<div class="modal-wrap">
+				<div class="modal">
+					<a class="modal-close" href="#" title="Close" data-bind="visible: modal.canClose()"></a>
+					<div id="modal-template" data-bind="template: { name: modal.current(), data: interfaces[interfaces.active.id].observers }"></div>
+				</div>
+			</div>
+		</div>
+
+		<!-- ko if: interface -->
+			<div id="interface_container" data-bind="with: interfaces[interface()].observers">
+				<!-- ko template: { name: interface() + '_interface', afterRender: postLoad } --><!-- /ko -->
+			</div>
+		<!-- /ko -->
+
+	</div>
+
+	<div id="notifications"></div>
+</script>
+<!-- @END App Interface Template -->
+
+<!-- @BEGIN List View Placeholder Template -->
+<script id="list_view_placholder" type="text/html">
+<span class="list-cell tn">
+	<span class="tn-wrap" style="background: none;"></span>
+</span>
+<span class="list-cell fn">&nbsp;</span>
+<span class="list-cell">&nbsp;</span>
+<span class="list-cell vis">&nbsp;</span>
+</script>
+<!-- @END List View Placeholder Template -->
+
+<!-- @BEGIN Scroller Template -->
+<script id="scroller_mu" type="text/html">
+<div class="scroll_track">
+	<div class="scroll_track_footer">
+		<div class="scroll_bar">
+			<div class="scroll_bar_grab"></div>
+		</div>
+	</div>
+</div>
+</script>
+<!-- @END Scroller Template -->
+
+<!-- @BEGIN Dropdown Template -->
+<script id="dropdown_mu" type="text/html">
+<div class="opt-menu" data-bind="attr: { id: id() + '_dd' }, visible: active(), css: { 'animU': $data.position && position() === 'above' }" style="top: 34px;">
+	<div class="inside">
+		<ul class="opt-list" data-bind="attr: { 'data-event': $data.event || 'false' }">
+			<!-- ko foreach: items -->
+				<!-- ko if: $data.title != '' -->
+				<li data-bind="attr: { 'data-modal': $data.modal || '', 'data-bind': $data.bind || '', 'data-event': $data.event || 'false', id: $data.id || '' }">
+					<a href="#" data-bind="attr: { title: $data.desc || $data.title }">
+						<span class="w">
+							<span data-bind="html: $data.html || $data.title, attr: { class: 'opt-icon' + ( ($data.class) ? ' ' + $data.class : '' ) }"></span>
+						</span>
+					</a>
+				</li>
+				<!-- /ko -->
+				<!-- ko if: $data.title == '' && ($parents[1] && $parents[1].order_by && $parents[1].order_by() !== 'manual') -->
+				<li class="break"></li>
+				<!-- /ko -->
+			<!-- /ko -->
+		</ul>
+	</div>
+	<div class="wedge top"></div>
+</div>
+</script>
+<!-- @END Dropdown Template -->
+
+<!-- @BEGIN Sheets Template -->
+<script id="sheets_mu" type="text/html">
+<div class="ui-sheet" data-bind="attr: { id: id() }, visible: active(), css: { active: active() }">
+	<a class="modal-close" href="#" title="Close panel" data-event="toggle_sheet" data-bind="attr: { 'data-sheet': id() }"></a>
+	<!-- ko template: { name: id() + '_sheet' } --><!-- /ko -->
+</div>
+</script>
+<!-- @END Sheets Template -->
+
+<script id="_sheet" type="text/html">
+</script>
+
+<!-- @BEGIN Notify Template -->
+<script id="notify_mu" type="text/html">
+<div class="note">
+	<div class="msg">
+		<div class="icon"></div>
+		<div class="text"></div>
+	</div>
+</div>
+</script>
+<!-- @END Notify Template -->
+
+<!-- @BEGIN Match Album Visibility Modal -->
+<script id="match_album_visibility_modal" type="text/html">
+<div class="modal-outer" style="width:350px;">
+	<div class="wrap">
+		<h1>Edit visibility</h1>
+		<!-- ko if: $data.visibility.items().length > 0 -->
+		<p id="items">You are adding <!-- ko text: $data.visibility.items().length --><!-- /ko --><!-- ko text: $data.visibility.viz_type_current().length ? ' ' + $data.visibility.viz_type_current() : ''  --><!-- /ko --> item<!-- ko if: $data.visibility.items().length > 1 -->s<!-- ko text: $data.visibility.viz_type_current().length ? '' : ' that is not ' + $data.visibility.viz_type_new() + ' ' --><!-- /ko --><!-- /ko --> to a<!-- ko if: $data.visibility.viz_type_new() === 'unlisted' -->n<!-- /ko --> <!-- ko text: $data.visibility.viz_type_new() --><!-- /ko --> album. Would you like to change the item<!-- ko if: $data.visibility.items().length > 1 -->s<!-- /ko --> to <!-- ko text: $data.visibility.viz_type_new() --><!-- /ko -->?
+		</p>
+		<!-- /ko -->
+		<!-- ko if: $data.visibility.items().length <= 0 -->
+		<p id="listed"><!-- ko if: $data.visibility.album_type() === 'set' -->You are about to make this set and all its albums <!-- ko text: $data.visibility.viz_type_new() --><!-- /ko -->. <!-- /ko -->Would you like to change the visibility of all <!-- ko text: $data.visibility.viz_type_current() --><!-- /ko --> content in this <!-- ko text: $data.visibility.album_type() --><!-- /ko --> to <!-- ko text: $data.visibility.viz_type_new() --><!-- /ko --> as well?</p>
+		<!-- /ko -->
+		<br>
+		<button id="cancel_leave" class="button">No, leave<!-- ko if: $data.visibility.items().length !== 1 --> them<!-- /ko --> alone</button>&nbsp;
+		<button id="keep_leave" class="button c0">Yes, make<!-- ko if: $data.visibility.items().length !== 1 --> all<!-- /ko --> <!-- ko text: $data.visibility.viz_type_new() --><!-- /ko --></button>
+	</div>
+</div>
+</script>
+<!-- @END Match Album Visibility Modal -->
+
+<!-- @BEGIN About Modal -->
+<script id="about_modal" type="text/html">
+	<div class="modal-outer" style="width:290px;text-align:center;">
+		<div class="wrap">
+			<p style="margin-bottom:20px;"><img src="images/koken_logo.svg" width="71" height="71" /></p>
+			<p style="margin-bottom:20px;"><a href="http://help.koken.me/customer/portal/articles/848339-release-notes" title="Release notes" onclick="return !window.open(this.href);">Version <span data-bind="text: system.version"></span></a></p>
+			<p style="margin-bottom:10px;font-size:11px;"><a href="http://koken.me/eula.html" title="End user license agreement" onclick="return !window.open(this.href);" >License agreement</a> / <a href="http://koken.me/privacy.html" title="Privacy policy" onclick="return !window.open(this.href);">Privacy policy</a></p>
+			&copy; 2013-<span data-bind="text: (new Date()).getFullYear().toString().substring(3)"></span> Koken
+		</div>
+	</div>
+</script>
+<!-- @END About Modal -->
+
+<!-- @BEGIN Map Modal -->
+<script id="map_modal" type="text/html">
+	<div class="modal-outer" style="width:700px;text-align:center;">
+		<div class="wrap">
+			<div id="map_info"></div>
+			<div id="map_container"></div>
+		</div>
+	</div>
+</script>
+<!-- @END Map Modal -->
+
+<!-- @BEGIN Tour Modal -->
+<script id="tour_modal" type="text/html">
+<div data-event="tour" class="tour-bg">
+	<div class="tour-wrap">
+		<div class="tour">
+			<div class="bounds">
+				<a class="modal-close" href="#" title="Close tour"></a>
+				<div class="head-wrap">
+					<img src="images/koken_logo.svg" width="71" height="71" />
+					<div class="copy">
+						<h1>Welcome to Koken</h1>
+						<p>This tour covers all the basics of using Koken in less than a minute.</p>
+					</div>
+				</div>
+				<div class="window-wrap">
+					<div class="tour-window">
+						<div class="tour-bttn next"><span></span></div>
+						<div class="tour-bttn prev"><span></span></div>
+						<div id="tour-library" class="tour-current">
+							<div class="img">
+								<img src="images/tour-library.jpg" />
+							</div>
+							<div class="copy">
+								<h2>Library</h2>
+								<p>
+									 Library is where all your images and videos are imported and organized. Content may be favorited, featured, and collected using albums. Sets are used to group albums and other sets as well.
+								</p>
+								<p>
+									Content created in the Library is automatically published to your public web site. To control who may view your content, set content visibility to <a href="http://help.koken.me/customer/portal/articles/1021786-publish-unlisted-content" title="Publishing unlisted content" onclick="return !window.open(this.href);">unlisted</a>. Koken will then provide secret site links for you to share.
+								</p>
+							</div>
+						</div>
+						<div id="tour-text">
+							<div class="img">
+								<img src="images/tour-text.png" />
+							</div>
+							<div class="copy">
+								<h2>Text</h2>
+								<p>
+									Text is for publishing written content on your web site.
+								</p>
+								<p>
+									Create essays to spotlight portfolio content, publish news or anything that's on your mind. Create pages to publish standalone documents.
+								</p>
+								<p>
+									Display media from the Library, upload custom images, or embed media from Flickr, Instagram, YouTube and Vimeo by <a href="http://help.koken.me/customer/portal/articles/947438-find-embeddable-urls-from-twitter-youtube-vimeo-instagram-flickr" onclick="return !window.open(this.href);" title="How to / Find embeddable URLs from Twitter, YouTube, Vimeo, Instagram, Flickr">pasting links</a> into essays and pages.
+								</p>
+							</div>
+						</div>
+						<div id="tour-site">
+							<div class="img">
+								<img src="images/tour-site.jpg" />
+							</div>
+							<div class="copy">
+								<h2>Site</h2>
+								<p>
+									Site is for editing your public web site. Add navigation links, pages, logos, and get creative with all the layout and style options your theme provides.
+								</p>
+								<p>
+									Need more control? Custom themes are <a href="http://help.koken.me/customer/portal/topics/483366-tutorials---theme-design/articles" onclick="return !window.open(this.href);" title="Theme development help documentation">easy to build</a> using our Lens markup language. Lens tags look and feel like regular HTML and offers web designers powerful tools to build spectacular web sites.
+								</p>
+							</div>
+						</div>
+						<div id="tour-store">
+							<div class="img">
+								<img src="images/tour-store.jpg" />
+							</div>
+							<div class="copy">
+								<h2>Store</h2>
+								<p>
+									Install additional themes and plugins through the integrated Koken Store. A variety of free and premium themes are available as well as plugins to import videos from Vimeo, images from Instagram, watermarks, Google Analytics, Disqus and more.
+								</p>
+								<p>
+									All items download and install automatically and are easily updatable anytime new releases are made available.
+								</p>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="pag-wrap">
+					<div class="pag">
+						<a href="#" class="button c0" title="Library">Library</a><a href="#" class="button" title="Text">Text</a><a href="#" class="button" title="Site">Site</a><a href="#" class="button" title="Store">Store</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</script>
+<!-- @END Tour Modal -->
+
+<!-- @BEGIN Draft Exists Modal -->
+<script id="draft_exists_modal" type="text/html">
+	<div class="modal-outer" style="width:350px;">
+		<div class="wrap">
+			<h1>Draft theme available</h1>
+			<p>This theme is in your draft history. To use it, click the "Use saved draft" button. To replace the saved draft with a new draft using the theme's default settings, click the "Create new draft" button.</p>
+			<br>
+			<button id="cancel_leave" class="button">Cancel</button>&nbsp;
+			<button id="keep_leave" class="button">Create new draft</button>&nbsp;
+			<button id="open_draft" class="button c0">Use saved draft</button>
+		</div>
+	</div>
+</script>
+<!-- @END Draft Exists Modal -->
+
+<!-- @BEGIN Cover Modal -->
+<script id="cover_modal" type="text/html">
+	<div class="modal-outer" style="width:350px;">
+		<div class="wrap">
+			<h1>Assign image as set cover?</h1>
+			<p>Images cannot be added to sets. Would you like to assign this image as the set's primary cover?</p>
+			<br>
+			<button id="cancel_leave" class="button">No, nevermind</button>&nbsp;
+			<button id="keep_leave" class="button c0">Yes, assign cover</button>
+		</div>
+	</div>
+</script>
+<!-- @END Cover Modal -->
+
+<!-- @BEGIN Unsaved Text Changes Modal -->
+<script id="unsaved_changes_text_modal" type="text/html">
+	<div class="modal-outer" style="width:350px;">
+		<div class="wrap">
+			<h1>Unsaved changes</h1>
+			<p>Are you sure you want to exit this document?</p>
+			<br>
+			<button id="cancel_leave" class="button">No, stay here</button>&nbsp;
+			<button id="keep_leave" class="button c0">Yes, exit and lose changes</button>
+		</div>
+	</div>
+</script>
+<!-- @END Unsaved Text Changes Modal -->
+
+<!-- @BEGIN Delete Category Modal -->
+<script id="delete_category_text_modal" type="text/html">
+	<div class="modal-outer" style="width:350px;">
+		<div class="wrap">
+			<h1>Delete category</h1>
+			<p>Are you sure you want to delete the "<span id="category_name"></span>" category? This will completely delete the category from Koken and remove it from any and all assigned content.</p>
+			<br>
+			<button id="cancel_leave" class="button">No, nevermind</button>&nbsp;
+			<button id="keep_leave" class="button c0">Yes, delete it</button>
+		</div>
+	</div>
+</script>
+<!-- @END Delete Category Modal -->
+
+<!-- @BEGIN Delete Tag Modal -->
+<script id="delete_tag_modal" type="text/html">
+	<div class="modal-outer" style="width:350px;">
+		<div class="wrap">
+			<h1>Delete tag</h1>
+			<p>Are you sure you want to delete the "<span id="delete_tag_name"></span>" tag? This will completely delete the tag from Koken and remove it from any and all assigned content.</p>
+			<br>
+			<button id="cancel_leave" class="button">No, nevermind</button>&nbsp;
+			<button id="keep_leave" class="button c0">Yes, delete it</button>
+		</div>
+	</div>
+</script>
+<!-- @END Delete Tag Modal -->
+
+<!-- @BEGIN Unpublish Essay Modal -->
+<script id="unpublish_essay_text_modal" type="text/html">
+	<div class="modal-outer" style="width:350px;">
+		<div class="wrap">
+			<h1>Save as draft</h1>
+			<p>This will remove the published <span id="unpublish_essay_type"></span> from your web site. Are you sure?</p>
+			<br>
+			<button id="cancel_unpublish" class="button">No, nevermind</button>&nbsp;
+			<button id="keep_unpublish" class="button c0">Yes, save as draft</button>
+		</div>
+	</div>
+</script>
+<!-- @END Unpublish Essay Modal -->
+
+<!-- @BEGIN Theme Change Modal -->
+<script id="theme_change_modal" type="text/html">
+	<div class="modal-outer" style="width:350px;">
+		<div class="wrap">
+			<h1>Publish new theme</h1>
+			<p>This will change your sites&apos;s theme. Are you sure?</p>
+			<br>
+			<button id="cancel_leave" class="button">No, nevermind</button>&nbsp;
+			<button id="keep_leave" class="button c0">Yes, change it</button>
+		</div>
+	</div>
+</script>
+<!-- @END Theme Change Modal -->
+
+<!-- @BEGIN Text Live Modal -->
+<script id="text_live_modal" type="text/html">
+	<div class="modal-outer" style="width:350px;">
+		<div class="wrap">
+			<h1>Publish essay</h1>
+			<p>This draft essay will be published to your live site for all to see. Are you sure it&apos;s ready?</p>
+			<br>
+			<button id="cancel_leave" class="button">No, nevermind</button>&nbsp;
+			<button id="keep_leave" class="button c0">Yes, publish it</button>
+		</div>
+	</div>
+</script>
+<!-- @END Text Live Modal -->
+
+<!-- @BEGIN Empty Modal -->
+<script id="empty_modal" type="text/html"></script>
+<!-- @END Empty Modal -->
+
+<!-- @BEGIN Update Modal -->
+<script id="update_modal" type="text/html">
+	<div class="modal-outer" style="width:350px;">
+		<div class="wrap">
+			<h1>Downloading update</h1>
+			<p>Please wait.</p>
+			<div class="update_progress"><span></span></div>
+		</div>
+	</div>
+</script>
+<!-- @END Update Modal -->
+
+<!-- @BEGIN Update Product Modal -->
+<script id="update_products_modal" type="text/html">
+	<div class="modal-outer" style="width:350px;">
+		<div class="wrap">
+			<h1>Downloading updates</h1>
+			<p id="product_update_label">Please wait.</p>
+			<div class="update_progress"><span></span></div>
+		</div>
+	</div>
+</script>
+<!-- @END Update Modal -->
+
+<!-- @BEGIN Update error Modal -->
+<script id="update_products_fail_modal" type="text/html">
+	<div class="modal-outer" style="width:350px;">
+		<div class="wrap">
+			<h1>Uh oh</h1>
+			<p>Koken was not able to download the new release for this product. Try setting the permissions on the Koken directory and all subdirectories and files to 777.</p>
+			<br>
+			<button id="clear_error" class="button c0">Okay</button>
+		</div>
+	</div>
+</script>
+<!-- @END Update error Modal -->
+
+<!-- @BEGIN Update Modal -->
+<script id="install_theme_modal" type="text/html">
+	<div class="modal-outer" style="width:350px;">
+		<div class="wrap">
+			<h1>Installing theme</h1>
+			<p>Please wait.</p>
+			<div class="update_progress"><span></span></div>
+		</div>
+	</div>
+</script>
+<!-- @END Update Modal -->
+
+<!-- @BEGIN Update Modal -->
+<script id="install_plugin_modal" type="text/html">
+	<div class="modal-outer" style="width:350px;">
+		<div class="wrap">
+			<h1>Installing plugin</h1>
+			<p>Please wait.</p>
+			<div class="update_progress"><span></span></div>
+		</div>
+	</div>
+</script>
+<!-- @END Update Modal -->
+
+<!-- @BEGIN Bindings Error Modal -->
+<script id="php_upgrade_modal" type="text/html">
+	<div class="modal-outer" style="width:350px;">
+		<div class="wrap">
+			<h1>PHP 5.2 support is ending</h1>
+			<p>Your server's version of PHP is out of date and will soon be incompatible with Koken. <a href="http://help.koken.me/customer/portal/articles/1670834-support-ending-for-php-5-2" onclick="return !window.open(this.href);">Read more</a> about what this means and how you can take action to resolve the issue.</p>
+			<br>
+			<a id="cancel_leave" class="button">Close</a>
+			<a class="button c0" href="http://help.koken.me/customer/portal/articles/1670834-support-ending-for-php-5-2" onclick="return !window.open(this.href);">Learn more</a>
+		</div>
+	</div>
+</script>
+<!-- @END Bindings Error Modal -->
+
+<!-- @BEGIN Bindings Error Modal -->
+<script id="bindings_error_modal" type="text/html">
+	<div class="modal-outer" style="width:350px;">
+		<div class="wrap">
+			<h1>Console error</h1>
+			<!-- ko if: modal.msg().length > 0 -->
+			<p data-bind="text: modal.msg()"></p>
+			<!-- /ko -->
+			<!-- ko if: modal.msg().length <= 0 -->
+			<p>Koken isn't able to load data. Please click the button below to try and fix the problem. If you see this error message again thereafter, please <a href="http://help.koken.me/customer/portal/emails/new" onclick="return !window.open(this.href);">contact us for support</a>.
+			</p>
+			<!-- /ko -->
+			<br>
+			<!-- ko if: modal.msg().length <= 0 --><button id="keep_leave" class="button c0">Clear cache and reload</button>&nbsp;<!-- /ko -->
+			<!-- ko if: modal.msg().length > 0 --><button id="cancel_leave" class="button c0">Okay</button><!-- /ko -->
+		</div>
+	</div>
+</script>
+<!-- @END Bindings Error Modal -->
+
+<!-- @BEGIN Update error Modal -->
+<script id="update_fail_modal" type="text/html">
+	<div class="modal-outer" style="width:350px;">
+		<div class="wrap">
+			<h1>Uh oh</h1>
+			<p>Koken was not able to download the new release. Try setting the permissions on the Koken directory and all subdirectories and files to 777.</p>
+			<br>
+			<button id="clear_error" class="button c0">Okay</button>
+		</div>
+	</div>
+</script>
+<!-- @END Update error Modal -->
+
+<!-- @BEGIN Update recovered Modal -->
+<script id="update_recovered_modal" type="text/html">
+	<div class="modal-outer" style="width:350px;">
+		<div class="wrap">
+			<h1>Uh oh</h1>
+			<p>Koken encountered a problem while updating and reverted back to the previous version to ensure your site continues to work. Please try the update again. If you continue to have issues, please contact Koken support.</p>
+			<br>
+			<button id="clear_error" class="button c0">Okay</button>
+		</div>
+	</div>
+</script>
+<!-- @END Update error Modal -->
+
+<!-- @BEGIN Update recovered Modal -->
+<script id="update_compat_fail_modal" type="text/html">
+	<div class="modal-outer" style="width:350px;">
+		<div class="wrap">
+			<h1>Uh oh</h1>
+			<p>Your server is not compatible with the latest version of Koken. Ask your host or system administrator to update the following requirements on your server, then run the update again.</p>
+			<h3 style="margin-bottom:5px">Unmet requirements</h3>
+			<ul id="unmet_requirements" style="margin-bottom:10px">
+			</ul>
+			<button id="clear_error" class="button c0">Okay</button>
+		</div>
+	</div>
+</script>
+<!-- @END Update error Modal -->
+
+<!-- @BEGIN Delete Text Modal -->
+<script id="delete_text_modal" type="text/html">
+	<div class="modal-outer" style="width:350px;">
+		<div class="wrap">
+			<h1>Delete</h1>
+			<p>Are you sure you want to delete this?</p>
+			<br>
+			<button id="cancel_delete" class="button">No, nevermind</button>&nbsp;
+			<button id="keep_delete" class="button c0">Yes, delete permanently</button>
+		</div>
+	</div>
+</script>
+<!-- @END Delete Text Modal -->
+
+<!-- @BEGIN Revert to Published Site Modal -->
+<script id="confirm_site_revert_modal" type="text/html">
+	<div class="modal-outer" style="width:350px;">
+		<div class="wrap">
+			<h1>Discard draft edits</h1>
+			<p>All unpublished edits will be discarded. The draft will revert to the settings used on your live site. Are you sure you want to do this?</p>
+			<br>
+			<button id="cancel_revert" class="button">No, nevermind</button>&nbsp;
+			<button id="keep_revert" class="button c0">Yes, discard edits</button>
+		</div>
+	</div>
+</script>
+<!-- @END Revert to Published Site Modal -->
+
+<!-- @BEGIN Revert Theme Modal -->
+<script id="confirm_site_revert_settings_modal" type="text/html">
+	<div class="modal-outer" style="width:350px;">
+		<div class="wrap">
+			<h1>Reset theme settings</h1>
+			<p>This will discard all edits and revert the draft to the theme's original settings. Are you sure you want to do this?</p>
+			<br>
+			<button id="cancel_revert_settings" class="button">No, nevermind</button>&nbsp;
+			<button id="keep_revert_settings" class="button c0">Yes, reset theme</button>
+		</div>
+	</div>
+</script>
+<!-- @END Revert Theme Modal -->
+
+<!-- @BEGIN Delete Draft Modal -->
+<script id="delete_draft_modal" type="text/html">
+	<div class="modal-outer" style="width:350px;">
+		<div class="wrap">
+			<h1>Delete draft</h1>
+			<p>This will permanently delete this saved draft. Are you sure you want to do this?</p>
+			<br>
+			<button id="cancel_delete" class="button">No, nevermind</button>&nbsp;
+			<button id="keep_delete" class="button c0">Yes, delete permanently</button>
+		</div>
+	</div>
+</script>
+<!-- @END Delete Draft Modal -->
+
+<!-- @BEGIN Reset links Modal -->
+<script id="reset_links_modal" type="text/html">
+	<div class="modal-outer" style="width:350px;">
+		<div class="wrap">
+			<h1>Reset links</h1>
+			<p>This will reset all navigation group links to the default links defined by your theme. Are you sure you want to do this?</p>
+			<br>
+			<button id="cancel_reset" class="button">No, nevermind</button>&nbsp;
+			<button id="keep_reset" class="button c0">Yes, reset all links</button>
+		</div>
+	</div>
+</script>
+<!-- @END Delete Draft Modal -->
+
+<!-- @BEGIN Keyboard Modal -->
+<script id="keyboard_modal" type="text/html">
+	<div id="modal-keyboard" class="modal-outer" style="width:600px;">
+		<div class="wrap">
+
+			<div class="modal-head">
+				<h1>Keyboard shortcuts for this page</h1>
+			</div>
+
+			<div class="library-shortcuts" data-bind="visible: $parent.interfaces.app.observers.interface() === 'library'">
+
+				<h4>General</h4>
+
+				<ul class="table">
+					<li>
+						<span class="cell">
+								<span class="kbd" data-bind="text: function() { return ( $parent.interfaces.app.observers.platform() === 'mac' ) ? 'cmd' : 'ctrl' }()"></span><span class="kbd-more">+</span><span class="kbd">f</span>
+								Focus on search field
+						</span>
+						<span class="cell">
+								<span class="kbd">esc</span>
+								Close modal or menu
+						</span>
+					</li>
+					<li>
+						<span class="cell">
+								<span class="kbd" data-bind="text: function() { return ( $parent.interfaces.app.observers.platform() === 'mac' ) ? 'cmd' : 'ctrl' }()"></span><span class="kbd-more">+</span><span class="kbd">i</span>
+								Toggle import content sheet
+						</span>
+					</li>
+				</ul>
+
+				<br>
+
+				<h4>With content selected</h4>
+
+				<ul class="table">
+					<li>
+						<span class="cell">
+								<span class="kbd">c</span>
+								Edit caption
+						</span>
+						<span class="cell">
+								<span class="kbd">t</span>
+								Edit title
+						</span>
+					</li>
+					<li>
+						<span class="cell">
+								<span class="kbd">&larr;</span>
+								Select content on left
+						</span>
+						<span class="cell">
+								<span class="kbd">&uarr;</span>
+								Select content above
+						</span>
+					</li>
+					<li>
+						<span class="cell">
+								<span class="kbd">&rarr;</span>
+								Select content on right
+						</span>
+						<span class="cell">
+								<span class="kbd">&darr;</span>
+								Select content below
+						</span>
+					</li>
+					<li>
+						<span class="cell">
+								<span class="kbd" data-bind="text: function() { return ( $parent.interfaces.app.observers.platform() === 'mac' ) ? 'cmd' : 'ctrl' }()"></span><span class="kbd-more">+ click</span>
+								Select additional content
+						</span>
+						<span class="cell">
+								<span class="kbd">shift</span><span class="kbd-more">+ click</span>
+								Select range of content
+						</span>
+					</li>
+					<li>
+						<span class="cell">
+								<span class="kbd">esc</span>
+								Deselect all
+						</span>
+						<span class="cell">
+
+						</span>
+					</li>
+				</ul>
+
+			</div>
+
+			<div class="text-shortcuts" data-bind="visible: $parent.interfaces.app.observers.interface() === 'text'">
+
+				<h4>Text editing</h4>
+
+				<ul class="table">
+					<li>
+						<span class="cell">
+							<span class="kbd" data-bind="text: function() { return ( $parent.interfaces.app.observers.platform() === 'mac' ) ? 'cmd' : 'ctrl' }()"></span><span class="kbd-more">+</span><span class="kbd">b</span>
+							Bold
+						</span>
+						<span class="cell">
+							<span class="kbd" data-bind="text: function() { return ( $parent.interfaces.app.observers.platform() === 'mac' ) ? 'cmd' : 'ctrl' }()"></span><span class="kbd-more">+</span><span class="kbd">i</span>
+							Italic
+						</span>
+					</li>
+					<li>
+						<span class="cell">
+							<span class="kbd" data-bind="text: function() { return ( $parent.interfaces.app.observers.platform() === 'mac' ) ? 'cmd' : 'ctrl' }()"></span><span class="kbd-more">+</span><span class="kbd">k</span>
+							Numbered list
+						</span>
+						<span class="cell">
+							<span class="kbd" data-bind="text: function() { return ( $parent.interfaces.app.observers.platform() === 'mac' ) ? 'cmd' : 'ctrl' }()"></span><span class="kbd-more">+</span><span class="kbd">j</span>
+							Bulleted list
+						</span>
+					</li>
+					<li>
+						<span class="cell">
+							<span class="kbd" data-bind="text: function() { return ( $parent.interfaces.app.observers.platform() === 'mac' ) ? 'cmd' : 'ctrl' }()"></span><span class="kbd-more">+</span><span class="kbd">l</span>
+							Superscript
+						</span>
+						<span class="cell">
+							<span class="kbd" data-bind="text: function() { return ( $parent.interfaces.app.observers.platform() === 'mac' ) ? 'cmd' : 'ctrl' }()"></span><span class="kbd-more">+</span><span class="kbd">;</span>
+							Subscript
+						</span>
+					</li>
+					<li>
+						<span class="cell">
+							<span class="kbd">tab</span>
+							Increase indent
+						</span>
+						<span class="cell">
+							<span class="kbd">shift</span><span class="kbd-more">+</span><span class="kbd">tab</span>
+							Decrease indent
+						</span>
+					</li>
+					<li>
+						<span class="cell">
+							<span class="kbd" data-bind="text: function() { return ( $parent.interfaces.app.observers.platform() === 'mac' ) ? 'cmd' : 'ctrl' }()"></span><span class="kbd-more">+</span><span class="kbd">z</span>
+							Undo
+						</span>
+						<span class="cell">
+							<span class="kbd" data-bind="text: function() { return ( $parent.interfaces.app.observers.platform() === 'mac' ) ? 'cmd' : 'ctrl' }()"></span><span class="kbd-more">+</span><span class="kbd">shift</span><span class="kbd-more">+</span><span class="kbd">z</span>
+							Redo
+						</span>
+					</li>
+					<li>
+						<span class="cell">
+							<span class="kbd" data-bind="text: function() { return ( $parent.interfaces.app.observers.platform() === 'mac' ) ? 'cmd' : 'ctrl' }()"></span><span class="kbd-more">+</span><span class="kbd">m</span>
+							Clear formatting
+						</span>
+						<span class="cell">
+							&nbsp;
+						</span>
+					</li>
+				</ul>
+
+			</div>
+
+			<div class="site-shortcuts" data-bind="visible: $parent.interfaces.app.observers.interface() === 'site'">
+
+				<ul class="table">
+					<li>
+						<span class="cell">
+							<span class="kbd">&rarr;</span>
+							Move forward in preview history
+						</span>
+						<span class="cell">
+							<span class="kbd">ctrl</span><span class="kbd-more">+</span><span class="kbd">s</span>
+							Show/hide settings panel
+						</span>
+					</li>
+					<li>
+						<span class="cell">
+							<span class="kbd">&larr;</span>
+							Move backward in preview history
+						</span>
+					</li>
+				</ul>
+
+			</div>
+
+			<div class="settings-shortcuts" data-bind="visible: $parent.interfaces.app.observers.interface() === 'settings'">
+				No keyboard shortcuts
+			</div>
+
+			<div class="plugins-shortcuts" data-bind="visible: $parent.interfaces.app.observers.interface() === 'plugins'">
+				No keyboard shortcuts
+			</div>
+
+		</div>
+	</div>
+</script>
+<!-- @END Keyboard Modal -->
+
+<!-- @BEGIN Help Modal -->
+<script id="help_modal" type="text/html">
+	<div id="modal-help" class="modal-outer">
+		<div class="wrap">
+			<h1>New to Koken?</h1>
+			<ul id="help-docs">
+				<li>
+					Learn how to <a href="http://j.mp/Zgd45H" title="Getting started with Koken" onclick="return !window.open(this.href);">get started with Koken</a>.
+				</li>
+				<li>
+					Delve deeper into the <a href="http://help.koken.me/customer/portal/articles/632093-library" title="Koken - Library - Overview" onclick="return !window.open(this.href);">Library</a>, <a href="http://help.koken.me/customer/portal/articles/632095-text" title="Koken - Text - Overview" onclick="return !window.open(this.href);">Text</a> and <a href="http://help.koken.me/customer/portal/articles/638104-site" title="Koken - Site - Overview" onclick="return !window.open(this.href);">Site</a> console areas.
+				</li>
+				<li>
+					Find definitions to common terminology in the <a href="http://help.koken.me/customer/portal/articles/890657-glossary-of-terms" title="Koken Glossary of Terms" onclick="return !window.open(this.href);">glossary of terms</a>.
+				</li>
+				<li>
+					<a href="http://j.mp/131cqt4" title="Build your first theme" onclick="return !window.open(this.href);">Design a theme</a> for yourself, a client or any Koken publisher.
+				</li>
+			</ul>
+			<div id="help-links">
+				<a href="http://help.koken.me/customer/portal/topics/290729-discussions/questions" title="Koken Discussions" onclick="return !window.open(this.href);">
+					<span class="icon16 label-help">
+						Ask a question
+						<span class="sub">
+							Post a question to discussions.
+						</span>
+					</span>
+				</a>
+				<a href="#" title="Ask a question" data-bind="attr: { href: function() { return 'mailto:info@koken.me?subject=Koken v' + system.version + ' feedback&body=%0A%0A----------------------------%0A%0AThe following diagnostic information will help our support team in troubleshooting your issue. Please do not modify any of the following information.%0A%0AKoken v' + system.version + ' installed at: ' + base_path() + '%0A%0ABrowser info: ' + window.navigator.userAgent + '%0A%0ACookies enabled: ' + ( window.navigator.cookieEnabled ? 'Yes' : 'No' ) + '%0A%0AOS: ' + window.navigator.platform + '%0A%0ABrowser resolution: ' + $(window).width() + 'x' + $(window).height() + '%0A%0AScreen resolution: ' + screen.width + 'x' + screen.height + '%0A%0AServer OS: ' + system.operating_system + '%0A%0AWebserver: ' + system.server_software + '%0A%0APHP version: ' + system.php_version + '%0A%0AMySQL version: ' + system.mysql_version + '%0A%0AImage processing: ' + system.image_processing_support + '%0A%0AMemory limit: ' + system.memory_limit + '%0A%0AMax parallel requests: ' + system.max_parallel_requests + '%0A%0AHost: ' + system.webhost }() }">
+					<span class="icon16 label-contact">
+						Contact support
+						<span class="sub">
+							Submit an email to our support team.
+						</span>
+					</span>
+				</a>
+			</div>
+		</div>
+	</div>
+</script>
+<!-- @END Help Modal -->
+
+<!-- @BEGIN Share Modal -->
+<script id="share_modal" type="text/html">
+<div id="modal-share-link" class="modal-outer" style="width:460px;">
+	<div class="wrap">
+		<div class="share-p-row">
+			<span class="preview" data-bind="attr: { width: observers.sidebar.asset.presets.tiny.width(), height: observers.sidebar.asset.presets.tiny.height() }"><img class="photo" data-bind="attr: { src: observers.sidebar.asset.presets.tiny.url(), alt: observers.sidebar.asset.filename() }" />
+			</span>
+			<h3 data-bind="text: observers.sidebar.asset.filename()">Item title</h3>
+			<span data-bind="text: observers.format_date(observers.sidebar.asset.captured_on.timestamp())"></span>
+		</div>
+	</div>
+	<hr>
+	<div class="modal-tab-view">
+		<div class="wrap">
+			<div id="m-share-links">
+				<ol>
+					<li>
+						<input type="radio" id="pre" class="preset" checked="checked" name="resize" />
+						<label for="pre" data-event="toggle_share_modal_option">Preset size:</label>
+						&nbsp;&nbsp;
+						<select>
+							<option value="tiny">Tiny (60px)</option>
+							<option value="small">Small (100px)</option>
+							<option value="medium">Medium (480px)</option>
+							<option value="medium_large">Medium Large (800px)</option>
+							<option value="large">Large (1024px)</option>
+							<option value="xlarge">Extra Large (1600px)</option>
+							<option value="huge">Huge (2048px)</option>
+						</select>
+					</li>
+					<li>
+						<input type="radio" id="orig" class="orig" name="resize" />
+						<label for="orig" data-event="toggle_share_modal_option">Original:</label>&nbsp;&nbsp;<span data-bind="text: observers.sidebar.asset.original.width()"></span> x <span data-bind="text: observers.sidebar.asset.original.height()"></span> px
+					</li>
+					<li data-event="share_modal_link_custom">
+						<input id="cust" class="custom" type="radio" name="resize" />
+						<label data-event="toggle_share_modal_option" for="cust">Custom size:</label>
+						&nbsp;&nbsp;&nbsp;
+						<input for="cust" class="field modal med wid" size="3" maxlength="4" />&nbsp;&nbsp;x&nbsp;&nbsp;<input class="field modal med hei" maxlength="4" size="3" />&nbsp;&nbsp;px&nbsp;&nbsp;&nbsp;<input id="constrain" type="checkbox" checked="checked" /> <label for="constrain">Constrain proportions</label>
+					</li>
+					<li>
+						<input style="display: none;" type="text" class="field modal wide output" disabled value="" />
+					</li>
+					<li>
+						<div class="button-row-one-wide">
+							<button class="button c0" data-event="share_modal_link">Generate HTML code</button>
+						</div>
+					</li>
+				</ol>
+			</div>
+		</div>
+	</div>
+</div>
+</script>
+<!-- @END Share Modal -->
+
+<!-- @BEGIN Sheet Content Error -->
+<script id="sheet_content_error" type="text/html">
+	<div style="padding:7px 10px 4px;text-align:center;">
+		<h3>No content in selection</h3>
+	</div>
+</script>
+<!-- @END Sheet Content Error -->
+
+<!-- @BEGIN Categories Edit -->
+<script id="edit_categories" type="text/html">
+<div id="category_edit_drawer">
+	<!-- ko if: $root.categories().length -->
+
+		<div class="panel_group">
+
+			<!-- ko foreach: $root.categories() -->
+				<div class="col-row" data-event="category_actions" data-bind="attr: { 'data-id': id }">
+					<input data-bind="attr: { id: 'content_category_' + id }" type="checkbox" class="display" /> <label data-bind="text: title, attr: { for: 'content_category_' + id }" class="display"></label>
+					<a href="#" title="Edit category" class="edit-cat edit-link panel-hover-link">edit</a>
+					<a href="#" title="Delete category" class="delete-cat edit-link panel-hover-link">delete</a>
+					<div class="check-edit">
+						<div class="fright">
+							<a class="edit-link save-edit-cat" href="#" title="Save">save</a><a class="edit-link cancel-cat" href="#" title="Cancel" style="margin-left:7px;">cancel</a>
+						</div>
+						<input type="text" class="field side-col edit" data-bind="value: title" />
+					</div>
+				</div>
+			<!-- /ko -->
+			</div>
+
+			<div class="col-row button-row">
+				<button class="button c0 sm save-cat" data-event="category_actions" title="Save edits and close">Done</button>
+			</div>
+
+		<!-- /ko -->
+
+		<!-- ko ifnot: $root.categories().length -->
+			<div class="col-row">No categories.</div>
+		<!-- /ko -->
+
+	</div>
+
+	<div class="col-row hr"><hr></div>
+
+	<div data-event="toggle_visibility" class="col-head">
+		<span class="in">
+			<a href="#" class="arrow-toggle fold open"></a>
+			<h6><a href="#" class="fold" title="Assign new category">Assign new category</a></h6>
+		</span>
+	</div>
+
+	<div class="col-group">
+		<div class="col-row">
+			Enter a category name below to assign a new category to the selected content. The new category may then be assigned to other content thereafter.
+		</div>
+		<div class="col-row field-row">
+			<input type="text" class="field side-col" placeholder="Enter category name" />
+		</div>
+		<div class="col-row button-row">
+			<button class="button sm add-cat" data-event="category_actions" title="Assign new category">Assign</button>
+		</div>
+	</div>
+</div>
+</script>
+<!-- @END Categories Edit -->
+
+<!-- @BEGIN Tags Edit -->
+<script id="edit_tags" type="text/html">
+<div id="tags_edit_drawer" data-event="tag_actions">
+
+	<div class="panel_group">
+
+		<!-- ko if: $data.tags().length -->
+			<div class="tag-edit">
+				<!-- ko if: $parents[0].selection().length <= 1 || $root.interfaces.active.id !== 'library' -->
+					<!-- ko foreach: $data.tags() -->
+					<div class="col-row tag_edit">
+						<span class="tag active-tag" data-bind='text: $data.title.replace(/"+/g, "")'></span>
+						<a href="#" title="Remove tag from selection" class="edit-link panel-hover-link remove-tag">remove</a>
+						<a href="#" data-event="delete_tag_confirm" title="Delete tag" class="edit-link panel-hover-link delete-tag">delete</a>
+					</div>
+					<!-- /ko -->
+				<!-- /ko -->
+				<!-- ko if: $parents[0].selection && $parents[0].selection().length > 1 && $root.interfaces.active.id === 'library' -->
+					<!-- ko foreach: $data.tags() -->
+					<div class="col-row">
+						<input type="checkbox" class="display" /> <label data-bind='text: $data.title.replace(/"+/g, "")' class="display"></label>
+					</div>
+					<!-- /ko -->
+				<!-- /ko -->
+				<div class="col-row button-row" style="padding-top:10px;">
+					<button class="button c0 sm done-tag" title="Save edits and close">Done</button>
+				</div>
+			</div>
+		<!-- /ko -->
+
+		<!-- ko ifnot: $data.tags().length -->
+			<div class="col-row">Assign a new or recent tag below.</div>
+		<!-- /ko -->
+
+	</div>
+
+	<div class="col-row hr"><hr></div>
+
+	<div data-event="toggle_visibility" class="col-head">
+		<span class="in">
+			<a href="#" class="arrow-toggle fold open"></a>
+			<h6><a href="#" class="fold" title="Assign tags">Assign tags</a></h6>
+		</span>
+	</div>
+
+	<div class="col-group">
+		<div class="col-row">
+			Separate each tag name with a space. Use double quotes (e.g., "black and white") for multi-word tags. Existing tags will appear as options as you type.
+		</div>
+		<div class="col-row field-row" id="enterTagsInput">
+			<input type="text" class="field side-col" placeholder="Enter tags" />
+		</div>
+		<div class="col-row button-row">
+		 	<button class="button sm create-tag" title="Assign tags">Assign</button>
+		</div>
+	</div>
+
+	<div data-event="toggle_visibility" class="col-head" data-bind="visible: $root.tags().length > 0">
+		<span class="in">
+			<a href="#" class="arrow-toggle fold"></a>
+			<h6><a href="#" class="fold" title="Assign recent tags">Assign recent tags</a></h6>
+		</span>
+	</div>
+
+	<div class="col-group tag-edit" style="display:none;">
+		<div class="col-row">
+			Click any tag below to assign it to the selected item.
+		</div>
+		<div class="col-row">
+			<span class="tag-display">
+				<!-- ko foreach: $root.tags -->
+					<!-- ko ifnot: $root.inArrayTags($data, $parent.tags()) -->
+					<a href="#" class="data-link tag recent-tag" title="Click to add" data-bind="text: function(){return $root.helpers.clean($data.title);}()"></a>
+					<!-- /ko -->
+				<!-- /ko -->
+			</span>
+		</div>
+	</div>
+
+</div>
+</script>
+<!-- @END Tags Edit -->
+
+<!-- @BEGIN Timestamp Edit -->
+<script id="edit_timestamp" type="text/html">
+<div id="timestamp_edit_drawer" data-event="timestamp_actions">
+	<div>
+		<div class="col-row field-row">
+			<input type="text" class="field side-col datepicker" data-bind="attr:{ 'data-raw': $data.published_on.timestamp() }, value: $root.observers.format_date($data.published_on.timestamp(),'YYYY/M/D h:mm a')" />
+		</div>
+		<div class="col-row button-row">
+			<button class="button c0 sm done-timestamp" title="Save changes and close">Done</button>
+		</div>
+	</div>
+	<div class="col-row hr"><hr></div>
+	<div class="col-row">
+		<!-- ko if: $root.interfaces.active.id === 'text' -->
+		Edit this to change the day and time the <span data-bind="text: $data.page_type()"></span> was published. This may change the order in which the <span data-bind="text: $data.page_type()"></span> appears on your site.
+		<!-- /ko -->
+	</div>
+</div>
+</script>
+<!-- @END Timestamp Edit -->
+
+<!-- @BEGIN Timestamp Edit -->
+<script id="edit_created" type="text/html">
+<div id="timestamp_edit_drawer" data-event="timestamp_actions">
+	<div>
+		<div class="col-row field-row">
+			<input type="text" class="field side-col datepicker" data-bind="attr:{ 'data-raw': $data.created_on.timestamp() }, value: $root.observers.format_date($data.created_on.timestamp(),'YYYY/M/D h:mm a')" />
+		</div>
+		<div class="col-row button-row">
+			<button class="button c0 sm done-timestamp-created" title="Save changes and close">Done</button>
+		</div>
+	</div>
+	<div class="col-row hr"><hr></div>
+	<div class="col-row">
+		<!-- ko if: $root.interfaces.active.id === 'text' -->
+		Edit this to change the day and time the <span data-bind="text: $data.page_type()"></span> was created. This may change the order in which the <span data-bind="text: $data.page_type()"></span> appears on your site.
+		<!-- /ko -->
+	</div>
+</div>
+</script>
+<!-- @END Timestamp Edit -->
+
+<!-- @BEGIN Site Link Edit Drawer Template -->
+<script id="site_link_edit" type="text/html">
+<div data-submit="site_link">
+	<div class="col-row field-row">
+		<span class="input_symbol small">/</span>
+		<div class="input_symbol_wrap small">
+			<input type="hidden" class="field side-col" data-bind="attr: { value: $root.slug_is_editable($data.slug ? $data : sidebar.asset) ? ($data.slug ? $data.slug : sidebar.asset.slug) : ($data.id ? $data.id : sidebar.asset.id) }" />
+			<input type="text" class="field side-col" data-bind="attr: { value: $root.slug_is_editable($data.slug ? $data : sidebar.asset) ? ($data.slug ? $data.slug : sidebar.asset.slug) : ($data.id ? $data.id : sidebar.asset.id), disabled: !$root.slug_is_editable($data.slug ? $data : sidebar.asset) }" />
+		</div>
+	</div>
+	<div class="col-row button-row" data-event="update_slug" data-bind="visible: $root.slug_is_editable($data.slug ? $data : sidebar.asset)">
+		<button class="button c0 sm" title="Save changes and close">Done</button>
+	</div>
+</div>
+<div class="col-row hr"><hr></div>
+<div class="col-row">
+	<!-- ko if: $root.slug_is_editable($data.slug ? $data : sidebar.asset) -->
+	Edit this item's site link slug above. Must include at least one lowercase character. Use hyphens instead of underscores for spaces.
+	<!-- /ko -->
+	<!-- ko ifnot: $root.slug_is_editable($data.slug ? $data : sidebar.asset) -->
+	<span class="label-warn icon16">URLs that use IDs may not be edited. <a href="#/settings/publishing">Switch your site link formatting to titles</a> to assign custom slugs.</span>
+	<!-- /ko -->
+</div>
+</script>
+<!-- @END Site Link Edit Drawer Template -->
+
+<!-- @BEGIN Moment Template -->
+<script id="moment" type="text/html"><span class="moment_output" data-bind="attr: { 'data-raw': $data }, text: moment( $data * 1000 ).fromNow()"></span></script>
+<!-- @END Moment Template -->
+
+<script id="form_string" type="text/html">
+	<input type="text" data-bind="value: setting.value, attr: { placeholder: setting.placeholder ? setting.placeholder : '', 'data-validate': setting.validation ? setting.validation.type : null, 'data-validate-regex': setting.validation && setting.validation.rule ? setting.validation.rule : null, 'data-validate-allow-empty': setting.validation && setting.validation.allow_empty ? 'true' : null, 'data-send-as': setting.send_as || '', 'data-default-value': setting.default || setting.value, name: setting.key, id: prefix + 'option_' + setting.key, class: prefix === 'shortcode_' ? 'field sheet wide' : '' }" />
+	<!-- ko if: setting.validation -->
+	<span class="form-error-msg" data-bind="text: setting.validation.error_message || ''"></span>
+	<!-- /ko -->
+</script>
+
+<script id="form_code" type="text/html">
+	<textarea rows="15" data-bind="value: setting.value, attr: { placeholder: setting.placeholder ? setting.placeholder : '', 'data-validate': setting.validation ? setting.validation.type : null, 'data-validate-regex': setting.validation && setting.validation.rule ? setting.validation.rule : null, 'data-validate-allow-empty': setting.validation && setting.validation.allow_empty ? 'true' : null, name: setting.key, id: prefix + 'option_' + setting.key, class: prefix === 'shortcode_' ? 'field sheet wide' : '' }"></textarea>
+	<!-- ko if: setting.validation -->
+	<span class="form-error-msg" data-bind="text: setting.validation.error_message || ''"></span>
+	<!-- /ko -->
+</script>
+
+<script id="form_fields_array" type="text/html">
+	<table class="ui-sheet-table">
+		<thead>
+			<tr>
+				<td></td>
+				<!-- ko foreach: setting.fields -->
+				<td data-bind="text: $data.label, attr: { style: $index() ? 'text-align: center' : '' }"></td>
+				<!-- /ko -->
+				<td></td>
+			</tr>
+		</thead>
+		<tbody class="fields-data-sortable" data-bind="attr: { 'data-field': setting.key }">
+			<!-- ko foreach: setting.value -->
+			<tr class="fields-data-row">
+				<td><a class="move" href="#" title="Drag to reorder">☰</a></td>
+				<!-- ko foreach: $parent.setting.fields -->
+				<td data-bind="attr: { style: $index() ? 'text-align: center' : '' }">
+					<!-- ko if: type === 'select' -->
+					<select class="fields-data tiny" data-bind="options: options, optionsValue: 'value', optionsText: 'label', value: $parent[$index()]"></select>
+					<!-- /ko -->
+
+					<!-- ko if: type === 'string' -->
+					<input class="fields-data field small sheet wide" data-bind="value: $parent[$index()], valueUpdate: 'afterkeydown'" type="text" />
+					<!-- /ko -->
+
+					<!-- ko if: type === 'boolean' -->
+					<input class="fields-data small" data-bind="checked: $parent[$index()], visible: $data.hidden ? $parent[$data.hidden.index] !== $data.hidden.equals : true" type="checkbox" />
+					<!-- /ko -->
+				</td>
+				<!-- /ko -->
+				<td class="action"><span><a class="remove" title="Remove field" data-event="shortcode_remove_field" href="#" data-bind="visible: $index(), attr: { 'data-field': $parent.setting.key, 'data-index': $index() }"></a></span></td>
+			</tr>
+			<!-- /ko -->
+			<tr>
+				<td>&nbsp;</td>
+				<td data-bind="attr: { colspan: setting.fields.length - 1 }"><a class="font_small" data-event="shortcode_add_field" href="#" title="Create another contact form field row">+ Add another field</a></td>
+			</tr>
+		</tbody>
+	</table>
+
+</script>
+
+<script id="form_recaptcha" type="text/html">
+
+	<table class="ui-sheet-table" data-bind="attr: { id: prefix + setting.key }">
+		<thead>
+			<tr class="fields-data-row">
+				<td>
+					<label>
+						<input data-bind="checked: setting.value[0], event: { change: function() { $('#' + prefix + setting.key + ' tbody').toggle(); } }" type="checkbox" />
+						Google reCaptcha
+					</label>
+					<a href="http://help.koken.me/customer/en/portal/articles/1914327-insert-contact-forms#recaptcha" target="_blank" class="help fright">More Info</a>
+				</td>
+			</tr>
+		<thead>
+		<tbody data-bind="visible: setting.value[0]">
+			<!-- ko foreach: setting.fields -->
+			<!-- ko if: $index() !== 0 -->
+			<tr class="fields-data-row">
+				<td>
+					<input class="field wide" data-bind="value: $parent.setting.value[$index()], valueUpdate: 'afterkeydown', attr: { 'placeholder': placeholder }" type="text" />
+				</td>
+			</tr>
+			<!-- /ko -->
+			<!-- /ko -->
+		</tbody>
+	</table>
+</script>
+
+<script id="form_boolean" type="text/html">
+	<input type="checkbox" value="true" data-bind="event: { change: function() { setting.value = $('#' + prefix + 'option_' + setting.key).is(':checked'); } }, checked: $data.setting.values ? setting.value === setting.values['true'] : setting.value === true || (setting.value !== false && setting.value !== 'false'), attr: { 'data-send-as': setting.send_as || '', 'data-default-value': setting.default || setting.value ? 'true' : 'false', name: setting.key, id: prefix + 'option_' + setting.key }" />
+</script>
+
+<script id="form_select" type="text/html">
+	<!-- ko if: prefix === 'pulse_' && setting.key === 'transition_type' -->
+	<select class="tiny" data-bind="attr: { 'data-send-as': setting.send_as || '', 'data-default-value': setting.default || setting.value, name: setting.key, id: prefix + 'option_' + setting.key }">
+		<option value="none">None</option>
+		<option value="dissolve">Dissolve</option>
+		<option value="fade">Fade</option>
+		<option value="slide">Slide</option>
+		<!-- ko foreach: $root.interfaces.site.observers.user_pulse_transitions -->
+		<optgroup data-bind="attr: { label: title }">
+			<!-- ko foreach: transitions -->
+			<option data-bind="attr: { value: value }, text: label"></option>
+			<!-- /ko -->
+		</optgroup>
+		<!-- /ko -->
+	</select>
+	<!-- /ko -->
+	<!-- ko ifnot: prefix === 'pulse_' && setting.key === 'transition_type' -->
+	<select data-bind="css: { tiny: prefix !== 'shortcode_' }, attr: { 'data-send-as': setting.send_as || '', 'data-default-value': setting.default || setting.value, name: setting.key, id: prefix + 'option_' + setting.key }, options: setting.options, optionsText: 'label', optionsValue: 'value', value: setting.value || $.extend({}, setting.options[0], true).value, valueAllowUnset: true">
+	</select>
+	<!-- /ko -->
+</script>
+
+<script id="form_slider" type="text/html">
+	<!-- Also important: No whitespace between closing span and /script, for slider hover cursor reasons -->
+	<input data-bind="slider: [prefix, setting]" />
+	<span class="display_value slider" style="vertical-align:top" data-bind="text: setting.value"></span></script>
+
+<script id="form_number" type="text/html">
+	<input class="field small emb" type="number" data-bind="value: setting.value, attr: { min: setting.min, max: setting.max, step: setting.step, 'data-send-as': setting.send_as || '', 'data-default-value': setting.default || setting.value, name: setting.key, id: prefix + 'option_' + setting.key }" />
+</script>
+
+<script id="form_color" type="text/html">
+	<input type="ccolor" data-bind="value: setting.value, attr: { 'data-send-as': setting.send_as || '', 'data-default-value': setting.default || setting.value, name: setting.key, id: prefix + 'option_' + setting.key }" />
+</script>

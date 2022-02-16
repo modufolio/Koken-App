@@ -1,0 +1,91 @@
+<section>
+
+	<header class="content">
+
+		<span class="wrap first">
+
+			View all {{ labels.essay.plural case="lower" }} by month
+
+		</span>
+
+	</header>
+
+	<koken:dates limit_to="essays">
+		<koken:select label="Select month" />
+	</koken:dates>
+
+</section>
+
+<koken:categories limit_to="essays" order_by="essay_count">
+
+	<section>
+
+		<header class="content">
+
+			<span class="wrap first">
+
+				View all {{ labels.essay.plural case="lower" }} by {{ labels.category.singular case="lower" }}
+
+			</span>
+
+		</header>
+
+		<ol class="meta_list">
+
+			<koken:loop>
+
+				<li>
+
+					<koken:link title="View all {{ labels.essay.plural case='lower' }} in {{ category.title }}">
+
+						<span class="count">{{ category.counts.total }}</span>
+						<h4>{{ category.title }}</h4>
+
+					</koken:link>
+
+				</li>
+
+			</koken:loop>
+
+		</ol>
+
+	</section>
+
+</koken:categories>
+
+<koken:tags limit_to="essays" order_by="essay_count">
+
+	<section>
+
+		<header class="content">
+
+			<span class="wrap first">
+
+				View all {{ labels.essay.plural case="lower" }} by {{ labels.tag.singular case="lower" }}
+
+			</span>
+
+		</header>
+
+		 <ol class="meta_list">
+
+			<koken:loop>
+
+				<li>
+
+					<koken:link title="View all {{ labels.essay.plural case='lower' }} in {{ tag.title }}">
+
+						<span class="count">{{ tag.counts.total }}</span>
+						<h4 class="tag">{{ tag.title }}</h4>
+
+					</koken:link>
+
+				</li>
+
+			</koken:loop>
+
+		</ol>
+
+	</section>
+
+</koken:load>

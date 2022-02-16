@@ -1,0 +1,44 @@
+	</main>
+
+	<footer class="bot">
+
+		<koken:public>
+
+			<koken:if true="settings.show_social">
+				<div class="social">
+					<span class="fb">
+						<koken:if data="settings.fb_href" equals="site">
+							<div class="fb-like" data-href="{{ location.site_url }}" data-send="false" data-layout="button_count" data-width="450" data-show-faces="false"></div>
+						</koken:if>
+						<koken:if data="settings.fb_href" equals="fbpage">
+							<div class="fb-like" data-href="{{ profile.facebook }}" data-send="false" data-layout="button_count" data-width="450" data-show-faces="false"></div>
+						</koken:if>
+					</span>
+					<span class="tw">
+						<a href="https://twitter.com/share" class="twitter-share-button">Tweet</a>
+						<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+					</span>
+					<span class="gplus">
+						<script type="text/javascript" src="https://apis.google.com/js/platform.js"></script>
+						<div class="g-plus" data-action="share" data-annotation="bubble"></div>
+					</span>
+				</div>
+			</koken:if>
+
+		</koken:public>
+
+		<nav>
+			<koken:navigation group="footer" />
+		</nav>
+
+		{{ site.copyright }}
+
+	</footer>
+
+	</div>	<!-- close container -->
+
+	<koken:asset file="share.js" common="true" />
+
+</body>
+
+</html>

@@ -1,0 +1,1 @@
+Managed Koken is a subscription service that we set up, monitor and maintain to ensure the service is optimized for running Koken. We designed it with all solid state drives (SSDs) to offer you more power, speed and stability. Because it is a dedicated service, your server, storage, and network capacity are not shared with other users.

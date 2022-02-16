@@ -1,0 +1,10 @@
+<item>
+	<title><![CDATA[{{ essay.title }}]]></title>
+	<link><![CDATA[<koken:permalink />]]></link>
+	<guid><![CDATA[<koken:permalink />]]></guid>
+	<pubDate><koken:time rss="true" /></pubDate>
+	<description><![CDATA[{{ essay.excerpt }}]]></description>
+	<content:encoded><![CDATA[<figure><koken:featured_image><img alt="{{ content.filename|content.title }}" src="{{ content.presets.medium_large.url }}" width="{{ content.presets.medium_large.width }}" /></koken:featured_image><figcaption>{{ essay.excerpt }}</figcaption></figure>]]></content:encoded>
+	<media:credit role="photographer"><![CDATA[{{ profile.name }}]]></media:credit>
+	<dc:creator><![CDATA[{{ profile.name }}]]></dc:creator>
+</item>

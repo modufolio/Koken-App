@@ -1,0 +1,123 @@
+<koken:if true="settings.timeline_show_feat_albums">
+
+	<koken:load source="featured_albums">
+
+		<section>
+
+			<header class="content">
+				<span class="wrap first">
+					Featured {{ labels.album.plural case="lower" }}
+				</span>
+			</header>
+
+			<ul class="block_list">
+
+				<koken:loop>
+
+					<li>
+
+						<koken:link class="thumb" title="View {{ album.title }}">
+
+							<koken:img size="3:2" lazy="true" />
+
+						</koken:link>
+
+						<h4>
+							<koken:link title="View {{ album.title }}">
+								{{ album.title }}
+							</koken:link>
+						</h4>
+
+						{{ album.summary paragraphs="true" }}
+
+					</li>
+
+				</koken:loop>
+
+			</ul>
+
+		</section>
+
+	<koken:else>
+
+		<section>
+
+			<header class="content">
+				<span class="wrap first">
+					Featured {{ labels.album.plural case="lower" }}
+				</span>
+			</header>
+
+			<koken:note>This area displays featured albums. Add some in the Library or turn this section off in the theme settings.</koken:note>
+
+		</section>
+
+	</koken:load>
+
+</koken:if>
+
+<koken:if true="settings.timeline_show_feat_essays">
+
+	<koken:load source="featured_essays">
+
+		<section>
+
+			<header class="content">
+				<span class="wrap first">
+					Featured {{ labels.essay.plural case="lower" }}
+				</span>
+			</header>
+
+			<ul class="block_list">
+
+				<koken:loop>
+
+					<li>
+
+						<koken:featured_image>
+
+							<koken:link class="thumb" title="View {{ essay.title }}">
+
+								<koken:img size="3:2" lazy="true" />
+
+							</koken:link>
+
+						</koken:featured_image>
+
+						<h4>
+							<koken:link title="View {{ essay.title }}">
+								{{ essay.title }}
+							</koken:link>
+						</h4>
+
+						<p>
+							{{ essay.excerpt }} <koken:link class="norm" title="View {{ essay.title }}">Read more</koken:link>
+						</p>
+
+					</li>
+
+				</koken:loop>
+
+			</ul>
+
+		</section>
+
+	<koken:else>
+
+		<section>
+
+			<header class="content">
+				<span class="wrap first">
+					Featured {{ labels.essay.plural case="lower" }}
+				</span>
+			</header>
+
+			<koken:note>This area displays featured essays. Add some in the Library or turn this section off in the theme settings.</koken:note>
+
+		</section>
+
+	</koken:load>
+
+</koken:if>
+
+<koken:include file="layouts/links_aside.html" />

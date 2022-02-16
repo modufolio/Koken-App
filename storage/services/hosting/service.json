@@ -1,0 +1,17 @@
+{
+  "name": "Managed Koken",
+  "description": "We create, manage and support Koken for you.",
+  "version": "1.0.0",
+  "demo": "http://koken.me",
+  "author": {
+    "name": "Koken",
+    "link": "https://store.koken.me/authors/koken"
+  },
+  "plans": [{
+    "title": "Monthly subscription",
+    "description": "monthly",
+    "price": 13,
+    "merchant_id": "4mbb",
+    "billed": "monthly"
+  }]
+}

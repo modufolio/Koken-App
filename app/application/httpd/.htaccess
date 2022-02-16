@@ -1,0 +1,142 @@
+
+## Uncomment the following block to force SSL when accessing /admin
+# <IfModule mod_rewrite.c>
+#	RewriteEngine On
+# 	RewriteCond %{REQUEST_URI} /admin/
+# 	RewriteCond %{SERVER_PORT} 80
+# 	RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+# </IfModule>
+
+####### DO NOT EDIT BELOW THIS LINE ########
+
+#MARK#######################################
+########	KOKEN .htaccess rules	########
+############################################
+
+## Make sure settings.css.lens is rendered as CSS
+AddType text/css .lens
+
+## SVG MIME type as some servers don't have it
+AddType image/svg+xml .svg
+
+## UTF-8 encoding for everything
+AddDefaultCharset utf-8
+
+DirectoryIndex index.php index.html
+
+## Enable gzip.
+## Highly recommended as it will increase speed for
+## both the console and your published site.
+<IfModule mod_deflate.c>
+	AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/json application/javascript application/x-javascript
+</IfModule>
+## END gzip
+
+## Rewrite Rules (Pretty URLs)
+## These rules remove index.php/ from your published site links
+## and also speed up the serving of cached images.
+<IfModule mod_rewrite.c>
+	RewriteEngine On
+	RewriteBase /
+
+	# Pass images requests back to PHP if they do not exist
+	RewriteCond %{REQUEST_METHOD} =GET
+	RewriteCond %{REQUEST_FILENAME} !-f
+	RewriteCond %{REQUEST_URI} storage/cache/images(/(([0-9]{3}/[0-9]{3})|custom)/.*)$
+	RewriteRule . i.php?path=%1 [L]
+
+	# Pass albums requests back to PHP if they do not exist
+	RewriteCond %{REQUEST_METHOD} =GET
+	RewriteCond %{REQUEST_FILENAME} !-f
+	RewriteCond %{REQUEST_URI} storage/cache/albums(/([0-9]{3}/[0-9]{3})/.*)$
+	RewriteRule . a.php?path=%1 [L]
+
+	# Catch root requests (pjax)
+	RewriteCond %{REQUEST_METHOD} =GET
+	RewriteCond %{REQUEST_URI} ^/?$
+	RewriteCond %{QUERY_STRING} _pjax=
+	RewriteCond %{DOCUMENT_ROOT}/storage/cache/site/index/cache.phtml -f
+	RewriteRule .* storage/cache/site/index/cache.phtml [L]
+
+	# Catch root requests
+	RewriteCond %{REQUEST_METHOD} =GET
+	RewriteCond %{REQUEST_URI} ^/?$
+	RewriteCond %{QUERY_STRING} !_pjax=
+	RewriteCond %{DOCUMENT_ROOT}/storage/cache/site/index/cache.html -f
+	RewriteRule .* storage/cache/site/index/cache.html [L]
+
+	# Catch site requests (pjax)
+	RewriteCond %{REQUEST_METHOD} =GET
+	RewriteCond %{QUERY_STRING} _pjax=
+	RewriteCond %{DOCUMENT_ROOT}/storage/cache/site%{REQUEST_URI}cache.phtml -f
+	RewriteRule . storage/cache/site%{REQUEST_URI}cache.phtml [L]
+
+	# Catch site requests
+	RewriteCond %{REQUEST_METHOD} =GET
+	RewriteCond %{QUERY_STRING} !_pjax=
+	RewriteCond %{HTTP_COOKIE} !share_to_tumblr=
+	RewriteCond %{DOCUMENT_ROOT}/storage/cache/site%{REQUEST_URI}cache.html -f
+	RewriteRule . storage/cache/site%{REQUEST_URI}cache.html [L]
+
+	# CSS / RSS caching
+	RewriteCond %{REQUEST_METHOD} =GET
+	RewriteCond %{REQUEST_FILENAME} !-f
+	RewriteCond %{DOCUMENT_ROOT}/storage/cache/site%{REQUEST_URI} -f
+	RewriteRule . storage/cache/site%{REQUEST_URI} [L]
+
+	# Rewrite any old URLs that still use index.php?/this/that syntax
+	RewriteCond %{QUERY_STRING} ^/(.*)
+	RewriteRule ^index.php %1? [R,L]
+
+	# Rewrite any old URLs that still use index.php/this/that syntax
+	RewriteRule ^index.php/(.*)$ $1 [R,L]
+
+	# Catch root requests
+	RewriteRule ^(index.php)?$ app/site/site.php?url=/ [L,QSA]
+
+	# Do not enable path rewriting for files that exist
+	RewriteCond %{REQUEST_FILENAME} !-f
+	RewriteCond %{REQUEST_FILENAME} !-d
+	RewriteCond	%{REQUEST_FILENAME} !favicon.ico
+
+	# For requests that are not actual files
+	# rewrite to index.php?/PATH
+	RewriteRule ^(.*)$ app/site/site.php?url=/$1 [L,QSA]
+</IfModule>
+
+## This ruleset ensures core Koken JS and CSS are cached
+## for 1 year. These files are always timestamped in new releases,
+## so it is safe to cache them for long periods of time.
+<IfModule mod_expires.c>
+	ExpiresActive On
+	# Set default to 0 so .php/API requests are not cached
+	ExpiresDefault A0
+
+	# Do not cache MP4s, as Chrome and others tend to fail on first playback
+	<FilesMatch "\.mp4$">
+		<IfModule mod_headers.c>
+			ExpiresActive Off
+			Header set Cache-Control "private, no-cache, no-store, proxy-revalidate, no-transform"
+			Header set Pragma "no-cache"
+		</IfModule>
+	</FilesMatch>
+
+	# Console javascript and CSS is timestamped and can be aggressively cached
+	<FilesMatch "console_.*\.(js|css)$">
+		ExpiresByType text/javascript "access plus 1 year"
+		ExpiresByType application/javascript "access plus 1 year"
+		ExpiresByType application/x-javascript "access plus 1 year"
+		ExpiresByType text/css "access plus 1 year"
+	</FilesMatch>
+
+	# Cached images are timestamped and can be aggressively cached
+	<FilesMatch "\.\d{9,10}\.(jpg|jpeg|gif|png|JPG|JPEG|GIF|PNG)$">
+		ExpiresDefault "access plus 1 year"
+	</FilesMatch>
+</IfModule>
+
+## End Rewrite Rules
+
+############################################
+#######	 END KOKEN .htaccess rules  ########
+############################################

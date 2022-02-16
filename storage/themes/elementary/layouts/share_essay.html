@@ -1,0 +1,25 @@
+<div class="share_content">
+
+<span class="share_button">Share</span>
+
+<div class="kshare">
+	<input type="text" class="kshare-input" value="{{ essay.url }}" />
+	<ul class="kshare-items">
+		<li>
+    		<koken:if empty="profile.twitter"><a href="https://twitter.com/intent/tweet?text={{ essay.title url_encode="true" }}&url={{ essay.url url_encode="true" }}" class="share-twitter" title="Share {{ essay.title url_encode="true" }} on Twitter"><koken:else><a href="https://twitter.com/intent/tweet?text={{ essay.title url_encode="true" }}&url={{ essay.url url_encode="true" }}&via={{ profile.twitter }}" class="share-twitter" title="Share {{ essay.title url_encode="true" }} on Twitter"></koken:if><i class="kicon-twitter"></i></a>
+    	</li>
+    	<li>
+   			 <a href="https://www.facebook.com/sharer.php?u={{ essay.url url_encode="true" }}" class="share-facebook" title="Share {{ essay.title url_encode="true" }} on Facebook"><i class="kicon-facebook"></i></a>
+   		</li>
+   		<li>
+    		<a href="http://pinterest.com/pin/create/button/?url={{ essay.url url_encode="true" }}" class="share-pinterest" title="Share {{ essay.title url_encode="true" }} on Pinterest"><i class="kicon-pinterest"></i></a>
+    	</li>
+    	<li>
+    		<a href="https://www.tumblr.com/widgets/share/tool?posttype=link&canonicalUrl={{ essay.url url_encode="true" }}&content={{ essay.url url_encode="true" }}&caption=%3Cp%3E%3Cstrong%3E%3Ca href=&quot;{{ essay.url url_encode="true" }}&quot; title=&quot;{{ essay.title url_encode="true" }}&quot;%3E{{ essay.title url_encode="true" }}%3C/a%3E%3C%2Fstrong%3E%3C%2Fp%3E%3Cp%3E{{ essay.excerpt url_encode="true" }}%3C%2Fp%3E" class="share-tumblr" title="Share {{ essay.title url_encode="true" }} on Tumblr"><i class="kicon-tumblr"></i></a>
+    	</li>
+    	<li>
+    		<a href="https://plus.google.com/share?url={{ essay.url url_encode="true" }}" class="share-google" title="Share {{ essay.title url_encode="true" }} on Google+"><i class="kicon-gplus"></i></a>
+    	</li>
+    </ul>
+</div>
+</div>

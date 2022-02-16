@@ -1,0 +1,65 @@
+<koken:loop>
+
+	<li class="album-content">
+
+		<figure>
+
+			<koken:link title="View {{ content.title | content.filename }}" class="thumb">
+
+				<koken:if data="settings.albums_detail_crop" equals="proportional">
+
+					<koken:img class="preview" lazy="true" />
+
+				<koken:else>
+
+					<koken:img size="{{ settings.album_detail_crop_size }}" lazy="true" />
+
+				</koken:if>
+
+			</koken:link>
+
+			<figcaption>
+
+				<koken:if true="settings.albums_detail_show_date">
+					<koken:time class="date" />
+				</koken:if>
+
+				<koken:if true="settings.albums_detail_show_title">
+
+					<h4>
+						<koken:link title="{{ content.title | content.filename }}">
+							{{ content.title | content.filename }}
+						</koken:link>
+					</h4>
+
+				</koken:if>
+
+				<koken:if true="settings.albums_detail_show_caption">
+
+					<koken:not empty="content.caption">
+
+						<p>
+							<koken:if true="settings.albums_detail_truncate">
+								{{ content.caption truncate="130" }}
+							<koken:else>
+								{{ content.caption }}
+							</koken:if>
+						</p>
+
+					</koken:not>
+
+				</koken:if>
+
+			</figcaption>
+
+		</figure>
+
+	</li>
+
+</koken:loop>
+
+<koken:filtered>
+	<p>
+		<span class="filter_count">{{ filter.count }} of {{ album.counts.total }} / <koken:link title="View {{ album.title }}">View all</koken:link></span>
+	</p>
+</koken:filtered>

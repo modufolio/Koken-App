@@ -1,0 +1,106 @@
+<koken:event_content>
+
+	<article class="kevent">
+
+		<header class="content">
+
+			<div class="right">
+
+				<span class="wrap last share">
+
+					<koken:if true="settings.timeline_show_share">
+
+						<koken:include file="layouts/share_content.html" />
+
+					</koken:if>
+
+				</span>
+
+			</div>
+
+			<koken:if true="content.featured">
+				<span class="edge_right">
+					<span class="wrap">
+						<i class="kicon-star"></i>
+					</span>
+				</span>
+			</koken:if>
+
+			<span class="edge_right">
+				<span class="wrap first {{ content.featured if_true="featured" }}"><koken:link to="contents" title="{{ labels.content.singular }}">{{ labels.content.singular }}</koken:link></span>
+			</span>
+
+			<span class="wrap">Published <koken:link to="date"><koken:time relative="{{ settings.show_event_date_relative }}" /></koken:link></span>
+
+			<koken:if true="settings.show_comment_counts">
+
+				<koken:discussion_count>
+
+					<span class="edge_left">
+
+						<span class="wrap">
+
+							<span class="comment_count">{{ discussion_count }}</span>
+
+						</span>
+
+					</span>
+
+				</koken:discussion_count>
+
+			</koken:if>
+
+		</header>
+
+		<div class="article_body">
+
+			<figure>
+
+				<koken:content_image>
+					<koken:link title="View {{ content.title | content.filename }}">
+						<koken:img lazy="true" />
+					</koken:link>
+				</koken:content_image>
+
+				<koken:content_video>
+					<koken:video />
+				</koken:content_video>
+
+				<figcaption>
+
+					<h3>
+						<koken:link title="View {{ content.title | content.filename }}">
+							{{ content.title | content.filename }}
+						</koken:link>
+					</h3>
+
+					{{ content.caption paragraphs="true" }}
+
+					<koken:tags>
+						<p class="meta-links">
+							<koken:loop separator="">
+								<koken:link class="tag" to="tag" title="View everything in {{ tag.title }}">{{ tag.title }}</koken:link>
+							</koken:loop>
+						</p>
+					</koken:tags>
+
+					<koken:categories>
+						<p class="meta-links">
+							See more in
+							<koken:loop separator=", ">
+								<koken:link class="norm" to="category" title="View everything in {{ category.title }}">
+									{{ category.title }}
+								</koken:link>
+							</koken:loop>
+						</p>
+					</koken:categories>
+
+				</figcaption>
+
+			</figure>
+
+		</div>
+
+	</article>
+
+</koken:event_content>

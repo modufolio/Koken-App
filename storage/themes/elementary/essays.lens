@@ -1,0 +1,55 @@
+<koken:include file="layouts/header.html" />
+
+<koken:load limit="10">
+
+<koken:head>
+	<meta property="og:site_name" content="{{ site.title }}" />
+	<meta property="og:description" content="{{ site.description strip_html='true' }}" />
+	<meta property="og:title" content="{{ labels.essay.plural }}" />
+	<meta property="og:type" content="blog" />
+	<meta property="og:url" content="{{ location.site_url }}{{ location.here }}" />
+</koken:head>
+
+<div id="twocol" class="edge">
+
+	<div class="mcol">
+
+		<koken:variable name="list" value="true" />
+
+		<koken:loop>
+
+			<koken:include file="layouts/article.html" />
+
+		</koken:loop>
+
+	</div>
+
+	<div class="rcol">
+
+		<aside>
+
+			<koken:include file="layouts/essays-aside.html" />
+
+			<koken:include file="layouts/links_aside.html" />
+
+		</aside>
+
+	</div>
+
+</div>
+
+<koken:include file="layouts/pagination.html" />
+
+<koken:keyboard_scroll element="article" offset="-10" />
+
+<koken:else>
+
+	<koken:note>
+
+		No essays found. Write some in Text.
+
+	</koken:note>
+
+</koken:load>
+
+<koken:include file="layouts/footer.html" />

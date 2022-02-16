@@ -1,0 +1,111 @@
+<koken:event_essay>
+
+	<article class="kevent">
+
+		<header class="content">
+
+			<div class="right">
+
+				<span class="wrap last share">
+
+					<koken:if true="settings.timeline_show_share">
+
+						<koken:include file="layouts/share_essay.html" />
+
+					</koken:if>
+
+				</span>
+
+			</div>
+
+			<koken:if true="essay.featured">
+				<span class="edge_right">
+					<span class="wrap">
+						<i class="kicon-star"></i>
+					</span>
+				</span>
+			</koken:if>
+
+			<span class="edge_right"><span class="wrap first {{ essay.featured if_true="featured" }}"><koken:link to="essays" title="{{ labels.essay.plural }}">{{ labels.essay.singular }}</koken:link></span></span>
+
+			<span class="wrap">
+
+				Published <koken:link to="date"><koken:time relative="{{ settings.show_event_date_relative }}" /></koken:link>
+
+			</span>
+
+			<koken:if true="settings.show_comment_counts">
+
+				<koken:discussion_count>
+
+					<span class="edge_left">
+
+						<span class="wrap">
+
+							<span class="comment_count">{{ discussion_count }}</span>
+
+						</span>
+
+					</span>
+
+				</koken:discussion_count>
+
+			</koken:if>
+
+		</header>
+
+		<div class="article_body">
+
+			<figure>
+
+				<koken:featured_image>
+
+					<koken:link title="View {{ essay.title }}">
+
+						<koken:img lazy="true" />
+
+					</koken:link>
+
+				</koken:featured_image>
+
+				<figcaption>
+
+					<h3>
+						<koken:link title="{{ essay.title }}">
+							{{ essay.title }}
+						</koken:link>
+					</h3>
+
+					<p>
+						{{ essay.excerpt }} <koken:link class="read_more" title="View {{ essay.title }}">Read more</koken:link>
+
+					</p>
+
+					<koken:tags>
+						<p class="meta-links">
+							<koken:loop separator="">
+								<koken:link class="tag" to="tag" title="View everything in {{ tag.title }}">{{ tag.title }}</koken:link>
+							</koken:loop>
+						</p>
+					</koken:tags>
+
+					<koken:categories>
+						<p class="meta-links">
+							See more in
+							<koken:loop separator=", ">
+								<koken:link class="norm" to="category" title="View everything in {{ category.title }}">
+									{{ category.title }}
+								</koken:link>
+							</koken:loop>
+						</p>
+					</koken:categories>
+
+				</figcaption>
+
+			</figure>
+
+		</div>
+
+	</article>
+
+</koken:event_essay>

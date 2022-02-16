@@ -1,0 +1,26 @@
+<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:georss="http://www.georss.org/georss" xmlns:media="http://search.yahoo.com/mrss/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+	<channel>
+		<koken:load>
+			<title><![CDATA[{{ site.title }}: {{ album.title }}]]></title>
+			<link><![CDATA[<koken:link echo="true" />]]></link>
+			<description><![CDATA[{{ site.title }}: {{ language.recent_uploads_from_the_title_album collate="album.title" }}]]></description>
+			<generator>http://koken.me</generator>
+			<lastBuildDate><koken:time rss="true" /></lastBuildDate>
+			<atom:link href="{{location.host}}{{location.root_folder}}{{ location.here }}" rel="self" type="application/rss+xml" />
+			<koken:not empty="album.covers">
+				<image>
+					<koken:covers>
+					<koken:shift>
+					<url>{{ content.presets.medium_large.url }}</url>
+					</koken:shift>
+					</koken:covers>
+					<title><![CDATA[{{ site.title }}: {{ album.title }}]]></title>
+					<link><koken:link echo="true" /></link>
+				</image>
+			</koken:not>
+			<koken:loop>
+				<koken:include file="inc/content.rss.lens" />
+			</koken:loop>
+		</koken:load>
+	</channel>
+</rss>

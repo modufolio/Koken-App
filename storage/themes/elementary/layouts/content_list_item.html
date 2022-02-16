@@ -1,0 +1,53 @@
+<li class="content">
+
+	<figure>
+
+		<koken:link title="View {{ content.title | content.filename }}" class="thumb">
+
+			<koken:if data="settings.content_index_crop" equals="proportional">
+
+				<koken:img lazy="true" />
+
+			<koken:else>
+
+				<koken:img size="{{ settings.contents_crop_size }}" lazy="true" />
+
+			</koken:if>
+
+		</koken:link>
+
+		<figcaption>
+
+			<koken:if true="settings.content_index_show_date">
+				<koken:time class="date" />
+			</koken:if>
+
+			<koken:if true="settings.content_index_show_title">
+
+				<h4>
+					<koken:link title="View {{ content.title | content.filename }}">{{ content.title | content.filename }}</koken:link>
+				</h4>
+
+			</koken:if>
+
+			<koken:if true="settings.content_index_show_caption">
+
+				<koken:not empty="content.caption">
+
+					<p>
+						<koken:if true="settings.content_index_truncate">
+							{{ content.caption truncate="130" }}
+						<koken:else>
+							{{ content.caption }}
+						</koken:if>
+					</p>
+
+				</koken:not>
+
+			</koken:if>
+
+		</figcaption>
+
+	</figure>
+
+</li>

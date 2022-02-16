@@ -1,0 +1,19 @@
+<item>
+	<title><![CDATA[{{ content.title | content.filename }}]]></title>
+	<link><![CDATA[<koken:permalink />]]></link>
+	<guid><![CDATA[<koken:permalink />]]></guid>
+	<pubDate><koken:time rss="true" /></pubDate>
+	<dc:creator><![CDATA[{{ profile.name }}]]></dc:creator>
+	<description><![CDATA[{{ content.caption }}]]></description>
+	<content:encoded><![CDATA[<figure><img alt="{{ content.title | content.filename }}" src="{{ content.presets.medium_large.url }}" width="{{ content.presets.medium_large.width }}"><figcaption>{{ content.caption }}</figcaption></figure>]]></content:encoded>
+	<media:title><![CDATA[{{ content.title | content.filename }}]]></media:title>
+	<media:description><![CDATA[{{ content.caption }}]]></media:description>
+	<koken:if data="content.license.raw" equals="all">
+	<media:copyright><![CDATA[{{ site.copyright }}]]></media:copyright>
+	<koken:else>
+	<media:license url="{{ content.license.url }}"><![CDATA[{{ content.license.clean }}]]></media:license>
+	</koken:if>
+	<media:content url="{{ content.presets.medium_large.url }}" width="{{ content.presets.medium_large.width }}" type="{{ content.mime_type }}" />
+	<media:thumbnail url="{{ content.presets.small.url }}" width="{{ content.presets.small.width }}" />
+	<media:credit role="photographer"><![CDATA[{{ profile.name }}]]></media:credit>
+</item>

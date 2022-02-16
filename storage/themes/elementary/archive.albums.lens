@@ -1,0 +1,66 @@
+<koken:include file="layouts/header.html" />
+
+<koken:load limit="4">
+	<koken:head>
+		<meta property="og:site_name" content="{{ site.title }}" />
+		<meta property="og:title" content="{{ labels.album.plural }}" />
+		<meta property="og:description" content="{{ site.description strip_html='true' }}" />
+		<meta property="og:type" content="website" />
+		<koken:first>
+			<koken:covers>
+				<koken:first>
+					<meta property="og:image" content="{{ content.presets.medium_large.url }}" />
+					<meta property="og:image:width" content="{{ content.presets.medium_large.width }}" />
+					<meta property="og:image:height" content="{{ content.presets.medium_large.height }}" />
+				</koken:first>
+			</koken:covers>
+		</koken:first>
+		<meta property="og:url" content="{{ location.site_url }}{{ location.here }}" />
+		<koken:not empty="profile.twitter">
+			<meta name="twitter:card" content="gallery" />
+			<meta name="twitter:site" content="@{{ profile.twitter }}" />
+			<meta name="twitter:creator" content="@{{ profile.twitter }}" />
+			<koken:loop>
+				<koken:covers>
+					<koken:shift>
+						<meta name="twitter:image{{ index }}" content="{{ content.presets.medium_large.cropped.url }}">
+					</koken:shift>
+				</koken:covers>
+			</koken:loop>
+		</koken:not>
+	</koken:head>
+</koken:load>
+
+<koken:load limit="{{ settings.albums_index_limit }}">
+
+<header class="content page">
+
+	<span class="wrap first">
+
+		<koken:breadcrumbs separator="/" />
+
+	</span>
+
+</header>
+
+<ol class="thumbs">
+
+	<koken:loop>
+		<koken:include file="layouts/album_index_loop.html" />
+	</koken:loop>
+
+</ol>
+
+<koken:include file="layouts/pagination.html" />
+
+<koken:else>
+
+	<koken:note>
+
+		No albums found. Create some in the Library.
+
+	</koken:note>
+
+</koken:load>
+
+<koken:include file="layouts/footer.html" />

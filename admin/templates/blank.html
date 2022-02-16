@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<style>
+		html, body {
+			height: 100%;
+			overflow:hidden;
+		}
+
+		body {
+			background-color: #fff;
+		}
+		div#wrap {
+			position:absolute;
+			display:table;
+			width:100%;
+			height:100%;
+		}
+		div#spin {
+			position:fixed;
+			top:50%;
+			left:50%;
+			-moz-opacity: 0.5;
+  			opacity: 0.5;
+			z-index:1;
+			margin:0 auto;
+			display:inline-block;
+			width:36px;
+			height:36px;
+			background-size: 36px;
+			background-image: url(../images/kspinner_white.gif);
+			background-repeat: no-repeat;
+			background-color: transparent;
+		}
+	</style>
+</head>
+<body>
+
+	<!-- This dummy is loaded when themes are previewed. Once the animation completes, the preview replaces this page. -->
+
+	<div id="wrap"><div id="spin"></div></div>
+
+</body>
+</html>

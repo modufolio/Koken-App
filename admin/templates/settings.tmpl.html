@@ -1,0 +1,1867 @@
+<!-- @BEGIN Settings Interface Template -->
+<script id="settings_interface" type="text/html">
+
+<div id="settings_interface">
+
+	<div id="lay-two-col" class="Snapshot current">
+
+		<div class="ui-sheet-bg"></div>
+
+		<!-- ko with: sheets.new_api_token -->
+			<!-- ko template: 'sheets_mu' --><!-- /ko -->
+		<!-- /ko -->
+
+		<div id="two-col-left" class="ui-col">
+
+			<div class="col-top">
+				<div class="hoffx">
+					<h5>Settings</h5>
+				</div>
+			</div>
+
+			<div id="content_subnav" class="top-off" data-bind="scrollbar: true">
+
+				<div class="col-block no-head">
+					<ol class="lib-nav">
+						<li data-bind="css: { selected: state.view() == 'console' }">
+							<a href="#/settings/console" class="item"><span class="in"><span class="icon16 label-settings">Console</span></span></a>
+						</li>
+						<li data-bind="css: { selected: state.view() == 'administrator' }">
+							<a href="#/settings/administrator" class="item"><span class="in"><span class="icon16 label-admin">Administrator</span></span></a>
+						</li>
+						<li data-bind="css: { selected: state.view() == 'importing' }">
+							<a href="#/settings/importing" class="item"><span class="in"><span class="icon16 label-upload">Importing</span></span></a>
+						</li>
+						<li data-bind="css: { selected: state.view() == 'publishing' }">
+							<a href="#/settings/publishing" class="item"><span class="in"><span class="icon16 label-publishing">Site publishing</span></span></a>
+						</li>
+						<li data-bind="css: { selected: state.view() == 'photos' }">
+							<a href="#/settings/photos" class="item"><span class="in"><span class="icon16 label-photo">Image publishing</span></span></a>
+						</li>
+						<li data-bind="css: { selected: state.view() == 'email' }">
+							<a href="#/settings/email" class="item"><span class="in"><span class="icon16 label-contact">Email</span></span></a>
+						</li>
+						<li data-bind="css: { selected: state.view() == 'applications' }">
+							<a href="#/settings/applications" class="item"><span class="in"><span class="icon16 label-application">Applications</span></span></a>
+						</li>
+						<!-- ko ifnot: settings.disable_system_info -->
+						<li data-bind="css: { selected: state.view() == 'system' }">
+							<a href="#/settings/system" class="item"><span class="in"><span class="icon16 label-settings">System</span></span></a>
+						</li>
+						<!-- /ko -->
+						<li data-bind="css: { selected: state.view().indexOf('plugins') === 0 }">
+							<a href="#/settings/plugins" class="item"><span class="in"><span class="icon16 label-plugins">Plugins</span></a>
+						</li>
+						<!-- <li data-bind="css: { selected: state.view() == 'cache' }">
+							<a href="#/settings/cache" class="item"><span class="in"><span class="icon16 label-cache">Cache</span></span></a>
+						</li> -->
+						<!-- <li data-bind="css: { selected: state.view() == 'advanced' }">
+							<a href="#/settings/advanced" class="item"><span class="in"><span class="icon16 label-advanced">Advanced</span></span></a>
+						</li> -->
+					</ol>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div id="two-col-right">
+
+			<div class="col-top">
+				<div class="hoffx">
+					<h5 data-bind="text: state.view_clean()"></h5>
+				</div>
+			</div>
+
+			<div id="content_settings" data-bind="scrollbar: true">
+
+			<!-- ko template: { name: state.view() + '_view', afterRender: function() { $data.classes.form_validation.settings.valid('two-col-right'); } } --><!-- /ko -->
+
+			</div>
+
+		</div>
+
+	</div>
+
+</div>
+</script>
+<!-- @END Settings Interface Template -->
+
+<!-- @BEGIN Console Template -->
+<script id="console_view" type="text/html">
+<div id="Console" class="wrap">
+
+	<div class="head">
+		<h1>Console</h1>
+	</div>
+
+	<div class="settings-layout">
+
+		<p>Settings and information about Koken itself.</p>
+
+		<div class="row">
+			<div class="left">
+				<label for="">Version</label>
+			</div>
+			<div class="mid">
+				<div class="help-toggle">
+					<a class="toggle fright" title="More information about this setting" data-event="help">More info</a>
+					<div>Version of Koken this installation is using.</div>
+				</div>
+				<div class="mid-wrap">
+					<span data-bind="text: $root.system.version"></span>&nbsp;&nbsp;
+					<!-- ko ifnot: settings.disable_auto_updates -->
+					<a href="#" class="button sm" data-event="install_release" data-bind="visible: $root.interfaces.app.observers.update_available_version">
+						Update now
+					</a>
+					<!-- /ko -->
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="left">
+				<label for="">URL</label>
+			</div>
+			<div class="mid">
+				<div class="help-toggle">
+					<a class="toggle fright" title="More information about this setting" data-event="help">More info</a>
+					<div>Directory where Koken is installed. This value may not be edited. See Site publishing > URL if you are looking to change your web site's address.</div>
+				</div>
+				<div class="mid-wrap">
+					<input type="text" class="field full" placeholder="" data-bind="value: console_url" readonly="readonly" />
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="left">
+				<label for="">Time zone</label>
+			</div>
+			<div class="mid">
+				<div class="help-toggle">
+					<a class="toggle fright" title="More information about this setting" data-event="help">More info</a>
+					<div>Sets a target time zone for all dates and times generated by Koken.</div>
+				</div>
+				<div class="mid-wrap">
+					<select data-bind="options: timezones, optionsValue: 'value', optionsText: 'label', value: settings.site_timezone">
+					</select>
+				</div>
+			</div>
+		</div>
+
+		<!-- <div class="row">
+			<div class="left">
+				Notifications
+			</div>
+			<div class="mid">
+				<div class="help-toggle">
+<a class="toggle fright" title="More information about this setting" data-event="help">More info</a>
+					<div>
+						Notifications appear in the console anytime a notable event occurs. If you would prefer less intrusion you may turn them off here.
+					</div>
+				</div>
+				<div class="mid-wrap">
+					<input type="checkbox" checked="checked" /> <label for="">Show event notifications</label>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="left">
+				Keyboard shortcuts
+			</div>
+			<div class="mid">
+				<div class="help-toggle">
+<a class="toggle fright" title="More information about this setting" data-event="help">More info</a>
+					<div>
+						On some console screens keyboard shortcuts are enabled to select content and perform other actions. If you have trouble typing characters you may turn them off here.
+					</div>
+				</div>
+				<div class="mid-wrap">
+					<input type="checkbox" checked="checked" /> <label for="">Enable keyboard shortcuts</label>
+				</div>
+			</div>
+		</div> -->
+
+		<div class="row button-row">
+			<div class="left"></div>
+			<div class="mid">
+				<button class="button c0" data-event="save" title="Save settings" data-bind="css: { disabled: $root.valid() === false }">Save settings</button>
+			</div>
+		</div>
+
+	</div>
+
+</div>
+</script>
+
+<script id="administrator_view" type="text/html">
+<div id="Administrator" class="wrap curr">
+
+	<div class="head">
+		<h1>Administrator</h1>
+	</div>
+
+	<div class="settings-layout">
+
+		<p>Koken sign-in and site profile information.</p>
+
+		<div class="row">
+
+			<div class="left">
+				Name
+			</div>
+
+			<div class="mid">
+				<div class="mid-wrap">
+					<div class="mid-two-col">
+						<input id="admin-first-name" type="text" class="field full" placeholder="First name" data-validate="not_empty" data-error-msg="This field cannot be left blank" data-bind="value: user.first_name, valueUpdate: 'afterkeydown'" />
+						<span class="form-error-msg"></span>
+					</div>
+					<div class="mid-two-col">
+						<input id="admin-last-name" type="text" class="field full" placeholder="Last name" data-validate="not_empty" data-error-msg="This field cannot be left blank" data-bind="value: user.last_name, valueUpdate: 'afterkeydown'" />
+						<span class="form-error-msg"></span>
+					</div>
+				</div>
+			</div>
+
+		</div>
+
+		<div class="row">
+
+			<div class="left">
+				<label for="admin-email">Email address</label>
+			</div>
+
+			<div class="mid">
+				<div class="mid-wrap">
+					<div class="mid-two-col">
+						<input name="admin-email" id="admin-email" type="email" class="field full" placeholder="you@yourdomain.com" data-validate="email" data-bind="value: user.email, valueUpdate: 'afterkeydown'" />
+						<span class="help-notes">The email address you use to sign in to Koken.</span>
+						<span class="form-error-msg"></span>
+					</div>
+				</div>
+			</div>
+
+		</div>
+
+		<div class="row">
+
+			<div class="left">
+				Password
+			</div>
+
+			<div class="mid">
+				<div class="mid-wrap">
+					<div class="mid-three-col"><input name="oldpw" id="oldpw" type="password" class="field wide" placeholder="Enter current password" /></div><div class="mid-three-col"><input name="pw1" id="pw1" type="password" class="field wide" placeholder="Enter new password" /></div><div class="mid-three-col" style="margin-right:0;"><input name="pw2" id="pw2" type="password" class="field wide" placeholder="Confirm new password" /></div>
+					<span class="help-notes">Leave fields blank to keep current password.</span>
+					<span id="pwd_error" class="form-error-msg"></span>
+				</div>
+			</div>
+
+		</div>
+
+		<div class="row subhead">
+
+			<h6>Site profile</h6>
+
+		</div>
+
+		<div class="row">
+
+			<div class="left">
+				Name
+			</div>
+
+			<div class="mid">
+				<div class="mid-wrap">
+					<div class="mid-two-col">
+						<input id="profile-first-name" type="text" class="field full" placeholder="First name" data-validate="not_empty" data-error-msg="This field cannot be left blank" data-bind="value: user.public_first_name, valueUpdate: 'afterkeydown'" />
+						<span class="form-error-msg"></span>
+					</div>
+					<div class="mid-two-col">
+						<input id="profile-last-name" type="text" class="field full" placeholder="Last name" data-validate="not_empty" data-error-msg="This field cannot be left blank" data-bind="value: user.public_last_name, valueUpdate: 'afterkeydown'" />
+						<span class="form-error-msg"></span>
+					</div>
+				</div>
+			</div>
+
+		</div>
+
+		<div class="row">
+
+			<div class="left">
+				<label>Display name</label>
+			</div>
+
+			<div class="mid">
+				<select data-bind="value: user.public_display">
+					<option value="first">First name</option>
+					<option value="last">Last name</option>
+					<option value="both">First and last name</option>
+				</select>
+			</div>
+
+		</div>
+
+		<div class="row">
+
+			<div class="left">
+				<label for="profile-email">Email address</label>
+			</div>
+
+			<div class="mid">
+				<div class="mid-wrap">
+					<div class="mid-two-col">
+						<input name="profile-email" id="profile-email" type="email" class="field full" placeholder="you@yourdomain.com" data-validate="email" data-bind="value: user.public_email, valueUpdate: 'afterkeydown'" />
+						<span class="form-error-msg"></span>
+					</div>
+				</div>
+			</div>
+
+		</div>
+
+		<div class="row">
+
+			<div class="left">
+				<label for="profile-twitter">Twitter username</label>
+			</div>
+
+			<div class="mid">
+				<div class="mid-wrap">
+					<div class="mid-two-col">
+						<span class="input_symbol">@</span>
+						<div class="input_symbol_wrap">
+							<input name="profile-twitter" id="profile-twitter" type="text" class="field full symbol" placeholder="name" data-validate="regex" data-validate-allow-empty="true" data-validate-regex="^@?[a-zA-Z0-9_]{0,20}$" data-bind="value: user.twitter, valueUpdate: 'afterkeydown'" />
+							<span class="form-error-msg">Not formatted correctly. Enter your username without the leading @. Example: koken</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+
+		<div class="row">
+
+			<div class="left">
+				<label for="profile-fb">Facebook profile</label>
+			</div>
+
+			<div class="mid">
+				<div class="mid-wrap">
+					<div class="mid-two-col">
+						<input name="profile-fb" id="profile-fb" type="text" class="field full" placeholder="http://facebook.com/name" data-bind="value: user.facebook, valueUpdate: 'afterkeydown'" data-validate="regex" data-validate-allow-empty="true" data-validate-regex="^http(s)?:\/\/(www.)?facebook.com/.+$" />
+						<span class="form-error-msg">Not a valid Facebook profile URL (e.g. https://facebook.com/your.name).</span>
+					</div>
+				</div>
+			</div>
+
+		</div>
+
+		<div class="row">
+
+			<div class="left">
+				<label for="profile-gplus">Google+ profile</label>
+			</div>
+
+			<div class="mid">
+				<div class="mid-wrap">
+					<div class="mid-two-col">
+						<input name="profile-gplus" id="profile-gplus" type="text" class="field full" placeholder="https://plus.google.com/userid" data-bind="value: user.google, valueUpdate: 'afterkeydown'" data-validate="regex" data-validate-allow-empty="true" data-validate-regex="^http(s)?:\/\/plus.google.com\/.+" />
+						<span class="form-error-msg">Not a valid Google+ profile URL (e.g. https://plus.google.com/userid).</span>
+					</div>
+				</div>
+			</div>
+
+		</div>
+
+		<div class="row button-row">
+
+			<div class="left"></div>
+
+			<div class="mid">
+				<button class="button c0" data-event="save_user" title="Save settings" data-bind="css: { disabled: $root.valid() === false }">Save settings</button>
+			</div>
+
+		</div>
+
+	</div>
+
+</div>
+</script>
+<!-- @END Console Template -->
+
+<!-- @BEGIN Importing Template -->
+<script id="importing_view" type="text/html">
+<div id="Importing" class="wrap">
+
+	<div class="head">
+		<h1>Importing</h1>
+	</div>
+
+	<div class="settings-layout">
+
+		<p>
+			Default settings for all newly created content and collections in the Library.
+		</p>
+
+		<div class="row">
+
+			<div class="left">
+				License
+			</div>
+			<div class="mid">
+				<div class="help-toggle">
+					<a class="toggle fright" title="More information about this setting" data-event="help">More info</a>
+					<div>
+						Default license assigned to all newly imported items. You may apply a standard copyright or a more liberal <a href="http://www.creativecommons.org/licenses/" title="Learn more" onclick="window.open(this.href); return false;">Creative Commons</a> license to encourage re-use and sharing. You may override this setting on an individual basis in the Library.
+					</div>
+				</div>
+				<div class="mid-wrap">
+					<div class="group">
+						<!-- ko if: settings.uploading_default_license() === 'all' -->
+
+							<span class="sprite sprite-license lic-cr"></span>
+
+						<!-- /ko -->
+
+						<!-- ko ifnot: settings.uploading_default_license() === 'all' -->
+
+							<span class="sprite sprite-license lic-cc-by"></span>
+
+							<!-- ko if: settings.uploading_default_license().substr(0,1) === 'n' -->
+							<span class="sprite sprite-license lic-cc-nc"></span>
+							<!-- /ko -->
+
+							<!-- ko if: settings.uploading_default_license().substr(2,1) === 's' -->
+							<span class="sprite sprite-license lic-cc-sa"></span>
+							<!-- /ko -->
+
+							<!-- ko if: settings.uploading_default_license().substr(2,1) === 'n' -->
+							<span class="sprite sprite-license lic-cc-nd"></span>
+							<!-- /ko -->
+
+						<!-- /ko -->
+
+						<span class="sprite-txt" data-bind="text: settings.uploading_default_license_clean"></span>
+					</div>
+					<div class="group">
+						<input id="upload_license_all" data-bind="checked: settings.uploading_default_license() != 'all'" data-check="true" data-event="toggle_license" type="checkbox" name="lic1" /> <label for="upload_license_all">Allow reuse</label> (<a href="http://www.creativecommons.org/licenses/" title="Learn more" onclick="window.open(this.href); return false;">Creative Commons</a>)
+					</div>
+					<div id="commons_group" data-event="commons_change" class="group" data-bind="visible: settings.uploading_default_license() != 'all'">
+						<ol>
+							<li>Allow commercial use?</li>
+							<li>
+								<input id="l_y2" value="y" type="radio" name="lic2" data-bind="checked: settings.uploading_default_license().substr(0,1)" /> <label for="l_y2">Yes</label>
+							</li>
+							<li>
+								<input id="l_n2" value="n" type="radio" name="lic2" checked /> <label for="l_n2">No</label>
+							</li>
+							<li>Allow modifications?</li>
+							<li>
+								<input id="l_y" value="y" type="radio" name="lic3" data-bind="checked: settings.uploading_default_license().substr(2,1)" /> <label for="l_y">Yes</label>
+							</li>
+							<li>
+								<input id="l_m" value="s" type="radio" name="lic3" data-bind="attr: { checked: settings.uploading_default_license().substr(2,1) === 's' || settings.uploading_default_license() == 'all' }"/> <label for="l_m">Yes, as long as others share alike</label>
+							</li>
+							<li>
+								<input id="l_n" value="n" type="radio" name="lic3" data-bind="checked: settings.uploading_default_license().substr(2,1)" /> <label for="l_n">No</label>
+							</li>
+						</ol>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+
+			<div class="left">
+				Date
+			</div>
+			<div class="mid">
+				<div class="help-toggle">
+					<a class="toggle fright" title="More information about this setting" data-event="help">More info</a>
+					<div>
+						<p>
+							Publishes images to the timeline and other date-based pages using the date an image was captured instead of the date it was published by Koken.
+						</p>
+					</div>
+				</div>
+				<div class="mid-wrap">
+					<input id="uploading_publish_captured" type="checkbox" data-bind="checked: settings.uploading_publish_on_captured_date" /> <label for="uploading_publish_captured">Assign date captured to date published</label>
+				</div>
+			</div>
+
+		</div>
+
+		<div class="row">
+
+			<div class="left">
+				Visibility (content)
+			</div>
+			<div class="mid">
+				<div class="help-toggle">
+					<a class="toggle fright" title="More information about this setting" data-event="help">More info</a>
+					<div>
+						<p>
+							Default visibility for all newly imported images and videos. If set to public, and images or videos are imported directly to an unlisted album, the items are set to unlisted automatically.
+						</p>
+						<ol>
+							<li>
+								<strong>Public</strong>: Viewable to anyone, including search engines.
+							</li>
+							<li>
+								<strong>Unlisted</strong>: Viewable by secret url only. Not visible to search engines.
+							</li>
+							<li>
+								<strong>Private</strong>: Viewable only to you inside Koken.
+							</li>
+						</ol>
+					</div>
+				</div>
+				<div class="mid-wrap">
+					<ol>
+						<li>
+							<select data-bind="options: [ 'public', 'unlisted', 'private' ], optionsText: function(o) { return o.substr(0,1).toUpperCase() + o.substr(1); }, value: settings.uploading_default_visibility">
+							</select>
+						</li>
+					</ol>
+				</div>
+			</div>
+
+		</div>
+
+		<div class="row">
+
+			<div class="left">
+				Visibility (collections)
+			</div>
+			<div class="mid">
+				<div class="help-toggle">
+					<a class="toggle fright" title="More information about this setting" data-event="help">More info</a>
+					<div>
+						<p>
+							Default visibility for all newly created albums and sets.
+						</p>
+						<ol>
+							<li>
+								<strong>Public</strong>: Viewable to anyone, including search engines.
+							</li>
+							<li>
+								<strong>Unlisted</strong>: Viewable by secret url only. Not visible to search engines.
+							</li>
+							<li>
+								<strong>Private</strong>: Viewable only to you inside Koken.
+							</li>
+						</ol>
+					</div>
+				</div>
+				<div class="mid-wrap">
+					<ol>
+						<li>
+							<select data-bind="options: [ 'public', 'unlisted', 'private'  ], optionsText: function(o) { return o.substr(0,1).toUpperCase() + o.substr(1); }, value: settings.uploading_default_album_visibility">
+							</select>
+						</li>
+					</ol>
+				</div>
+			</div>
+
+		</div>
+
+		<div class="row">
+			<div class="left">
+				Maximum image download
+			</div>
+			<div class="mid">
+				<div class="help-toggle">
+					<a class="toggle fright" title="More information about this setting" data-event="help">More info</a>
+					<div>
+						Sets the maximum image size available for download. Your site theme must include download functionality for this to apply.
+					</div>
+				</div>
+				<div class="mid-wrap">
+					<ol>
+						<li>
+							<select data-bind="options: [ { val: 'none', label: 'None' }, { val: 'original', 'label': 'Original' }, { val: 'huge', 'label': 'Huge (2048px)' }, { val: 'xlarge', 'label': 'Extra Large (1600px)' }, { val: 'large', 'label': 'Large (1024px)' }, { val: 'medium_large', 'label': 'Medium Large (800px)' }, { val: 'medium', 'label': 'Medium (480px)' } ], optionsText: 'label', optionsValue: 'val', value: settings.uploading_default_max_download_size">
+							</select>
+						</li>
+					</ol>
+				</div>
+			</div>
+		</div>
+
+		<div class="row button-row">
+			<div class="left"></div>
+			<div class="mid">
+				<button class="button c0" data-event="save" title="Save settings" data-bind="css: { disabled: $root.valid() === false }">Save settings</button>
+			</div>
+		</div>
+
+	</div>
+
+</div>
+</script>
+<!-- @END Importing Template -->
+
+<!-- @BEGIN Application Template -->
+<script id="applications_view" type="text/html">
+<div id="Applications" class="wrap">
+
+	<!-- ko if: application_request.complete -->
+
+	<div class="head">
+		<h1>Access granted</h1>
+	</div>
+
+	<div class="settings-layout">
+
+		<p>
+			Please return to the application to complete the authentication process.
+		</p>
+
+	</div>
+	<!-- /ko -->
+
+	<!-- ko if: application_request.active -->
+
+	<div class="head">
+		<h1>An application is requesting access to your Koken data and content.</h1>
+	</div>
+
+	<div class="settings-layout">
+
+		<p>
+			By allowing this request, you are authorizing the <strong data-bind="text: application_request.name"></strong> application to act on your behalf. You can revoke this access at anytime via the Settings > Applications screen.
+		</p>
+
+		<div class="row">
+
+			<div class="left">
+				Application
+			</div>
+			<div class="mid">
+				<div class="help-toggle">
+					<a class="toggle fright" title="More information about this setting" data-event="help">More info</a>
+					<div>
+						The name of the application requesting access to your data and content.
+					</div>
+				</div>
+				<div class="mid-wrap">
+					<div class="group">
+						<span data-bind="text: application_request.name"></span>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+
+			<div class="left">
+				Permissions
+			</div>
+			<div class="mid">
+				<div class="help-toggle">
+					<a class="toggle fright" title="More information about this setting" data-event="help">More info</a>
+					<div>
+						The permissions that the application is requesting. Applications with "read" permissions can only access your data, they cannot modify or delete anything. Applications with "read-write" permissions can create, modify or delete data and content.
+					</div>
+				</div>
+				<div class="mid-wrap">
+					<div class="group">
+						<span data-bind="text: application_request.role"></span>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="left"></div>
+			<div class="mid">
+				<button class="button" title="Deny" data-event="deny_app_access">Deny</button> <button class="button c0" title="Grant access" data-event="grant_app_access">Grant access</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- /ko -->
+
+	<!-- ko if: !application_request.active() && !application_request.complete() -->
+
+	<div class="head">
+		<h1>Applications</h1>
+	</div>
+
+	<div class="settings-layout">
+
+		<p>Information for connecting to Koken through its public API.</p>
+
+		<div class="row">
+			<div class="left">
+				<label>API Path</label>
+			</div>
+			<div class="mid">
+				<div class="mid-wrap">
+					<input class="field full" disabled="disabled" data-bind="value: base_url" />
+				</div>
+			</div>
+			<div class="right">
+			</div>
+		</div>
+
+		<!-- ko ifnot: applications().length -->
+
+		<p>You have not granted access to any applications.</p>
+
+		<!-- /ko -->
+
+		<!-- ko if: applications().length -->
+
+		<p>The following applications can access your Koken installation.</p>
+
+		<!-- ko foreach: applications -->
+		<div class="row-three">
+			<div class="left">
+				<label data-bind="text: name && name.length ? name : 'No description given'"></label>
+			</div>
+			<div class="mid">
+				<strong>Token:</strong> <code data-bind="text: token"></code><br><strong>Permissions:</strong> <span data-bind="text: role === 'read' ? 'read' : 'read and write'"></span> access<br><strong>Approved:</strong> <span data-bind="text: $root.format_date( Number(created_on), 'MMMM DD, YYYY' )"</span>
+			</div>
+			<div class="right">
+				<a href="#" class="button sm" data-event="revoke_app_access">
+					Revoke access
+				</a>
+			</div>
+		</div>
+		<!-- /ko -->
+
+		<!-- /ko -->
+		<br clear="all">
+		<br clear="all">
+
+		<a class="button c0" href="#" data-event="toggle_sheet" data-sheet="new_api_token" title="Create new access token">Create new access token</a>
+
+	</div>
+
+	<!-- /ko -->
+</div>
+</script>
+<!-- @END Application Template -->
+
+<!-- @BEGIN Plugins Template -->
+<script id="plugins_edit_view" type="text/html">
+<div id="Plugins-edit" class="wrap">
+
+	<div class="head">
+		<h1 data-bind="text: 'Plugins: ' + edit_plugin().name"></h1>
+	</div>
+
+	<div id="plugin_settings" class="settings-layout">
+
+		<p data-bind="text: edit_plugin().description_long || edit_plugin().description"></p>
+
+		<p class="plugin-error" data-bind="visible: edit_plugin_error, text: edit_plugin_error"></p>
+
+		<div id="plugin_opt_top"></div>
+
+		<!-- ko if: edit_plugin -->
+		<!-- ko foreach: edit_plugin_data -->
+		<!-- ko if: type !== 'hidden' -->
+		<div class="row">
+			<div class="left">
+				<!-- ko if: type !== 'boolean' || $data.header-->
+				<label data-bind="text: $data.header ? header : label, attr: { for: 'plugin-edit-' + key }"></label>
+				<!-- /ko -->
+			</div>
+			<div class="mid">
+				<!-- ko if: $data.info -->
+				<div class="help-toggle">
+					<a class="toggle fright" title="More information about this setting" data-event="help">More info</a>
+					<div data-bind="text: info"></div>
+				</div>
+				<!-- /ko -->
+				<div class="mid-wrap">
+					<div class="mid-range", data-bind="css: { rangeinput: $data.type === 'slider' }">
+						<!-- ko if: type === 'select' -->
+							<!-- ko if: $data.multi -->
+								<select data-bind="attr: { id: 'plugin-edit-' + key }" multiple>
+									<!-- ko foreach: options -->
+									<option data-bind="value: value, text: label, attr: { selected: $parent.value && $.inArray(value, $parent.value.split(',')) !== -1 }"></option>
+									<!-- /ko -->
+								</select>
+								<div style="display:none;" data-bind="html:function(){ $parent.remove_selected(); }()"></div>
+							<!-- /ko -->
+
+							<!-- ko ifnot: $data.multi -->
+								<select data-bind="value: $data.value || '', attr: { id: 'plugin-edit-' + key }, options: options, optionsValue: 'value', optionsText: 'label'"></select>
+							<!-- /ko -->
+						<!-- /ko -->
+						<!-- ko if: type === 'boolean' -->
+						<input type="checkbox" value="true" data-bind="checked: $data.value || false, attr: { id: 'plugin-edit-' + key }" /> <label data-bind="text: label, attr: { for: 'plugin-edit-' + key }"></label>
+						<!-- /ko -->
+						<!-- ko if: type === 'string' -->
+						<input type="text" class="field full" data-bind="value: $data.value || '', attr: { placeholder: ($data.placeholder && $data.placeholder.length > 0) ? $data.placeholder : '', id: 'plugin-edit-' + key, 'data-validate': $data.validation ? $data.validation.type : null, 'data-validate-regex': $data.validation && $data.validation.rule ? $data.validation.rule : null, 'data-validate-allow-empty': $data.validation && $data.validation.allow_empty ? 'true' : null }" />
+						<!-- /ko -->
+						<!-- ko if: type === 'text' -->
+						<textarea class="field full" data-bind="value: $data.value || '', attr: { id: 'plugin-edit-' + key, 'data-validate': $data.validation ? $data.validation.type : null, 'data-validate-regex': $data.validation && $data.validation.rule ? $data.validation.rule : null, 'data-validate-allow-empty': $data.validation && $data.validation.allow_empty ? 'true' : null }"></textarea>
+						<!-- /ko -->
+						<!-- ko if: type === 'color' -->
+						<input type="ccolor" data-bind="value: $data.value || '#000', attr: { id: 'plugin-edit-' + key }" />
+						<!-- /ko -->
+						<!-- ko if: type === 'slider' -->
+						<input data-bind="slider: [$data], sliderOptions: { id: 'plugin-edit-' + $data.key }" />
+						<span class="display_value slider" style="vertical-align:top" data-bind="text: $data.value || $data.default"></span><!-- ko if: $data.suffix --><span class="suffix" data-bind="text: $data.suffix, css: { slider: $data.type === 'slider' }"></span><!-- /ko -->
+						<!-- /ko -->
+						<!-- ko if: type === 'file' && $data.value.length -->
+						<div class="file_well">
+							<img data-bind="attr: { src: $root.config.paths.base + 'storage/plugins/' + $parent.edit_plugin().path + '/storage/' + $data.value, id: 'plugin-upload-' + key + '-preview' }" />
+						</div>
+						<div style="margin-top:1em;">
+							<button class="button sm plugin-upload" data-bind="attr: { id: 'plugin-upload-' + $parent.edit_plugin().path, 'data-field': key, 'data-allowed': $data.allowed_types, 'data-basename': $data.basename, 'data-plugin': $parent.edit_plugin().path }">Upload image</button>
+						</div>
+						<input type="hidden" data-bind="value: $data.value || '', attr: { id: 'plugin-edit-' + key }" />
+						<!-- /ko -->
+						<!-- ko if: type === 'number' -->
+						<input type="number" class="field short" data-bind="value: $data.value, attr: { id: 'plugin-edit-' + key, min: $data.min, max: $data.max, step: $data.step }" /><!-- ko if: $data.suffix --> <span class="suffix" data-bind="text: $data.suffix"></span><!-- /ko -->
+						<!-- /ko -->
+
+						<!-- ko if: $data.validation -->
+						<span class="form-error-msg" data-bind="text: $data.validation.error_message || ''"></span>
+						<!-- /ko -->
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- /ko -->
+		<!-- /ko -->
+		<!-- /ko -->
+
+		<div id="plugin_opt_bot"></div>
+
+		<div class="row button-row">
+			<div class="left"></div>
+			<div class="mid">
+				<button class="button" title="Cancel" data-bind="click: function() { location.hash='#/settings/plugins' }">Cancel</button>&nbsp;&nbsp;
+				<button class="button c0" title="Save plugin settings" data-event="save_plugin" data-bind="css: { disabled: $root.valid() === false }">Save</button>
+			</div>
+		</div>
+
+	</div>
+</div>
+</script>
+
+<!-- @BEGIN Plugins Template -->
+<script id="plugins_view" type="text/html">
+<div id="Plugins" class="wrap">
+
+	<div class="head">
+		<h1 data-bind="text: 'Plugins'"></h1>
+	</div>
+
+	<div class="settings-layout">
+
+		<!-- ko if: user_plugins().length -->
+		<p>The following plugins are installed. <a href="#/store/plugins" title="Browse plugins at the Koken Store">Download more plugins from the Koken Store</a>.
+		</p>
+		<!-- /ko -->
+
+		<!-- ko ifnot: user_plugins().length -->
+		<p>No plugins installed. <a href="#/store/plugins" title="Browse plugins at the Koken Store">Download plugins from the Koken Store</a>.</p>
+		<!-- /ko -->
+
+		<!-- ko foreach: user_plugins -->
+		<div class="row-three">
+			<div class="left">
+				<label data-bind="text: name"></label>
+			</div>
+			<div class="mid">
+				<span data-bind="text: description"></span>
+				<br>
+				Version <span data-bind="text: version"></span> by <a data-bind="attr: { href: author.link.indexOf('https://store.koken.me') === 0 ? '#/store' + author.link.replace('https://store.koken.me', '') : author.link }, text: author.name" target="_blank"></a>
+				<!-- ko ifnot: compatible -->
+				</br>
+				<span class="plugin-error">This plugin is not compatible with your server. The plugin returned the following error: <em data-bind="text: compatible_error"></em></span>
+				<!-- /ko -->
+				<!-- ko if: activated && setup === false && data.length -->
+				</br>
+				<span class="plugin-error">This plugin requires <a data-bind="attr: { href: '#/settings/plugins/' + path }">additional setup</a> before it can be used.</span>
+				<!-- /ko -->
+			</div>
+			<div class="right">
+				<a class="button sm" data-bind="visible: activated && data.length, attr: { href: '#/settings/plugins/' + path }" title="Setup this plugin" style="margin-right:5px;">Setup</a>
+
+				<a href="#" class="button sm enable" data-bind="css: { c0: activated }, visible: compatible, text: activated ? 'Enabled' : 'Enable', attr: { 'data-path': path, title: activated ? 'Click to disable this plugin' : 'Click to enable this plugin' }" data-event="toggle_plugin"></a>
+			</div>
+		</div>
+
+		<!-- /ko -->
+
+	</div>
+
+	<br><br>
+
+	<a class="button" href="#/store/plugins" title="Download more plugins from the Koken Store">Download plugins</a>
+
+	<br><br><br><br>
+
+</div>
+</script>
+<!-- @END Plugins Template -->
+
+<!-- @BEGIN Publishing Template -->
+<script id="publishing_view" type="text/html">
+<div id="Publishing" class="wrap">
+
+	<div class="head">
+		<h1>Site publishing</h1>
+	</div>
+
+	<div class="settings-layout">
+
+		<p>Settings that apply to the web site published by Koken.</p>
+
+		<!-- ko ifnot: settings.disable_site_url_edits -->
+		<div class="row">
+			<div class="left">
+				<label for="">URL</label>
+			</div>
+			<div class="mid">
+				<div class="help-toggle">
+					<a class="toggle fright" title="More information about this setting" data-event="help">More info</a>
+					<div>Defines the URL your Koken site is viewed with. You may edit this to your domain root or to a specific directory. If an assigned directory doesn't exist, Koken will create it for you.</div>
+				</div>
+				<div class="mid-wrap">
+					<input type="text" class="field full" data-bind="value: settings.site_url, valueUpdate: 'afterkeydown', attr: { 'data-validate-regex': '^' + window.location.protocol + '//' + window.location.host + '(\\/([~a-zA-Z0-9_\\-\\/]+)?)?$' }" placeholder="Enter site URL" data-validate="regex" data-validate-regex="/" />
+					<span class="form-error-msg">Not a valid path</span>
+				</div>
+			</div>
+		</div>
+		<!-- /ko -->
+
+		<div class="row">
+			<div class="left">
+				<label for="">Site title</label>
+			</div>
+			<div class="mid">
+				<div class="help-toggle">
+					<a class="toggle fright" title="More information about this setting" data-event="help">More info</a>
+					<div>The title of your site. Appears at the top of most themes.</div>
+				</div>
+				<div class="mid-wrap">
+					<input type="text" class="field full" data-bind="value: settings.site_title" placeholder="Enter site name" />
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="left">
+				<label for="">Page title</label>
+			</div>
+			<div class="mid">
+				<div class="help-toggle">
+					<a class="toggle fright" title="More information about this setting" data-event="help">More info</a>
+					<div>Published to the HTML title tag of every page. Koken will automatically prepend this with content titles on the interior pages of your site.</div>
+				</div>
+				<div class="mid-wrap">
+					<input type="text" class="field full" data-bind="value: settings.site_page_title" placeholder="Enter page title" />
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="left">
+				<label for="">Description</label>
+			</div>
+			<div class="mid">
+				<div class="help-toggle">
+					<a class="toggle fright" title="More information about this setting" data-event="help">More info</a>
+					<div>
+						Enter a description of your site in 160 characters or less. This description will be published to the HTML source of your site, be visible only to search engines, and will be dynamically replaced with summaries, captions and excerpts on content pages for better SEO.
+					</div>
+				</div>
+				<div class="mid-wrap">
+					<input type="text" class="field full" data-bind="value: settings.site_description" placeholder="Enter website description" />
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="left">
+				<label for="">Keywords</label>
+			</div>
+			<div class="mid">
+				<div class="help-toggle">
+					<a class="toggle fright" title="More information about this setting" data-event="help">More info</a>
+					<div>
+						Keywords help optimize your site's search engine results. Keywords entered here are published first, followed by tags on content pages. This information is published to your site's HTML source code and visible only to search engines.
+					</div>
+				</div>
+				<div class="mid-wrap">
+					<input type="text" class="field full" data-bind="value: settings.site_keywords" placeholder="Enter keywords" />
+					<span class="help-notes">
+						Example: Your Name, photography, portfolio
+					</span>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="left">
+				<label for="">Tagline</label>
+			</div>
+			<div class="mid">
+				<div class="help-toggle">
+					<a class="toggle fright" title="More information about this setting" data-event="help">More info</a>
+					<div>Appears in most themes underneath the site title.</div>
+				</div>
+				<div class="mid-wrap">
+					<input type="text" class="field full" data-bind="value: settings.site_tagline" placeholder="Enter tagline" />
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="left">
+				<label for="">Copyright</label>
+			</div>
+			<div class="mid">
+				<div class="mid-wrap">
+					<input type="text" class="field full" data-bind="value: settings.site_copyright"/>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="left">
+				<label for="">Date format</label>
+			</div>
+			<div class="mid">
+				<div class="help-toggle">
+					<a class="toggle fright" title="More information about this setting" data-event="help">More info</a>
+					<div>
+						How dates are formatted on your site.
+					</div>
+				</div>
+				<div class="mid-wrap">
+					<div class="group">
+						<select data-bind="event: { change: date_change }">
+							<!-- ko foreach: date_options -->
+							<option data-bind="attr: { value: $data, selected: !$parent.date_is_custom() && $data === $parent.settings.site_date_format() }, text: $parent.date($data)"></option>
+							<!-- /ko -->
+							<option value="custom" data-bind="attr: { selected: $.inArray( settings.site_date_format(), date_options ) === -1 || date_is_custom() }">Custom</option>
+						</select>
+					</div>
+					<div class="group" data-bind="visible: $.inArray( settings.site_date_format(), date_options ) === -1 || date_is_custom()">
+						<input id="custom_date_format" type="text" class="field small" size="4" data-bind="attr: { value: settings.site_date_format() }, event: { keyup: custom_date_change }" />&nbsp;&nbsp;<strong>Preview:</strong> <span id="custom_date_format_preview" data-bind="text: date( settings.site_date_format() )"></span>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="left">
+				<label for="">Time format</label>
+			</div>
+			<div class="mid">
+				<div class="help-toggle">
+					<a class="toggle fright" title="More information about this setting" data-event="help">More info</a>
+					<div>
+						How time stamps are formatted on your site.
+					</div>
+				</div>
+				<div class="mid-wrap">
+					<div class="group">
+						<select data-bind="event: { change: time_change }">
+							<!-- ko foreach: time_options -->
+							<option data-bind="attr: { value: $data, selected: !$parent.time_is_custom() && $data === $parent.settings.site_time_format() }, text: $parent.date($data)"></option>
+							<!-- /ko -->
+							<option value="custom" data-bind="attr: { selected: $.inArray( settings.site_time_format(), time_options ) === -1 || time_is_custom() }">Custom</option>
+						</select>
+					</div>
+					<div class="group" data-bind="visible: $.inArray( settings.site_time_format(), time_options ) === -1 || time_is_custom()">
+						<input id="custom_time_format" type="text" class="field small" size="4" data-bind="attr: { value: settings.site_time_format() }, event: { keyup: custom_time_change }" />&nbsp;&nbsp;<strong>Preview:</strong> <span id="custom_time_format_preview" data-bind="text: date( settings.site_time_format() )"></span>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="left">
+				Labels and links
+			</div>
+			<div class="mid">
+				<div class="help-toggle">
+					<a class="toggle fright" title="More information about this setting" data-event="help">More info</a>
+					<div>
+					 	How data is labeled and linked on your site. Editing this will affect navigation link labels, page titles as well as the urls used to view content. You may also fine-tune how links are formatted to optionally use IDs or dates.
+					</div>
+				</div>
+				<div class="mid-wrap">
+					<div class="group">
+						<input id="labels_link" type="checkbox" data-bind="checked: settings.use_default_labels_links" /> <label for="labels_link">Use default settings</label>
+					</div>
+					<div id="label-inputs" class="group double" data-bind="visible: !settings.use_default_labels_links()">
+						<ul class="table">
+							<li>
+								<span class="cell">
+									<label>Label (plural)</label>
+								</span>
+								<span class="cell">
+									<label>Label (singular)</label>
+								</span>
+								<span class="cell">
+									<label>Link format</label>
+								</span>
+							</li>
+							<li>
+								<span class="cell">
+									<input class="field full plural" data-validate="unique" data-validate-scope="#label-inputs .plural" type="text" data-bind="value: url_data.content.plural, valueUpdate: 'afterkeydown'" />
+									<span class="form-error-msg">All labels must have a unique value.</span>
+								</span>
+								<span class="cell">
+									<input class="field full singular" type="text" data-bind="value: url_data.content.singular, valueUpdate: 'afterkeydown'" />
+								</span>
+								<span class="cell">
+									<select class="full update-observer" data-obs="content">
+										<option value="slug" data-bind="text: '/' + make_url_safe(url_data.content.plural(), 'content') + '/title/', attr: { selected: url_data.content.url() === 'slug' }"></option>
+										<option value="id" data-bind="text: '/' + make_url_safe(url_data.content.plural(), 'content') + '/id/', attr: { selected: url_data.content.url() === 'id' }"></option>
+										<option value="date+slug" data-bind="text: '/' + make_url_safe(url_data.content.plural(), 'content') + '/' + date('Y') + '/' + date('m') + '/title/', attr: { selected: url_data.content.url() === 'date+slug' }"></option>
+										<option value="date+id" data-bind="text: '/' + make_url_safe(url_data.content.plural(), 'content') + '/' + date('Y') + '/' + date('m') + '/id/', attr: { selected: url_data.content.url() === 'date+id' }"></option>
+									</select>
+								</span>
+							</li>
+							<li>
+								<span class="cell">
+									<input class="field full plural" data-validate="unique" data-validate-scope="#label-inputs .plural" type="text" data-bind="value: url_data.favorite.plural, valueUpdate: 'afterkeydown'" />
+									<span class="form-error-msg">All labels must have a unique value.</span>
+								</span>
+								<span class="cell">
+									<input class="field full singular" type="text" data-bind="value: url_data.favorite.singular, valueUpdate: 'afterkeydown'" />
+								</span>
+								<span class="cell">
+									<span class="static" data-bind="text: '/' + make_url_safe(url_data.favorite.plural(), 'favorites') + '/'"></span>
+								</span>
+							</li>
+							<li>
+								<span class="cell">
+									<input class="field full plural" data-validate="unique" data-validate-scope="#label-inputs .plural" type="text" data-bind="value: url_data.feature.plural, valueUpdate: 'afterkeydown'" />
+									<span class="form-error-msg">All labels must have a unique value.</span>
+								</span>
+								<span class="cell">
+									<input class="field full singular" type="text" data-bind="value: url_data.feature.singular, valueUpdate: 'afterkeydown'" />
+								</span>
+								<span class="cell">
+									<span class="static" data-bind="text: '/' + make_url_safe(url_data.feature.plural(), 'features') + '/'"></span>
+								</span>
+							</li>
+							<li>
+								<span class="cell">
+									<input class="field full plural" data-validate="unique" data-validate-scope="#label-inputs .plural" type="text" data-bind="value: url_data.album.plural, valueUpdate: 'afterkeydown'" />
+									<span class="form-error-msg">All labels must have a unique value.</span>
+								</span>
+								<span class="cell">
+									<input class="field full singular" type="text" data-bind="value: url_data.album.singular, valueUpdate: 'afterkeydown'" />
+								</span>
+								<span class="cell">
+									<select class="full update-observer" data-obs="album">
+										<option value="slug" data-bind="text: '/' + make_url_safe(url_data.album.plural(), 'albums') + '/title/', attr: { selected: url_data.album.url() === 'slug' }"></option>
+										<option value="id" data-bind="text: '/' + make_url_safe(url_data.album.plural(), 'albums') + '/id/', attr: { selected: url_data.album.url() === 'id' }"></option>
+										<option value="date+slug" data-bind="text: '/' + make_url_safe(url_data.album.plural(), 'albums') + '/' + date('Y') + '/' + date('m') + '/title/', attr: { selected: url_data.album.url() === 'date+slug' }"></option>
+										<option value="date+id" data-bind="text: '/' + make_url_safe(url_data.album.plural(), 'albums') + '/' + date('Y') + '/' + date('m') + '/id/', attr: { selected: url_data.album.url() === 'date+id' }"></option>
+									</select>
+								</span>
+							</li>
+							<li>
+								<span class="cell">
+									<input class="field full plural" data-validate="unique" data-validate-scope="#label-inputs .plural" type="text" data-bind="value: url_data.set.plural, valueUpdate: 'afterkeydown'" />
+									<span class="form-error-msg">All labels must have a unique value.</span>
+								</span>
+								<span class="cell">
+									<input class="field full singular" type="text" data-bind="value: url_data.set.singular, valueUpdate: 'afterkeydown'" />
+								</span>
+								<span class="cell">
+									<span class="slug" data-bind="text: '/' + make_url_safe(url_data.set.plural(), 'sets') + '/title/', visible: url_data.album.url() === 'slug'"></span>
+									<span class="id" data-bind="text: '/' + make_url_safe(url_data.set.plural(), 'sets') + '/id/', visible: url_data.album.url() === 'id'"></span>
+									<span class="date+slug" data-bind="text: '/' + make_url_safe(url_data.set.plural(), 'sets') + '/' + date('Y') + '/' + date('m') + '/title/', visible: url_data.album.url() === 'date+slug'"></span>
+									<span class="date+id" data-bind="text: '/' + make_url_safe(url_data.set.plural(), 'sets') + '/' + date('Y') + '/' + date('m') + '/id/', visible: url_data.album.url() === 'date+id'"></span>
+								</span>
+							</li>
+							<li>
+								<span class="cell">
+									<input class="field full plural" data-validate="unique" data-validate-scope="#label-inputs .plural" type="text" data-bind="value: url_data.essay.plural, valueUpdate: 'afterkeydown'" />
+									<span class="form-error-msg">All labels must have a unique value.</span>
+								</span>
+								<span class="cell">
+									<input class="field full singular" type="text" data-bind="value: url_data.essay.singular, valueUpdate: 'afterkeydown'" />
+								</span>
+								<span class="cell">
+									<select class="full update-observer" data-obs="essay">
+										<option value="slug" data-bind="text: '/' + make_url_safe(url_data.essay.plural(), 'essays') + '/title/', attr: { selected: url_data.essay.url() === 'slug' }"></option>
+										<option value="id" data-bind="text: '/' + make_url_safe(url_data.essay.plural(), 'essays') + '/id/', attr: { selected: url_data.essay.url() === 'id' }"></option>
+										<option value="date+slug" data-bind="text: '/' + make_url_safe(url_data.essay.plural(), 'essays') + '/' + date('Y') + '/' + date('m') + '/title/', attr: { selected: url_data.essay.url() === 'date+slug' }"></option>
+										<option value="date+id" data-bind="text: '/' + make_url_safe(url_data.essay.plural(), 'essays') + '/' + date('Y') + '/' + date('m') + '/id/', attr: { selected: url_data.essay.url() === 'date+id' }"></option>
+									</select>
+								</span>
+							</li>
+							<li>
+								<span class="cell">
+									<input class="field full plural" data-validate="unique" data-validate-scope="#label-inputs .plural" type="text" data-bind="value: url_data.page.plural, valueUpdate: 'afterkeydown'" />
+									<span class="form-error-msg">All labels must have a unique value.</span>
+								</span>
+								<span class="cell">
+									<input class="field full singular" type="text" data-bind="value: url_data.page.singular, valueUpdate: 'afterkeydown'" />
+								</span>
+								<span class="cell">
+									<span class="static" data-bind="text: '/' + make_url_safe(url_data.page.plural(), 'pages') + '/title/'"></span>
+								</span>
+							</li>
+							<li>
+								<span class="cell">
+									<input class="field full plural" data-validate="unique" data-validate-scope="#label-inputs .plural" type="text" data-bind="value: url_data.tag.plural, valueUpdate: 'afterkeydown'" />
+									<span class="form-error-msg">All labels must have a unique value.</span>
+								</span>
+								<span class="cell">
+									<input class="field full singular" type="text" data-bind="value: url_data.tag.singular, valueUpdate: 'afterkeydown'" />
+								</span>
+								<span class="cell">
+									<span class="static" data-bind="text: '/' + make_url_safe(url_data.tag.plural(), 'tags') + '/' + url_data.tag.singular().toLowerCase() + '/.../'"></span>
+								</span>
+							</li>
+							<li>
+								<span class="cell">
+									<input class="field full plural" data-validate="unique" data-validate-scope="#label-inputs .plural" type="text" data-bind="value: url_data.category.plural, valueUpdate: 'afterkeydown'" />
+									<span class="form-error-msg">All labels must have a unique value.</span>
+								</span>
+								<span class="cell">
+									<input class="field full singular" type="text" data-bind="value: url_data.category.singular, valueUpdate: 'afterkeydown'" />
+								</span>
+								<span class="cell">
+									<span class="static" data-bind="text: '/' + make_url_safe(url_data.category.plural(), 'categories') + '/category/.../'"></span>
+								</span>
+							</li>
+							<li>
+								<span class="cell">
+									<input class="field full plural" data-validate="unique" data-validate-scope="#label-inputs .plural" type="text" data-bind="value: url_data.timeline.plural, valueUpdate: 'afterkeydown'" />
+									<span class="form-error-msg">All labels must have a unique value.</span>
+								</span>
+								<span class="cell">
+									<input class="field full singular" type="text" data-bind="value: url_data.timeline.singular, valueUpdate: 'afterkeydown'" />
+								</span>
+								<span class="cell">
+									<span class="static" data-bind="text: '/' + make_url_safe(url_data.timeline.plural(), 'timeline') + '/'"></span>
+								</span>
+							</li>
+							<li>
+								<span class="cell">
+									&nbsp;
+								</span>
+								<span class="cell"><input class="field wide" data-validate="not_empty" type="text" data-bind="value: url_data.home || 'Home', valueUpdate: 'afterkeydown'" />
+									<span class="form-error-msg">Label cannot be empty.</span></span>
+								<span class="cell">/</span>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- ko ifnot: settings.disable_template_debugging -->
+		<div class="row">
+			<div class="left">
+				Template caching
+			</div>
+			<div class="mid">
+				<div class="help-toggle">
+					<a class="toggle fright" title="More information about this setting" data-event="help">More info</a>
+					<div>
+					 	Caches templates on your live site for optimum performance.
+					</div>
+				</div>
+				<div class="mid-wrap">
+					<input id="pub_cache_tmpl" type="checkbox" data-bind="checked: settings.enable_site_cache" /> <label for="pub_cache_tmpl">Cache all site templates</label>
+				</div>
+			</div>
+		</div>
+		<!-- /ko -->
+
+		<!-- <div class="row">
+			<div class="left">
+				Privacy
+			</div>
+			<div class="mid">
+				<div class="help-toggle">
+				<a class="toggle fright" title="More information about this setting" data-event="help">More info</a>
+					<div>This controls who may view your site.</div>
+				</div>
+				<div class="mid-wrap">
+					<div class="group">
+						<ol>
+							<li><input type="radio"checked="checked" /> <label for="">Public</strong></label>&nbsp;&nbsp;Viewable to any visitor, including search engines</li>
+							<li><input type="radio" /> <label for="">Block search engines</label>&nbsp;&nbsp;Only allow normal visitors</li>
+							<li><input type="radio" /> <label for="">Private</label>&nbsp;&nbsp;Password protect entire site</li>
+						</ol>
+					</div>
+					<div class="group" style="display:none;">
+						<label for="">Password:</label>&nbsp;&nbsp;<input class="field" type="password" value="abc123" />
+					</div>
+				</div>
+			</div>
+		</div> -->
+
+		<div class="row button-row">
+			<div class="left"></div>
+			<div class="mid">
+				<button class="button c0" title="Save settings" data-event="save" data-bind="css: { disabled: $root.valid() === false }">Save settings</button>
+			</div>
+		</div>
+
+	</div>
+
+</div>
+</script>
+<!-- @END Publishing Template -->
+
+<!-- @BEGIN Image Publishing Template -->
+<script id="photos_view" type="text/html">
+<div id="Photos" class="wrap">
+
+	<div class="head">
+		<h1>Image publishing</h1>
+	</div>
+
+	<div class="settings-layout">
+
+		<p>Settings for controlling image output inside Koken and on your published site.</p>
+
+		<!-- ko ifnot: settings.disable_image_processing_options -->
+		<div class="row">
+			<div class="left">
+				Processing
+			</div>
+			<div class="mid">
+				<div class="help-toggle">
+					<a class="toggle fright" title="More information about this setting" data-event="help">More info</a>
+					<div>
+						Koken processes images using software provided by your server. If more than one software package is available at installation, Koken automatically selects one for you. If you are experiencing issues with your assigned software we recommend switching to a different package below.
+					</div>
+				</div>
+				<div class="mid-wrap">
+					<!-- ko if: settings.image_processing_libraries().length > 1 -->
+					<select data-bind="options: settings.image_processing_libraries, optionsValue: 'key', optionsText: 'label', value: settings.image_processing_library"></select>
+					<!-- /ko -->
+					<!-- ko if: settings.image_processing_libraries().length < 2 -->
+					<span data-bind="text: settings.image_processing_library_label"></span>
+					<!-- /ko -->
+				</div>
+			</div>
+		</div>
+		<!-- /ko -->
+
+		<div class="row">
+			<div class="left">
+				HiDPI (Retina)
+			</div>
+			<div class="mid">
+				<div class="help-toggle">
+					<a class="toggle fright" title="More information about this setting" data-event="help">More info</a>
+					<div>
+					 	If your web site is viewed with a HiDPI (a.k.a. Retina) display, Koken will publish images that have twice the clarity of a normal web image. This will result in slightly larger file sizes and more images being generated to serve both types of displays, but your images will always look their absolute best. Turning this off will generate normal resolution images  across all display types. Hardware that offer HiDPI/Retina screens include the iPhone 4+, iPad 2+, MacBook Pro and more.
+					</div>
+				</div>
+				<div class="mid-wrap">
+					<input id="pub_hidpi" type="checkbox" data-bind="checked: settings.site_hidpi" /> <label for="pub_hidpi">Publish high resolution images</label>
+				</div>
+			</div>
+		</div>
+
+		<div class="row" data-bind="visible: $parent.settings.image_processing_library() !== 'gd'">
+			<div class="left">
+				Metadata
+			</div>
+			<div class="mid">
+				<div class="help-toggle">
+					<a class="toggle fright" title="More information about this setting" data-event="help">More info</a>
+					<div>
+					 	Koken removes metadata when publishing copies of images. This reduces filesize considerably and in turn speeds up your published site. Checking this box will retain EXIF and IPTC metadata in any images generated at the medium preset (480px) or larger.
+					</div>
+				</div>
+				<div class="mid-wrap">
+					<input id="pub_metadata" type="checkbox" data-bind="checked: settings.retain_image_metadata" /> <label for="pub_metadata">Retain image metadata</label>
+				</div>
+			</div>
+		</div>
+
+		<div class="row" data-bind="">
+			<div class="left">
+				Quality / Sharpness
+			</div>
+			<div class="mid">
+				<div class="help-toggle">
+					<a class="toggle fright" title="More information about this setting" data-event="help">More info</a>
+					<div>
+					 	These values control the quality (left) and sharpness (right) output for all published images. The default values are adequate for most users, but you may fine-tune each size below to your liking.
+					</div>
+				</div>
+				<div class="group">
+					<input id="pub_quality" type="checkbox" data-bind="checked: settings.image_use_defaults" /> <label for="pub_quality">Use default settings</label>
+				</div>
+				<!-- ko foreach: [ { name: 'Huge', key: 'huge', edge: '2048px' }, { name: 'X-Large', key: 'xlarge', edge: '1600px' }, { name: 'Large', key: 'large', edge: '1024px' }, { name: 'Medium Large', key: 'medium_large', edge: '800px' }, { name: 'Medium', key: 'medium', edge: '480px' }, { name: 'Small', key: 'small', edge: '100px' }, { name: 'Tiny', key: 'tiny', edge: '60px' } ] -->
+				<div id="settings_quality" class="group" data-bind="visible: !$parent.settings.image_use_defaults()">
+					<div class="mid-wrap">
+						<label class="range" data-bind="text: $data.name + ' (' + $data.edge + ')'"></label>
+						<div class="rangeinput">
+							<input type="range" class="settings_quality" min="20" max="100" step="1" data-bind="value: $parent.settings['image_' + $data.key + '_quality'], valueUpdate: 'input'" />
+							<span class="value" data-bind="text: $parent.settings['image_' + $data.key + '_quality']"></span>
+							<span class="suffix">%</span>
+						</div>
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						<div class="rangeinput">
+							<input type="range" class="settings_sharp" min="0" max="1" step="0.1" data-bind="value: $parent.settings['image_' + $data.key + '_sharpening'], valueUpdate: 'input'" />
+							<span class="value" data-bind="text: $parent.settings['image_' + $data.key + '_sharpening']"></span>
+						</div>
+					</div>
+				</div>
+				<!-- /ko -->
+			</div>
+		</div>
+
+		<!-- ko ifnot: settings.disable_cache_clear -->
+		<div class="row">
+			<div class="left">
+				Cache
+			</div>
+			<div class="mid">
+				<div class="help-toggle">
+					<a class="toggle fright" title="More information about this setting" data-event="help">More info</a>
+					<div>
+					 	Koken caches all published images for speed and optimization. The "Clear image cache" button below is a troubleshooting utility for those experiencing image publishing issues. Clearing the image cache removes duplicated images only, not your original uploads.<br>
+					 	<br>
+					 	The "Build image cache" button below will create in advance most of the images used on your site. This is a process intensive action and may take several minutes to complete.
+					</div>
+				</div>
+				<div class="mid-wrap">
+					<a href="#" data-event="clear_image_cache" class="button sm">Clear image cache</a>
+					<a href="#" data-event="build_image_cache" class="button sm">Build image cache</a>
+				</div>
+			</div>
+		</div>
+		<!-- /ko -->
+
+		<div class="row button-row">
+			<div class="left"></div>
+			<div class="mid">
+				<button class="button c0" title="Save settings" data-event="save" data-bind="css: { disabled: $root.valid() === false }">Save settings</button>
+			</div>
+		</div>
+
+	</div>
+
+</div>
+</script>
+<!-- @END Publishing Template -->
+
+<!-- @BEGIN Email Template -->
+<script id="email_view" type="text/html">
+<div id="Email" class="wrap">
+
+	<div class="head">
+		<h1>Email</h1>
+	</div>
+
+	<div class="settings-layout">
+
+		<p>Configuration for sending application emails and contact form messages. Additional sender options available in <a href="#/store/plugins/email-endpoints">this plugin</a>.</p>
+
+		<div class="row">
+			<div class="left">
+				Sender
+			</div>
+			<div class="mid">
+				<div class="help-toggle">
+					<a class="toggle fright" title="More information about this setting" data-event="help">More info</a>
+					<div>
+						By default, Koken sends email through the default PHP mail function. Depending on your server, you may want to opt for a different email sending mechanism for improved reliabilty.
+					</div>
+				</div>
+				<div class="mid-wrap">
+					<!-- ko if: settings.email_handlers().length === 1 -->
+					<span data-bind="text: settings.email_handlers()[0].label"></span>
+					<!-- /ko -->
+					<!-- ko if: settings.email_handlers().length > 1 -->
+					<select data-bind="options: settings.email_handlers, optionsValue: 'class', optionsText: 'label', value: settings.email_handler">
+					</select>
+					<!-- /ko -->
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="left">
+				Delivery address
+			</div>
+			<div class="mid">
+				<div class="help-toggle">
+					<a class="toggle fright" title="More information about this setting" data-event="help">More info</a>
+					<div>
+						Koken will send all system emails to this address.
+					</div>
+				</div>
+				<div class="mid-wrap">
+					<input type="email" data-validate="email" data-bind="value: settings.email_delivery_address" class="field wide" />
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="left">
+				Test email
+			</div>
+			<div class="mid">
+				<div class="help-toggle">
+					<a class="toggle fright" title="More information about this setting" data-event="help">More info</a>
+					<div>
+					 	Koken will send an email to the delivery address above to test your settings.
+					</div>
+				</div>
+				<div class="mid-wrap">
+					<a href="#" data-event="send_test_email" class="button sm">Send test email</a>
+				</div>
+			</div>
+		</div>
+
+		<div class="row button-row">
+			<div class="left"></div>
+			<div class="mid">
+				<button class="button c0" title="Save settings" data-event="save" data-bind="css: { disabled: $root.valid() === false }">Save settings</button>
+			</div>
+		</div>
+
+	</div>
+
+</div>
+</script>
+<!-- @END Publishing Template -->
+
+<!-- @BEGIN System Template -->
+<script id="system_view" type="text/html">
+<div id="System" class="wrap">
+
+	<div class="head">
+		<h1>System</h1>
+	</div>
+
+	<div class="settings-layout">
+
+		<p>Information about the server hosting this installation.</p>
+
+		<div class="row">
+			<div class="left">
+				<label>PHP</label>
+			</div>
+			<div class="mid">
+				<div class="help-toggle">
+					<a class="toggle fright" title="More information about this setting" data-event="help">More info</a>
+					<div>This displays the version of PHP your web server is running. At least 5.2.0 is required.</div>
+				</div>
+				<div class="mid-wrap">
+					<span data-bind="text: 'Version ' + system.php_version"></span>
+					<!-- ko if: system.php_version.indexOf('5.2.') === 0 -->
+					<span class="plugin-error">
+						This version of PHP is out of date and will soon be incompatible. <a href="http://help.koken.me/customer/portal/articles/1670834-support-ending-for-php-5-2" onclick="return !window.open(this.href);">Learn more</a>
+					</span>
+					<!-- /ko -->
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="left">
+				<label>MySQL</label>
+			</div>
+			<div class="mid">
+				<div class="help-toggle">
+					<a class="toggle fright" title="More information about this setting" data-event="help">More info</a>
+					<div>This displays the version of MySQL your web server is running. At least 4.1.0 is required.</div>
+				</div>
+				<div class="mid-wrap">
+					<span data-bind="text: 'Version ' + system.mysql_version"></span>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="left">
+				<label>Server operating system</label>
+			</div>
+			<div class="mid">
+				<div class="help-toggle">
+					<a class="toggle fright" title="More information about this setting" data-event="help">More info</a>
+					<div>The operating system software this web server is running to serve your web site.</div>
+				</div>
+				<div class="mid-wrap">
+					<span data-bind="text: system.operating_system"></span>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="left">
+				<label>Webserver software</label>
+			</div>
+			<div class="mid">
+				<div class="help-toggle">
+					<a class="toggle fright" title="More information about this setting" data-event="help">More info</a>
+					<div>The webserver software that is responsible for serving your web site.</div>
+				</div>
+				<div class="mid-wrap">
+					<span data-bind="text: system.server_software"></span>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="left">
+				<label>Image processing</label>
+			</div>
+			<div class="mid">
+				<div class="help-toggle">
+					<a class="toggle fright" title="More information about this setting" data-event="help">More info</a>
+					<div>The image processing software Koken is currently using to create images. Go to Settings > Image Publishing to edit.</div>
+				</div>
+				<div class="mid-wrap">
+					<span data-bind="text: settings.image_processing_library_label"></span>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="left">
+				<label>FFmpeg</label>
+			</div>
+			<div class="mid">
+				<div class="help-toggle">
+					<a class="toggle fright" title="More information about this setting" data-event="help">More info</a>
+					<div>FFmpeg is a video utility library. Koken uses it to create thumbnail images from keyframes in uploaded videos. FFmpeg is not necessary if you are uploading images only.</div>
+				</div>
+				<div class="mid-wrap">
+					<span data-bind="text: system.ffmpeg_support ? 'Installed (Version ' + system.ffmpeg_support + ')' : 'Not installed'"></span>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="left">
+				<label>Memory limit</label>
+			</div>
+			<div class="mid">
+				<div class="help-toggle">
+					<a class="toggle fright" title="More information about this setting" data-event="help">More info</a>
+
+					<div>This displays the memory_limit setting for your server's installation of PHP. If limited to less than 64MB, Koken may not function to its fullest potential, especially when processing large images. <a href="http://help.koken.me/customer/portal/articles/1489034-raising-server-memory-limit" onclick="window.open(this.href); return false;">Read options for editing this limit</a>.</div>
+
+				</div>
+
+				<div class="mid-wrap">
+					<!-- ko ifnot: system.memory_limit -->
+					Not set
+					<!-- /ko -->
+					<!-- ko if: system.memory_limit && system.memory_limit.replace(/M$/, '') < 64 -->
+					<span class="icon16 label-warn" data-bind="text: system.memory_limit + 'B (low)'"></span>
+					<!-- /ko -->
+					<!-- ko if: system.memory_limit && (system.memory_limit.replace(/M$/, '') >= 64 || system.memory_limit.indexOf('G') !== -1) -->
+					<span data-bind="text: system.memory_limit + 'B'"></span>
+					<!-- /ko -->
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="left">
+				<label>Upload file size limit</label>
+			</div>
+			<div class="mid">
+				<div class="help-toggle">
+					<a class="toggle fright" title="More information about this setting" data-event="help">More info</a>
+					<div>This displays the file upload limit imposed by your server's installation of PHP. If set too low you may not be able to upload Library content. <a href="http://help.koken.me/customer/portal/articles/1489038-raising-upload-file-size-limit" onclick="window.open(this.href); return false;">Read options for editing this limit</a>.</div>
+				</div>
+				<div class="mid-wrap">
+					<span data-bind="text: system.upload_limit_clean"></span>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="left">
+				<label>EXIF/IPTC parsing</label>
+			</div>
+			<div class="mid">
+				<div class="help-toggle">
+					<a class="toggle fright" title="More information about this setting" data-event="help">More info</a>
+					<div>This confirms whether your web server has the proper software to retrieve the embedded EXIF/IPTC metadata in your photos.</div>
+				</div>
+				<div class="mid-wrap">
+					<span data-bind="text: system.exif_support && system.iptc_support ? 'Supported' : ( system.exif_support ? 'EXIF only' : ( system.iptc_support ? 'IPTC only' : 'Not supported' ) )"></span>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="left">
+				Cache
+			</div>
+			<div class="mid">
+				<div class="help-toggle">
+					<a class="toggle fright" title="More information about this setting" data-event="help">More info</a>
+					<div>
+					 	Clicking this button will clear all of Koken's temporary caches. Recommended if you have recently moved Koken to another server or if you are having issues in general.
+					</div>
+				</div>
+				<div class="mid-wrap">
+					<a href="#" data-event="clear_system_cache" class="button sm">Clear system caches</a>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+</div>
+</script>
+<!-- @END System Template -->
+
+<!-- @BEGIN Cache Template -->
+<script id="cache_view" type="text/html">
+<!--
+<div id="Cache" class="wrap">
+
+	<div class="head">
+		<h1>Cache</h1>
+	</div>
+
+	<div class="settings-layout">
+
+		<p>Controls for content published and cached by Koken.</p>
+
+	</div>
+
+</div> -->
+</script>
+<!-- @END Cache Template -->
+
+<!-- @BEGIN Advanced Template -->
+<script id="advanced_view" type="text/html">
+<!-- <div id="Advanced" class="wrap">
+
+	<div class="head">
+		<h1>Advanced</h1>
+	</div>
+
+	<div class="settings-layout">
+
+		<p>Inject custom HTML code into the header and/or footer area of your site.</p>
+
+		<div class="solo-row">
+
+			<h4>Head code</h4>
+
+			<textarea class="field wide" rows="15"></textarea>
+
+			<br /><br />
+
+			<h4>Footer code</h4>
+
+			<textarea class="field wide" rows="15"></textarea>
+
+			<br /><br />
+
+			<button class="button c0" title="Save settings">Save settings</button>
+
+
+		</div>
+
+	</div>
+
+</div> -->
+</script>
+<!-- @END Advanced Template -->
+
+<!-- @BEGIN Create token Sheet -->
+<script id="new_api_token_sheet" type="text/html">
+<div class="sheet-head">
+	<div class="sheet-wrap">
+		<h1>Create new API access token</h1>
+	</div>
+</div>
+
+<hr>
+
+<div id="sheetview-create-col" class="sheet-middle" data-bind="scrollbar: true">
+
+	<section>
+
+		<div class="sheet-wrap">
+
+			<div class="section-header" data-event="toggle_visibility">
+				<a href="#" class="arrow-toggle sheet open"></a>
+				<h6>Permissions</h6>
+			</div>
+
+			<div class="section-content always-show">
+				<ul class="sheet-opt-types">
+					<li class="nobot" data-bind="css: { selected: role() === 'read' }, click: function() { role('read'); }">
+						<a href="#" title="Read"><span>Read <span class="sub-title">Allow only reading of data</span></span></a>
+					</li>
+					<li class="nobot" data-bind="css: { selected: role() === 'read-write' }, click: function() { role('read-write'); }">
+						<a href="#" title="Read + Write"><span>Read &amp; Write <span class="sub-title">Allow reading and writing of data</span></span></a>
+					</li>
+				</ul>
+			</div>
+
+		</div>
+
+	</section>
+
+	<section>
+
+		<div class="sheet-wrap">
+
+			<div class="section-header" data-event="toggle_visibility">
+				<a href="#" class="arrow-toggle sheet open"></a>
+				<h6>Description</h6>
+			</div>
+
+			<div class="section-content no-bot">
+				<ul class="table">
+					<li>
+						<span class="cell label nobot">
+							<label for="">Description</label>
+						</span>
+						<span class="cell nobot">
+							<input class="field sheet wide" placeholder="Enter description" data-bind="value: name" />
+						</span>
+					</li>
+				</ul>
+			</div>
+
+		</div>
+
+	</section>
+
+</div> <!-- close .sheet-middle -->
+
+<div class="sheet-actions">
+
+	<hr>
+
+	<div class="sheet-wrap">
+
+		<div class="sheet-action">
+			<ul class="button-row">
+				<li><button class="button sheet lg c1" data-event="toggle_sheet" data-sheet="new_api_token">Cancel</button></li>
+				<li data-event="create_api_token"><button class="button sheet lg c0">Create token</button></li>
+			</ul>
+		</div>
+
+	</div>
+
+</div>
+</script>
+<!-- @END Create token Sheet

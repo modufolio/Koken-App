@@ -1,0 +1,169 @@
+<koken:include file="layouts/header.html" />
+
+<koken:if true="settings.index_show_slideshow">
+
+	<koken:load>
+
+		<koken:head>
+			<meta property="og:site_name" content="{{ site.title }}" />
+			<meta property="og:title" content="{{ site.title }}" />
+			<meta property="og:description" content="{{ site.description strip_html='true' }}" />
+			<meta property="og:type" content="website" />
+			<koken:first>
+			<meta property="og:image" content="{{ content.presets.medium_large.url }}" />
+			<meta property="og:image:width" content="{{ content.presets.medium_large.width }}" />
+			<meta property="og:image:height" content="{{ content.presets.medium_large.height }}" />
+			</koken:first>
+			<meta property="og:url" content="{{ location.site_url }}{{ location.here }}" />
+			<koken:not empty="profile.twitter">
+				<meta name="twitter:card" content="gallery" />
+				<meta name="twitter:site" content="@{{ profile.twitter }}" />
+				<meta name="twitter:creator" content="@{{ profile.twitter }}" />
+				<koken:loop limit="4">
+					<meta name="twitter:image{{ index }}" content="{{ content.presets.medium_large.cropped.url }}">
+				</koken:loop>
+			</koken:not>
+		</koken:head>
+
+	</koken:load>
+
+	<section>
+
+		<div id="home-slideshow">
+			<koken:pulse jsvar="pulse" link_to="advance" fallbacktext="No featured content found. Assign some in the Library." />
+			<div id="ss_spinner"></div>
+		</div>
+
+		<div id="home-slideshow-text" style="display:none;">
+			<koken:if true="settings.index_show_title"><a id="home-slideshow-title-link" href="#"><h4 id="home-slideshow-title">&nbsp;</h4></a></koken:if><koken:if true="settings.index_show_caption">&nbsp;&nbsp;<span id="home-slideshow-caption">&nbsp;</span></koken:if>
+		</div>
+
+		<script>
+			pulse.on( 'start', function() {
+				$('#ss_spinner').addClass('loading');
+			});
+			pulse.on( 'waiting', function(e) {
+				if (e) {
+					$('#ss_spinner').addClass('loading');
+				} else {
+					$('#ss_spinner').removeClass('loading');
+				}
+			});
+			pulse.on( 'dataloaded', function() {
+				$('#ss_spinner').removeClass('loading');
+			});
+			pulse.on( 'transitionstart', function(e) {
+				$('#home-slideshow-text').show();
+				$('#home-slideshow-title').html(e.data.title || e.data.filename);
+				$('#home-slideshow-caption').html(e.data.caption);
+				$('#home-slideshow-title-link').attr("href", e.data.url).attr("title", e.data.title || e.data.filename);
+			});
+		</script>
+
+	</section>
+
+</koken:if>
+
+<koken:if true="settings.index_show_featured_albums">
+
+	<koken:load source="featured_albums">
+
+		<section class="inner_margin">
+
+			<koken:if true="settings.index_show_slideshow">
+				<hr>
+			</koken:if>
+
+			<ol class="thumbs" style="margin-bottom:0;">
+				<koken:loop>
+					<li>
+						<figure>
+							<koken:covers>
+								<koken:link title="View {{ album.title }}">
+									<koken:first>
+										<koken:if data="settings.albums_crop" equals="uniform">
+											<koken:img size="{{ settings.albums_crop_size }}" lazy="true" />
+										</koken:if>
+										<koken:if data="settings.albums_crop" equals="proportional">
+											<koken:img lazy="true" />
+										</koken:if>
+									</koken:first>
+								</koken:link>
+							</koken:covers>
+							<figcaption>
+								<koken:link title="View {{ album.title }}">
+									<h4>{{ album.title }}</h4>
+								</koken:link>
+								<p>
+									{{ album.summary }}
+								</p>
+							</figcaption>
+						</figure>
+					</li>
+				</koken:loop>
+			</ol>
+
+		</section>
+
+	<koken:else>
+
+		<section>
+
+			<koken:note>This area displays featured albums. Assign albums as featured in the Library or turn this section off in theme settings.</koken:note>
+
+		</section>
+
+	</koken:load>
+
+</koken:if>
+
+<koken:if true="settings.index_show_featured_essays">
+
+	<koken:load source="featured_essays">
+
+		<section class="inner_margin">
+
+			<hr>
+
+			<ol class="thumbs" style="margin-bottom:0;">
+				<koken:loop>
+					<li>
+						<figure>
+							<koken:link title="View {{ essay.title }}">
+								<koken:featured_image>
+									<koken:if data="settings.albums_crop" equals="uniform">
+										<koken:img size="{{ settings.albums_crop_size }}" lazy="true" />
+									</koken:if>
+									<koken:if data="settings.albums_crop" equals="proportional">
+										<koken:img lazy="true" />
+									</koken:if>
+								</koken:featured_image>
+							</koken:link>
+							<figcaption>
+								<koken:link title="View {{ essay.title }}">
+									<h4>{{ essay.title }}</h4>
+								</koken:link>
+								<p>
+									{{ essay.excerpt }}
+								</p>
+							</figcaption>
+						</figure>
+					</li>
+				</koken:loop>
+			</ol>
+
+		</section>
+
+	<koken:else>
+
+		<section>
+
+			<koken:note>This area displays featured essays. Assign essays as featured in Text or turn this section off in theme settings.</koken:note>
+
+		</section>
+
+	</koken:load>
+
+</koken:if>
+
+<koken:include file="layouts/footer.html" />

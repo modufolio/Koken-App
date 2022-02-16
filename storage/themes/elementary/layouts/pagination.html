@@ -1,0 +1,52 @@
+<koken:pagination limit="20">
+
+	<nav class="paginate">
+
+		<span class="count">
+			{{ page }} of {{ pages }}
+		</span>
+
+		<ol>
+
+			<koken:pagination_previous>
+
+			<li class="prev">
+				<koken:link title="Previous">
+					&lt;
+				</koken:link>
+			</li>
+
+			</koken:pagination_previous>
+
+			<li>
+
+				<koken:pagination_limited_previous>
+					<koken:link>...</koken:link>
+				</koken:pagination_limited_previous>
+
+				<koken:loop>
+					<koken:link class="{{ is_current }}" title="{{ number }}">
+						{{ number }}
+					</koken:link>
+				</koken:loop>
+
+				<koken:pagination_limited_next>
+					<koken:link>...</koken:link>
+				</koken:pagination_limited_next>
+
+			</li>
+
+			<koken:pagination_next>
+
+			<li class="next">
+				<koken:link title="Next">
+					&gt;
+				</koken:link>
+			</li>
+
+			</koken:pagination_next>
+		</ol>
+
+	</nav>
+
+</koken:pagination>

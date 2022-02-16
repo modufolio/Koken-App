@@ -1,0 +1,5 @@
+@import url(//fonts.googleapis.com/css?family=Noto+Sans:400,700,400italic,700italic);
+
+h1,h2,h3,h4,h5,h6, nav a {
+	font-family: 'Noto Sans', sans-serif;
+}

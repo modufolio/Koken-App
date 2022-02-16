@@ -1,0 +1,416 @@
+<koken:include file="layouts/header.html" />
+
+<koken:load>
+
+<koken:head>
+	<meta property="og:site_name" content="{{ site.title }}" />
+	<meta property="og:title" content="{{ content.title|content.filename strip_html="true" }}" />
+	<meta property="og:description" content="{{ content.caption strip_html="true" }}" />
+	<meta property="og:type" content="website" />
+	<meta property="og:image" content="{{ content.presets.medium_large.url }}" />
+	<meta property="og:image:width" content="{{ content.presets.medium_large.width }}" />
+	<meta property="og:image:height" content="{{ content.presets.medium_large.height }}" />
+	<meta property="og:url" content="{{ content.url }}" />
+	<koken:content_image>
+		<koken:not empty="profile.twitter">
+			<meta name="twitter:card" content="photo" />
+			<meta name="twitter:site" content="@{{ profile.twitter }}" />
+			<meta name="twitter:creator" content="@{{ profile.twitter }}" />
+		</koken:not>
+	</koken:content_image>
+</koken:head>
+
+<div id="twocol">
+
+	<header class="content page">
+
+		<span class="wrap first">
+
+			<koken:breadcrumbs separator="/" />
+
+		</span>
+
+	</header>
+
+	<div class="mcol">
+
+		<header class="content">
+
+			<span class="wrap first">
+
+				{{ content.title | content.filename }}
+
+			</span>
+
+			<span class="right share">
+
+				<span class="wrap first">
+
+					<koken:link lightbox="true" bind_to_key="l" title="View in lightbox">View in lightbox</koken:link>
+
+				</span>
+
+				<koken:if true="settings.content_detail_show_share">
+
+					<koken:if true="{{ content.public }}">
+
+						<span class="edge_left share">
+							<span class="wrap last">
+								<koken:include file="layouts/share_content.html" />
+							</span>
+						</span>
+
+					</koken:if>
+
+				</koken:if>
+
+			</span>
+
+		</header>
+
+		<figure>
+
+			<div class="figimg">
+
+				<koken:content_image>
+
+					<koken:link class="mag" lightbox="true" title="Lightbox">
+
+						<koken:img class="content_main" lazy="true" />
+
+					</koken:link>
+
+				</koken:content_image>
+
+				<koken:content_video>
+
+					<koken:video />
+
+				</koken:content_video>
+
+			</div>
+
+			<figcaption>
+
+				<koken:if true="settings.content_show_title">
+
+					<h3>
+						{{ content.title | content.filename }}
+					</h3>
+
+				</koken:if>
+
+				<koken:if true="settings.content_show_caption">
+
+					{{ content.caption paragraphs="true" }}
+
+				</koken:if>
+
+				<koken:if true="settings.show_disc_content">
+
+					<div id="kdiscuss">
+
+						<koken:discussion>
+
+							{{ discussion }}
+
+						</koken:discussion>
+
+					</div>
+
+				</koken:if>
+
+			</figcaption>
+
+		</figure>
+
+	</div>
+
+	<div class="rcol">
+
+		<koken:parent>
+			<koken:variable name="previous_label" value="Previous" />
+			<koken:variable name="next_label" value="Next" />
+		<koken:else>
+			<koken:variable name="previous_label" value="Newer" />
+			<koken:variable name="next_label" value="Older" />
+		</koken:parent>
+
+		<header class="content">
+
+			<div class="right">
+
+				<span class="wrap last">
+
+					<koken:next>
+						<koken:link class="rarr" title="{{ next_label }}" bind_to_key="right">{{ next_label }}</koken:link>
+					<koken:else>
+						<a class="rarr disabled" title="{{ next_label }}">{{ next_label }}</a>
+					</koken:next>
+
+				</span>
+
+			</div>
+
+			<span class="wrap first">
+
+				<koken:previous>
+					<koken:link class="larr" title="{{ previous_label }}" bind_to_key="left">{{ previous_label }}</koken:link>
+				<koken:else>
+					<a class="larr disabled">{{ previous_label }}</a>
+				</koken:previous>
+
+			</span>
+
+		</header>
+
+		<aside>
+
+		<section class="view-album">
+
+			<koken:if true="settings.content_detail_show_tnav">
+
+			<koken:context>
+
+				<h4>
+
+					<koken:link title="View {{ context.title }}">
+						{{ context.title }}
+					</koken:link>
+
+					<span>({{ context.position }} of {{ context.total }})</span>
+
+				</h4>
+
+			<koken:else>
+
+				<h4><koken:link to="contents" title="{{ labels.content.plural }}">{{ labels.content.plural }}</koken:link></h4>
+
+			</koken:context>
+
+			<ol class="thumb-strip">
+
+				<koken:neighbors count="{{ settings.content_detail_neighbor_num }}">
+
+					<koken:previous>
+						<koken:loop>
+
+							<li>
+								<koken:link title="View {{ content.title | content.filename }}">
+									<koken:img size="1:1" lazy="true" />
+								</koken:link>
+							</li>
+
+						</koken:loop>
+					</koken:previous>
+
+					<li>
+						<koken:img size="1:1" class="current" lazy="true" />
+					</li>
+
+					<koken:next>
+						<koken:loop>
+
+							<li>
+								<koken:link title="View {{ content.title | content.filename }}">
+									<koken:img size="1:1" lazy="true" />
+								</koken:link>
+							</li>
+
+						</koken:loop>
+					</koken:next>
+
+				</koken:neighbors>
+			</ol>
+			</koken:if>
+
+		</section>
+
+		<koken:albums>
+
+			<section>
+
+				<h4>{{ labels.album.plural }}</h4>
+				<koken:loop separator=", ">
+					<koken:link title="View {{ album.title }}">
+						{{ album.title }}
+					</koken:link>
+				</koken:loop>
+
+			</section>
+
+		</koken:albums>
+
+		<koken:if true="settings.content_detail_show_date_upload">
+
+			<section>
+
+				<h4>Uploaded</h4>
+				<koken:time data="content.uploaded_on" />
+
+			</section>
+
+		</koken:if>
+
+		<koken:if true="settings.content_detail_show_date_capture">
+
+			<section>
+
+				<koken:not empty="captured_on.timestamp">
+					<h4>Captured</h4>
+					<koken:link to="archive" filter:order_by="captured_on" filter:year="{{ captured_on date_format='Y' }}" filter:month="{{ captured_on date_format='m' }}" filter:day="{{ captured_on date_format='d' }}" title="View all {{ labels.content.plural case='lower' }} captured on this date">
+						<koken:time show="both" data="content.captured_on" />
+					</koken:link>
+				</koken:not>
+
+			</section>
+
+		</koken:if>
+
+		<koken:if true="settings.content_detail_show_exif">
+
+			<koken:exif>
+
+				<section>
+
+					<h4>EXIF</h4>
+					<ol class="data">
+					<koken:not empty="exif.model">
+						<li>
+							<span class="label">Model</span>
+							<span class="value">{{ exif.model }}</span>
+						</li>
+					</koken:not>
+					<koken:not empty="exif.aperture">
+						<li>
+							<span class="label">Aperture</span>
+							<span class="value">{{ exif.aperture }}</span>
+						</li>
+					</koken:not>
+					<koken:not empty="exif.exposure">
+						<li>
+							<span class="label">Exposure</span>
+							<span class="value">{{ exif.exposure }}</span>
+						</li>
+					</koken:not>
+					<koken:not empty="exif.focal_length">
+						<li>
+							<span class="label">Focal length</span>
+							<span class="value">{{ exif.focal_length }}</span>
+						</li>
+					</koken:not>
+					<koken:not empty="exif.iso_speed_ratings">
+						<li>
+							<span class="label">ISO</span>
+							<span class="value">{{ exif.iso_speed_ratings }}</span>
+						</li>
+				     </koken:not>
+				 	</ol>
+
+			 	</section>
+
+			</koken:exif>
+
+		</koken:if>
+
+		<koken:if true="settings.content_detail_show_cats">
+
+			<koken:categories>
+
+				<section>
+
+					<h4>{{ labels.category.plural }}</h4>
+					<koken:loop separator=", ">
+						<koken:link title="View all {{ labels.content.plural case='lower' }} in {{ category.title }}">
+							{{ category.title }}
+						</koken:link>
+					</koken:loop>
+
+				</section>
+
+			</koken:categories>
+
+			<koken:tags>
+
+				<section>
+
+					<h4>{{ labels.tag.plural }}</h4>
+					<koken:loop separator="">
+						<koken:link class="tag" title="View all {{ labels.content.plural case='lower' }} in {{ tag.title }}">{{ tag.title }}</koken:link>
+					</koken:loop>
+
+				</section>
+
+			</koken:tags>
+
+		</koken:if>
+
+		<koken:if true="{{ settings.content_detail_show_source }}">
+
+	    	<koken:not empty="{{ content.source.title }}">
+
+				<section>
+
+					<h4>Elsewhere</h4>
+					<a href="{{ content.source.url }}" onclick="return !window.open(this.href);" title="View at {{ content.source.title }}">View at {{ content.source.title }}</a>
+
+				</section>
+
+			</koken:not>
+
+		</koken:if>
+
+		<koken:if true="settings.content_detail_show_map">
+
+			<koken:geolocation>
+
+				<section>
+
+					<h4>Location</h4>
+					<a target="_blank" href="http://maps.google.com/?q={{ geolocation.latitude }},{{ geolocation.longitude }}">View map</a>
+
+				</section>
+
+			</koken:geolocation>
+
+		</koken:if>
+
+		<koken:if true="settings.content_detail_show_dl">
+
+			<koken:max_download>
+
+				<section>
+
+					<h4>Download</h4>
+					<p><koken:link title="Download image">{{ max_download.width }} x {{ max_download.height }}</koken:link></p>
+
+				</section>
+
+			</koken:max_download>
+
+		</koken:if>
+
+		<koken:if true="settings.content_detail_show_license">
+
+			<section>
+
+				<h4>License</h4>
+				{{ content.license.clean }}
+
+			</section>
+
+		</koken:if>
+
+	</aside>
+
+	</div>
+
+</div> <!-- close main -->
+
+<koken:else>
+
+	Nothing to see here
+
+</koken:load>
+
+<koken:include file="layouts/footer.html" />

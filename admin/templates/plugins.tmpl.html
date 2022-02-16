@@ -1,0 +1,84 @@
+<script id="kokenLibrarySidebar" type="text/html">
+<!-- ko foreach: $data.sections() -->
+<div class="col-block" data-bind="visible: $data.visibility == true">
+	<div data-event="toggle_visibility" class="col-head">
+		<span class="in">
+			<a href="#" class="arrow-toggle open fold"></a>
+			<h6><a href="#" class="fold" data-bind="text: $data.label, attr: { title: $data.label }"></a></h6>
+		</span>
+	</div>
+	<div class="col-group" data-bind="visible: $data.visibility == true">
+		<div data-bind="foreach: { data: $data.fields, as: 'item' }">
+
+			<!-- ko if: item.type == 'hidden' -->
+			<input type="hidden" data-bind="value: item.value, attr: { name: $data.key, id: 'plugin_' + $data.key }" />
+			<!-- /ko -->
+			<!-- ko ifnot: item.type == 'hidden' -->
+
+			<div class="col-row plugin_option" data-bind="css: { single: $.inArray(item.type, ['boolean', 'color']) !== -1 && item.control_first !== false, dependent: item.dependencies }, style: { display: item.hide ? 'none' : 'block' }">
+				<div class="label">
+					<label data-bind="text: $data.label, attr: { for: 'plugin_' + $data.key }"></label>
+				</div>
+
+				<div class="value plugin-fields">
+					<!-- ko if: item.type == 'boolean' -->
+					<input type="checkbox" data-bind="checked: item.value, attr: { name: $data.key, id: 'plugin_' + $data.key }" />
+					<!-- /ko -->
+
+					<!-- ko if: item.type == 'color' -->
+					<input type="ccolor" data-bind="value: item.value, attr: { name: $data.key, id: 'plugin_' + $data.key }" />
+					<!-- /ko -->
+
+					<!-- ko if: item.type == 'select' -->
+					<select data-bind="options: item.options, optionsText: 'label', optionsValue: 'value', value: item.value, valueAllowUnset: true, attr: { name: $data.key, id: 'plugin_' + $data.key }">
+					</select>
+					<!-- /ko -->
+
+					<!-- ko if: item.type == 'string' -->
+					<input class="field side-col" type="text" data-bind="value: item.value, attr: { name: $data.key, id: 'plugin_' + $data.key, placeholder: $data.placeholder }" />
+					<!-- /ko -->
+
+					<!-- ko if: item.type == 'site_link' -->
+					<textarea rows="2" type="text" class="field side-col expand short" data-bind="value: item.value" readonly="readonly"></textarea>
+						<!-- ko if: item.links && item.links.length -->
+						<span class="field-links">
+							<!-- ko foreach: item.links -->
+								<a href="#" class="edit-link" data-bind="event: { click: click.bind(null) }, text: label"></a>
+							<!-- /ko -->
+						</span>
+						<!-- /ko -->
+					<!-- /ko -->
+
+					<!-- ko if: item.type == 'text' -->
+					<span data-bind="text: item.value, attr: { class: item.key + '-text' }"></span>
+					<!-- /ko -->
+
+					<!-- ko if: item.type == 'number' -->
+					<!-- ko if: $data.prefix --><span class="prefix" data-bind="text: $data.prefix"></span><!-- /ko -->
+					<input type="number" class="field side-col short" data-bind="value: item.value, attr: { name: $data.key, id: 'plugin_' + $data.key, min: $data.min, max: $data.max, step: $data.step, placeholder: $data.placeholder }" />
+					<!-- ko if: $data.suffix --><span class="suffix" data-bind="text: $data.suffix"></span><!-- /ko -->
+					<!-- /ko -->
+				</div>
+			</div>
+			<!-- /ko -->
+		</div>
+	</div>
+</div>
+<!-- /ko -->
+</script>
+
+<script id="kokenLibraryNavigation" type="text/html">
+<li class="plugin-library-nav-item">
+	<a class="item" data-bind="attr: { href: $data.url }">
+		<span class="in"><span data-bind="attr: { class: 'icon16 ' + $data.icon_class() }, text: $data.title"></span>
+	</a>
+</li>
+</script>
+
+<script id="kokenSheetSection" type="text/html">
+<section data-bind="template: $data.html, attr: { id: $data.id, class: $data.class }" style="display: none;margin-bottom:0"></section>
+</script>
+
+<script id="kokenSettingsEdit" type="text/html">
+<div data-bind="template: $data.html"></div>
+</script>

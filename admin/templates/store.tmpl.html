@@ -1,0 +1,107 @@
+<!-- @BEGIN Site Interface Template -->
+<script id="store_interface" type="text/html">
+<div id="storeui" data-bind="css: {'storeui-mod-expand': state.expand() == true }">
+	<div id="lay-two-col">
+		<div id="two-col-left" class="ui-col">
+			<div class="col-top">
+				<div class="hoffx">
+					<h5>Store</h5>
+				</div>
+			</div>
+			<div id="content_subnav" class="top-off" data-bind="scrollbar: true">
+				<div class="col-block no-head">
+					<ol class="lib-nav">
+						<li data-bind="css: { selected: store_url() === '' }">
+							<a href="#/store" target="store_window" class="item">
+								<span class="in">
+									<span class="icon16 label-featured">
+										Featured
+									</span>
+								</span>
+							</a>
+						</li>
+						<li data-bind="css: { selected: store_url().indexOf('themes') === 0 }">
+							<a href="#/store/themes" target="store_window" class="item">
+								<span class="in">
+									<span class="icon16 label-themes">
+										Themes
+									</span>
+								</span>
+							</a>
+						</li>
+						<li data-bind="css: { selected: store_url().indexOf('plugins') === 0 }">
+							<a href="#/store/plugins" target="store_window" class="item">
+								<span class="in">
+									<span class="icon16 label-plugins">
+										Plugins
+									</span>
+								</span>
+							</a>
+						</li>
+						<li data-bind="css: { selected: store_url().indexOf('lightroom') === 0 }">
+							<a href="#/store/lightroom/koken-publish-service" target="store_window" class="item">
+								<span class="in">
+									<span class="icon16 label-lr">
+										Lightroom
+									</span>
+								</span>
+							</a>
+						</li>
+						<li data-bind="css: { selected: store_url().indexOf('updates') === 0 }">
+							<a href="#/store/updates" target="store_window" class="item">
+								<span class="item-count hot" data-bind="visible: updates_count() > 0, text: updates_count"></span>
+								<span class="in">
+									<span class="icon16 label-updates">
+										Updates
+									</span>
+								</span>
+							</a>
+						</li>
+						<li>
+							<a data-bind="attr: { href: support_link }" class="item" onclick="return !window.open(this.href);">
+								<span class="in">
+									<span class="icon16 label-support">
+										Support
+									</span>
+								</span>
+							</a>
+						</li>
+						<li data-bind="css: { selected: store_url().indexOf('account') === 0 }">
+							<a href="#/store/account" target="store_window" class="item">
+								<span class="in">
+									<span class="icon16 label-admin" data-bind="text: username"></span>
+								</span>
+							</a>
+						</li>
+					</ol>
+				</div>
+			</div>
+		</div>
+		<!-- ko with: $data -->
+		<div id="two-col-right" data-bind="css: { 'no-left-margin': state.pages() === false || state.expand() }">
+			<div class="col-top">
+				<div class="ui-row">
+					<div class="l push">
+						<a id="storeui-pages-toggle" href="#" class="button-ui thin emb fleft" data-event="update_state" data-state="pages" title="Toggle navigation links column"><span class="bicon_sm col_close" data-bind="css: { col_close: state.pages() == true, col_open: state.pages() == false }"></span></a>
+						<ul class="button-row-joined fleft" style="margin:0 5px;">
+							<li>
+								<a href="#" class="button-ui back emb thin" data-bind="css: { disabled: history.index() === 0 }" data-event="history" title="Click to go back"><span class="bicon_sm bwd"></span></a>
+							</li>
+							<li>
+								<a href="#" class="button-ui fwd emb thin" data-bind="css: { disabled: history.index() === (history.entries().length - 1) }" data-event="history" title="Click to go forward"><span class="bicon_sm forw"></span></a>
+							</li>
+						</ul>
+					</div>
+					<h5 data-bind="text: title"></h5>
+					<div class="r push">
+						<a href="#" class="button-ui thin emb fright" data-event="update_state" data-state="expand" title="Expand preview window"><span class="bicon_sm expand" data-bind="css: { expand: state.expand() == false, contract: state.expand() == true }"></span></a>
+						<a href="#/store/cart" style="margin-right:5px;" target="store_window" title="View cart" class="button-ui emb thin fright cart_bttn" data-bind="css: { full: cart_count() > 0, selected: store_url().indexOf('cart') === 0 }"><span class="bicon_sm cart"></span>&nbsp;&nbsp;Cart&nbsp;<span data-bind="visible: cart_count() > 0">(<span data-bind="text: cart_count"></span>)</span></a>
+					</div>
+				</div>
+			</div>
+			<iframe style="width:100%;" id="store-iframe" name="store_window" scrolling="yes"></iframe>
+		</div>
+		<!-- /ko -->
+	</div>
+</div>
+</script>

@@ -1,0 +1,1773 @@
+<!-- @BEGIN Site Interface Template -->
+<script id="site_interface" type="text/html">
+<!-- ko with: $data -->
+<div id="siteui" data-bind="css: {'siteui-mod-expand': state.expand() == true, 'siteui-mod-draft': state.type() == 'draft', 'siteui-mod-live': state.type() == 'live', 'siteui-mod-themes': state.type() == 'themes' }">
+
+	<!-- gear pop-up menu for left col tree nav -->
+	<div id="gear_pop" class="opt-menu animL" style="left:253px;" data-bind="visible: state.gear() === true" data-event="gear_menu">
+		<div class="inside">
+			<ul class="opt-list">
+				<li><a href="#" title="Edit link label"><span class="w"><span class="opt-icon opt-edit">Edit link label</span></span></a></li>
+				<li class="delete"><a href="#" title="Delete this link"><span class="w"><span class="opt-icon opt-delete">Delete link</span></span></a></li>
+				<li class="front"><a href="#" title="Assign as front page of your site"><span class="w"><span class="opt-icon opt-front">Assign as front page</span></span></a></li>
+				<li class="hide-home"><a href="#" title="Hide this link in the navigation"><span class="w"><span class="opt-icon opt-hide">Hide link</span></span></a></li>
+				<li class="show-home"><a href="#" title="Show this link in the navigation"><span class="w"><span class="opt-icon opt-show">Show link</span></span></a></li>
+			</ul>
+		</div>
+		<div class="wedge l-center" style="left: -11px;"></div>
+	</div>
+
+	<!--
+		START SITE UI
+	-->
+
+	<div id="siteui-wrap" data-bind="visible: !error()">
+
+		<div class="ui-sheet-bg"></div>
+
+		<!-- ko with: sheets.draft_history -->
+			<!-- ko template: 'sheets_mu' --><!-- /ko -->
+		<!-- /ko -->
+
+		<!-- ko with: sheets.create_link -->
+			<!-- ko template: 'sheets_mu' --><!-- /ko -->
+		<!-- /ko -->
+
+		<!-- ko with: sheets.edit_link_data -->
+			<!-- ko template: 'sheets_mu' --><!-- /ko -->
+		<!-- /ko -->
+
+		<!-- ko with: sheets.create_custom_link -->
+			<!-- ko template: 'sheets_mu' --><!-- /ko -->
+		<!-- /ko -->
+
+		<!-- ko with: sheets.current_page_link -->
+			<!-- ko template: 'sheets_mu' --><!-- /ko -->
+		<!-- /ko -->
+
+		<!-- ko with: sheets.source_filter -->
+			<!-- ko template: 'sheets_mu' --><!-- /ko -->
+		<!-- /ko -->
+
+		<!--
+			SITE PREVIEW
+		-->
+		<div id="siteui-frame" class="ks_parent loading" data-bind="css: { 'edit-page': state.edit() === 'edit_page' && state.type() === 'draft', 'no-left-margin': state.pages() === false && state.type() === 'draft', 'docked-settings': state.settings_panel_docked() && state.settings_panel() }">
+
+			<span class="kspinner ks_abs ks_abs_lg"></span>
+
+			<div id="undocked_editor" data-bind="visible: state.mid_col() !== 'preview' && state.editor_type() !== 'dock'"></div>
+
+			<div id="siteui-page-preview" data-bind="visible: state.mid_col() === 'preview' || state.editor_type() === 'dock'">
+
+				<div class="col-top">
+
+					<div class="ui-row">
+
+						<div class="l push">
+							<a id="siteui-pages-toggle" href="#" class="button-ui thin emb fleft" data-event="update_state" data-state="pages" title="Toggle navigation links column"><span class="bicon_sm col_close" data-bind="css: { col_close: state.pages() == true, col_open: state.pages() == false }"></span></a>
+
+							<ul class="button-row-joined fleft" style="margin:0 5px;">
+								<li>
+									<a href="#" class="button-ui back emb thin" data-event="history" title="Click to go back"><span class="bicon_sm bwd"></span></a>
+								</li>
+								<li>
+									<a href="#" class="button-ui fwd emb thin" data-event="history" title="Click to go forward"><span class="bicon_sm forw"></span></a>
+								</li>
+							</ul>
+
+							<a href="#" class="button-ui emb thin fleft" style="margin-right:5px;" data-event="refresh" title="Refresh preview"><span class="bicon_sm refresh"></span></a>
+
+							<a href="#/site/draft/page/url:/" class="button-ui emb thin fleft" style="margin-right:5px;" title="Open the front page"><span class="bicon_sm home"></span></a>
+
+							<a id="siteui-add-current-page" href="#" class="button-ui emb thin fleft" data-sheet="current_page_link" data-event="toggle_sheet" title="Add current page to navigation"><span class="bicon_sm add"></span></a>
+						</div>
+
+						<h5><a href="#" data-bind="attr: { href: state.iframe.path() }, text: state.iframe.path()" target="_blank" title="View page in separate window"></a></h5>
+
+						<div class="r push">
+							<a href="#" class="button-ui thin emb fright" data-event="update_state" data-state="expand" title="Expand preview window"><span class="bicon_sm expand" data-bind="css: { expand: state.expand() == false, contract: state.expand() == true }"></span></a>
+							<a href="#" class="button-ui thin emb fright" data-event="update_state" data-state="settings_panel" data-bind="visible: state.type() === 'draft' && site.settings().length || site.styles().length, css: { selected: state.settings_panel }" style="margin-right:5px;" title="Toggle the Settings panel"><span class="bicon_sm settings"></span></a>
+							<a href="#" class="button-ui thin emb fright" data-sheet="source_filter" data-event="filter_current" data-bind="visible: state.type() === 'draft' && sheets.source_filter.available()" style="margin-right:5px;" title="Apply template filter"><span class="bicon_sm filter"></span></a>
+						</div>
+
+					</div>
+
+				</div>
+
+				<div id="siteui-iframe-container" data-bind="css: { docked: state.mid_col() !== 'preview' && state.editor_type() === 'dock' }">
+
+						<iframe style="display:none" data-bind="event: { load: $parent.events.iframe_loaded.bind($parent) }" id="siteui-iframe" scrolling="yes"></iframe>
+
+						<!--
+							PULSE PANEL
+						-->
+
+						<div id="siteui-panel-pulse" class="ui-col panel move_offscreen">
+
+							<div class="panel-handle">
+								<a class="modal-close" href="#" title="Close panel"></a>
+								<div class="hoffx"><h5>Edit slideshow</h5></div>
+								<hr>
+							</div>
+
+							<div id="pulse-inspector" class="panel-body" data-bind="scrollbar:true">
+
+								<!-- ko if: $parent.state.loaded_page().path -->
+
+									<!-- ko template: { name: 'theme_options', data: { prefix: 'pulse_', settings: site.pulse() } } --><!-- /ko -->
+
+									<!-- ko if: $parent.user_pulse_plugins().length -->
+
+										<!-- ko foreach: $parent.user_pulse_plugins -->
+
+											<!-- ko template: { name: 'theme_options', data: { prefix: 'pulse_', settings: $data.settings }, plugin: true } --><!-- /ko -->
+
+										<!-- /ko -->
+
+									<!-- /ko -->
+								<!-- /ko -->
+
+							</div>
+
+							<!-- ko if: sitepanel_pulse.title() !== 'default' -->
+
+							<hr>
+
+							<div class="col-row tall">
+								Edits will apply to all slideshows in the <strong data-bind="text: sitepanel_pulse.title"></strong> slideshow group.
+							</div>
+
+							<!-- /ko -->
+
+							<div class="panel-foot"></div>
+
+						</div>
+
+						<!--
+							SETTINGS PANEL
+						-->
+
+						<div id="siteui-panel-settings" class="ui-col panel move_offscreen" data-bind="css: { offscreen: !state.settings_panel() || (!site.settings().length && !site.styles().length), docked: state.settings_panel_docked() && state.settings_panel() }">
+
+							<div class="panel-handle">
+								<div class="panel-handle-nav">
+									<a href="#" class="modal-pin" data-event="update_state"  data-state="settings_panel_docked" data-bind="css: { selected: state.settings_panel_docked }, attr: { title: state.settings_panel_docked() ? 'Undock the Settings panel' : 'Dock the Settings panel' }"></a>
+									<a href="#" class="modal-close" title="Close panel" data-event="update_state" data-state="settings_panel"></a>
+								</div>
+
+								<div class="hoffx"><h5>Settings</h5></div>
+								<hr>
+							</div>
+
+							<div id="siteui-inspect-settings" class="panel-inspector">
+								<a href="#" class="button-panel theme" data-bind="css: { current: state.sidebar() === 'theme' }" data-event="theme_view" title="View theme settings">Theme</a>
+								<a href="#" class="button-panel template" data-bind="css: { current: state.sidebar() === 'page' }" data-event="page_view" title="View template settings">Template</a>
+							</div>
+
+							<hr>
+
+							<div id="site-inspector" class="panel-body" data-bind="scrollbar: true">
+
+								<!-- ko if: $parent.state.loaded_page().path -->
+
+								<!-- ko if: site.style && site.style.key && site.styles().length && state.sidebar() === 'theme' -->
+								<div class="group-wrap">
+
+									<div class="col-sep">
+										<div class="label">
+											<span class="icon style"></span>
+											<h5>Style</h5>
+										</div>
+										<hr>
+									</div>
+
+									<div class="col-row theme_option">
+									<div class="label">Style</div>
+									<div class="value">
+										<select class="tiny" name="__style">
+											<!-- ko foreach: site.styles -->
+											<option data-bind="text: label, value: key, attr: { selected: $parent.site.style.key() === key }"></option>
+											<!-- /ko -->
+											<!-- ko if: $parent.site.custom_style -->
+											<option selected="selected">Custom</option>
+											<!-- /ko -->
+										<select>
+									</div>
+									</div>
+								</div>
+								<!-- /ko -->
+
+								<!-- ko template: { name: 'theme_options', data: { prefix: '', settings: site.settings() }, afterRender: function() { $data.classes.form_validation.site.valid('siteui-panel-settings'); } } --><!-- /ko -->
+
+								<!-- /ko -->
+
+								<div id="empty_settings" style="display:none">
+									<p style="padding:10px 10px 3px;">No settings available</p>
+								</div>
+
+								<hr>
+
+								<div class="col-block">
+
+									<div id="settings-panel-reset" class="col-head" data-event="toggle_visibility">
+										<span class="in">
+											<a href="#" class="arrow-toggle fold"></a>
+											<h6><a href="#" class="fold">Reset</a></h6>
+										</span>
+									</div>
+
+									<div class="col-row" style="padding-bottom:15px;display:none;">
+										<!-- ko if: site.published -->
+										<a class="button c0 wide" href="#" data-event="revert_settings" title="Reset all settings to theme defaults">Reset theme to default settings</a>
+										<!-- /ko -->
+
+										<!-- ko ifnot: site.published -->
+										<ul class="button-row" style="width:100%;">
+											<li style="width:49%;">
+												<a style="width:100%" class="button wide" href="#" data-event="revert" title="Discard all draft edits and revert to live site">Discard edits</a>
+											</li>
+											<li style="width:49%;">
+												<a style="width:100%;" class="button c0 wide" href="#" data-event="revert_settings" title="Reset all settings to theme defaults">Reset theme</a>
+											</li>
+										</ul>
+										<!-- /ko -->
+									</div>
+
+								</div>
+
+							</div> <!-- close #site-inspector -->
+
+							<div class="panel-foot"></div>
+
+						</div> <!-- close #siteui-panel-settings -->
+
+				</div>
+
+				<div id="docked_editor" data-bind="visible: state.mid_col() !== 'preview'">
+						<div id="siteui-css-editor-frame" data-bind="css: { docked: state.editor_type() === 'dock' }">
+
+							<div class="col-top">
+
+								<div class="ui-row">
+
+									<div class="l push">
+										<a id="siteui-pages-toggle" href="#" data-bind="visible: state.editor_type() !== 'dock'" class="button-ui thin emb fleft" data-event="update_state" data-state="pages" title="Toggle navigation links column" style="margin-right:5px;"><span class="bicon_sm col_close" data-bind="css: { col_close: state.pages() == true, col_open: state.pages() == false }"></span></a>
+										<a id="" href="#" class="button-ui thin emb fleft" data-event="update_state" data-state="editor_type" data-bind="attr: { title: (state.editor_type() === 'dock') ? 'Expand CSS Editor' : 'Dock CSS editor at bottom' }"><span class="bicon_sm" data-bind="css: { dock_down: state.editor_type() !== 'dock', dock_up: state.editor_type() === 'dock' }, text: (state.editor_type() === 'dock') ? '' : 'Dock'"></span></a>
+										<a id="" href="#" class="button-ui thin emb fleft" data-event="toggle_editor_theme" data-state="" title="Toggle editor theme" style="margin-left:5px;"><span class="bicon_sm theme"></span></a>
+									</div>
+
+									<h5>Custom CSS</h5>
+
+									<div class="r push">
+										<a href="#" class="button-ui thin emb fright" title="Close CSS editor" style="margin-left:5px;" data-event="toggle_css_editor"><span class="bicon_sm close"></span></a>
+										<a href="#" data-bind="visible: state.editor_type() !== 'dock'" class="button-ui thin emb fright" data-event="update_state" data-state="expand" title="Expand preview window"><span class="bicon_sm expand" data-bind="css: { expand: state.expand() == false, contract: state.expand() == true }"></span></a>
+									</div>
+
+								</div>
+
+							</div>
+
+							<div id="siteui-css-editor"></div>
+
+						</div>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div> <!-- close #siteui-wrap -->
+
+	<!--
+		LEFT COLUMN (LINKS)
+	-->
+
+	<div id="siteui-lcol-pages" class="ui-col" data-bind="visible: state.pages() && !error()">
+
+		<div class="col-top">
+			<div class="hoffx">
+				<h5>Site</h5>
+			</div>
+		</div>
+
+		<div id="pages_col" class="top-off" data-bind="scrollbar: true">
+
+			<div class="col-block">
+				<div class="col-head" data-event="toggle_visibility">
+					<span class="in">
+						<a href="#" class="arrow-toggle open fold"></a>
+						<h6><a href="#" class="fold">Primary</a></h6>
+					</span>
+				</div>
+				<ol class="lib-nav primary">
+					<!-- ko foreach: { data: site.navigation.items, afterRender: $parent.events.navigation_sort.bind($parent) } -->
+					<li data-event="nav_from_link" data-bind="attr: { id: 'nav_item_' + $index() }, css: { hidden: $data.hide, selected: path === $parent.state.iframe.rel_path() || $data.front && front && $parent.state.iframe.rel_path() === '/'  }">
+						<a href="#" class="item-edit ui-droppable" data-event="toggle_gear_popout" data-bind="attr: { 'data-sheet': path.indexOf('http://') === -1 ? 'edit_link_data' : 'create_custom_link' }" title="Edit link"><span></span></a>
+						<a href="#" class="item" data-bind="css: { 'front-page': $data.front && front }"><span class="in"><span data-bind="attr: { class: 'icon16 label-' + ($data.auto && $data.auto === 'rss' ? 'rss' : 'chain') }, text: label"></span><span class="front-mark">(front<span class="front-hidden">&nbsp;/&nbsp;hidden</span>)</span></span></a>
+
+					</li>
+					<!-- /ko -->
+					<li class="create_new">
+						<a href="#" data-sheet="create_link" data-event="edit_nav_group" class="item" title="Add or remove links from this navigation group"><span class="in"><span class="icon16 label-add-link">Add links</span></span></a>
+					</li>
+				</ol>
+			</div>
+
+			<!-- ko foreach: { data: site.navigation.groups, afterRender: $parent.events.navigation_sort.bind($parent) } -->
+
+			<div class="col-block">
+
+				<div class="col-head" data-event="toggle_visibility">
+					<span class="in">
+						<a href="#" class="arrow-toggle open"></a>
+						<h6><a href="#" class="fold" data-bind="text: label"></a></h6>
+					</span>
+				</div>
+
+				<ol class="lib-nav" data-bind="attr: { id: 'group-' + $data.key }">
+
+					<!-- ko if: items.length -->
+
+						<!-- ko foreach: items -->
+						<li data-event="nav_from_link" data-bind="attr: { id: $parent.key + '_nav_item_' + $index() }, css: { selected: path === $parents[1].state.iframe.rel_path() || $data.front && front && $parents[1].state.iframe.rel_path() === '/'  }">
+							<a href="#" class="item-edit ui-droppable" data-event="toggle_gear_popout" data-bind="attr: { 'data-group': $parent.key, 'data-sheet': path.indexOf('http://') === -1 ? 'edit_link_data' : 'create_custom_link' }" title="Edit link"><span></span></a>
+							<a href="#" class="item" title="Click to view this page"><span class="in"><span data-bind="attr: { class: 'icon16 label-' + ($data.auto && $data.auto === 'rss' ? 'rss' : 'chain') }, text: label"></span></span></a>
+						</li>
+						<!-- /ko -->
+
+					<!-- /ko -->
+
+					<!-- ko ifnot: items.length -->
+						<li class="note">
+							<span class="in"><span class="noicon">No links assigned to this group</span></span>
+						</li>
+					<!-- /ko -->
+
+					<li data-bind="attr: { 'data-group': key }" class="create_new">
+						<a href="#" data-sheet="create_link" data-event="edit_nav_group" class="item" title="Add or remove links from this navigation group"><span class="in"><span class="icon16 label-add-link">Add links</span></span></a>
+					</li>
+				</ol>
+
+			</div>
+
+			<!-- /ko -->
+
+		</div>
+
+		<div class="col-foot">
+			<ol class="lib-nav single">
+				<li data-bind="css { selected: state.mid_col() !== 'preview' }">
+					<hr>
+					<a href="#" class="item single" data-event="toggle_css_editor" title="Toggle CSS editor">
+						<span class="in">
+							<span class="icon16 label-css">Custom CSS</span>
+						</span>
+					</a>
+				</li>
+				<li>
+					<hr>
+					<a href="#" class="item single" data-sheet="draft_history" data-event="toggle_sheet" title="View draft history">
+						<span class="in">
+							<span class="icon16 label-recent">Draft history</span>
+						</span>
+					</a>
+				</li>
+				<li>
+					<hr>
+					<a href="#" class="item single" data-event="reset_nav" title="Reset navigation links">
+						<span class="in">
+							<span class="icon16 label-reset">Links reset</span>
+						</span>
+					</a>
+				</li>
+			</ol>
+		</div>
+
+	</div>
+
+	<!--
+		THEMES VIEW
+	-->
+
+	<div id="siteui-lcol-themes">
+
+		<div id="themes-browse">
+
+			<div id="mid-menu-top" class="col-top">
+				<h5>Themes</h5>
+			</div>
+
+			<div id="theme-selection" class="top-off" style="position:relative" data-bind="scrollbar: true">
+
+				<ol class="theme-scroll" data-bind="visible: $parent.themes().length">
+
+					<!-- ko foreach: $parent.themes -->
+
+					<li class="loading" data-bind="css: { live: path === $parent.published_theme(), current: path === $parent.drafts.current.theme.path() }">
+						<a class="theme-img" data-bind="attr: { href: '#/site/themes/preview:' + path }" title="Preview theme with your content"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" width="260" data-bind="attr: { id: 'preview-thumb-' + path, 'data-src': preview + '?' + version, style: 'height:' + Math.round(260 / preview_aspect) + 'px' }" class="preview" /></a>
+						<span class="theme-info">
+							<span class="theme-title">
+								<h2 data-bind="text: name"></h2>
+								<span data-bind="text: version"></span>
+								<span class="theme_state draft">Draft</span><span class="theme_state live">Live</span>
+							</span>
+							<span data-bind="text: $parent.truncate(description,140)"></span>
+						</span>
+					</li>
+
+					<!-- /ko -->
+
+					<li>
+						<a href="#/store/themes" class="theme-store-link" title="Download more themes from the Koken Store" class="">
+							<span>
+								<h3>More themes</h3>
+								<p>Click here to browse the Koken Store</p>
+							</span>
+						</a>
+					</li>
+
+				</ol>
+
+			</div>
+
+			<div id="theme-preview-wrap">
+
+			<div id="theme-preview-info" class="l-col">
+
+				<div class="inside">
+
+					<!-- ko if: state.preview_obj().name -->
+					<!-- ko with: state.preview_obj() -->
+					<div class="offset">
+						<p style="padding:3px 0;">
+							<a href="#" data-event="init_draft" class="button c0 fright" title="Use this theme" id="use_theme">Use theme</a>
+							<a href="#/site/themes" class="button" title="Back to all themes">Browse all themes</a>
+						</p>
+					</div>
+
+					<hr>
+
+					<div class="offset">
+						<span class="theme-info">
+							<span class="theme-title">
+								<h2 data-bind="text: name"></h2>
+							</span>
+							<p>by <a data-bind="attr: { href: author.link.indexOf('https://store.koken.me') === 0 ? '#/store' + author.link.replace('https://store.koken.me', '') : author.link }, text: author.name" target="_blank"></a>
+							</p>
+							<p data-bind="text: description" style="margin:13px 0;"></p>
+							<p>
+								<strong>Version:</strong> <span data-bind="text: version"></span>
+							</p>
+						</span>
+					</div>
+
+					<!-- ko if: $data.demo || $data.documentation -->
+					<hr style="margin-top:15px;margin-bottom:15px;">
+					<div class="offset">
+						<ul class="button-row">
+							<!-- ko if: $data.demo -->
+							<li><a class="button sm" data-bind="attr: { href: demo }, text: 'Live demonstration'" title="View demo" onclick="return !window.open(this.href);" ></a></li>
+							<!-- /ko -->
+							<!-- ko if: $data.documentation -->
+							<li><a class="button sm" data-bind="attr: { href: documentation.indexOf('https://store.koken.me') === 0 ? '#/store' + documentation.replace('https://store.koken.me', '') : documentation, onclick: documentation.indexOf('https://store.koken.me') === 0 ? '' : 'return !window.open(this.href)' }, text: 'Help documentation'" title="View demo"></a></li>
+							<!-- /ko -->
+						</ul>
+					</div>
+					<!-- /ko -->
+					<!-- /ko -->
+					<!-- /ko -->
+
+				</div>
+
+			</div> <!-- close l-col -->
+
+			<div id="preview-frame-wrap">
+
+				<iframe id="preview-frame" src=""></iframe>
+
+				<!-- ko if: state.preview_obj().name -->
+				<!-- ko with: state.preview_obj() -->
+				<div id="siteui-msg-theme-preview" class="site-view-msg">
+					<div class="w">
+						<span class="site_preview_icon"></span>
+						Theme preview for "<span data-bind="text: name"></span>" <strong><span data-bind=""></span></strong>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#/site/draft" class="button c0 tiny" title="Cancel preview and return to saved draft">Clear</a>
+					</div>
+				</div>
+				<!-- /ko -->
+				<!-- /ko -->
+			</div>
+
+			</div>
+
+		</div> <!-- close themes-browse -->
+
+	</div> <!-- close siteui-lcol-themes -->
+
+	<div id="siteui-error" data-bind="visible: error() && state.type() !== 'themes'">
+
+		<div class="cmsg dark">
+			<div class="cmsg-wrap">
+				<div class="cmsg-msg">
+					<h1>Site view not available</h1>
+					<p>The theme you have selected does not have a valid info.json file.<br>Please correct the problem or <a href="#/site/themes" title="Choose a site theme">choose another theme</a>.</p>
+				</div>
+			</div>
+		</div>
+
+	</div> <!-- close #siteui-error -->
+
+<!--
+	BOTTOM ROW
+-->
+
+<div id="siteui-bot-row" data-bind="attr: { class: 'col-bot' + ( ( state.expand() === true ) ? ' expand' : '' )}">
+
+	<div class="ui-row">
+
+			<ul id="siteui-view-toggle" class="button-row-joined" data-bind="visible: !error()">
+				<li>
+					<a class="button-ui emb" href="#/site/themes" data-bind="css: { selected: state.type() == 'themes' }" title="Browse themes">Themes</a>
+				</li>
+				<li>
+					<a class="button-ui emb" data-bind="attr: { href: '#/site/draft/' + state.sidebar() + '/url:' + state.iframe.rel_path() }, css: { selected: state.type() == 'draft' }" title="Edit current draft" id="edit_current_draft">Draft</a>
+				</li>
+				<li>
+					<a class="button-ui emb" href="#/site/live" data-bind="css: { selected: state.type() == 'live' }" title="View live site">Live</a>
+				</li>
+			</ul>
+
+			<div class="r">
+				<div id="siteui-publish-buttons" data-bind="visible: state.type() == 'draft' && !error()" class="bttn">
+					<a href="#" data-event="publish" data-bind="css: { disabled: site.published() }, text: site.published() ? 'No changes' : 'Publish changes'" class="button-ui emb c0" title="Make draft changes live on your site"></a>
+				</div>
+			</div>
+	</div>
+
+</div> <!-- close #siteui-bot-row -->
+
+<!-- /ko -->
+</script>
+<!-- @END Site Interface Template -->
+
+<!-- @BEGIN Automagical form elements for theme defined settings -->
+
+<script id="render_option" type="text/html">
+<div data-bind="visible: prefix === 'pulse_' || ($root.interfaces.site.observers.state.sidebar() === 'theme' && !$data.setting.scope) || ($root.interfaces.site.observers.state.sidebar() === 'page' && $data.setting.scope && $.inArray( $root.interfaces.site.observers.state.loaded_page().path, $data.setting.scope ) !== -1), attr: { class: 'col-row theme_option ' + ( $data.setting.dependencies ? ' dependent': '' ) + ( $data.setting.control_first ? ' single': '' ) + ($data.setting.plugin_enabler ? ' plugin-enabler' : '') + ($data.setting.separate_lines ? ' row-split' : '' ) }">
+	<div class="label">
+		<!-- ko if: setting.type === 'boolean' -->
+		<label data-bind="text: setting.label, attr: { for: prefix + 'option_' + setting.key }">
+		</label>
+		<!-- /ko -->
+		<!-- ko ifnot: setting.type === 'boolean' -->
+		<span data-bind="text: setting.label"></span>
+		<!-- /ko -->
+	</div>
+	<div class="value" data-bind="css: { rangeinput: $data.setting.type === 'slider', coloralpharow: $data.setting.type === 'color' && $data.setting.with_alpha }">
+		<!-- ko template: { name: 'form_' + setting.type } --><!-- /ko --><!-- ko if: $data.setting.suffix --><span class="suffix" data-bind="text: '&nbsp;' + setting.suffix, css: { slider: $data.setting.type === 'slider' }"></span><!-- /ko -->
+	</div>
+
+	<!-- ko if: setting.note -->
+	<span data-bind="text: setting.note, attr: { class: 'note' + ( setting.note_align ? ' ' + setting.note_align : '' ) }"></span>
+	<!-- /ko -->
+
+	<!-- ko if: setting.type === 'color' && $data.setting.with_alpha -->
+	<div class="alpha_slider">
+		<strong>Opacity</strong>
+		<input class="coloralpha" type="range" max="100" min="0" data-bind="attr: { name: setting.key }, value: Math.round(setting.value.match(/\,\s?([\d\.]+)\)$/)[1]*100)" /> <span style="vertical-align:top" data-bind="attr: { class: 'display_value ' + setting.key }, text: Math.round(setting.value.match(/\,\s?([\d\.]+)\)$/)[1]*100)"></span>
+	</div>
+	<!-- /ko -->
+
+</div>
+
+<!-- ko if: setting.key === 'transition_type' && $root.interfaces.app.observers.user_pulse_transitions_settings().length -->
+	<!-- ko foreach: $root.interfaces.app.observers.user_pulse_transitions_settings -->
+		<!-- ko template: { name: 'render_option', data: { prefix: 'pulse_', setting: $data } } --><!-- /ko -->
+	<!-- /ko -->
+<!-- /ko -->
+</script>
+
+<script id="theme_options" type="text/html">
+	<!-- ko if: $data.settings.length -->
+
+	<!-- ko foreach: $data.settings -->
+
+	<div class="group-wrap" data-bind="css: { dependent: $data.dependencies } ">
+
+	<div class="col-sep">
+		<div class="label">
+			<span data-bind="attr: { class: !$data.icon || icon === 'default' ? 'icon' : 'icon ' + icon }"></span>
+			<h5 data-bind="text: group"></h5>
+		</div>
+		<hr>
+	</div>
+
+	<!-- ko if: settings.length -->
+	<!-- ko foreach: settings -->
+
+	<!-- ko if: $data.group -->
+
+	<div data-bind="css: { dependent: $data.dependencies } ">
+
+	<div class="col-head" data-event="toggle_visibility">
+		<span class="in">
+			<a href="#" class="arrow-toggle fold" data-bind="css: { open: !$data.collapse }"></a>
+			<h6><a href="#" class="fold" data-bind="text: group"></a></h6>
+		</span>
+	</div>
+
+	<div class="col-group" data-bind="visible: !$data.collapse">
+		<!-- ko if: settings.length -->
+		<!-- ko foreach: settings -->
+			<!-- ko template: { name: 'render_option', data: { prefix: $parents[2].prefix, setting: $data } } --><!-- /ko -->
+		<!-- /ko -->
+		<!-- /ko -->
+	</div>
+
+	</div>
+
+	<!-- /ko -->
+
+	<!-- ko ifnot: $data.group -->
+		<!-- ko template: { name: 'render_option', data: { prefix: $parents[1].prefix, setting: $data } } --><!-- /ko -->
+	<!-- /ko -->
+
+	<!-- /ko -->
+	<!-- /ko -->
+
+	<!-- /ko -->
+
+	</div>
+
+	<!-- /ko -->
+
+	<!-- ko ifnot: $data.settings.length -->
+	<div class="col-row null" data-bind="text: 'No settings for this ' + ( $parent.name ? 'page' : 'theme' )">
+	</div>
+	<!-- /ko -->
+
+	<!-- /ko -->
+</script>
+<!-- @END Automagical form elements -->
+
+<!-- @BEGIN Draft History Sheet -->
+<script id="draft_history_sheet" type="text/html">
+<div class="sheet-head">
+
+	<div class="sheet-wrap">
+
+		<h1>Draft history</h1>
+
+		<p>
+			Themes are automatically saved as drafts. Every theme you use is backed-up so you are free to work on new site designs or preview themes without affecting your live site.
+		</p>
+
+	</div>
+
+</div>
+
+<hr class="single">
+
+<div class="media-browse-middle sheet-middle">
+
+	<div id="draft_hist_list" data-bind="scrollbar: true">
+
+		<section>
+
+			<div class="sheet-wrap">
+
+				<ol class="sheet-theme-drafts">
+
+					<!-- ko with: $parent.drafts.current -->
+					<li class="current">
+
+						<span class="save-date">Last saved:
+						<!-- ko template: { name:'moment', data: modified_on } --><!-- /ko -->
+						</span>
+
+						<!-- ko if: published() && !$parents[1].site.published() -->
+						<span class="hover-bttns">
+							<span class="wrap">
+								<a href="#" data-event="revert" class="theme-bttn" title="Revert draft to live site and lose changes">Revert to live site</a>
+							</span>
+						</span>
+						<!-- /ko -->
+
+						<span class="theme-img">
+							<img data-bind="attr : { src: theme.preview }" class="flex preview" />
+						</span>
+
+						<span class="theme-title">
+							<h4 class="current" data-bind="text: theme.name"></h4>
+							<span class="theme_state draft">Draft</span>
+						</span>
+
+					</li>
+					<!-- /ko -->
+
+					<!-- ko if: $parent.drafts.history().length -->
+
+						<!-- ko foreach: $parent.drafts.history -->
+
+						<li>
+
+							<span class="save-date">Last saved <span data-bind="text: moment( modified_on * 1000 ).fromNow()"></span>
+							</span>
+
+							<span class="hover-bttns">
+								<span class="wrap">
+									<a href="#" data-bind="" class="theme-bttn" data-event="switch_draft" title="Make this the current draft">Make current draft</a>
+									<a href="#" class="remcover" id="theme-draft-delete" data-bind="visible: !published" data-event="delete_draft" title="Delete this draft"></a>
+								</span>
+							</span>
+							<span class="theme-img">
+								<img data-bind="attr : { src: theme.preview }" class="flex preview" />
+							</span>
+
+							<h4 data-bind="text: theme.name"></h4>
+
+						</li>
+
+						<!-- /ko -->
+
+					<!-- /ko -->
+
+				</ol>
+
+			</div>
+
+		</section>
+
+	</div> <!-- close #draft_hist_list -->
+
+</div> <!-- close .sheet-middle -->
+
+<div class="sheet-actions">
+
+	<hr>
+
+	<div class="sheet-wrap">
+
+		<div class="sheet-action">
+			<button class="button lg c0" data-event="toggle_sheet" data-sheet="draft_history">Done</button>
+		</div>
+
+	</div>
+
+</div>
+
+<!-- /ko -->
+</script>
+<!-- @END Draft History Sheet -->
+
+<!-- @BEGIN Add Links Sheet -->
+<script id="create_link_sheet" type="text/html">
+
+<div class="sheet-head">
+
+	<div class="sheet-wrap">
+
+		<h1>Add links</h1>
+
+		<p>
+			Add or remove links from this navigation group
+		</p>
+
+	</div>
+
+</div>
+
+<hr class="single" />
+
+<div id="sheetview-edit-links" class="sheet-middle media-browse-middle" data-bind="scrollbar: true">
+
+	<section data-bind="visible: $parent.albums_full().length">
+
+		<div class="sheet-wrap">
+
+			<div class="col-head top_up" data-event="toggle_visibility">
+				<span class="in">
+					<a href="#" class="arrow-toggle open"></a>
+					<h6>
+						<a href="#" title="" class="fold">
+							Collections
+						</a>
+					</h6>
+				</span>
+			</div>
+
+			<div class="section-content">
+				<ul data-event="" id="" class="sheet-link-opts" data-bind="template: { name: 'edit_link_album_list_item', foreach: $parent.albums_full }">
+				</ul>
+			</div>
+
+		</div>
+
+	</section>
+
+	<section>
+
+		<div class="sheet-wrap">
+			<!-- ko if: $parents.length && $parents[1].site.url_data.home() -->
+			<div class="col-head" data-event="toggle_visibility">
+				<span class="in">
+					<a href="#" class="arrow-toggle open"></a>
+					<h6>
+						<a href="#" title="" class="fold">
+							Templates
+						</a>
+					</h6>
+				</span>
+			</div>
+
+			<div class="section-content">
+				<ul class="sheet-link-opts">
+					<li data-bind="visible: $.inArray('albums', $parents[1].site.navigation.active.supported_sections()) !== -1">
+						<span class="preview">
+							<span class="icon48 icon-page-albums"></span>
+						</span>
+						<span class="info">
+							<h3>Albums <span data-bind="visible: $parents[1].site.url_data['album'].plural() !== 'Albums', text: '(' + $parents[1].site.url_data['album'].plural() + ')'"></span></h3>
+							<span class="desc">Displays all top public albums and sets</span>
+						</span>
+						<span class="toggle">
+							<!-- ko if: $.inArray('albums', $parents[1].site.navigation.active.sections()) !== -1 -->
+							<span class="button-plus">
+								<a data-sheet="source_filter" data-event="add_index_link" data-index="albums" href="#" class="button opts c0 plus" title="Create another page using this template"><span></span></a><a data-section="albums" data-event="toggle_link_sections" href="#" class="button opts c0" title="Remove link to this template">Added</a>
+							</span>
+							<!-- /ko -->
+							<!-- ko if: $.inArray('albums', $parents[1].site.navigation.active.sections()) === -1 -->
+							<a data-section="albums" data-event="toggle_link_sections" href="#" class="button opts" title="Add link to this template">Add</a>
+							<!-- /ko -->
+						</span>
+					</li>
+
+					<li data-bind="visible: $.inArray('sets', $parents[1].site.navigation.active.supported_sections()) !== -1">
+						<span class="preview">
+							<span class="icon48 icon-page-set"></span>
+						</span>
+						<span class="info">
+							<h3>Sets <span data-bind="visible: $parents[1].site.url_data['set'].plural() !== 'Sets', text: '(' + $parents[1].site.url_data['set'].plural() + ')'"></span></h3>
+							<span class="desc">Displays all top public sets</span>
+						</span>
+						<span class="toggle">
+							<!-- ko if: $.inArray('sets', $parents[1].site.navigation.active.sections()) !== -1 -->
+							<span class="button-plus">
+								<a data-sheet="source_filter" data-event="add_index_link" data-index="sets" href="#" class="button opts c0 plus" title="Create another page using this template"><span></span></a><a data-section="sets" data-event="toggle_link_sections" href="#" class="button opts c0" title="Remove link to this template">Added</a>
+							</span>
+							<!-- /ko -->
+							<!-- ko if: $.inArray('sets', $parents[1].site.navigation.active.sections()) === -1 -->
+							<a data-section="sets" data-event="toggle_link_sections" href="#" class="button opts" title="Add link to this template">Add</a>
+							<!-- /ko -->
+						</span>
+					</li>
+
+					<li data-bind="visible: $.inArray('contents', $parents[1].site.navigation.active.supported_sections()) !== -1">
+						<span class="preview">
+							<span class="icon48 icon-page-contents"></span>
+						</span>
+						<span class="info">
+							<h3>Content <span data-bind="visible: $parents[1].site.url_data['content'].plural() !== 'Content', text: '(' + $parents[1].site.url_data['content'].plural() + ')'"></span></h3>
+							<span class="desc">Displays the latest published images and videos</span>
+						</span>
+						<span class="toggle">
+							<!-- ko if: $.inArray('contents', $parents[1].site.navigation.active.sections()) !== -1 -->
+							<span class="button-plus">
+								<a data-sheet="source_filter" data-event="add_index_link" data-index="contents" href="#" class="button opts c0 plus" title="Create another page using this template"><span></span></a><a data-section="contents" data-event="toggle_link_sections" href="#" class="button opts c0" title="Remove link to this template">Added</a>
+							</span>
+							<!-- /ko -->
+							<!-- ko if: $.inArray('contents', $parents[1].site.navigation.active.sections()) === -1 -->
+							<a data-section="contents" data-event="toggle_link_sections" href="#" class="button opts" title="Add link to this template">Add</a>
+							<!-- /ko -->
+						</span>
+					</li>
+
+					<li data-bind="visible: $.inArray('essays', $parents[1].site.navigation.active.supported_sections()) !== -1">
+						<span class="preview">
+							<span class="icon48 icon-page-essays"></span>
+						</span>
+						<span class="info">
+							<h3>Essays <span data-bind="visible: $parents[1].site.url_data['essay'].plural() !== 'Essays', text: '(' + $parents[1].site.url_data['essay'].plural() + ')'"></span></h3>
+							<span class="desc">Displays all published essays</span>
+						</span>
+						<span class="toggle">
+							<!-- ko if: $.inArray('essays', $parents[1].site.navigation.active.sections()) !== -1 -->
+							<span class="button-plus">
+								<a data-sheet="source_filter" data-event="add_index_link" data-index="essays" href="#" class="button opts c0 plus" title="Create another page using this template"><span></span></a><a data-section="essays" data-event="toggle_link_sections" href="#" class="button opts c0" title="Remove link to this template">Added</a>
+							</span>
+							<!-- /ko -->
+							<!-- ko if: $.inArray('essays', $parents[1].site.navigation.active.sections()) === -1 -->
+							<a data-section="essays" data-event="toggle_link_sections" href="#" class="button opts" title="Add link to this template">Add</a>
+							<!-- /ko -->
+						</span>
+					</li>
+
+					<li data-bind="visible: $.inArray('favorites', $parents[1].site.navigation.active.supported_sections()) !== -1">
+						<span class="preview">
+							<span class="icon48 icon-page-favorites"></span>
+						</span>
+						<span class="info">
+							<h3>Favorites <span data-bind="visible: $parents[1].site.url_data['favorite'].plural() !== 'Favorites', text: '(' + $parents[1].site.url_data['favorite'].plural() + ')'"></span></h3>
+							<span class="desc">Displays all favorite images and videos</span>
+						</span>
+						<span class="toggle">
+							<!-- ko if: $.inArray('favorites', $parents[1].site.navigation.active.sections()) !== -1 -->
+							<span class="button-plus">
+								<a data-sheet="source_filter" data-event="add_index_link" data-index="favorites" href="#" class="button opts c0 plus" title="Create another page using this template"><span></span></a><a data-section="favorites" data-event="toggle_link_sections" href="#" class="button opts c0" title="Remove link to this template">Added</a>
+							</span>
+							<!-- /ko -->
+							<!-- ko if: $.inArray('favorites', $parents[1].site.navigation.active.sections()) === -1 -->
+							<a data-section="favorites" data-event="toggle_link_sections" href="#" class="button opts" title="Add link to this template">Add</a>
+							<!-- /ko -->
+						</span>
+					</li>
+
+					<li data-bind="visible: $.inArray('timeline', $parents[1].site.navigation.active.supported_sections()) !== -1">
+						<span class="preview">
+							<span class="icon48 icon-page-archives"></span>
+						</span>
+						<span class="info">
+							<h3>Timeline <span data-bind="visible: $parents[1].site.url_data['timeline'].plural() !== 'Timeline', text: '(' + $parents[1].site.url_data['timeline'].plural() + ')'"></span></h3>
+							<span class="desc">Displays an unified stream of your latest essays, albums and content</span>
+						</span>
+						<span class="toggle">
+							<!-- ko if: $.inArray('timeline', $parents[1].site.navigation.active.sections()) !== -1 -->
+							<span class="button-plus">
+								<a data-sheet="source_filter" data-event="add_index_link" data-index="timeline" href="#" class="button opts c0 plus" title="Create another page using this template"><span></span></a><a data-section="timeline" data-event="toggle_link_sections" href="#" class="button opts c0" title="Remove link to this template">Added</a>
+							</span>
+							<!-- /ko -->
+							<!-- ko if: $.inArray('timeline', $parents[1].site.navigation.active.sections()) === -1 -->
+							<a data-section="timeline" data-event="toggle_link_sections" href="#" class="button opts" title="Add link to this template">Add</a>
+							<!-- /ko -->
+						</span>
+					</li>
+
+					<li data-bind="visible: $.inArray('tags', $parents[1].site.navigation.active.supported_sections()) !== -1">
+						<span class="preview">
+							<span class="icon48 icon-page-tags"></span>
+						</span>
+						<span class="info">
+							<h3>Tags <span data-bind="visible: $parents[1].site.url_data['tag'].plural() !== 'Tags', text: '(' + $parents[1].site.url_data['tag'].plural() + ')'"></span></h3>
+							<span class="desc">Displays all tags</span>
+						</span>
+						<span class="toggle">
+							<a data-section="tags" data-event="toggle_link_sections" href="#" class="button opts" data-bind="css: { c0: $.inArray('tags', $parents[1].site.navigation.active.sections()) !== -1, c1: $.inArray('tags', $parents[1].site.navigation.active.sections()) === -1 }, text: $.inArray('tags', $parents[1].site.navigation.active.sections()) !== -1 ? 'Added' : 'Add'"></a>
+						</span>
+					</li>
+
+					<li data-bind="visible: $.inArray('categories', $parents[1].site.navigation.active.supported_sections()) !== -1">
+						<span class="preview">
+							<span class="icon48 icon-page-categories"></span>
+						</span>
+						<span class="info">
+							<h3>Categories <span data-bind="visible: $parents[1].site.url_data['category'].plural() !== 'Categories', text: '(' + $parents[1].site.url_data['category'].plural() + ')'"></span></h3>
+							<span class="desc">Displays all categories</span>
+						</span>
+						<span class="toggle">
+							<a data-section="categories" data-event="toggle_link_sections" href="#" class="button opts" data-bind="css: { c0: $.inArray('categories', $parents[1].site.navigation.active.sections()) !== -1, c1: $.inArray('categories', $parents[1].site.navigation.active.sections()) === -1 }, text: $.inArray('categories', $parents[1].site.navigation.active.sections()) !== -1 ? 'Added' : 'Add'"></a>
+						</span>
+					</li>
+
+					<!-- ko foreach: $parent.site.templates_grouped.indexes -->
+					<li>
+						<span class="toggle">
+							<a data-sheet="source_filter" data-event="add_index_link" href="#" class="button opts">Add</a>
+						</span>
+						<span class="preview">
+							<span class="icon48" data-bind="attr: { class: 'icon48 icon-page-' + (path === 'index' ? 'page' : ( path.indexOf('featured') === 0 ? 'featured' : $data.icon || source ) ) }"></span>
+						</span>
+						<span class="info">
+							<h3 data-bind="text: name"></h3>
+							<span class="desc" data-bind="text: $data.description || 'No description available'"></span>
+						</span>
+					</li>
+					<!-- /ko -->
+					<!-- ko if: $parent.site.templates_grouped.specials().length -->
+					<!-- ko foreach: $parent.site.templates_grouped.specials -->
+					<li>
+						<span class="toggle">
+							<a href="#" data-event="toggle_link_specials" class="button opts" data-bind="css: { c0: $.inArray(path, $parents[1].site.navigation.active.internals()) !== -1, c1: $.inArray(path, $parents[1].site.navigation.active.internals()) === -1 }, text: $.inArray(path, $parents[1].site.navigation.active.internals()) !== -1 ? 'Added' : 'Add', attr: { title: $.inArray(path, $parents[1].site.navigation.active.internals()) !== -1 ? 'Remove link to this template' : 'Add link to this template' }"></a>
+						</span>
+						<span class="preview">
+							<span class="icon48 icon-page-custom"></span>
+						</span>
+						<span class="info">
+							<h3 data-bind="text: name"></h3>
+							<span class="desc" data-bind="text: $data.description || 'No description available'"></span>
+						</span>
+					</li>
+					<!-- /ko -->
+					<!-- /ko -->
+				</ul>
+			</div>
+			<!-- /ko -->
+		</div>
+
+	</section>
+
+	<!-- ko if: $parent.pages().length && $parent.site.has_page_template() -->
+	<section>
+
+		<div class="sheet-wrap">
+
+			<div class="col-head" data-event="toggle_visibility">
+				<span class="in">
+					<a href="#" class="arrow-toggle open"></a>
+					<h6>
+						<a href="#" title="" class="fold">
+							Pages
+						</a>
+					</h6>
+				</span>
+			</div>
+
+			<div class="section-content">
+				<ul id="page_link_list" class="sheet-link-opts">
+					<!-- ko foreach: $parent.pages -->
+					<li>
+						<span class="preview">
+							<span class="icon48 icon-page-custom"></span>
+						</span>
+						<span class="info">
+							<h3 data-bind="text: $root.truncate(title, 70)"></h3>
+							<span class="desc">Last modified <span data-bind="text: $root.format_date(modified_on.timestamp, 'MMMM D YYYY')"></span></span>
+						</span>
+						<span class="toggle">
+							<a data-event="toggle_link_pages" href="#" class="button opts" data-bind="css: { c0: $root.multi_in_array([ id, slug ], $parents[1].site.navigation.active.pages()) !== -1, c1: $root.multi_in_array([ id, slug ], $parents[1].site.navigation.active.pages()) === -1 }, text: $root.multi_in_array([ id, slug ], $parents[1].site.navigation.active.pages()) !== -1 ? 'Added' : 'Add', attr: { title: $root.multi_in_array([ id, slug ], $root.interfaces.site.observers.site.navigation.active.pages()) !== -1 ? 'Remove link to this page' : 'Add link to this page' }"></a>
+						</span>
+					</li>
+					<!-- /ko -->
+				</ul>
+			</div>
+
+		</div>
+
+	</section>
+	<!-- /ko -->
+
+	<!-- ko if: ($parent.user.twitter() && $root.user.twitter().length) || ($parent.user.facebook() && $root.user.facebook().length) || ($parent.user.google() && $parent.user.google().length) -->
+	<section>
+
+		<div class="sheet-wrap">
+
+			<div class="col-head" data-event="toggle_visibility">
+				<span class="in">
+					<a href="#" class="arrow-toggle open"></a>
+					<h6>
+						<a href="#" title="" class="fold">
+							Elsewhere
+						</a>
+					</h6>
+				</span>
+			</div>
+
+			<div class="section-content">
+				<ul data-event="" id="" class="sheet-link-opts">
+					<!-- ko if: $parent.user.twitter() && $parent.user.twitter().length -->
+					<li>
+						<span class="toggle">
+							<a href="#" data-service="Twitter" data-event="toggle_link_profiles" class="button opts" data-bind="css: { c0: $.inArray('twitter', $parents[1].site.navigation.active.profiles()) !== -1, c1: $.inArray('twitter', $parents[1].site.navigation.active.profiles()) === -1 }, text: $.inArray('twitter', $parents[1].site.navigation.active.profiles()) !== -1 ? 'Added' : 'Add', attr: { title: $.inArray('twitter', $parents[1].site.navigation.active.profiles()) !== -1 ? 'Remove link to your Twitter profile' : 'Add link to your Twitter profile' }"></a>
+						</span>
+						<span class="preview">
+							<span class="icon48 icon-page-twitter"></span>
+						</span>
+						<span class="info">
+							<h3>Twitter</h3>
+							<span class="desc">Add a link to your Twitter profile</span>
+						</span>
+					</li>
+					<!-- /ko -->
+
+					<!-- ko if: $parent.user.facebook() && $parent.user.facebook().length -->
+					<li>
+						<span class="toggle">
+							<a href="#" data-service="Facebook" data-event="toggle_link_profiles" class="button opts" data-bind="css: { c0: $.inArray('facebook', $parents[1].site.navigation.active.profiles()) !== -1, c1: $.inArray('facebook', $parents[1].site.navigation.active.profiles()) === -1 }, text: $.inArray('facebook', $parents[1].site.navigation.active.profiles()) !== -1 ? 'Added' : 'Add', attr: { title: $.inArray('facebook', $parents[1].site.navigation.active.profiles()) !== -1 ? 'Remove link to your Facebook profile' : 'Add link to your Facebook profile' }"></a>
+						</span>
+						<span class="preview">
+							<span class="icon48 icon-page-fb"></span>
+						</span>
+						<span class="info">
+							<h3>Facebook</h3>
+							<span class="desc">Add a link to your Facebook profile</span>
+						</span>
+					</li>
+					<!-- /ko -->
+
+					<!-- ko if: $parent.user.google() && $parent.user.google().length -->
+					<li>
+						<span class="toggle">
+							<a href="#" data-service="Google" data-event="toggle_link_profiles" class="button opts" data-bind="css: { c0: $.inArray('google', $parents[1].site.navigation.active.profiles()) !== -1, c1: $.inArray('google', $parents[1].site.navigation.active.profiles()) === -1 }, text: $.inArray('google', $parents[1].site.navigation.active.profiles()) !== -1 ? 'Added' : 'Add', attr: { title: $.inArray('google', $parents[1].site.navigation.active.profiles()) !== -1 ? 'Remove link to your Google+ profile' : 'Add link to your Google+ profile' }"></a>
+						</span>
+						<span class="preview">
+							<span class="icon48 icon-page-gplus"></span>
+						</span>
+						<span class="info">
+							<h3>Google+</h3>
+							<span class="desc">Add a link to your Google+ profile</span>
+						</span>
+					</li>
+					<!-- /ko -->
+				</ul>
+			</div>
+
+		</div>
+
+	</section>
+	<!-- /ko -->
+
+	<!-- ko if: $parents.length && $parents[1].site.url_data.home() -->
+	<section>
+
+		<div class="sheet-wrap">
+
+			<div class="col-head" data-event="toggle_visibility">
+				<span class="in">
+					<a href="#" class="arrow-toggle open"></a>
+					<h6>
+						<a href="#" title="" class="fold">
+							RSS
+						</a>
+					</h6>
+				</span>
+			</div>
+
+			<div class="section-content">
+				<ul class="sheet-link-opts">
+					<li>
+						<span class="toggle">
+							<a href="#" data-type="essay" data-event="toggle_link_rss" class="button opts" data-bind="css: { c0: $.inArray('essay', $parents[1].site.navigation.active.rss()) !== -1, c1: $.inArray('essay', $parents[1].site.navigation.active.rss()) === -1 }, text: $.inArray('essay', $parents[1].site.navigation.active.rss()) !== -1 ? 'Added' : 'Add', attr: { title: $.inArray('essay', $parents[1].site.navigation.active.rss()) !== -1 ? 'Remove link to the Essays RSS feed' : 'Add link to this Essays RSS feed' }"></a>
+						</span>
+						<span class="preview">
+							<span class="icon48 icon-page-rss"></span>
+						</span>
+						<span class="info">
+							<h3 data-bind="text: $parents[1].site.url_data['essay'].plural()"></h3>
+							<span class="desc" data-bind="text: 'RSS feed for published ' + $parents[1].site.url_data['essay'].plural().toLowerCase()"></span>
+						</span>
+					</li>
+
+					<li>
+						<span class="toggle">
+							<a href="#" data-type="content" data-event="toggle_link_rss" class="button opts" data-bind="css: { c0: $.inArray('content', $parents[1].site.navigation.active.rss()) !== -1, c1: $.inArray('content', $parents[1].site.navigation.active.rss()) === -1 }, text: $.inArray('content', $parents[1].site.navigation.active.rss()) !== -1 ? 'Added' : 'Add', attr: { title: $.inArray('content', $parents[1].site.navigation.active.rss()) !== -1 ? 'Remove link to the Content RSS feed' : 'Add link to this Content RSS feed' }"></a>
+						</span>
+						<span class="preview">
+							<span class="icon48 icon-page-rss"></span>
+						</span>
+						<span class="info">
+							<h3 data-bind="text: $parents[1].site.url_data['content'].plural()"></h3>
+							<span class="desc" data-bind="text: 'RSS feed for published ' + $parents[1].site.url_data['content'].plural().toLowerCase()"></span>
+						</span>
+					</li>
+
+					<li>
+						<span class="toggle">
+							<a href="#" data-type="timeline" data-event="toggle_link_rss" class="button opts" data-bind="css: { c0: $.inArray('timeline', $parents[1].site.navigation.active.rss()) !== -1, c1: $.inArray('timeline', $parents[1].site.navigation.active.rss()) === -1 }, text: $.inArray('timeline', $parents[1].site.navigation.active.rss()) !== -1 ? 'Added' : 'Add', attr: { title: $.inArray('timeline', $parents[1].site.navigation.active.rss()) !== -1 ? 'Remove link to the Timeline RSS feed' : 'Add link to this Timeline RSS feed' }"></a>
+						</span>
+						<span class="preview">
+							<span class="icon48 icon-page-rss"></span>
+						</span>
+						<span class="info">
+							<h3 data-bind="text: $parents[1].site.url_data['timeline'].plural()"></h3>
+							<span class="desc" data-bind="text: 'RSS feed for published ' + $parents[1].site.url_data['timeline'].plural().toLowerCase()"></span>
+						</span>
+					</li>
+				</ul>
+			</div>
+
+		</div>
+
+	</section>
+	<!-- /ko -->
+
+</div> <!-- close sheet-middle -->
+
+<div class="sheet-actions">
+
+	<hr class="reverse">
+
+	<div class="sheet-wrap">
+
+		<div class="sheet-action-l">
+			<ul class="button-row">
+				<li><a href="#" class="button lg" data-event="add_custom_link" data-sheet="create_custom_link" title="Add a direct link to anywhere">Add custom link</a>
+				</li>
+			</ul>
+		</div>
+
+		<div class="sheet-action">
+			<ul class="button-row" data-sheet="create_link">
+				<li><button class="button lg c0" data-event="save_nav" title="Done">Done</button></li>
+			</ul>
+		</div>
+
+	</div>
+
+</div>
+
+</script>
+<!-- @END Add Links Sheet -->
+
+<!-- @BEGIN Edit Link Label Sheet -->
+<script id="edit_link_data_sheet" type="text/html">
+<div class="sheet-head">
+
+	<div class="sheet-wrap">
+
+		<h1>Edit link label</h1>
+
+	</div>
+
+</div>
+
+<hr>
+
+<div class="clearfix sheet-middle">
+
+	<section>
+
+		<div class="sheet-wrap sheet-options">
+
+			<ul class="table">
+				<!-- ko with: $parent.sheets.edit_nav.link_to_edit -->
+				<li>
+					<span class="cell label">
+						<label>Link label</label>
+					</span>
+					<span class="cell">
+						<input data-validate="not_empty" data-error-msg="This field cannot be left blank" type="text" class="field wide" placeholder="Enter label" data-bind="value: label, valueUpdate: 'afterkeydown', attr: { value: label }" />
+						<span class="form-error-msg"></span>
+					</span>
+				</li>
+				<!-- /ko -->
+			</ul>
+
+		</div>
+
+	</section>
+
+</div>
+
+<div class="sheet-actions">
+
+	<hr>
+
+	<div class="sheet-wrap">
+
+		<div class="sheet-action">
+			<ul class="button-row">
+				<li><button class="button lg" data-event="toggle_sheet" data-sheet="edit_link_data">Cancel</button></li>
+				<li><button class="button lg c0" data-event="update_link" data-sheet="edit_link_data" data-bind="css: { disabled: $root.valid() === false }">Done</button></li>
+			</ul>
+		</div>
+
+	</div>
+
+</div>
+
+</script>
+<!-- @END Edit Link Label Sheet -->
+
+<!-- @BEGIN Source Filter Sheet -->
+<script id="source_filter_sheet" type="text/html">
+<div class="sheet-head">
+
+	<div class="sheet-wrap">
+
+		<h1 data-bind="text: current() ? 'Apply template filter' : sheet_title()"></h1>
+		<p data-bind="text: current() ? 'Change content order and appearance in this template' : 'Add link to a new page using this template'"></p>
+
+	</div>
+
+</div>
+
+<hr>
+
+<div id="sheetview-source-filter" class="clearfix sheet-middle" data-bind="scrollbar: true">
+
+	<div data-bind="visible: !current()">
+
+		<section>
+
+			<div class="sheet-wrap sheet-options">
+
+				<ul class="table">
+
+					<li>
+						<span class="cell label">
+							<label>Link label</label>
+						</span>
+
+						<span class="cell">
+							<input data-bind="value: label, valueUpdate: 'afterkeydown'" data-validate="not_empty" type="text" class="field wide" placeholder="Enter label" />
+							<span class="form-help-msg" data-bind="visible: source().length && type() === 'index' && source() !== 'timeline' && (source() === 'favorites' || display() !== 'all' || !$root.interfaces.site.observers.site.url_data[ source().replace(/s$/, '') ] || order_by() + ' ' + order_direction() !== $root.interfaces.site.observers.site.url_data[ source().replace(/s$/, '') ].order().toLowerCase()), text: $root.paths.base + $root.make_url_safe(label()) + ( label().length ? '/' : '' )"></span>
+							<span class="form-error-msg">This field cannot be left blank.</span>
+						</span>
+					</li>
+
+				</ul>
+
+			</div>
+
+		</section>
+
+		<hr>
+
+	</div>
+
+	<section class="sub">
+
+		<div class="sheet-wrap">
+
+			<div class="col-head" data-event="toggle_visibility">
+				<span class="in">
+					<a href="#" class="arrow-toggle open"></a>
+					<h6>
+						<a href="#" title="" class="fold">
+							Options
+						</a>
+					</h6>
+				</span>
+			</div>
+
+			<div class="section-content">
+
+				<ul class="table">
+
+					<!-- ko if: type() === 'archives' && !section() -->
+
+					<!-- ko if: source() === 'tags' -->
+					<li>
+						<span class="cell label">
+							<label>Display</label>
+						</span>
+
+						<span class="cell">
+							<select data-bind="value: filter" class="filter filter_list">
+								<option value="none">All tags</option>
+								<option value="tag">Specific tag</option>
+							</select>
+						</span>
+					</li>
+					<!-- /ko -->
+
+					<!-- ko if: source() === 'categories' -->
+					<li>
+						<span class="cell label">
+							<label>Display</label>
+						</span>
+
+						<span class="cell">
+							<select data-bind="value: filter" class="filter filter_list">
+								<option value="none">All categories</option>
+								<!-- ko if: $parents[1].categories().length -->
+								<option value="category">Specific category</option>
+								<!-- /ko -->
+							</select>
+						</span>
+					</li>
+					<!-- /ko -->
+
+					<!-- /ko -->
+
+					<!-- ko if: type() === 'index' || type() === 'archive' || is_album() || (section() && (source() === 'tags' || source() === 'categories') ) -->
+
+					<!-- ko if: !section() -->
+					<li data-bind="visible: !is_album() && type() !== 'archive' && source() !== 'timeline' && source() !== 'favorites' && source().indexOf('featured_') !== 0">
+						<span class="cell label">
+							<label>Display</label>
+						</span>
+
+						<span class="cell">
+							<select data-bind="value: display" class="filter filter_list">
+								<option value="all">All items</option>
+								<option value="featured">Featured only</option>
+								<!-- ko if: source() === 'contents' -->
+								<option value="favorites">Favorites only</option>
+								<!-- /ko -->
+								<!-- ko foreach: $root.interfaces.app.observers.user_custom_sources[source()] -->
+								<option data-bind="value: $data.key, text: $data.label"></option>
+								<!-- /ko -->
+							</select>
+						</span>
+					</li>
+					<!-- /ko -->
+
+					<li data-bind="visible: type() !== 'archive' && source() !== 'timeline' && (!$root.interfaces.app.observers.user_custom_sources_keys[source()] || $.inArray(display(), $root.interfaces.app.observers.user_custom_sources_keys[source()]()) === -1)">
+						<span class="cell label">
+							<label>Order</label>
+						</span>
+
+						<span class="cell">
+							<select id="filter_order_by" data-bind="value: order_by" class="filter filter_list">
+								<!-- ko if: is_orderable -->
+								<option value="manual">Library order</option>
+								<!-- /ko -->
+								<!-- ko if: source() === 'favorites' || source() === 'featured_content' || source() === 'contents' -->
+								<option value="uploaded_on">Date uploaded</option>
+								<option value="captured_on">Date captured</option>
+								<!-- /ko -->
+								<!-- ko if: source() !== 'tags' && source() !== 'categories' && source() !== 'favorites' && source() !== 'featured_content' && source() !== 'contents' -->
+								<option value="title">Title</option>
+								<option value="created_on">Date created</option>
+								<!-- /ko -->
+								<!-- ko if: source() === 'tags' || source() === 'categories' -->
+									<option value="title">Title</option>
+									<option value="count">Count</option>
+								<!-- /ko -->
+								<!-- ko ifnot: source() === 'tags' || source() === 'categories' -->
+								<option value="modified_on">Date modified</option>
+								<option value="published_on">Date published</option>
+								<!-- /ko -->
+								<!-- ko if: source() === 'favorites' || source() === 'featured_content' || source() === 'contents' -->
+								<option value="filename">Filename</option>
+								<!-- /ko -->
+							</select>
+							&nbsp;
+							<select id="filter_order_direction" data-bind="visible: order_by() !== 'manual', value: order_direction" class="filter filter_list">
+								<option value="asc">Ascending</option>
+								<option value="desc">Descending</option>
+							</select>
+						</span>
+					</li>
+
+					<li data-bind="visible: !is_album() && !section() && source() !== 'timeline' ">
+						<span class="cell label">
+							<label>Filter</label>
+						</span>
+
+						<span class="cell">
+							<select id="source_filter_filter" class="filter filter_list">
+								<!-- ko if: type() !== 'archive' -->
+								<option value="none" data-bind="attr: { selected: filter() === 'none'}">None</option>
+								<!-- /ko -->
+								<!-- ko if: type() === 'archive' -->
+								<option value="date" data-bind="attr: { selected: filter() === 'date'}">By date</option>
+								<!-- /ko -->
+								<!-- ko if: $parents[1].categories().length -->
+								<option value="category" data-bind="attr: { selected: filter() === 'category'}">By category</option>
+								<!-- /ko -->
+								<option value="tag" data-bind="attr: { selected: filter() === 'tag'}">By tag</option>
+							</select>
+						</span>
+					</li>
+
+					<!-- /ko -->
+
+					<li data-bind="visible: source() === 'timeline' || filter() === 'date'">
+						<span class="cell label">
+							Apply date
+						</span>
+						<span class="cell">
+							<select data-bind="value: year">
+								<!-- ko foreach: years -->
+								<option data-bind="text: $data, attr: { value: $data }"></option>
+								<!-- /ko -->
+							</select>
+							<select data-bind="value: month">
+								<option value="any">Any month</option>
+								<option value="1">January</option>
+								<option value="2">February</option>
+								<option value="3">March</option>
+								<option value="4">April</option>
+								<option value="5">May</option>
+								<option value="6">June</option>
+								<option value="7">July</option>
+								<option value="8">August</option>
+								<option value="9">September</option>
+								<option value="10">October</option>
+								<option value="11">November</option>
+								<option value="12">December</option>
+							</select>
+						</span>
+					</li>
+
+					<li data-bind="visible: filter() === 'category'">
+						<span class="cell label">
+							Apply category
+						</span>
+						<span class="cell">
+							<select data-bind="value: category">
+								<!-- ko foreach: $parents[1].categories -->
+								<option data-bind="attr: { value: id, 'data-slug': slug }, text: title"></option>
+								<!-- /ko -->
+							</select>
+						</span>
+					</li>
+					<!-- when selecting tags -->
+
+					<!-- <li data-bind="visible: filter() === 'tag' && tags().length > 1">
+						<span class="cell label">
+							Tag options
+						</span>
+						<span class="cell">
+							<select data-bind="value: tag_option">
+								<option value="any">Contains any tag</option>
+								<option value="all">Contains all tags</option>
+							</select>
+						</span>
+					</li> -->
+
+					<li data-bind="visible: filter() === 'tag'">
+						<span class="cell label top">
+							Assign tag
+						</span>
+						<span class="cell">
+							<ul class="table">
+								<li>
+									<span class="cell">
+										<!-- ko if: tags().length > 0 -->
+										<span class="cell-row">
+											<div id="sheet-assigned-tags">
+												<ol class="inline">
+
+													<!-- ko foreach: tags -->
+														<span class="tag sheet" data-bind="text: $data"></span> <a href="#" data-event="manage_filter_tag" title="Click to remove">remove</a>
+													<!-- /ko -->
+												</ol>
+											</div>
+										</span>
+										<!-- /ko -->
+										<!-- ko if: tags().length < 1 -->
+										<span class="cell-row">
+											<h6>Assign tag</h6>
+											<ul class="table">
+												<li>
+													<span class="cell">
+														<input class="field small wide widefilter_tag" data-label="tag" type="text" placeholder="Enter tag name" />
+													</span>
+													<span class="cell">
+														<button class="button sm" data-event="add_filter_tag">Assign</button>
+													</span>
+												</li>
+											</ul>
+										</span>
+										<span class="cell-row" data-bind="visible: $root.tags().length > 0">
+											<h6>Recent tags. Click to assign.</h6>
+											<!-- ko foreach: $root.tags -->
+												<a data-event="manage_filter_tag" class="data-link tag small" data-bind="text: title" title="Click to add"></a>
+											<!-- /ko -->
+										</span>
+										<!-- /ko -->
+									</span>
+								</li>
+							</ul>
+						</span>
+					</li>
+					<!-- end custom tag -->
+				</ul>
+
+			</div>
+
+		</div>
+
+	</section>
+
+</div>
+
+<div class="sheet-actions">
+
+	<hr>
+
+	<div class="sheet-wrap">
+
+		<div class="sheet-action">
+			<ul class="button-row">
+				<!-- ko if: current -->
+				<li><button class="button lg" data-event="toggle_sheet" data-sheet="source_filter">Cancel</button></li>
+				<li><button class="button lg c0" data-event="apply_filters" data-sheet="source_filter" data-bind="css: { disabled: filter() === 'tag' && !tags().length ? true : ( current() ? false : $root.valid() === false ) }">Apply filter</button></li>
+				<!-- /ko-->
+				<!-- ko ifnot: current -->
+				<li><button class="button lg" data-event="toggle_sheet" data-sheet="create_link">Cancel</button></li>
+				<li><button class="button lg c0" data-event="apply_filters" data-sheet="source_filter" data-bind="css: { disabled: filter() === 'tag' && !tags().length ? true : ( current() ? false : $root.valid() === false ) }">Add link</button></li>
+				<!-- /ko-->
+
+			</ul>
+		</div>
+
+	</div>
+
+</div>
+
+</script>
+<!-- @END Source Filter Sheet -->
+
+<script id="edit_link_album_list_item" type="text/html">
+<li>
+	<span class="toggle">
+		<a data-event="toggle_link_albums" href="#" class="button opts" data-bind="css: { c0: $root.multi_in_array([ id, slug ], $root.interfaces.site.observers.site.navigation.active.albums()) !== -1, c1: $root.multi_in_array([ id, slug ], $root.interfaces.site.observers.site.navigation.active.albums()) === -1 }, text: $root.multi_in_array([ id, slug ], $root.interfaces.site.observers.site.navigation.active.albums()) !== -1 ? 'Added' : 'Add', attr: { title: $root.multi_in_array([ id, slug ], $root.interfaces.site.observers.site.navigation.active.albums()) !== -1 ? 'Remove link to this collection' : 'Add link to this collection' }"></a>
+	</span>
+	<span class="preview" data-bind="style: { 'padding-left': (level * 15) + 'px' }">
+		<img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-bind="attr: { 'data-src': $root.get_album_cover($data) }" width="48" height="48" class="thumb loading" />
+	</span>
+	<span class="info">
+		<h3 data-bind="text: $root.truncate(title, 50 - (level*5))"></h3>
+		<!-- ko if: description -->
+		<span class="desc" data-bind="text: $root.truncate(description, 70 - (level*5))"></span>
+		<!-- /ko -->
+		<!-- ko ifnot: description -->
+		<span class="desc">No description available</span>
+		<!-- /ko -->
+	</span>
+</li>
+<!-- ko if: albums().length -->
+<!-- ko template: { name: 'edit_link_album_list_item', foreach: albums } --><!-- /ko -->
+<!-- /ko -->
+</script>
+
+<!-- @BEGIN Create Custom Link Sheet -->
+<script id="create_custom_link_sheet" type="text/html">
+<!-- ko with: $parent.sheets.edit_nav.link_to_edit -->
+<div class="sheet-head">
+
+	<div class="sheet-wrap">
+
+		<h1 data-bind="text: is_new() ? 'Add custom link' : 'Edit link label'"></h1>
+
+		<p>Add a direct link to whatever you like</p>
+
+	</div>
+
+</div>
+
+<hr>
+
+<div class="clearfix sheet-middle">
+
+	<section>
+
+		<div class="sheet-wrap sheet-options">
+
+			<ul class="table">
+				<li>
+					<span class="cell label">
+						<label>Link label</label>
+					</span>
+					<span class="cell">
+						<input data-bind="value: label" data-validate="not_empty" type="text" class="field wide" placeholder="Enter label" data-bind="" />
+						<span class="form-error-msg">This field cannot be left blank.</span>
+					</span>
+				</li>
+				<li data-bind="">
+					<span class="cell label">
+						<label>Link URL</label>
+					</span>
+					<span class="cell" data-bind="">
+						<input data-bind="value: path" data-validate="url" class="field wide" placeholder="Enter URL" />
+						<span class="form-error-msg">This field cannot be left blank.</span>
+					</span>
+				</li>
+				<li data-bind="">
+					<span class="cell label"></span>
+					<span class="cell small">
+						<input id="custom_link_target" type="checkbox" data-bind="checked: checked" /> <label for="custom_link_target">Open in new browser window</label>
+					</span>
+				</li>
+			</ul>
+
+		</div>
+
+	</section>
+
+</div>
+
+<div class="sheet-actions">
+
+	<hr>
+
+	<div class="sheet-wrap">
+
+		<div class="sheet-action-l">
+			<a href="#" class="button lg" data-sheet="create_link" data-event="edit_nav_group" title="Return to adding links">Back to add links</a>
+		</div>
+		<div class="sheet-action">
+			<ul class="button-row">
+				<li><button class="button lg" data-event="toggle_sheet" data-sheet="create_custom_link">Cancel</button></li>
+				<li data-validate="create_custom_link"><button class="button lg c0" data-event="create_custom_link" data-sheet="create_custom_link" data-bind="css: { disabled: $root.valid() === false }, text: is_new() ? 'Add link' : 'Save link'"></button></li>
+			</ul>
+		</div>
+
+	</div>
+
+</div>
+<!-- /ko -->
+</script>
+<!-- @END Create Custom Link Sheet -->
+
+
+<!-- @BEGIN Current Page Link Sheet -->
+<script id="current_page_link_sheet" type="text/html">
+<div class="sheet-head">
+
+	<div class="sheet-wrap">
+
+		<h1>Add link to current page</h1>
+
+		<p>Publish a link to this page in your navigation</p>
+
+	</div>
+
+</div>
+
+<hr>
+
+<div class="sheet-middle clearfix">
+
+	<section>
+
+		<div class="sheet-wrap sheet-options">
+
+			<ul class="table">
+				<li>
+					<span class="cell label">
+						<label>Link label</label>
+					</span>
+					<span class="cell">
+						<input data-validate="not_empty" id="link_to_current_label" type="text" class="field wide" placeholder="Enter label" />
+						<span class="form-error-msg">This field cannot be left blank.</span>
+					</span>
+				</li>
+				<!-- ko if: $parent.site.navigation.groups().length -->
+				<li>
+					<span class="cell label">
+						<label>Navigation group</label>
+					</span>
+					<span class="cell">
+						<!--
+						<span class="form-error-msg" data-bind="">You must select at least one.</span>
+						-->
+						<input id="current_link_primary" type="checkbox" checked="checked" /> <label for="current_link_primary">Primary</label>
+						&nbsp;&nbsp;
+						<!-- ko foreach: $parent.site.navigation.groups -->
+						<input type="checkbox" data-bind="attr: { 'data-current-group': key, id: 'current_link_' + key }" /> <label data-bind="text: label, attr: { for: 'current_link_' + key }"></label>
+						&nbsp;&nbsp;
+						<!-- /ko -->
+					</span>
+				</li>
+				<!-- /ko -->
+			</ul>
+
+		</div>
+
+	</section>
+
+</div>
+
+<div class="sheet-actions">
+
+	<hr>
+
+	<div class="sheet-wrap">
+
+		<div class="sheet-action">
+			<ul class="button-row">
+				<li><button class="button lg" data-event="toggle_sheet" data-sheet="current_page_link">Cancel</button></li>
+				<li><button class="button lg c0" data-bind="css: { disabled: $root.valid() === false }" data-event="link_to_current" data-sheet="current_page_link">Add link</button></li>
+			</ul>
+		</div>
+
+	</div>
+
+</div>
+
+</script>
+<!-- @END Current Page Link Sheet -->

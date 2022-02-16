@@ -1,0 +1,1925 @@
+<!-- @BEGIN Library Interface Template -->
+<script id="library_interface" type="text/html">
+<div id="library_interface_container">
+
+	<!-- gear pop-up menu for left col tree nav -->
+	<div id="gear_pop" class="opt-menu animL" style="left:245px;display:none;">
+		<div class="inside">
+			<ul class="opt-list" data-event="gear_popout">
+				<li><a href="#" title="Mark as featured"><span class="w"><span class="opt-icon opt-feat">Mark as featured</span></span></a></li>
+				<li style="display: none;"><a href="#" title="Set visibility to public"><span class="w"><span class="opt-icon opt-public">Make public</span></span></a></li>
+				<li><a href="#" title="Move to trash"><span class="w"><span class="opt-icon opt-trash">Move to trash</span></span></a></li>
+				<li class="rm_set"><a href="#" title="Remove collection from set"><span class="w"><span class="opt-icon opt-remove">Remove from set</span></span></a></li>
+			</ul>
+		</div>
+		<div class="wedge l-center"></div>
+	</div>
+
+	<div id="lay-three-col">
+
+		<div class="ui-sheet-bg"></div>
+
+		<!-- ko with: sheets.create_collection -->
+			<!-- ko template: 'sheets_mu' --><!-- /ko -->
+		<!-- /ko -->
+
+		<!-- ko with: sheets.import_content -->
+			<!-- ko template: 'sheets_mu' --><!-- /ko -->
+		<!-- /ko -->
+
+		<div id="lay-three-col-wrap">
+			<div id="scroll-tick">
+				<div style="position:relative;">
+				<p></p>
+				<p></p>
+				</div>
+			</div>
+			<div id="search-library">
+				<div id="search_form" class="k-dropdown">
+					<a href="#" data-dropdown="search" data-event="toggle_dropdown" class="button-ui emb" id="search-terms" title="Modify search filter"><span id="search-terms-library" data-bind="attr: { class: search_filter() } "></span></a>
+					<a href="#" id="end_search" class="input-clear hide" data-bind="click: function() { search(null) && search(''); $('#end_search').hide(); }" title="Clear search"></a>
+					<input data-bind="value: decodeURIComponent(search())" type="text" class="search" placeholder="Search" />
+
+					<!-- ko with: dropdowns.search -->
+						<!-- ko template: 'dropdown_mu' --><!-- /ko -->
+					<!-- /ko -->
+
+				</div> <!-- close #search_form -->
+			</div> <!-- close #search-library -->
+			<div id="three-col-mid">
+				<!-- ko with: dropdowns.edit -->
+					<!-- ko template: 'dropdown_mu' --><!-- /ko -->
+				<!-- /ko -->
+				<!-- ko with: dropdowns.sort -->
+					<!-- ko template: 'dropdown_mu' --><!-- /ko -->
+				<!-- /ko -->
+				<!-- ko with: dropdowns.filter -->
+					<!-- ko template: 'dropdown_mu' --><!-- /ko -->
+				<!-- /ko -->
+				<!-- ko with: dropdowns.share -->
+					<!-- ko template: 'dropdown_mu' --><!-- /ko -->
+				<!-- /ko -->
+				<div id="mid-menu-top" class="col-top">
+
+					<div class="ui-row">
+
+						<div class="l">
+							<ul class="button-row-joined">
+								<li>
+									<a href="#" title="Edit selection" data-dropdown="edit" data-event="toggle_dropdown" class="button-ui emb thin disabled" data-bind="css: { disabled: view() == 'empty' || loading() || selection().length <= 0 || sidebar.id() === 'trash', selected: dropdowns.edit.active() == true }">
+										<span>Edit</span>
+									</a>
+								</li>
+								<li>
+									<a href="#" title="Filter view" data-dropdown="filter" data-event="toggle_dropdown" class="button-ui emb thin" data-bind="css: { disabled: loading() || selected_type() == 'set' || view() == 'single' || api_url().indexOf('visibility:any') !== -1 || view() == 'empty' && dropdowns.filter.selected() == 'none', selected: dropdowns.filter.active() == true }">
+										<span>Filter</span>
+									</a>
+								</li>
+								<li>
+									<a href="#" title="Share selection" data-dropdown="share" data-event="toggle_dropdown" class="button-ui emb thin" data-bind="css: { disabled: sidebar.id() === 'trash' || selected_type() == 'set' || view() == 'empty' || view() == 'loading' || selection().length !== 1 || ( sidebar.asset.visibility && sidebar.asset.visibility.raw() == 'private' ), selected: dropdowns.share.active() == true }">
+										<span>Share</span>
+									</a>
+								</li>
+							</ul>
+						</div>
+
+						<h5 data-bind="text: header.title(), visible: year() < 1 && month() < 1  && dropdowns.filter.selected() === 'none' && ( !search() || !search().length )"></h5>
+
+						<div id="entry-list-filter" class="row-mid-filter" data-bind="visible: year() > 0 || month() > 0">
+							<h5>
+								Found <span data-bind="text: properties.overall.total"></span> results
+								<!-- ko if: month() > 0 -->
+								from <span data-bind="text: moment(year() + '-' + (month().length === 1 ? '0' + month() : month()) + '-10').format('MMMM YYYY')"></span>
+								<!-- /ko -->
+								<!-- ko if: month() <= 0 && year() > 0 -->
+								from <span data-bind="text: moment(year() + '-01-10').format('YYYY')"></span>
+								<!-- /ko -->
+							</h5>
+							&nbsp;
+							<a href="#" class="button c0 tiny" data-event="clear_filters" title="Clear search results">Remove search</a>
+						</div>
+
+						<div id="multi-filter-head" class="row-mid-filter" style="display: none;">
+							<div class="filter-display"><div class="hoffx">
+								<span data-bind="text: dropdowns.filter.title()"></span>&nbsp;&nbsp;&nbsp;&nbsp;<a class="button c0 tiny" title="Remove filter" data-event="reset_filter">Remove filter</a>
+							</div></div>
+						</div>
+
+						<div id="multi-search-head" class="row-mid-filter" style="display: none;">
+							<div class="filter-display"><div class="hoffx">
+								Found <span data-bind="text: properties.overall.total"></span> results in <span data-bind="text: header.collection()"></span>&nbsp;&nbsp;&nbsp;&nbsp;<a class="button c0 tiny" data-bind="click: function() { search(null); search(''); $('#end_search').hide(); }" title="Clear">Remove search</a>
+							</div></div>
+						</div>
+
+					</div>
+
+				</div><!-- #mid-menu-top -->
+
+				<div class="top-off">
+
+					<div id="mid-content" data-bind="css: { grid: view() === 'grid', list: view() === 'list', single: view() === 'single' }">
+						<div id="lib-overlay-content"></div>
+
+						<div data-bind="visible: view() !== 'single' && view() !== 'empty' && !loading(), scrollbar: true" id="mid_multi" class="lazy">
+					    	<div class="content">
+					    		<ul data-bind="attr: { class: 'lib-content ' + order_by() + ' ' + view() }" id="content_list"></ul>
+							</div>
+						</div>
+
+						<div data-bind="visible: view() === 'single'" id="mid-single">
+							<div id="mid-single-img" class="ks_parent loading">
+								<span class="kspinner ks_abs ks_abs_lg"></span>
+								<div id="mid-single-wrap">
+									<!-- ko if: selection().length -->
+									<!-- ko if: sidebar.asset.html() -->
+									<div id="custom_single_html" data-bind="html: sidebar.asset.console_html ? sidebar.asset.console_html() : sidebar.asset.html()"></div>
+									<!-- /ko -->
+									<!-- ko if: sidebar.asset.file_type && sidebar.asset.file_type() === 'image' -->
+									<div id="focal_point_wrapper">
+										<div id="focal_point" data-bind="css: { selected: focal_point() }"></div>
+									</div>
+									<!-- /ko -->
+									<!-- /ko -->
+								</div>
+								<div id="mid-single-text" data-bind="css: { focal: focal_point }">
+									<div id="mid-single-text-pull">
+										<p>
+											<!-- ko if: selection().length && sidebar.asset.file_type -->
+												<!-- ko if: sidebar.asset.title -->
+												<span class="cell" data-bind="text: sidebar.asset.title"></span>
+												<!-- /ko -->
+												<span class="cell" data-bind="text: sidebar.asset.filename"></span>
+												<!-- ko if: sidebar.asset.file_type() === 'image' && sidebar.asset.width -->
+												<span class="cell" data-bind="visible: sidebar.asset.width() > 0, text: sidebar.asset.width() + ' x ' + sidebar.asset.height()"></span>
+												<!-- /ko -->
+												<!-- ko if: sidebar.asset.file_type() === 'video' && sidebar.asset.duration.raw && sidebar.asset.duration.raw() > 0 -->
+												<span class="cell" data-bind="text: sidebar.asset.duration.clean()"></span>
+												<!-- /ko -->
+												<!-- ko if: sidebar.asset.exif && $data.exif_label().length -->
+												<span class="cell" data-bind="html: $data.exif_label(), visible: sidebar.asset.file_type() === 'image' && sidebar.asset.exif_fields().length > 0"></span>
+												<!-- /ko -->
+											<!-- /ko -->
+										</p>
+										<p>Drag the focal point on the image above to the area that should be maintained when cropped.</p>
+									</div>
+								</div>
+							</div>
+							<!-- ko if: selection().length && sidebar.asset.file_type && sidebar.asset.file_type() === 'image' -->
+							<div id="focal_point_toggle" data-bind="css: { selected: focal_point() }">
+								<a href="#" class="button-ui" data-event="toggle_focal" data-bind="css: { selected: focal_point() }"><span class="bicon_lg focal_point"></span></a>
+							</div>
+							<!-- /ko -->
+						</div>
+
+						<div data-bind="visible: loading() || view() === 'empty'" class="cmsg">
+							<div class="cmsg-wrap">
+								<div class="cmsg-msg">
+									<!-- ko if: loading() -->
+									<span class="kspinner"></span>
+									<!-- /ko -->
+									<!-- ko ifnot: loading() -->
+										<!-- ko if: $data.observers.properties.album.selected().album -->
+											<!-- ko if: $data.observers.properties.album.selected().album.album_type && $data.observers.properties.album.selected().album.album_type == 'set' -->
+												<h1>Set is empty</h1>
+												<h2>Drag albums or sets onto this set in the left column</h2>
+											<!-- /ko -->
+											<!-- ko if: $data.observers.properties.album.selected().album && $data.observers.properties.album.selected().album.album_type == 'standard' -->
+												<h1>Album is empty</h1>
+											<!-- /ko -->
+										<!-- /ko -->
+										<!-- ko ifnot: $data.observers.properties.album.selected().album -->
+											<h1>Selection is empty</h1>
+										<!-- /ko -->
+										<!-- ko if: !($data.observers.properties.album.selected().album && $data.observers.properties.album.selected().album.album_type == 'set') && $data.observers.observers.is_uploadable() -->
+											<h2>Drop images or videos here for instant upload</h2>
+										<!-- /ko -->
+									<!-- /ko -->
+								</div>
+							</div>
+						</div>
+
+
+					</div><!-- #mid-content -->
+
+					<div id="mid-menu-bot" class="col-bot">
+						<div data-bind="template: { name: view() === 'single' ? 'single_bottom' : 'multi_bottom' }"></div>
+					</div>
+				</div>
+
+			</div><!-- #three-col-mid -->
+		</div><!-- #lay-three-col-wrap -->
+		<div id="three-col-left" class="ui-col">
+			<div class="col-top">
+				<div class="hoffx"><h5>Library</h5></div>
+			</div>
+			<div id="content_subnav" class="top-off lib-col-content" data-bind="scrollbar:true">
+				<div class="col-block no-head">
+					<ol class="lib-nav">
+						<li>
+							<a class="item" title="View all public content" data-bind="attr: { href: '#/library/content' + ( ( selection().length > 0 && view() === 'single' ) ? '/selection:' + selection()[0] : '' ) + ( view() !== 'grid' && view() !== 'empty' ? '/view:' + view() : '') }">
+								<span class="in"><span class="icon16 label-photo">Content</span></span>
+							</a>
+						</li>
+						<li data-bind="visible: settings.last_upload()">
+							<a data-bind="attr: { href: '#/library/content/after:' + settings.last_upload() + '/visibility:any/order_by:uploaded_on' + ( view() !== 'grid' && view() !== 'empty' ? '/view:' + view() : '') }" class="item" title="View most recent uploads">
+								<span class="in"><span class="icon16 label-recent">Last import</span></span>
+							</a>
+						</li>
+						<li>
+							<a data-bind="attr: { href: '#/library/favorites' + ( view() !== 'grid' && view() !== 'empty' ? '/view:' + view() : '') }" class="item" title="View favorites">
+								<span class="in"><span class="icon16 label-faves">Favorites</span></span>
+							</a>
+						</li>
+						<li>
+							<a data-bind="attr: { href: '#/library/content/featured' + ( view() !== 'grid' && view() !== 'empty' ? '/view:' + view() : '') }" class="item" title="View featured content">
+								<span class="in"><span class="icon16 label-featured">Featured</span></span>
+							</a>
+						</li>
+						<li>
+							<a href="#/library/content/quick_collection:true" class="item" title="View quick collection">
+								<span class="in"><span class="icon16 label-quick">Quick collection</span></span>
+							</a>
+						</li>
+						<li>
+							<a href="#/library/content/unlisted" class="item" title="View unlisted">
+								<span class="in"><span class="icon16 label-unlisted">Unlisted</span></span>
+							</a>
+						</li>
+						<li>
+							<a href="#/library/content/private" class="item" title="View private">
+								<span class="in"><span class="icon16 label-private">Private</span></span>
+							</a>
+						</li>
+					</ol>
+				</div>
+
+				<div class="col-block">
+					<div data-event="toggle_visibility" id="date_captured_toggle" class="col-head" data-bind="visible: years().length">
+						<span class="in">
+							<a href="#" class="arrow-toggle open" data-bind="css: { open: !$root.cookie('library:date_captured_toggle') || $root.cookie('library:date_captured_toggle') === 'open' }"></a>
+							<h6><a class="fold" href="#" title="Toggle">Date published</a></h6>
+						</span>
+					</div>
+					<ol class="lib-nav" data-bind="visible: !$root.cookie('library:date_captured_toggle') || $root.cookie('library:date_captured_toggle') === 'open'">
+						<!-- ko foreach: years -->
+						<li data-event="sort_year" data-bind="css: { selected: $parent.month() <=0 && $parent.year() == year }">
+							<a href="#" class="arrow-toggle" data-event="arrow_toggle_date" data-bind="css: { open: $parent.year() == year }"></a>
+							<a href="#" class="item" title="View photos captured on this date">
+								<span class="in">
+									<span class="icon16 label-date" data-bind="text: year">
+									</span>
+								</span>
+							</a>
+							<ol data-bind="visible: $parent.year() == year">
+								<!-- ko foreach: months -->
+								<li data-event="sort_month" data-bind="css: { selected: $parents[1].month() == month && $parents[1].year() == year }">
+									<a href="#" class="item selected" title="View photos captured on this date">
+										<span class="in" style="padding-left:33px;">
+											<span class="icon16 label-date" data-bind="text: moment(year + '-' + (month < 10 ? '0' + month : month) + '-10').format('MMMM')">
+
+											</span>
+										</span>
+									</a>
+								</li>
+								<!-- /ko -->
+							</ol>
+						</li>
+						<!-- /ko -->
+					</ol>
+				</div>
+
+				<div class="col-block">
+					<div data-event="toggle_visibility" class="col-head">
+						<span class="in">
+							<a href="#" class="arrow-toggle open"></a>
+							<h6><a class="fold" href="#" title="Toggle">Collections</a></h6>
+						</span>
+					</div>
+					<ol id="al-nav" class="lib-nav">
+						<li data-type="set">
+							<a href="#/library/albums/featured" class="item" title="View featured albums">
+								<span class="in"><span class="icon16 label-album-featured">Featured albums</span></span>
+							</a>
+						</li>
+						<li class="public" data-bind="css: { selected: api_url().indexOf('albums/visibility:public') === 0 }">
+							<a href="#" data-event="album-visibility" class="arrow-toggle" data-bind="visible: albums().length > 0, css: { open: albums().length > 0 }"></a>
+							<a href="#/library/albums/visibility:public" id="p_albums" class="item" title="View public collections">
+								<span class="in"><span class="icon16 label-collections">Public</span></span>
+							</a>
+							<div id="public_albums">
+								<ol>
+								<!-- ko foreach: albums -->
+									<!-- ko template: 'album_sidebar_item' --><!-- /ko -->
+								<!-- /ko -->
+								</ol>
+							</div>
+						</li>
+						<li class="unlisted" data-bind="css: { selected: api_url().indexOf('albums/visibility:unlisted') === 0 }">
+							<a href="#" data-event="album-visibility" class="arrow-toggle open" data-bind="visible: unlisted_albums().length > 0, css: { open: unlisted_albums().length > 0 }"></a>
+							<a href="#/library/albums/visibility:unlisted" id="u_albums" class="item" title="View unlisted collections">
+								<span class="in"><span class="icon16 label-collections">Unlisted</span></span>
+							</a>
+							<div id="unlisted_albums">
+								<ol>
+								<!-- ko foreach: unlisted_albums -->
+									<!-- ko template: 'album_sidebar_item' --><!-- /ko -->
+								<!-- /ko -->
+								</ol>
+							</div>
+						</li>
+						<li class="private" data-bind="css: { selected: api_url().indexOf('albums/visibility:private') === 0 }">
+							<a href="#" data-event="album-visibility" class="arrow-toggle open" data-bind="visible: private_albums().length > 0, css: { open: private_albums().length > 0 }"></a>
+							<a href="#/library/albums/visibility:private" id="pr_albums" class="item" title="View unlisted collections">
+								<span class="in"><span class="icon16 label-collections">Private</span></span>
+							</a>
+							<div id="private_albums">
+								<ol>
+								<!-- ko foreach: private_albums -->
+									<!-- ko template: 'album_sidebar_item' --><!-- /ko -->
+								<!-- /ko -->
+								</ol>
+							</div>
+						</li>
+					</ol>
+				</div>
+
+			</div>
+
+			<div class="col-foot">
+				<hr>
+				<ol class="lib-nav single">
+					<li>
+						<a href="#/library/trash" class="item single" id="trash_drop" title="View trash">
+							<span class="item-count" data-bind="text: properties.trash.total(), visible: properties.trash.total() > 0 "></span>
+							<span class="in">
+								<span class="icon16" data-bind="css: { 'label-trash': properties.trash.total() <= 0, 'label-trash-full': properties.trash.total() > 0 }">Trash</span>
+							</span>
+						</a>
+					</li>
+				</ol>
+			</div>
+			<div id="left-menu-bot" class="col-bot">
+	        	<div class="ui-row">
+	        		<div class="l push">
+						<a href="#" data-event="toggle_sheet" data-sheet="create_collection" title="Create new collection" class="button-ui emb"><span class="bicon_lg new"></span></a>
+					</div>
+					<div class="r">
+
+					</div>
+	          	</div>
+	        </div>
+		</div><!-- #three-col-left -->
+		<div id="three-col-right" class="ui-col">
+			<div class="col-top">
+				<div class="ui-row">
+					<div class="l label">
+						<h5>Inspector</h5>
+					</div>
+					<div class="r push">
+						<!-- ko if: sidebar.asset.url() && ((sidebar.id() === 'content' && selection().length === 1) || sidebar.id() === 'album') -->
+						<a href="#" class="button-ui thin emb fright" data-bind="attr: { href: sidebar.asset.url() }" onclick="window.open(this.href); return false;" title="View this on your web site"><span class="bicon_sm preview"></span></a>
+						<!-- /ko -->
+						<!-- ko if: sidebar.hasgeo -->
+						<a href="#" class="button-ui thin emb fright" data-event="map" data-bind="" title="View geolocation" style="margin-right:5px;"><span class="bicon_sm geo"></span></a>
+						<!-- /ko -->
+					</div>
+				</div>
+			</div>
+			<div id="right-col-xtra">
+				<div class="col-top-panel">
+					<a class="button-ui emb thin" id="close_xtra" data-event="save_changes" href="#" alt="Close edit panel"><span class="bicon_sm panel_close"></span></a>
+					<div class="in">
+						<h5></h5>
+					</div>
+				</div>
+				<div id="right-col-data" data-event="sidebar" data-bind="template: { name: drawer.template, afterRender: function() { new klass.scrollbar($('#right-col-data')); }}"></div>
+			</div>
+			<!-- #content_sidebar_template -->
+			<div class="top-off" style="position: relative;" id="content_sidebar_template" data-bind="template: { name: sidebar.id() + '_sidebar_info', data: observers, afterRender: function() { $data.events.sidebar_callback[sidebar.id()] && $data.events.sidebar_callback[sidebar.id()].call($data) }}"></div>
+			<div id="right-menu-bot" class="col-bot">
+				<div class="ui-row">
+					<div class="w">
+						<a href="#" title="Import images and videos" data-event="toggle_sheet" data-sheet="import_content" class="button-ui emb" style="width:201px">Import content</a>
+					</div>
+				</div>
+			</div>
+		</div><!-- #three-col-right -->
+	</div>
+</div>
+</script>
+<!-- @END Library Interface Template -->
+
+<!-- @BEGIN Albums Sidebar Item -->
+<script id="album_sidebar_item" type="text/html">
+<li data-bind="css: { selected: $parent.properties.album.selected().album && $data.id == $parent.properties.album.selected().album.id }, attr: { 'data-featured': featured, 'data-type': album_type, 'data-id': id, 'data-visibility': visibility, 'data-children': $data.children ? $data.children.length : 0 }">
+	<!-- ko if: album_type === 'set' && $data.children -->
+		<a href="#" class="arrow-toggle" data-event="arrow_toggle" data-bind="css: { open: !$parent.is_closed($data) }, style:{'left': (($.browser.mozilla) ? '14px' : ((parseInt( $data.level, 10 ) * 10) + 4) + 'px')}" style="z-index:7;"></a>
+	<!-- /ko -->
+	<a href="#" class="item-edit" data-event="toggle_gear_popout" title="Edit collection">
+		<span></span>
+	</a>
+	<a data-bind="attr: { 'href': '#/library/albums/' + id + '/content' + (album_type !== 'set' && $parent.view() !== 'grid' && $parent.view() !== 'empty' ? '/view:' + $parent.view() : '' ), 'title': 'View ' + title }" class="item" style="padding-left:8px;">
+		<span class="in" data-bind="style:{'padding-left': ( ( parseInt( $data.level, 10 ) * 10 ) + 13 ) + 'px'}">
+			<span data-bind="attr: { class: 'replace-title ' + $parent.album_class($data) }, text: title"></span>
+		</span>
+	</a>
+	<!-- ko if: $data.children -->
+		<ol data-bind="css: { hide: $parent.is_closed($data) }, with: $parent">
+			<!-- ko foreach: $parent.children -->
+				<!-- ko template: 'album_sidebar_item' --><!-- /ko -->
+			<!-- /ko -->
+		</ol>
+	<!-- /ko -->
+</li>
+</script>
+<!-- @END Albums Sidebar Item -->
+
+<!-- @BEGIN Default Drawer -->
+<script id="default_edit" type="text/html"></script>
+<!-- @END Default Drawer -->
+
+<!-- @BEGIN IPTC Edit Drawer Template -->
+<script id="iptc_edit" type="text/html">
+<!-- ko foreach: sidebar.asset.iptc() -->
+	<!-- ko if: value -->
+	<div class="col-row">
+		<div class="label"><label data-bind="text: label"></label></div>
+		<div class="value" data-bind="text: value"></div>
+	</div>
+	<!-- /ko -->
+<!-- /ko -->
+</div>
+</script>
+<!-- @END IPTC Edit Drawer Template -->
+
+<!-- @BEGIN EXIF Edit Drawer Template -->
+<script id="exif_edit" type="text/html">
+<div class="panel_group">
+	<!-- ko foreach: sidebar.asset.exif() -->
+	<div class="col-row">
+		<div class="label"><label data-bind="text: label"></label></div>
+		<div class="value" data-bind="html: $data.clean ? ( label === 'Aperture' ? clean.replace('f', '<span class=\'fstop\'>f</span>') : clean ) : raw"></div>
+	</div>
+	<!-- /ko -->
+	<!-- ko if: sidebar.hasgeo -->
+		<div data-event="map">
+			<div class="col-row">
+				<div class="label"><label>Latitude</label></div>
+				<div class="value lat"><span data-bind="html: sidebar.asset.geolocation.latitude()"></span> <a href="#" class="edit-link">view</a></div>
+			</div>
+			<div class="col-row">
+				<div class="label"><label>Longitude</label></div>
+				<div class="value long"><span data-bind="html: sidebar.asset.geolocation.longitude()"></span> <a href="#" class="edit-link">view</a></div>
+			</div>
+		</div>
+	<!-- /ko -->
+	</div>
+</div>
+</script>
+<!-- @END EXIF Edit Drawer Template -->
+
+<script id="license_display" type="text/html">
+	<!-- ko ifnot: license.raw() === 'all' -->
+
+		<span class="sprite sprite-license lic-cc-by"></span>
+
+		<!-- ko if: license.raw().substr(0,1) === 'n' -->
+		<span class="sprite sprite-license lic-cc-nc"></span>
+		<!-- /ko -->
+
+		<!-- ko if: license.raw().substr(2,1) === 's' -->
+		<span class="sprite sprite-license lic-cc-sa"></span>
+		<!-- /ko -->
+
+		<!-- ko if: license.raw().substr(2,1) === 'n' -->
+		<span class="sprite sprite-license lic-cc-nd"></span>
+		<!-- /ko -->
+
+	<!-- /ko -->
+
+	<span class="sprite-txt" data-bind="text: license.clean"></span>
+</script>
+
+<!-- @BEGIN License Edit Drawer Template -->
+<script id="license_edit" type="text/html">
+<!-- ko ifnot: sidebar.asset.license.raw() === '' -->
+<div class="col-row tall">
+	<!-- ko template: { name: 'license_display', data: sidebar.asset } --><!-- /ko -->
+</div>
+<div class="col-row hr"><hr></div>
+<!-- /ko -->
+<div data-submit="license">
+	<div class="panel_group">
+		<div class="col-row">
+			<input id="l_r" data-check="true" data-event="toggle_license" type="checkbox" data-bind="checked: sidebar.asset.license.raw() != 'all'" name="lic1" />
+			<label for="l_r">Allow reuse</label> (<a href="http://www.creativecommons.org/licenses/" title="Learn more" onclick="window.open(this.href); return false;">Creative Commons</a>)
+		</div>
+		<div id="license-sub" data-bind="css: { hide: sidebar.asset.license.raw() == 'all' }" style="padding-left:10px;">
+			<div class="col-row">
+				<strong>Allow commercial use?</strong>
+			</div>
+			<div class="col-row">
+				<input id="l_y2" value="y" type="radio" name="lic2" data-bind="checked: sidebar.asset.license.raw().substr(0,1)" /> <label for="l_y2">Yes</label>
+			</div>
+			<div class="col-row">
+				<input id="l_n2" value="n" type="radio" name="lic2" data-bind="attr: { checked: sidebar.asset.license.raw().substr(0,1) === 'n' || sidebar.asset.license.raw() == 'all' }" /> <label for="l_n2">No</label>
+			</div>
+			<div class="col-row">
+				<strong>Allow modifications?</strong>
+			</div>
+			<div class="col-row">
+				<input id="l_y" value="y" type="radio" name="lic3" data-bind="checked: sidebar.asset.license.raw().substr(2,1)" /> <label for="l_y">Yes</label>
+			</div>
+			<div class="col-row">
+				<input id="l_m" value="s" type="radio" name="lic3" data-bind="attr: { checked: sidebar.asset.license.raw().substr(2,1) === 's' || sidebar.asset.license.raw() == 'all' }"/> <label for="l_m">Yes, as long as others share alike</label>
+			</div>
+			<div class="col-row">
+				<input id="l_n" value="n" type="radio" name="lic3" data-bind="checked: sidebar.asset.license.raw().substr(2,1)" /> <label for="l_n">No</label>
+			</div>
+		</div>
+	</div>
+	<div class="col-row button-row" data-event="save_changes"><button class="button c0 sm data-submit" title="Save changes and close">Done</button></div>
+</div>
+</script>
+<!-- @END License Edit Drawer Template -->
+
+<!-- @BEGIN MaxDownload Edit Drawer Template -->
+<script id="maxdl_edit" type="text/html">
+<div data-submit="max_download">
+	<div class="panel_group">
+		<div class="col-row">
+			<input id="dl_original" type="radio" value="original" name="max_download" data-bind="attr: { checked: sidebar.asset.max_download.raw() == 'original' }" /> <label for="dl_original">Original</label>
+		</div>
+		<div class="col-row"><input id="dl_huge" type="radio" value="huge" name="max_download" data-bind="checked: sidebar.asset.max_download.raw()" /> <label for="dl_huge">Huge (2048)</label></div>
+		<div class="col-row"><input id="dl_xlarge" type="radio" value="xlarge" name="max_download" data-bind="checked: sidebar.asset.max_download.raw()" /> <label for="dl_xlarge">X-Large (1600)</label></div>
+		<div class="col-row"><input id="dl_large" type="radio" value="large" name="max_download" data-bind="checked: sidebar.asset.max_download.raw()" /> <label for="dl_large">Large (1024)</label></div>
+		<div class="col-row"><input id="dl_medlarge" type="radio" value="medium_large" name="max_download" data-bind="checked: sidebar.asset.max_download.raw()" /> <label for="dl_medlarge">Medium-Large (800)</label></div>
+		<div class="col-row"><input id="dl_med" type="radio" value="medium" name="max_download" data-bind="checked: sidebar.asset.max_download.raw()" /> <label for="dl_med">Medium (480)</label></div>
+		<div class="col-row"><input id="dl_none" type="radio" value="none" name="max_download" data-bind="checked: sidebar.asset.max_download.raw()" /> <label for="dl_none">None</label></div>
+	</div>
+	<div class="col-row button-row" data-event="save_changes"><button class="button c0 sm data-submit" title="Save changes and close">Done</button></div>
+</div>
+<div class="col-row hr"><hr></div>
+<div class="col-row">
+	Controls the maximum image size that visitors will be able to download using links provided by your theme.
+</div>
+</script>
+<!-- @END MaxDownload Edit Drawer Template -->
+
+<!-- @BEGIN Captured Uploaded Edit Drawer Template -->
+<script id="captured_uploaded_edit" type="text/html">
+<div data-submit="captured_on">
+	<div class="col-row field-row">
+		<input type="text" class="field side-col datepicker" data-no-tz-shift="true" data-bind="value: sidebar.asset.captured_on.timestamp, attr: { 'data-no-tz-shift': sidebar.asset.captured_on.utc() ? 'false' : 'true' }" />
+	</div>
+	<div class="col-row button-row" data-event="save_changes">
+		<button class="button c0 sm data-submit" title="Save changes and close">Done</button>
+	</div>
+</div>
+<div class="col-row hr"><hr></div>
+<div class="col-row">
+	Edit this to change the day and time the photo was captured. This may change the order in which the photo appears on your site.
+</div>
+</script>
+<!-- @END Captured Uploaded Edit Drawer Template -->
+
+<!-- @BEGIN History Uploaded Edit Drawer Template -->
+<script id="history_uploaded_edit" type="text/html">
+<div data-bind="attr: { 'data-submit': sidebar.id() == 'content' ? 'uploaded_on' : 'created_on' }">
+	<div class="col-row field-row">
+		<input type="text" class="field side-col datepicker" data-bind="value: sidebar.id() == 'content' ? sidebar.asset.uploaded_on.timestamp : sidebar.asset.created_on.timestamp" />
+	</div>
+	<div class="col-row button-row" data-event="save_changes">
+		<button class="button c0 sm data-submit" title="Save changes and close">Done</button>
+	</div>
+</div>
+<div class="col-row hr"><hr></div>
+<div class="col-row">
+	<!-- ko if: sidebar.id() === 'content' -->
+	Edit this to change the day and time the item was uploaded. This may change the order in which it appears on your site.
+	<!-- /ko -->
+	<!-- ko ifnot: sidebar.id() === 'content' -->
+	Edit this to change the day and time the album was created. You may backdate this however far you want.
+	<!-- /ko -->
+</div>
+</script>
+<!-- @END History Uploaded Edit Drawer Template -->
+
+<!-- @BEGIN History Published Edit Drawer Template -->
+<script id="history_published_edit" type="text/html">
+<div data-bind="attr: { 'data-submit': 'published_on' }">
+	<div class="panel_group">
+		<!-- ko if: sidebar.id() === 'content' -->
+		<div class="col-row">
+			<input id="date_pub_single" type="radio" name="pub_on" value="captured" data-bind="attr: {checked: singleHistory.type() === 'captured'}" /> <label for="date_pub_single">Assign date captured</label>
+		</div>
+		<div class="col-row">
+			<input id="date_new_single" type="radio" name="pub_on" value="assign" data-bind="attr: {checked: singleHistory.type() === 'assign'}" /> <label for="date_new_single">Assign new date and time</label>
+		</div>
+		<!-- /ko -->
+		<div class="col-row field-row" data-bind="visible: singleHistory.type() === 'assign'">
+			<input type="text" class="field side-col datepicker" data-bind="value: sidebar.asset.published_on.timestamp" />
+		</div>
+	</div>
+	<div class="col-row button-row" data-event="save_changes">
+		<button class="button c0 sm data-submit" title="Save changes and close">Done</button>
+	</div>
+</div>
+<div class="col-row hr"><hr></div>
+<div class="col-row">
+	<!-- ko if: sidebar.id() === 'content' -->
+	Edit this to change the day and time the item was published. This may change the order in which it appears on your site.
+	<!-- /ko -->
+	<!-- ko ifnot: sidebar.id() === 'content' -->
+	Edit this to change the day and time the album was published. You may backdate this however far you want.
+	<!-- /ko -->
+</div>
+</script>
+<!-- @END History Published Drawer Template -->
+
+<!-- @BEGIN Multi History Uploaded Edit Drawer Template -->
+<script id="multi_history" type="text/html">
+<div data-submit="multi_history">
+	<div class="col-row">
+		You have multiple items selected. How do you want to assign a new date and time?
+	</div>
+	<!-- ko if: multiHistory.drawer() === 'published_on' -->
+	<div class="col-row">
+		<input id="date_pub" type="radio" name="multi_history" data-bind="attr: {checked: multiHistory.type() === 'captured'}" value="captured" /> <label for="date_pub">Assign date captured</label>
+	</div>
+	<!-- /ko -->
+	<div class="col-row">
+		<input id="date_new" type="radio" name="multi_history" data-bind="attr: {checked: multiHistory.type() === 'assign'}" value="assign" /> <label for="date_new">Assign new date and time</label>
+	</div>
+	<div class="col-row">
+		<input id="date_shift" type="radio" name="multi_history" data-bind="attr: {checked: multiHistory.type() === 'shift'}" value="shift" /> <label for="date_shift">Shift each date and time</label>
+	</div>
+	<div data-bind="visible: multiHistory.type() === 'assign'">
+		<div class="col-row field-row">
+			<input type="text" class="field side-col datepicker" data-bind="value: multiHistory.getNow()" />
+		</div>
+	</div>
+	<div data-bind="visible: multiHistory.type() === 'shift'">
+		<div class="col-row field-row">
+			<div class="label">Years</div>
+			<div class="value">
+				<input data-type="years" class="field small" type="number" min="-50" max="50" step="1" data-bind="value: multiHistory.date.years()" />
+			</div>
+		</div>
+		<div class="col-row">
+			<div class="label">Months</div>
+			<div class="value">
+				<input data-type="months" class="field small" type="number" min="-12" max="12" step="1" data-bind="value: multiHistory.date.months()" />
+			</div>
+		</div>
+		<div class="col-row">
+			<div class="label">Days</div>
+			<div class="value">
+				<input data-type="days" class="field small" type="number" min="-31" max="31" step="1" data-bind="value: multiHistory.date.days()" />
+			</div>
+		</div>
+		<div class="col-row">
+			<div class="label">Hours</div>
+			<div class="value">
+				<input data-type="hours" class="field small" type="number" min="-24" max="24" step="1" data-bind="value: multiHistory.date.hours()" />
+			</div>
+		</div>
+		<div class="col-row">
+			<div class="label">Minutes</div>
+			<div class="value">
+				<input data-type="minutes" class="field small" type="number" min="-60" max="60" step="1" data-bind="value: multiHistory.date.minutes()" />
+			</div>
+		</div>
+	</div>
+	<div class="col-row" data-bind="visible: multiHistory.type() === 'shift'">
+		<!-- ko if: multiHistory.date.years() != 0 || multiHistory.date.months() != 0 || multiHistory.date.days() != 0 || multiHistory.date.hours() != 0 || multiHistory.date.minutes() != 0 -->
+		Each selected date will be shifted by:<br>
+		<!-- /ko -->
+			<!-- ko if: multiHistory.date.years() != 0 --><strong><span data-bind="text: multiHistory.date.years()"></span> year<!-- ko if: multiHistory.date.years() != 1 && multiHistory.date.years() != -1 -->s<!-- /ko --></strong><br><!-- /ko -->
+			<!-- ko if: multiHistory.date.months() != 0 || multiHistory.date.days() != 0 || multiHistory.date.hours() != 0 || multiHistory.date.minutes() != 0 --><!-- /ko -->
+			<!-- ko if: multiHistory.date.months() != 0 --><strong><span data-bind="text: multiHistory.date.months()"></span> month<!-- ko if: multiHistory.date.months() != 1 && multiHistory.date.months() != -1 -->s<!-- /ko --></strong><br><!-- /ko -->
+			<!-- ko if:  multiHistory.date.days() != 0 || multiHistory.date.hours() != 0 || multiHistory.date.minutes() != 0 --><!-- /ko -->
+			<!-- ko if: multiHistory.date.days() != 0 --><strong><span data-bind="text: multiHistory.date.days()"></span> day<!-- ko if: multiHistory.date.days() != 1 && multiHistory.date.days() != -1 -->s<!-- /ko --></strong><br><!-- /ko -->
+			<!-- ko if: multiHistory.date.hours() != 0 || multiHistory.date.minutes() != 0 --><!-- /ko -->
+			<!-- ko if: multiHistory.date.hours() != 0 --><strong><span data-bind="text: multiHistory.date.hours()"></span> hour<!-- ko if: multiHistory.date.hours() != 1 && multiHistory.date.hours() != -1 -->s<!-- /ko --></strong><br><!-- /ko -->
+			<!-- ko if: multiHistory.date.minutes() != 0 --><!-- /ko -->
+			<!-- ko if: multiHistory.date.minutes() != 0 --><strong><span data-bind="text: multiHistory.date.minutes()"></span> minute<!-- ko if: multiHistory.date.minutes() != 1 && multiHistory.date.minutes() != -1 -->s<!-- /ko --></strong><!-- /ko -->
+	</div>
+	<div class="col-row button-row" data-event="save_changes">
+		<button class="button c0 sm data-submit" title="Save changes and close">Done</button>
+	</div>
+</div>
+</script>
+<!-- @END Multi History Uploaded Edit Drawer Template -->
+
+<!-- @BEGIN Visibility Edit Drawer Template -->
+<script id="visibility_edit" type="text/html">
+<div data-submit="visibility">
+	<div class="panel_group">
+		<div class="col-row"><input id="i-public" value="public" type="radio" name="visibility" data-bind="checked: sidebar.asset.visibility.raw()" /> <label for="i-public">Public</label></div>
+		<div class="col-row"><input id="i-unlisted" value="unlisted" type="radio" name="visibility" data-bind="checked: sidebar.asset.visibility.raw()" /> <label for="i-unlisted">Unlisted</label></div>
+		<div class="col-row"><input id="i-private" value="private" type="radio" name="visibility" data-bind="checked: sidebar.asset.visibility.raw()" /> <label for="i-private">Private</label></div>
+	</div>
+	<div class="col-row button-row" data-event="save_changes"><button class="button c0 sm data-submit" title="Save changes and close">Done</button></div>
+	<div class="col-row hr"><hr></div>
+	<div class="col-row">
+		<strong>Public</strong>: Anyone can view, including search engines.
+	</div>
+	<div class="col-row">
+		<strong>Unlisted</strong>: Only people with a link can view.
+	</div>
+	<div class="col-row">
+		<strong>Private</strong>: Console viewing only.
+	</div>
+
+</script>
+<!-- @END Visibility Edit Drawer Template -->
+
+<!-- @BEGIN Tags Edit Drawer Template -->
+<script id="tags_edit" type="text/html">
+<!-- ko with: $data.sidebar.asset -->
+	<!-- ko template: 'edit_tags' --><!-- /ko -->
+<!-- /ko -->
+</script>
+<!-- @END Tags Edit Drawer Template -->
+
+<!-- @BEGIN Category Edit Drawer Template -->
+<script id="category_edit" type="text/html">
+<!-- ko ifnot: $.isEmptyObject( $data.sidebar.asset ) -->
+	<!-- ko with: $data.sidebar.asset -->
+		<!-- ko template: 'edit_categories' --><!-- /ko -->
+	<!-- /ko -->
+<!-- /ko -->
+
+<!-- ko if: $.isEmptyObject( $data.sidebar.asset ) -->
+	<!-- ko with: $data.sidebar.multi -->
+		<!-- ko template: 'edit_categories' --><!-- /ko -->
+	<!-- /ko -->
+<!-- /ko -->
+</script>
+<!-- @END Category Edit Drawer Template -->
+
+<!-- @BEGIN Upload Bottom -->
+<script id="loading_bottom" type="text/html"></script>
+<!-- @END Upload Bottom -->
+
+<!-- @BEGIN Mid Multi Bottom -->
+<script id="multi_bottom" type="text/html">
+<div class="ui-row">
+
+	<div class="l push">
+		<a href="#" id="" class="button-ui emb fleft" style="margin-right:5px;" data-dropdown="sort" data-event="toggle_dropdown" class="button-ui emb thin" data-bind="css: { disabled: !is_sortable() || loading() || view() == 'empty' || view() == 'single', selected: dropdowns.sort.active() == true }">
+			Sort: <span data-bind="text: order_by_string()"></span> <span class="sort_arrow" data-bind="visible: order_by() !== 'manual', css: { asc: order_direction() == 'asc', desc: order_direction() == 'desc' }"></span>
+		</a>
+		<a href="#" id="" class="button-ui emb fleft" title="Reverse manual order" style="margin-right:5px;" data-bind="visible: !loading() && view() !== 'empty' && view() !== 'single' && order_by() === 'manual' && is_sortable" data-event="reverse_manual"><span class="bicon_lg reverse"></span></a>
+	</div>
+
+	<div id="content-count">
+		<!-- ko if: selection().length -->
+			<span data-bind="text: selection().length"></span> of
+		<!-- /ko -->
+		<span data-bind="text: properties.overall.total() + ' items'"></span>
+		<!-- ko if: selection().length -->
+			selected
+		<!-- /ko -->
+		&nbsp;/&nbsp;
+		<a data-event="select_all" href="#" id="select_all" class=""  title="Select all items" data-bind="css: { disabled: properties.overall.total() <= 0 }">
+			<!-- ko if: selection().length -->
+			Deselect all
+			<!-- /ko -->
+			<!-- ko ifnot: selection().length -->
+			Select all
+			<!-- /ko -->
+		</a>
+	</div>
+
+	<div class="r push">
+		<div id="thumbnail_scale" class="fleft" style="margin: -5px 5px 0 0;" data-bind="visible: view() !== 'single' && selected_type() !== 'set' && properties.overall.total() > 0">
+			<label class="range" style="padding-right: 5px;">Thumbnails</label>
+			<input type="range" min="100" max="300" data-bind="value: thumbnail_scale, valueUpdate: 'input'">
+		</div>
+		<ul class="fleft button-row-joined">
+			<li>
+				<a href="#" data-bind="css: { selected: view() === 'grid', disabled: properties.overall.total() <= 0 }, click: function() { view('grid'); }" class="button-ui emb" title="Thumbnail view"><span class="bicon_lg lib_grid"></span></a>
+			</li>
+			<li>
+				<a data-bind="css: { selected: view() === 'list', disabled: sidebar.id() === 'trash' || selected_type() === 'set' || properties.overall.total() <= 0 }, click: function() { if ( sidebar.id() === 'trash' || selected_type() === 'set' ) { return false; } view('list'); }" class="button-ui emb" title="List view"><span class="bicon_lg lib_list"></span></a>
+			</li>
+			<li>
+				<a data-bind="css: { selected: view() === 'single', disabled: properties.overall.total() <= 0 || sidebar.id() === 'trash' || selected_type() === 'set' || selection().length <= 0 || selection().length > 1 }, click: function() { if ( sidebar.id() === 'trash' || selected_type() === 'set' || selection().length <= 0 || selection().length > 1 ) { return false; } view('single'); }" class="button-ui emb" title="Single view"><span class="bicon_lg lib_single"></span></a>
+			</li>
+		</ul>
+	</div>
+
+</div>
+</script>
+<!-- @END Mid Multi Bottom -->
+
+<!-- @BEGIN Mid Multi Bottom -->
+<script id="empty_bottom" type="text/html">
+<div id="content-count">0 items</div>
+</script>
+<!-- @END Mid Multi Bottom -->
+
+<!-- @BEGIN Upload Bottom -->
+<script id="upload_bottom" type="text/html"></script>
+<!-- @END Upload Bottom -->
+
+<!-- @BEGIN Fixed Sidebar Info -->
+<script id="fixed_sidebar_info" type="text/html">
+<!-- ko if: has_urls -->
+<div id="fixed_sidebar_info_container">
+	<div id="fixed_side" data-bind="scrollbar: true">
+
+		<div class="col-block">
+			<div data-event="toggle_visibility" class="col-head">
+				<span class="in">
+					<a href="#" class="arrow-toggle open fold"></a>
+					<h6><a href="#" class="fold" title="Properties">Properties</a></h6>
+				</span>
+			</div>
+			<div class="col-group">
+				<div data-bind="visible: selected_type() === 'content'">
+					<div class="col-row">
+						<div class="label">Photos</div>
+						<div class="value" data-bind="text: properties.overall.counts.images"></div>
+					</div>
+					<div class="col-row">
+						<div class="label">Videos</div>
+						<div class="value" data-bind="text: properties.overall.counts['videos']"></div>
+					</div>
+				</div>
+				<div data-bind="visible: selected_type() === 'set'">
+					<div class="col-row">
+						<div class="label">Albums</div>
+						<div class="value" data-bind="text: properties.overall.counts['albums']"></div>
+					</div>
+					<div class="col-row">
+						<div class="label">Sets</div>
+						<div class="value" data-bind="text: properties.overall.counts['sets']"></div>
+					</div>
+				</div>
+				<div data-bind="visible: show_root_site_links()">
+					<div data-event="toggle_visibility" class="col-head">
+						<span class="in">
+							<a href="#" class="arrow-toggle open fold"></a>
+							<h6><a href="#" class="fold" title="Site">Site</a></h6>
+						</span>
+					</div>
+					<div class="col-group">
+						<div class="col-row">
+							<div class="label"><label>Link</label></div>
+							<div class="value" data-bind="visible: api_url().indexOf('albums') === -1 && api_url().indexOf('favorites') === -1 && $root.form_site_link('contents')">
+								<textarea id="albums-link" rows="2" type="text" class="field side-col expand short" data-bind="value: $root.form_site_link('contents')" readonly="readonly"></textarea>
+								<span class="field-links"><a class="edit-link copier" href="#" title="Copy link to clipboard">copy</a><a class="edit-link" data-bind="attr: { href: $root.form_site_link('contents') }" onclick="window.open(this.href); return false;" title="View asset in site">view</a></span>
+							</div>
+							<div class="value" data-bind="visible: api_url().indexOf('albums') === -1 && api_url().indexOf('favorites') !== -1 && $root.form_site_link('favorites')">
+								<textarea id="albums-link" rows="2" type="text" class="field side-col expand short" data-bind="value: $root.form_site_link('favorites')" readonly="readonly"></textarea>
+								<span class="field-links"><a class="edit-link copier" href="#" title="Copy link to clipboard">copy</a><a class="edit-link" data-bind="attr: { href: $root.form_site_link('favorites') }" onclick="window.open(this.href); return false;" title="View asset in site">view</a></span>
+							</div>
+							<div class="value" data-bind="visible: api_url().indexOf('albums/visibility:public') !== -1 && $root.form_site_link('albums')">
+								<textarea id="albums-link" rows="2" type="text" class="field side-col expand short" data-bind="value: $root.form_site_link('albums')" readonly="readonly"></textarea>
+								<span class="field-links"><a class="edit-link copier" href="#" title="Copy link to clipboard">copy</a><a class="edit-link" data-bind="attr: { href: $root.form_site_link('albums') }" onclick="window.open(this.href); return false;" title="View asset in site">view</a></span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- ko if: settings.last_upload() -->
+		<div class="col-block">
+			<div data-event="toggle_visibility" class="col-head">
+				<span class="in">
+					<a href="#" class="arrow-toggle open fold"></a>
+					<h6><a href="#" class="fold">History</a></h6>
+				</span>
+			</div>
+			<div class="col-group">
+				<div class="col-row">
+					<div class="label"><label>Last import</label></div>
+					<div class="value" data-bind="text: format_date( settings.last_upload(),'M/D/YYYY h:mm a' )"></div>
+				</div>
+			</div>
+		</div>
+		<!-- /ko -->
+
+	</div>
+</div>
+<!-- /ko -->
+</script>
+<!-- @END Fixed Sidebar Info -->
+
+<!-- @BEGIN Album Sidebar Info -->
+<script id="album_sidebar_info" type="text/html">
+<div id="album_sidebar_info_container">
+	<div id="lib-covers-contain" class="col-select" data-bind="visible: $data.sidebar.asset.covers().length > 0">
+		<div id="lib-covers" class="col-block" data-bind="scrollbar: true">
+			<div data-event="toggle_visibility" class="col-head">
+				<span class="in">
+					<a href="#" class="arrow-toggle open"></a>
+					<h6><a class="fold" href="#" title="Toggle">Covers</a></h6>
+				</span>
+			</div>
+			<ol class="square-grid" data-bind="css: { scrolling: $data.sidebar.asset.covers().length > 9 }">
+				<!-- ko foreach: $data.sidebar.asset.covers -->
+				<li data-bind="attr: { 'data-id': $data.id }" class="loading">
+					<!-- ko if: $parent.sidebar.asset.covers().length > 3 -->
+					<a href="#" class="remcover" title="Remove cover" data-event="assign_cover"></a>
+					<!-- /ko -->
+					<img data-bind="attr: { src: $root.get_preset_url($data.presets.small.cropped) }, event: { load: $parent.events.show_cover.call($parent,$data) }" />
+				</li>
+				<!-- /ko -->
+			</ol>
+		</div>
+	</div>
+	<hr class="first" />
+	<div id="album_evt">
+		<div id="album_side" data-bind="scrollbar: true" style="position: relative;">
+			<div data-event="sidebar">
+			<div class="col-block">
+				<div data-event="toggle_visibility" class="col-head">
+					<span class="in">
+						<a href="#" class="arrow-toggle open fold"></a>
+						<h6><a href="#" class="fold" title="Properties">Properties</a></h6>
+					</span>
+				</div>
+				<div class="col-group">
+					<div class="col-row" >
+						<div class="label"><label>ID</label></div>
+						<div class="value">
+							<span data-bind="text: sidebar.asset.id()"></span>
+						</div>
+					</div>
+					<div class="col-row editable-input" data-submit="title">
+						<div class="label"><label>Title</label></div>
+						<div class="value">
+							<input data-ob="title" type="text" data-bind="value: sidebar.asset.title()" class="field side-col" />
+						</div>
+					</div>
+					<div class="col-row editable-textarea" data-submit="description">
+						<div class="label"><label>Description</label></div>
+						<div class="value">
+							<textarea data-ob="description" class="field side-col expand tall" rows="8" data-bind="value: sidebar.asset.description()"></textarea>
+						</div>
+					</div>
+					<div class="col-row editable-textarea" data-submit="summary">
+						<div class="label"><label>Summary</label></div>
+						<div class="value">
+							<textarea data-ob="summary" id="summary-text" rows="2" type="text" class="field side-col expand tall" data-bind="value: sidebar.asset.summary(), event: { keyup: function() { sidebar.asset.summary( $('#summary-text').val() ); }, focus: function() { $('#summary-text').parent().find('.field-links').show(); }, blur: function() { $('#summary-text').parent().find('.field-links').hide(); } }" maxlength="255"></textarea><span class="field-links" style="display: none;"><span data-bind="text: (255 - sidebar.asset.summary().length)"></span> characters left</span>
+						</div>
+					</div>
+					<div class="col-row">
+						<div class="label"><label class="category_edit">Categories</label></div>
+						<div class="value">
+							<!-- ko if: typeof selection_categories() !== 'string' -->
+								<!-- ko foreach: selection_categories() --><a href="#" data-event="category_search" class="data-link" data-bind="text: title, attr: { title: 'View all content in the ' + title +  ' category' }"></a><!-- /ko -->
+							<!-- /ko -->
+							<!-- ko if: typeof selection_categories() === 'string' -->
+							<span class="col-value" data-bind="text: selection_categories()"></span>
+							<!-- /ko -->
+							<a href="#" title="Edit categories" class="edit-link">edit</a>
+						</div>
+					</div>
+					<div class="col-row">
+						<div class="label"><label class="tags_edit">Tags</label></div>
+						<div class="value">
+							<span class="tag-display">
+								<!-- ko if: sidebar.asset.tags().length -->
+									<!-- ko foreach: sidebar.asset.tags() -->
+									<a href="#" data-bind='text: $data.title.replace(/"+/g, ""), attr: { title: "View all content tagged " + $data.title }' class="data-link tag" data-event="tag_search"></a>
+									<!-- /ko -->
+								<!-- /ko -->
+								<!-- ko ifnot: sidebar.asset.tags().length -->
+									<span class="col-value">- none -</span>
+								<!-- /ko -->
+							</span>
+							<a href="#" title="Edit tags" class="edit-link" style="display:inline-block">edit</a>
+						</div>
+					</div>
+				</div><!-- .col-group -->
+			</div>
+
+			<div class="col-block" data-plugin-target="site">
+				<div data-event="toggle_visibility" class="col-head">
+					<span class="in">
+						<a href="#" class="arrow-toggle open fold"></a>
+						<h6><a href="#" class="fold">Site</a></h6>
+					</span>
+				</div>
+				<div class="col-group">
+					<div class="col-row">
+						<div class="label"><label class="visibility_edit">Visibility</label></div>
+						<div class="value">
+							<span data-bind="text: sidebar.asset.visibility.clean()"></span>
+							 <a href="#" class="edit-link" title="edit">edit</a>
+						</div>
+					</div>
+					<!-- ko if: sidebar.asset.visibility.raw() !== 'private' -->
+					<div class="col-row" data-bind="visible: sidebar.asset.url()">
+						<div class="label"><label class="site_link_edit">Link</label></div>
+						<div class="value">
+							<textarea id="albums-link" rows="2" type="text" class="field side-col expand short" data-bind="value: sidebar.asset.url()" readonly="readonly"></textarea>
+							<span class="field-links"><!-- ko if: sidebar.asset.visibility.raw() === 'public' --><a href="#" class="edit-link" title="Edit URL slug">edit</a><!-- /ko --><a class="edit-link no-drawer copier" href="#" title="Copy URL to clipboard">copy</a><a class="edit-link no-drawer" data-bind="attr: { href: sidebar.asset.url() }" onclick="window.open(this.href); return false;" title="View asset in site">view</a><a data-event="reset_secret_link" class="edit-link no-drawer" href="#" title="Reset secret URL" data-bind="visible: sidebar.asset.visibility.raw() === 'unlisted'">reset</a></span>
+						</div>
+					</div>
+					<!-- /ko -->
+				</div>
+			</div>
+
+			<div class="col-block">
+				<div data-event="toggle_visibility" class="col-head">
+					<span class="in">
+						<a href="#" class="arrow-toggle open fold"></a>
+						<h6><a href="#" class="fold">History</a></h6>
+					</span>
+				</div>
+				<div class="col-group">
+					<div class="col-row">
+						<div class="label">
+							<label class="history_published_edit">Published</label>
+						</div>
+						<div class="value">
+							<!-- ko if: sidebar.asset.public -->
+							<span data-bind="text: format_date(sidebar.asset.published_on.timestamp(), 'M/D/YYYY h:mm a')"></span>
+							<a href="#" class="edit-link" title="Edit date published">edit</a>
+							<!-- /ko -->
+
+							<!-- ko ifnot: sidebar.asset.public -->
+							Not published
+							<!-- /ko -->
+						</div>
+					</div>
+					<div class="col-row">
+						<div class="label"><label for="" class="history_uploaded_edit">Created</label></div>
+						<div class="value">
+							<span data-bind="text: format_date( sidebar.asset.created_on.timestamp(), 'M/D/YYYY h:mm a')"></span>
+							<a href="#" class="edit-link">edit</a>
+						</div>
+					</div>
+					<div class="col-row">
+						<div class="label"><label>Modified</label></div>
+						<div class="value">
+							<span data-bind="text: format_date( sidebar.asset.modified_on.timestamp(), 'M/D/YYYY h:mm a')"></span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		</div>
+	</div>
+</div>
+</script>
+<!-- @END Album Sidebar Info -->
+
+<!-- @BEGIN Content Sidebar Template -->
+<script id="content_sidebar_info" type="text/html">
+<div id="content_sidebar_info_container">
+	<div class="col-select">
+		<div class="w">
+			<div id="lib-content-sel" class="ks_parent">
+			<!-- ko if: sidebar.last.id != sidebar.asset.id() -->
+			<a data-bind="click: function() { view('single'); }">
+				<img class="inspect mag" />
+			</a>
+			<!-- /ko -->
+			<!-- ko if: sidebar.last.id == sidebar.asset.id() -->
+			<a data-bind="click: function() { view('single'); }">
+				<img class="inspect mag" data-bind="attr: { src: $root.get_preset_url(sidebar.asset.presets.medium), width: sidebar.last.width, height: sidebar.last.height }" />
+			</a>
+			<!-- /ko -->
+			<!-- ko if: sidebar.asset.html() -->
+			<div data-bind="html: sidebar.asset.console_html ? sidebar.asset.console_html() : sidebar.asset.html()"></div>
+			<!-- /ko -->
+			<span class="kspinner ks_md ks_abs ks_abs_md"></span>
+			</div>
+		</div>
+	</div>
+	<hr class="first" />
+	<div id="content_side" class="lib-col-content" data-bind="scrollbar: true">
+		<div id="content_evt">
+			<div data-event="sidebar">
+				<div class="col-block" data-plugin-target="asset.properties">
+					<!-- Properties -->
+					<div data-event="toggle_visibility" class="col-head">
+						<span class="in">
+							<a href="#" class="arrow-toggle open fold"></a>
+							<h6><a href="#" class="fold" title="Properties">Properties</a></h6>
+						</span>
+					</div>
+					<div class="col-group">
+						<div class="col-row">
+							<div class="label">
+								<label>File</label>
+							</div>
+							<div class="value">
+								<span data-bind="text: sidebar.asset.filename"></span>
+								<!-- ko if: sidebar.asset.source.url -->
+								<a data-bind="attr: { href: sidebar.asset.source.url }" class="edit-link" title="View source page" onclick="return !window.open(this.href);">source</a>
+								<!-- /ko -->
+							</div>
+						</div>
+						<div class="col-row" data-bind="visible: sidebar.asset.width() !== null">
+							<div class="label"><label>Dimensions</label></div>
+							<div class="value" data-bind="text: sidebar.asset.width() + ' x ' + sidebar.asset.height()"></div>
+						</div>
+						<!-- ko if: sidebar.asset.file_type() === 'video' && sidebar.asset.duration.raw && sidebar.asset.duration.raw() > 0 -->
+						<div class="col-row">
+							<div class="label"><label>Duration</label></div>
+							<div class="value" data-bind="text: sidebar.asset.duration.clean()"></div>
+						</div>
+						<!-- /ko -->
+						<div class="col-row iptc" data-bind="visible: sidebar.asset.file_type() === 'image' && sidebar.asset.iptc_fields().length > 0">
+							<div class="label"><label class="iptc_edit">IPTC</label></div>
+							<div class="value">
+								<a href="#" title="Edit IPTC data" class="edit-link" style="margin-left:0;">view</a>
+							</div>
+						</div>
+						<div class="col-row exif" data-bind="visible: sidebar.asset.file_type() === 'image' && sidebar.asset.exif_fields().length > 0">
+							<div class="label"><label class="exif_edit">EXIF</label></div>
+							<div class="value">
+								<span data-bind="html: $data.exif_label()"></span>
+								<a href="#" title="View EXIF data" class="edit-link">view</a>
+							</div>
+						</div>
+						<div class="col-row">
+							<div class="label"><label>ID</label></div>
+							<div class="value" data-bind="text: sidebar.asset.id()"></div>
+						</div>
+						<div class="col-row" data-submit="title" class="editable-input">
+							<div class="label"><label>Title</label></div>
+							<div class="value">
+								<input type="text" data-ob="title" data-bind="value: sidebar.asset.title()" class="field side-col" />
+							</div>
+						</div>
+						<div class="col-row" data-submit="caption" class="editable-textarea">
+							<div class="label"><label>Caption</label></div>
+							<div class="value">
+								<textarea data-ob="caption" class="field side-col expand tall" rows="4" data-bind="value: sidebar.asset.caption()"></textarea>
+							</div>
+						</div>
+						<div class="col-row">
+							<div class="label"><label class="category_edit">Categories</label></div>
+							<div class="value">
+								<!-- ko if: typeof selection_categories() !== 'string' -->
+									<!-- ko foreach: selection_categories() --><a href="#" data-event="category_search" class="data-link" data-bind="text: title, attr: { title: 'View all content in the ' + title +  ' category' }"></a><!-- /ko -->
+								<!-- /ko -->
+								<!-- ko if: typeof selection_categories() === 'string' -->
+								<span class="col-value" data-bind="text: selection_categories()"></span>
+								<!-- /ko -->
+								<a href="#" title="Edit categories" class="edit-link nospace">edit</a>
+							</div>
+						</div>
+						<div class="col-row">
+							<div class="label"><label class="tags_edit">Tags</label></div>
+							<div class="value">
+								<span class="tag-display">
+									<!-- ko if: sidebar.asset.tags().length -->
+										<!-- ko foreach: sidebar.asset.tags() -->
+										<a href="#" data-bind='text: $data.title.replace(/"+/g, ""), attr: { title: "View all content tagged " + $data.title }' class="data-link tag" data-event="tag_search"></a>
+										<!-- /ko -->
+									<!-- /ko -->
+									<!-- ko ifnot: sidebar.asset.tags().length -->
+										<span class="col-value">- none -</span>
+									<!-- /ko -->
+								</span>
+								<a href="#" title="Edit tags" class="edit-link" style="display:inline-block">edit</a>
+							</div>
+						</div>
+						<div class="col-row">
+							<div class="label"><label>Albums</label></div>
+							<div class="value">
+								<!-- ko if: get_selected_asset_albums() --><!-- /ko -->
+								<!-- ko if: typeof selection_albums() !== 'string' -->
+									<!-- ko foreach: selection_albums() --><a href="#" class="data-link commafy" data-bind="text: $data.title, attr: {href: $root.paths.admin + '/#/library/albums/' + $data.id + '/content' }"></a><!-- /ko -->
+								<!-- /ko -->
+								<!-- ko if: typeof selection_albums() === 'string' -->
+								<span data-bind="text: selection_albums()"></span>
+								<!-- /ko -->
+							</div>
+						</div>
+					</div><!-- .col-group -->
+					<!-- /Properties -->
+				</div>
+
+				<!-- Ownership -->
+				<div class="col-block">
+					<div data-event="toggle_visibility" class="col-head">
+						<span class="in">
+							<a href="#" class="arrow-toggle open fold"></a>
+							<h6><a href="#" class="fold">Ownership</a></h6>
+						</span>
+					</div>
+					<div class="col-group">
+						<div class="col-row">
+							<div class="label"><label class="license_edit">License</label></div>
+							<div class="value">
+								<!-- ko template: { name: 'license_display', data: sidebar.asset } -->
+								<!-- /ko -->
+								<a href="#" title="Edit license" class="edit-link">edit</a>
+							</div>
+						</div>
+					</div>
+					<!-- /Ownership -->
+				</div>
+
+				<!-- Site -->
+				<div class="col-block">
+					<div data-event="toggle_visibility" class="col-head">
+						<span class="in">
+							<a href="#" class="arrow-toggle open fold"></a>
+							<h6><a href="#" class="fold">Site</a></h6>
+						</span>
+					</div>
+					<div class="col-group">
+						<div class="col-row">
+								<div class="label"><label class="visibility_edit">Visibility</label></div>
+								<div class="value">
+									<span data-bind="text: sidebar.asset.visibility.clean()"></span> <a href="#" class="edit-link">edit</a>
+								</div>
+						</div>
+						<div class="col-row" data-bind="visible: sidebar.asset.file_type() === 'image' && ((sidebar.asset.visibility.raw() !== 'private' && (!$data.observers.properties.album.selected().album || $data.observers.properties.album.selected().album.visibility.raw !== 'private')) || ($data.observers.properties.album.selected().album && $data.observers.properties.album.selected().album.allow_max_download))">
+							<div class="label"><label class="maxdl_edit">Download</label></div>
+							<div class="value">
+								<span data-bind="text: sidebar.asset.max_download.clean()"></span> <a href="#" title="Edit max download" class="edit-link">edit</a>
+							</div>
+						</div>
+						<!-- ko if: sidebar.asset.visibility.raw() !== 'private' && (!$data.observers.properties.album.selected().album || $data.observers.properties.album.selected().album.visibility.raw !== 'private') -->
+						<div class="col-row editable-input" data-submit="link" data-bind="visible: sidebar.asset.url()">
+							<div class="label"><label class="site_link_edit">Link</label></div>
+							<div class="value">
+								<textarea id="content-link" rows="2" type="text" class="field side-col expand short" data-bind="value: sidebar.asset.url()" readonly="readonly"></textarea>
+								<span class="field-links"><!-- ko if: sidebar.asset.visibility.raw() === 'public' --><a href="#" class="edit-link" title="Edit URL slug">edit</a><!-- /ko --><a class="edit-link no-drawer copier" data-copy="test" href="#" title="Copy URL to clipboard">copy</a><a class="edit-link no-drawer" data-bind="attr: { href: sidebar.asset.url() }" onclick="window.open(this.href); return false;" title="View asset in site">view</a><!-- ko if: sidebar.asset.visibility.raw() === 'unlisted' --><a data-event="reset_secret_link" class="edit-link no-drawer" href="#" title="Reset secret URL">reset</a><!-- /ko -->
+								</span>
+							</div>
+						</div>
+						<!-- /ko -->
+					</div>
+					<!-- /Site -->
+				</div>
+
+				<!-- History -->
+				<div class="col-block">
+					<div data-event="toggle_visibility" class="col-head">
+						<span class="in">
+							<a href="#" class="arrow-toggle open fold"></a>
+							<h6><a href="#" class="fold">History</a></h6>
+						</span>
+					</div>
+					<div class="col-group">
+						<div class="col-row">
+							<div class="label">
+								<label for="" class="history_published_edit">Published</label>
+							</div>
+							<div class="value">
+								<!-- ko if: sidebar.asset.visibility.raw() === 'public' -->
+								<span data-bind="text: format_date(sidebar.asset.published_on.timestamp(), 'M/D/YYYY h:mm a')"></span>
+								<a href="#" class="edit-link" title="Edit date published">edit</a>
+								<!-- /ko -->
+
+								<!-- ko if: sidebar.asset.visibility.raw() !== 'public' -->
+								Not published
+								<!-- /ko -->
+							</div>
+						</div>
+						<!-- ko if: sidebar.asset.captured_on.timestamp() !== null -->
+						<div class="col-row">
+							<div class="label">
+								<label for="" class="captured_uploaded_edit">Captured</label>
+							</div>
+							<div class="value">
+								<span data-bind="text: format_date(sidebar.asset.captured_on.timestamp(), 'M/D/YYYY h:mm a', sidebar.asset.captured_on.utc())"></span>
+								<a href="#" class="edit-link" title="Edit date captured">edit</a>
+							</div>
+						</div>
+						<!-- /ko -->
+						<div class="col-row">
+							<div class="label">
+								<label for="" class="history_uploaded_edit">Uploaded</label>
+							</div>
+							<div class="value">
+								<span data-bind="text: format_date(sidebar.asset.uploaded_on.timestamp(), 'M/D/YYYY h:mm a')"></span>
+								<a href="#" class="edit-link" title="Edit date uploaded">edit</a>
+							</div>
+						</div>
+						<div class="col-row">
+							<div class="label"><label for="">Modified</label></div>
+							<div class="value" data-bind="text: format_date(sidebar.asset.modified_on.timestamp(), 'M/D/YYYY h:mm a')"</div>
+						</div>
+					</div>
+				</div>
+				<!-- /History -->
+
+			</div>
+		</div>
+	</div>
+</div>
+</script>
+<!-- @END Content Sidebar Template -->
+
+<!-- @BEGIN Multiple Selection Sidebar Info -->
+<script id="multi_sidebar_info" type="text/html">
+<div id="multi_sidebar_info_container">
+	<div id="multi_side" data-bind="scrollbar: true">
+		<div data-event="sidebar">
+
+			<div class="col-row">
+				<div class="panel_group">
+					You have multiple items selected. Edits made below will apply to all.
+				</div>
+			</div>
+
+			<div class="col-row hr"><hr></div>
+
+			<div class="col-block">
+				<div data-event="toggle_visibility" class="col-head">
+					<span class="in">
+						<a href="#" class="arrow-toggle open fold"></a>
+						<h6><a href="#" class="fold">Properties</a></h6>
+					</span>
+				</div>
+				<div class="col-group">
+					<div class="col-row">
+						<div class="label"><label>Title</label></div>
+						<div class="value">
+							<input type="text" data-ob="title" class="field side-col" data-bind="value: properties.multi.labels().title" />
+						</div>
+					</div>
+					<div class="col-row" data-bind="visible: !$data.isMultiAlbum()">
+						<div class="label"><label>Caption</label></div>
+						<div class="value">
+							<textarea data-ob="caption" class="field side-col expand tall" rows="4"></textarea>
+						</div>
+					</div>
+					<div class="col-row editable-textarea" data-bind="visible: $data.isMultiAlbum()">
+						<div class="label"><label>Description</label></div>
+						<div class="value">
+							<textarea data-ob="description" class="field side-col expand tall" rows="8"></textarea>
+						</div>
+					</div>
+					<div id="multi_album_summary" class="col-row editable-textarea" data-bind="visible: $data.isMultiAlbum()">
+						<div class="label"><label>Summary</label></div>
+						<div class="value">
+							<textarea data-ob="summary" id="summary-text" rows="2" type="text" class="field side-col expand tall" data-bind="event: { focus: function() { $('#summary-text').parent().find('.field-links').show(); $('#multi_album_summary .char_count').text(255 - $('#multi_album_summary #summary-text').val().length); }, blur: function() { $('#summary-text').parent().find('.field-links').hide(); } }" maxlength="255"></textarea><span class="field-links" style="display: none;"><span class="char_count"></span> characters left</span>
+						</div>
+					</div>
+					<div class="col-row">
+						<div class="label"><label class="category_edit">Categories</label></div>
+						<div class="value">
+							<!-- ko if: typeof selection_categories() !== 'string' -->
+								<!-- ko foreach: selection_categories() -->
+								<a href="#" data-event="category_search" class="data-link" data-bind="text: title, attr: { title: 'View all content in the ' + title +  ' category' }"></a>
+								<!-- /ko -->
+							<!-- /ko -->
+							<!-- ko if: typeof selection_categories() === 'string' -->
+							<span class="col-value" data-bind="text: selection_categories()"></span>
+							<!-- /ko -->
+							<a href="#" title="Edit categories" class="edit-link nospace">edit</a>
+						</div>
+					</div>
+					<div class="col-row">
+						<div class="label"><label class="tags_edit">Tags</label></div>
+						<div class="value">
+							<span class="tag-display">
+								<!-- ko if: $data.tagsCommonAcrossAll().length > 0 -->
+									<!-- ko foreach: $data.tagsCommonAcrossAll -->
+									<a href="#" data-bind='text: $data.title.replace(/"+/g, ""), attr: { title: "View all content tagged " + $data.title }' class="data-link tag" data-event="tag_search"></a>
+									<!-- /ko -->
+								<!-- /ko -->
+								<!-- ko if: $data.tagsCommonAcrossAll().length <= 0 && $data.selectionHasTags() -->
+								<span class="col-value">- mixed -</span>
+								<!-- /ko -->
+								<!-- ko if: $data.tagsCommonAcrossAll().length <= 0 && !$data.selectionHasTags() -->
+								<span class="col-value">- none -</span>
+								<!-- /ko -->
+							</span>
+							<a href="#" title="Edit tags" class="edit-link">edit</a>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- ko if: $data.isContent() -->
+			<div class="col-block">
+				<div data-event="toggle_visibility" class="col-head">
+					<span class="in">
+						<a href="#" class="arrow-toggle open fold"></a>
+						<h6><a href="#" class="fold">Ownership</a></h6>
+					</span>
+				</div>
+				<div class="col-group">
+					<div class="col-row">
+						<div class="label"><label class="license_edit">License</label></div>
+						<div class="value">
+							<span data-bind="text: ($data.sidebar.asset.license.clean() != '') ? $data.sidebar.asset.license.clean() : '- mixed -'"></span> <a href="#" title="Edit license" class="edit-link">edit</a>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-block">
+				<div data-event="toggle_visibility" class="col-head">
+					<span class="in">
+						<a href="#" class="arrow-toggle open fold"></a>
+						<h6><a href="#" class="fold">Site</a></h6>
+					</span>
+				</div>
+				<div class="col-group">
+					<div class="col-row">
+						<div class="label"><label class="visibility_edit">Visibility</label></div>
+						<div class="value">
+							<span data-bind="text: ($data.sidebar.asset.visibility.clean() != '') ? $data.sidebar.asset.visibility.clean() : '- mixed -'"></span> <a href="#" class="edit-link" title="Edit visibility">edit</a>
+						</div>
+					</div>
+					<div class="col-row">
+						<div class="label"><label class="maxdl_edit">Download</label></div>
+						<div class="value">
+							<span data-bind="text: ($data.sidebar.asset.max_download.clean() != '') ? $data.sidebar.asset.max_download.clean() : '- mixed -'"></span> <a href="#" class="edit-link" title="Edit max download">edit</a>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-block">
+				<div data-event="toggle_visibility" class="col-head">
+					<span class="in">
+						<a href="#" class="arrow-toggle open fold"></a>
+						<h6><a href="#" class="fold">History</a></h6>
+					</span>
+				</div>
+				<div class="col-group">
+					<div class="col-row" data-type="published_on">
+						<div class="label"><label class="multi_history">Published</label></div>
+						<div class="value">
+							<span>- mixed -</span> <a href="#" class="edit-link" title="Edit published date">edit</a>
+						</div>
+					</div>
+					<div class="col-row" data-type="uploaded_on">
+						<div class="label"><label class="multi_history">Uploaded</label></div>
+						<div class="value">
+							<span>- mixed -</span> <a href="#" class="edit-link" title="Edit uploaded date">edit</a>
+						</div>
+					</div>
+					<div class="col-row" data-type="captured_on">
+						<div class="label"><label class="multi_history">Captured</label></div>
+						<div class="value">
+							<span>- mixed -</span> <a href="#" class="edit-link" title="Edit captured date">edit</a>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- /ko -->
+
+		</div>
+	</div>
+</div>
+</script>
+<!-- @END Multiple Selection Sidebar Info -->
+
+<!-- @BEGIN Search Sidebar Info -->
+<script id="search_sidebar_info" type="text/html"></script>
+<!-- @END Search Sidebar Info -->
+
+<!-- @BEGIN Trash Sidebar Info -->
+<script id="trash_sidebar_info" type="text/html">
+<!-- ko if: properties.trash.total() > 0 -->
+<div class="col-row">
+	<div class="panel_group">
+		<ul class="button-row">
+			<span data-event="trashed">
+				<li><button type="button" class="button sm restore-all" value="Restore" disabled="disabled" data-bind="attr: {disabled: trashRestoreDisabled }">Restore</button></li>
+				<li><button type="button" class="button sm c0 empty" value="Empty trash">Empty trash</button></li>
+			</span>
+		</ul>
+	</div>
+</div>
+
+<div class="col-row hr"><hr></div>
+
+<div class="col-row">
+	<strong>Restore</strong>
+	<br>
+	Restoring items will move them out of the Trash and back to your Library.
+</div>
+<div class="col-row">
+	<strong>Empty trash</strong>
+	<br>
+	Emptying the trash will permanetely remove items from your Library and delete their corresponding files from your server.
+</div>
+
+<!-- /ko -->
+<!-- ko ifnot: properties.trash.total() > 0 -->
+<div class="col-row">
+	<div class="panel_group">
+		Trash contains no items.
+	</div>
+</div>
+<!-- /ko -->
+</script>
+<!-- @END Trash Sidebar Info -->
+
+<!-- @BEGIN Mid Menu Bottom Single -->
+<script id="single_bottom" type="text/html">
+<div class="ui-row">
+	<div id="content-pag">
+		<ul class="table">
+			<li>
+				<span class="cell">
+					<a href="#" data-bind="css: { disabled: properties.content.selected.index() === 0 }, click: function() { prev_item(); }" class="button-ui emb prev" title="Previous item">Prev</a>
+				</span>
+				<span class="cell">
+	            <span class="bot-count" data-bind="text: properties.content.selected.index() + 1 + ' of ' + properties.overall.total()"></span>
+	            </span>
+	            <span class="cell">
+	                <a href="#" data-bind="css: { disabled: properties.content.selected.index() === (properties.overall.total() - 1) }, click: function() { next_item(); }" class="button-ui emb next" title="Next item">Next</a>
+	            </span>
+			</li>
+		</ul>
+	</div>
+	<div class="r" style="padding-top:6px;">
+		<ul class="button-row-joined">
+			<li>
+				<a href="#" data-bind="click: function() { view('grid'); }" class="button-ui emb" title="View items as thumbnails"><span class="bicon_lg lib_grid"></span></a>
+			</li>
+			<li>
+				<a data-bind="click: function() { view('list'); }" class="button-ui emb" title="View items as a list"><span class="bicon_lg lib_list"></span></a>
+			</li>
+			<li>
+				<a href="#" class="button-ui selected emb" title="View item up close"><span class="bicon_lg lib_single"></span></a>
+			</li>
+		</ul>
+	</div>
+</div>
+</script>
+<!-- @END Mid Menu Bottom Single -->
+
+<!-- @BEGIN Create Collection Sheet -->
+<script id="create_collection_sheet" type="text/html">
+<div class="sheet-head">
+	<div class="sheet-wrap">
+		<h1>Create new collection</h1>
+	</div>
+</div>
+
+<hr>
+
+<div id="sheetview-create-col" class="sheet-middle" data-bind="scrollbar: true">
+
+		<!-- ko with: properties -->
+		<section>
+
+			<div class="sheet-wrap">
+
+				<div class="section-header col-head top_up" data-event="toggle_visibility">
+					<span class="in">
+						<a href="#" class="arrow-toggle open"></a>
+						<h6>
+							<a class="fold" href="#" title="">Collection type</a>
+						</h6>
+					</span>
+				</div>
+
+				<div class="section-content always-show">
+					<ul class="sheet-opt-types">
+						<li class="nobot" data-bind="css: { selected: type() === 0 }, click: $parent.collection.bind($data,0)">
+							<a href="#" title="Create an album"><span class="icon16 label-album">Album <span class="sub-title">For grouping content</span></span></a>
+						</li>
+						<li class="nobot" data-bind="css: { selected: type() === 2 }, click: $parent.collection.bind($data,2)">
+							<a href="#" title="Create a set"><span class="icon16 label-album-set">Set <span class="sub-title">For grouping albums and sets</span></span></a>
+						</li>
+					</ul>
+				</div>
+
+			</div>
+
+		</section>
+
+		<section data-bind="visible: type() === 0 || type() === 2">
+
+			<div class="sheet-wrap">
+
+				<div class="col-head" data-event="toggle_visibility">
+					<span class="in">
+						<a href="#" class="arrow-toggle" data-bind="css: { open: type() === 0 || type() === 2 }"></a>
+						<h6>
+							<a href="#" title="" class="fold">
+							Title and description
+							</a>
+						</h6>
+					</span>
+				</div>
+
+				<div class="section-content no-bot" data-bind="style: { display: type() === 0 || type() === 2 ? 'block' : 'none' }">
+					<ul class="table">
+						<li class="error">
+							<span class="cell label">
+								<label>Title</label>
+							</span>
+							<span class="cell">
+								<input data-validate="not_empty" data-error-msg="This field cannot be left blank" type="text" class="field wide" data-bind="value: title, valueUpdate: 'afterkeydown'" placeholder="Enter title" />
+								<span class="form-error-msg"></span>
+							</span>
+						</li>
+						<li>
+							<span class="cell label nobot">
+								<label>Description</label>
+							</span>
+							<span class="cell nobot">
+								<input class="field wide" placeholder="Enter description" data-bind="value: description" />
+							</span>
+						</li>
+					</ul>
+				</div>
+
+			</div>
+
+		</section>
+		<!-- /ko -->
+
+		<section data-bind="visible: properties.type() === 0 || properties.type() === 2">
+
+			<div class="sheet-wrap">
+
+				<div id="more_properties" class="col-head" data-event="toggle_visibility">
+					<span class="in">
+						<a href="#" class="arrow-toggle"></a>
+						<h6>
+							<a href="#" class="fold" title="">
+								More properties
+							</a>
+						</h6>
+					</span>
+				</div>
+
+				<div class="section-content" style="display: none;">
+					<ul class="table">
+						<li>
+							<span class="cell label">
+								<label>Visibility</label>
+							</span>
+							<span class="cell">
+								<select data-bind="value: properties.visibility">
+									<option value="public">Public</option>
+									<option value="unlisted">Unlisted</option>
+									<option value="private">Private</option>
+								</select>
+							</span>
+						</li>
+						<li>
+							<span class="cell label">
+								<label>Summary</label>
+							</span>
+							<span class="cell">
+								<input class="field wide" placeholder="Enter a shorter version of the description" data-bind="value: properties.summary" />
+							</span>
+						</li>
+						<li>
+							<span class="cell label top">
+								<label>Tags</label>
+							</span>
+							<span class="cell">
+								<!-- ko if: properties.tags().length > 0 -->
+								<span class="cell-row">
+									<div id="sheet-assigned-tags">
+										<ol class="inline">
+											<!-- ko foreach: properties.tags -->
+												<a class="tag" href="#" data-bind="text: $data, click: $parent.remove_tag.bind($root,$data)" title="Remove tag"></a>
+											<!-- /ko -->
+										</ol>
+									</div>
+								</span>
+								<!-- /ko -->
+								<span class="cell-row">
+									<h6>Assign tags</h6>
+									<input id="cc_tag_input" data-bind="value: tag" class="field col-wide" placeholder="Enter new tags" />&nbsp;&nbsp;<button class="button sm sib" data-bind="click: add_tag.bind($root)">Assign</button>
+								</span>
+								<span class="cell-row" data-bind="visible: $root.tags().length > 0">
+									<h6>Recent tags. Click to assign.</h6>
+									<!-- ko foreach: $root.tags -->
+										<a class="data-link tag" data-bind="text: title, click: $parent.add_tag.bind($root,$data)"></a>
+									<!-- /ko -->
+								</span>
+							</span>
+						</li>
+						<li class="last">
+							<span class="cell nobot label top">
+								<label>Categories</label>
+							</span>
+							<span class="cell nobot">
+								<!-- ko if: $root.categories().length > 0 -->
+								<span class="cell-row">
+									<ol class="inline" id="create_sheet_categories">
+										<!-- ko foreach: $root.categories -->
+										<li class="small">
+											<input type="checkbox" data-bind="attr: { id: 'create_collection_category_' + $data.id, value: $data.id }" />
+											<label data-bind="text: title, attr: { for: 'create_collection_category_' + $data.id }"></label>
+										</li>
+										<!-- /ko -->
+									</ol>
+								</span>
+								<!-- /ko -->
+								<span class="cell-row">
+									<h6>Assign categories</h6>
+									<input class="field col-wide" data-bind="value: category" placeholder="Enter new category" />&nbsp;&nbsp;<button class="button sm sib" data-bind="click: $parent.models.categories.set.bind($root,category(), null)" id="create_cat_create_collection_sheet">Assign</button>
+								</span>
+							</span>
+						</li>
+					</ul>
+				</div>
+
+			</div>
+
+		</section>
+
+</div> <!-- close .sheet-middle -->
+
+<div class="sheet-actions">
+
+	<hr>
+
+	<div class="sheet-wrap">
+
+		<div class="sheet-action">
+			<ul class="button-row">
+				<li><button class="button lg" data-event="toggle_sheet" data-sheet="create_collection">Cancel</button></li>
+				<li data-event="create_collection" data-validate="create_collection"><button class="button lg c0" data-bind="css: { disabled: $root.valid() === false }">Create album</button></li>
+			</ul>
+		</div>
+
+	</div>
+
+</div>
+</script>
+<!-- @END Create Collection Sheet -->
+
+<!-- @BEGIN Import Content Sheet -->
+<script id="import_content_sheet" type="text/html">
+<div class="sheet-head">
+	<div class="sheet-wrap">
+		<h1>Import content</h1>
+		<p>Add images and videos to the Library</p>
+	</div>
+</div>
+<hr>
+<div class="sheet-middle-no-pad clearfix">
+<section style="margin-bottom:0;">
+	<div class="sheet-wrap">
+		<ul class="option_square_grid">
+			<li class="selected">
+				<a href="#" class="import_upload" data-title="Upload" title="Upload images or videos" data-bind=""><span></span></a>
+			</li>
+			<li>
+				<a href="#" class="import_link" data-title="URL" title="Import photo from a url"><span></span></a>
+			</li>
+			<li>
+				<a href="#" class="import_vimeo" data-title="Vimeo" data-plugin-php="KokenVimeo" data-plugin="#/store/plugins/vimeo-import" title="Import video from Vimeo"><span></span></a>
+			</li>
+			<li>
+				<a href="#" class="import_inst" data-plugin-php="KokenInstagram" data-plugin="#/store/plugins/instagram-import" data-title="Instagram" title="Import photo from Instagram"><span></span></a>
+			</li>
+		</ul>
+	</div>
+</section>
+</div>
+<div id="" class="sheet-middle-no-pad clearfix">
+	<div class="import_sheet_sections">
+
+		<section id="import_upload_content" class="nob">
+			<hr class="single" />
+			<div id="upload-drop-area" class="upload_well center">
+				<section id="upload-drop-start">
+					<div class="in">
+						<h3>Drop files here or click to browse</h3>
+						<p>JPG, PNG, GIF, MP4</p>
+					</div>
+				</section>
+				<section id="upload-drop-queued" style="display:none">
+					<div class="in">
+						<h2><span class="label-success-select"><span id="upload_queued_num">0</span> items queued</span></h2>
+						<p>Add more or click Import to begin upload</p>
+					</div>
+				</section>
+			</div>
+		</section>
+
+		<section id="import_content_plugin_disabled" style="display:none;">
+			<hr>
+			<div class="sheet-wrap" style="margin-top:10px;">
+				<div class="section-content">
+					<ul class="table">
+						<li>
+							<span class="cell">
+								<p class="no-bot"><span class="title"></span> import plugin required
+								&nbsp;&nbsp;
+								<a href="#" class="button sm c0" title="Download plugin">Download plugin</a>
+								</p>
+							</span>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</section>
+
+		<section id="import_content_plugin_activate" style="display:none;">
+			<hr>
+			<div class="sheet-wrap" style="margin-top:10px;">
+				<div class="section-content">
+					<ul class="table">
+						<li>
+							<span class="cell">
+								<p class="no-bot"><span class="title"></span> Import plugin is installed but not enabled.
+								&nbsp;&nbsp;
+								<a href="#" class="button sm c0" data-event="enable_plugin_import" title="Enable plugin">Enable plugin</a>
+								</p>
+							</span>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</section>
+
+		<section id="import_content_url" style="display:none;">
+			<hr>
+			<div class="sheet-wrap" style="margin-top:10px;">
+				<div class="section-content">
+					<ul class="table">
+						<li>
+							<span class="cell label">
+								<label>Image or video URL</label>
+							</span>
+							<span class="cell">
+								<input class="field wide" placeholder="http://path/to/image.jpg" data-validate="content_url" />
+								<span class="form-error-msg"></span>
+							</span>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</section>
+
+	</div>
+
+</div>
+<div class="sheet-middle fixed clearfix">
+<hr>
+<section class="sub">
+	<div class="sheet-wrap">
+		<div data-event="toggle_visibility" class="col-head">
+			<span class="in">
+				<a href="#" class="arrow-toggle"></a>
+				<h6>
+					<a href="#" title="" class="fold">
+						Options
+					</a>
+				</h6>
+			</span>
+		</div>
+		<div class="section-content" style="display:none;">
+			<label>Set content visibility to:</label>
+			<select id="upload_visibility" class="tiny" data-bind="">
+				<option value="public">Public</option>
+				<option value="unlisted">Unlisted</option>
+				<option value="private">Private</option>
+			</select>
+		</div>
+	</div>
+</section>
+</div>
+<div class="sheet-actions">
+	<hr>
+	<div class="sheet-wrap">
+		<div class="sheet-action-l al-display" style="display: none;">
+			<input id="import_tar_coll" type="checkbox" checked="checked" />
+			<label for="import_tar_coll" class="al-title"></label>
+		</div>
+		<div class="sheet-action">
+			<ul class="button-row">
+				<li><button class="button lg" data-event="toggle_sheet" data-sheet="import_content">Cancel</button></li>
+				<li><button class="button lg c0 import" data-bind="css: { disabled: $root.valid() === false }">Import</button></li>
+			</ul>
+		</div>
+	</div>
+</div>
+</script>
+<!-- @END Import Content Sheet -->
+
+<!-- @BEGIN Upload FileCon -->
+<script id="upload_filecon" type="text/html">
+<div class="fright">
+	<a class="button tiny" id="upload-progress-cancel-bttn" href="#" title="Cancel upload" style="">Cancel</a>
+	&nbsp;&nbsp;
+	<strong>Remaining:</strong>
+	<span id="remaining">Calculating...</span>
+</div>
+<span id="upload_spinner"></span>
+<span id="file-info"></span>
+</script>
+<!-- @END Upload FileCon -->
+
+<!-- @BEGIN Upload File -->
+<script id="upload_file" type="text/html">
+<strong>Now uploading:</strong>
+&nbsp;&nbsp;<span class="up_name"></span>&nbsp;&nbsp;(<span class="up_current"></span> of <span class="up_total"></span>)
+</script>
+<!-- @END Upload File -->

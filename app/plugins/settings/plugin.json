@@ -1,0 +1,10 @@
+{
+	"name": "Core settings",
+	"version": "1.0",
+	"description": "Built-in plugin",
+	"demo": "http://koken.me",
+	"author": {
+		"name": "Koken",
+		"link": "http://koken.me"
+	}
+}

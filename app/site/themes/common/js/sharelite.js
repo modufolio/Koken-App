@@ -1,0 +1,1 @@
+$(function(){var e={pinterest:{height:525},google:{height:400}};$(document).off(".kshare").on("click.kshare",".social-links li",function(t){if(!$(this).find("a").hasClass("no-share")){t.preventDefault();var i=$(this).find("a"),a=i.attr("class").replace("share-","");return window.open(i.attr("href"),"_blank","width=560,height="+(e[a]&&e[a].height||450)),!1}})});

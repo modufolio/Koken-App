@@ -1,0 +1,55 @@
+<li class="album">
+
+	<figure>
+
+		<koken:link class="thumb" title="View {{ album.title }}">
+			<koken:if data="settings.albums_crop" equals="uniform">
+				<koken:img size="{{ settings.albums_crop_size }}" lazy="true" />
+			</koken:if>
+			<koken:if data="settings.albums_crop" equals="proportional">
+				<koken:img lazy="true" />
+			</koken:if>
+		</koken:link>
+
+		<figcaption>
+
+			<koken:if true="settings.albums_index_show_title">
+
+				<h4>
+					<koken:link title="View {{ album.title }}">
+						{{ album.title }}
+					</koken:link>
+				</h4>
+
+			</koken:if>
+
+			<koken:if data="settings.albums_index_show_caption" equals="Summary">
+				<koken:not empty="album.summary">
+				<p>
+					<koken:if true="settings.albums_index_truncate">
+						{{ album.summary truncate="130" }}
+					<koken:else>
+						{{ album.summary }}
+					</koken:if>
+				</p>
+				</koken:not>
+			</koken:if>
+
+			<koken:if data="settings.albums_index_show_caption" equals="Description">
+				<koken:not empty="album.description">
+				<p>
+					<koken:if true="settings.albums_index_truncate">
+						{{ album.description truncate="130" }}
+						<koken:link title="More">more</koken:link>
+					<koken:else>
+						{{ album.description }}
+					</koken:if>
+				</p>
+				</koken:not>
+			</koken:if>
+
+		</figcaption>
+
+	</figure>
+
+</li>

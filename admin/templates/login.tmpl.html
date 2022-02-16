@@ -1,0 +1,91 @@
+<!-- @BEGIN Login Interface Template -->
+<script id="login_interface" type="text/html">
+<div id="login">
+  <div id="bg"></div>
+  <div id="ieno" data-bind="visible: function() { return !$root.system.browserSupported && !$root.system.apiError; }()">
+    This application is not compatible with this browser or version. Please use the latest version of Chrome, Safari, or Firefox.
+    </div>
+	<div id="help">
+    <span class="no" data-bind="visible: message_state() === 'login_incorrect'">
+      Incorrect. Try again or <a data-bind="click: retrieve_password" href="#">reset your password</a>.
+    </span>
+    <span class="yes" data-bind="visible: message_state() === 'after_reset'">
+      Your password has been reset. Your new password has been emailed to you.
+    </span>
+    <span class="no" data-bind="visible: message_state() === 'reset_fail'">
+      That email address was not found. Please try again.
+    </span>
+    <span class="yes" data-bind="visible: message_state() === 'reset_init'">
+      Email sent with password reset instructions.
+    </span>
+	</div>
+
+  <!-- ko if: function() { return !$root.system.apiError; }() -->
+	<div id="signin" data-bind="attr: { class: state }">
+        <div id="app-logo">
+        	<img src="images/koken_logo.svg" width="71" height="71" />
+        </div>
+        <div id="app-signin">
+        <form id="reset_form" data-bind="submit: reset">
+            <div class="field-container">
+                Instructions will be emailed to you.
+            </div>
+      			<div class="field-container">
+        			<input type="email" class="field signin" placeholder="Email address" name="email" />
+      			</div>
+      			<div class="field-container">
+        			<button type="submit" class="button c0">Reset password</button>
+      			</div>
+      			<div class="field-container">
+      				<button class="button c3" data-bind="click: back_to_login">Return to sign in</button>
+      			</div>
+    		</form>
+    		<form id="login_form" data-bind="submit: login">
+            <div class="field-container">
+            	<input id="email" type="email" class="field signin email" placeholder="Email address" name="email" autofocus />
+              <input type="password" class="field signin pass" placeholder="Password" name="password" />
+            </div>
+            <div class="field-container">
+          			<input name="remember" id="remember" type="checkbox" /> <label for="remember">Keep me signed in</label>
+        		</div>
+            <div class="field-container submit">
+            	<button type="submit" id="login_submit" class="button c0">Sign in</button>
+            </div>
+    		</form>
+    	 </div>
+	</div><!-- close #signin -->
+  <!-- /ko -->
+
+  <!-- ko if: function() { return $root.system.apiError; }() -->
+  <div id="signin" class="error" data-bind="css: { wide: $root.system.apiErrorMessage && $root.system.apiErrorMessage.length }">
+    <div id="app-logo">
+      <img src="images/koken_logo.svg" width="71" height="71" />
+    </div>
+    <div id="app-signin">
+      <h1 data-bind="text: $root.system.apiMaintenance ? 'Be right back' : 'Connection error'"></h1>
+      <p>
+        <!-- ko if: $root.system.apiMaintenance -->
+          <span data-bind="text: $root.system.apiErrorMessage"></span>
+        <!-- /ko -->
+
+        <!-- ko ifnot: $root.system.apiMaintenance -->
+        	Cannot connect to the API.
+        	<!-- ko if: $root.system.apiErrorMessage && $root.system.apiErrorMessage.length -->
+        	Error message:<br><em><span data-bind="text: $root.system.apiErrorMessage"></span></em>
+        	<!-- /ko -->
+        <!-- /ko -->
+      </p>
+      <!-- ko if: $root.system.apiMaintenance -->
+         <a href="#" class="button lg error_color" title="Refresh" onclick="location.reload()">Refresh</a>
+      <!-- /ko -->
+
+      <!-- ko ifnot: $root.system.apiMaintenance -->
+        <a href="#" class="button lg error_color" title="Ask a question" data-bind="attr: { href: function() { return 'mailto:info@koken.me?subject=Koken API communication issue&body=%0A%0A----------------------------%0A%0ADiagnostic info for our support team:%0A%0AKoken installed at: ' + window.location.origin + window.location.pathname + '%0A%0ABrowser info: ' + window.navigator.userAgent + '%0A%0ACookies enabled: ' + ( window.navigator.cookieEnabled ? 'Yes' : 'No' ) + '%0A%0AOS: ' + window.navigator.platform + '%0A%0ABrowser resolution: ' + $(window).width() + 'x' + $(window).height() + '%0A%0AScreen resolution: ' + screen.width + 'x' + screen.height }() }">
+                    Email support</a>
+      <!-- /ko -->
+    </div>
+  </div>
+  <!-- /ko -->
+
+</div> <!-- close #login -->
+<!-- @END Login Interface Template -->

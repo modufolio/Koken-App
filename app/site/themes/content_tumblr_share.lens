@@ -1,0 +1,4 @@
+<koken:load>
+
+	<meta http-equiv="refresh" content="0;URL=https://www.tumblr.com/widgets/share/tool?posttype=photo&content={{ content.presets.large.url url_encode="true" find="," replace="/"}}&caption=%3Cp%3E%3Cstrong%3E%3Ca href=&quot;{{ content.url url_encode="true" }}&quot; title=&quot;{{ content.title|content.filename }}&quot;%3E{{ content.title|content.filename }}%3C%2Fa%3E%3C%2Fstrong%3E%3C%2Fp%3E%3Cp%3E{{ content.caption }}%3C%2Fp%3E&canonicalUrl={{ content.url url_encode="true" }}&tags={{ content.tags separator=","}}">
+</koken:load>

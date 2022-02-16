@@ -1,0 +1,1106 @@
+{
+	"name": "Elementary",
+	"version": "1.5.10",
+	"description": "Straightforward, utilitarian theme that avoids fancy layout schemes by presenting content in a clear, simple manner. The theme is perfect for archivists or photographers with deep collections of content.",
+	"demo": "http://demo.koken.me/#elementary",
+	"documentation": "https://store.koken.me/themes/elementary",
+	"author": {
+		"name": "Koken",
+		"link": "https://store.koken.me/authors/koken"
+	},
+	"koken_version_required": "0.18.4",
+
+	"navigation_groups": {
+		"footer": {
+			"label": "Footer",
+			"defaults": [
+				"front", "albums", "contents", "essays", "twitter", "facebook", "gplus"
+			]
+		},
+		"aside_links": {
+			"label": "Aside links",
+			"defaults": [
+				"twitter", "facebook", "gplus"
+			]
+		}
+	},
+
+	"styles": {
+		"white": {
+			"label": "White",
+			"variables": {
+				"color_bg": "#fff",
+				"color_text": "#787878",
+				"color_text_reverse": "#fff",
+				"color_hr": "#dedede",
+				"color_links": "#222",
+				"color_links_hover": "#000",
+				"color_bq": "#888",
+				"color_text_meta": "#868686",
+				"color_h": "#222",
+				"color_nav": "#787878",
+				"color_nav_hover": "#222",
+				"color_nav_current": "#222",
+				"color_essay_caption":"#e6e6e6",
+				"color_essay_caption_text":"#222",
+				"firefox_alias": "auto"
+			}
+		},
+		"black": {
+			"label": "Black",
+			"variables": {
+				"color_bg": "#000",
+				"color_text": "#818181",
+				"color_text_reverse": "#000",
+				"color_hr": "#333",
+				"color_links": "#fff",
+				"color_links_hover": "#aaa",
+				"color_bq": "#555",
+				"color_text_meta": "#707070",
+				"color_h": "#fff",
+				"color_nav": "#818181",
+				"color_nav_hover": "#fff",
+				"color_nav_current": "#fff",
+				"color_essay_caption":"#222",
+				"color_essay_caption_text":"#fff",
+				"firefox_alias": "grayscale"
+			}
+		},
+		"gray": {
+			"label": "Gray",
+			"variables": {
+				"color_bg": "#2b2b2b",
+				"color_text": "#888",
+				"color_text_reverse": "#2b2b2b",
+				"color_hr": "#444",
+				"color_links": "#eee",
+				"color_links_hover": "#eee",
+				"color_bq": "#666",
+				"color_text_meta": "#888",
+				"color_h": "#eee",
+				"color_nav": "#888",
+				"color_nav_hover": "#eee",
+				"color_nav_current": "#eee",
+				"color_essay_caption":"#222",
+				"color_essay_caption_text":"#aaa",
+				"firefox_alias": "grayscale"
+			}
+		}
+	},
+
+	"settings": {
+		"Navigation": {
+			"icon": "nav",
+			"settings": {
+				"nav_location": {
+					"label": "Place navigation in sidebar",
+					"type": "boolean",
+					"values": {
+						"true": "nav-sidebar",
+						"false": "nav-header"
+					},
+					"value": "nav-header",
+					"control_first": true
+				}
+			}
+		},
+		"Site title": {
+			"icon":"type",
+			"settings": {
+				"site_title_type": {
+					"label": "Type",
+					"type": "select",
+					"options": [
+						{ "label": "Text", "value": "text" },
+						{ "label": "Image", "value": "image" }
+					],
+					"value": "text"
+				},
+				"site_title_size": {
+					"label": "Size",
+					"type": "slider",
+					"min": 11,
+					"max": 56,
+					"step": 1,
+					"value": 23,
+					"suffix": "px",
+					"dependencies": {
+	                    "evaluate": "all",
+	                    "conditions": [
+	                         {
+	                              "option": "site_title_type",
+	                              "equals": "text"
+	                         }
+	                    ]
+	               }
+				},
+				"site_title_lh": {
+					"label": "Line height",
+					"type": "slider",
+					"min": 1,
+					"max": 4,
+					"step": 0.1,
+					"value": 1.5,
+					"dependencies": {
+	                    "evaluate": "all",
+	                    "conditions": [
+	                         {
+	                              "option": "site_title_type",
+	                              "equals": "text"
+	                         }
+	                    ]
+	               }
+				},
+				"site_title_spacing": {
+					"label": "Spacing",
+					"type": "slider",
+					"min": 0,
+					"max": 50,
+					"step": 1,
+					"value": 0,
+					"suffix": "px",
+					"dependencies": {
+	                    "evaluate": "all",
+	                    "conditions": [
+	                         {
+	                              "option": "site_title_type",
+	                              "equals": "text"
+	                         }
+	                    ]
+	               }
+				},
+				"site_title_weight": {
+					"label": "Weight",
+					"type": "select",
+					"options": [
+						{ "label":"400", "value":"400" },
+						{ "label":"600", "value":"600" }
+					],
+					"value":"600",
+					"dependencies": {
+	                    "evaluate": "all",
+	                    "conditions": [
+	                         {
+	                              "option": "site_title_type",
+	                              "equals": "text"
+	                         }
+	                    ]
+	               }
+				},
+				"show_tagline": {
+					"label": "Show tagline",
+					"type": "boolean",
+					"value": true,
+					"dependencies": {
+	                    "evaluate": "all",
+	                    "conditions": [
+	                         {
+	                              "option": "site_title_type",
+	                              "equals": "text"
+	                         }
+	                    ]
+	               }
+				},
+				"site_title_img_url": {
+					"label": "Image URL",
+					"type": "string",
+					"value": "",
+					"dependencies": {
+	                    "evaluate": "all",
+	                    "conditions": [
+	                         {
+	                              "option": "site_title_type",
+	                              "equals": "image"
+	                         }
+	                    ]
+	               }
+				},
+				"site_title_img_scale_mobile": {
+					"label": "Mobile scale",
+					"type": "slider",
+					"min": 0.1,
+					"max": 1,
+					"step": 0.1,
+					"value": 0.5,
+					"note": "Scale applied to mobile screens",
+					"dependencies": {
+	                    "evaluate": "all",
+	                    "conditions": [
+	                         {
+	                              "option": "site_title_type",
+	                              "equals": "image"
+	                         }
+	                    ]
+	               }
+				}
+			}
+		},
+		"Typography": {
+			"icon": "type",
+			"settings": {
+				"font_title": {
+					"label": "Site title font",
+					"type": "select",
+					"options": [
+						{ "label": "Abril Fatface", "value": "abril" },
+						{ "label": "Bitter", "value": "bitter" },
+						{ "label": "Droid Sans", "value": "droid_sans" },
+						{ "label": "Droid Serif", "value": "droid_serif" },
+						{ "label": "Raleway", "value": "raleway" },
+						{ "label": "Georgia", "value": "georgia" },
+						{ "label": "Helvetica Neue", "value": "helvetica" },
+						{ "label": "Noto Sans", "value": "noto_sans" },
+						{ "label": "Open Sans", "value": "open_sans" },
+						{ "label": "Source Sans Pro", "value": "source_sans_pro" },
+						{ "label": "Source Serif Pro", "value": "source_serif_pro" }
+					],
+					"value": "helvetica"
+				},
+				"font_head": {
+					"label": "Header font",
+					"type": "select",
+					"options": [
+						{ "label": "Bitter", "value": "bitter" },
+						{ "label": "Droid Sans", "value": "droid_sans" },
+						{ "label": "Droid Serif", "value": "droid_serif" },
+						{ "label": "Georgia", "value": "georgia" },
+						{ "label": "Helvetica Neue", "value": "helvetica" },
+						{ "label": "Noto Sans", "value": "noto_sans" },
+						{ "label": "Open Sans", "value": "open_sans" },
+						{ "label": "Source Sans Pro", "value": "source_sans_pro" },
+						{ "label": "Source Serif Pro", "value": "source_serif_pro" }
+					],
+					"value": "helvetica"
+				},
+				"font_body": {
+					"label": "Body font",
+					"type": "select",
+					"options": [
+						{ "label": "Bitter", "value": "bitter" },
+						{ "label": "Droid Sans", "value": "droid_sans" },
+						{ "label": "Droid Serif", "value": "droid_serif" },
+						{ "label": "Georgia", "value": "georgia" },
+						{ "label": "Helvetica Neue", "value": "helvetica" },
+						{ "label": "Noto Sans", "value": "noto_sans" },
+						{ "label": "Open Sans", "value": "open_sans" },
+						{ "label": "Source Sans Pro", "value": "source_sans_pro" },
+						{ "label": "Source Serif Pro", "value": "source_serif_pro" }
+					],
+					"value": "helvetica"
+				}
+			}
+		},
+		"Layout": {
+			"icon": "layout",
+			"settings": {
+				"index_show_slideshow": {
+					"label": "Show slideshow",
+					"type": "boolean",
+					"value": true,
+					"control_first": true,
+					"scope": [ "index" ]
+				},
+				"index_show_title": {
+					"label": "Show slideshow title",
+					"type": "boolean",
+					"value": true,
+					"control_first": true,
+					"dependencies": {
+						"evaluate": "all",
+						"conditions": [
+							{
+								"option": "index_show_slideshow",
+								"equals": true
+							}
+						]
+					},
+					"scope": [ "index" ]
+				},
+				"index_show_caption": {
+					"label": "Show slideshow caption",
+					"type": "boolean",
+					"value": true,
+					"control_first": true,
+					"dependencies": {
+						"evaluate": "all",
+						"conditions": [
+							{
+								"option": "index_show_slideshow",
+								"equals": true
+							}
+						]
+					},
+					"scope": [ "index" ]
+				},
+				"index_show_featured_albums": {
+					"label": "Show featured albums",
+					"type": "boolean",
+					"value": true,
+					"control_first": true,
+					"scope": [ "index" ]
+				},
+				"index_show_featured_essays": {
+					"label": "Show featured essays",
+					"type": "boolean",
+					"value": true,
+					"control_first": true,
+					"scope": [ "index" ]
+				},
+				"albums_index_limit": {
+					"label": "Items per page",
+					"type": "slider",
+					"min": 8,
+					"max": 48,
+					"step": 1,
+					"value": 12,
+					"scope": [ "albums", "archive.albums", "sets", "set" ]
+				},
+				"albums_detail_limit": {
+					"label": "Items per page",
+					"type": "slider",
+					"min": 10,
+					"max": 100,
+					"step": 1,
+					"value": 21,
+					"scope": [ "album" ]
+				},
+				"content_index_limit": {
+					"label": "Items per page",
+					"type": "slider",
+					"min": 8,
+					"max": 48,
+					"step": 1,
+					"value": 21,
+					"scope": [ "contents", "favorites", "archive.contents" ]
+				}
+			}
+		},
+		"Album text": {
+			"icon": "type",
+			"settings": {
+				"show_album_desc": {
+					"label": "Show description",
+					"type": "boolean",
+					"value": true,
+					"control_first": true,
+					"scope": [ "album", "set" ]
+				},
+				"albums_detail_show_cats": {
+					"label": "Show categories and tags",
+					"type": "boolean",
+					"value": true,
+					"control_first": true,
+					"scope": [ "album", "set" ]
+				},
+				"album_detail_show_share": {
+					"label": "Show share links",
+					"type": "boolean",
+					"value": true,
+					"control_first": true,
+					"scope": [ "album", "set" ]
+				}
+			}
+		},
+		"Album content": {
+			"icon": "type",
+			"settings": {
+				"albums_detail_show_date": {
+					"label": "Show date",
+					"type": "boolean",
+					"value": false,
+					"control_first": true,
+					"scope": [ "album" ]
+				},
+				"albums_detail_show_title": {
+					"label": "Show title",
+					"type": "boolean",
+					"value": true,
+					"control_first": true,
+					"scope": [ "album" ]
+				},
+				"albums_detail_show_caption": {
+					"label": "Show caption",
+					"type": "boolean",
+					"value": true,
+					"control_first": true,
+					"scope": [ "album" ]
+				},
+				"albums_detail_truncate": {
+					"label": "Truncate caption",
+					"type": "boolean",
+					"control_first": true,
+					"value": true,
+					"dependencies": {
+						"evaluate": "all",
+						"conditions": [
+							{
+								"option": "albums_detail_show_caption",
+								"equals": true
+							}
+						]
+					},
+					"scope": [ "album" ]
+				}
+			}
+		},
+		"Text": {
+			"icon": "type",
+			"settings": {
+				"albums_index_show_title": {
+					"label": "Show title",
+					"type": "boolean",
+					"value": true,
+					"scope": [ "albums", "archive.albums", "sets", "set", "archives" ]
+				},
+				"albums_index_show_caption": {
+					"label": "Show caption",
+					"type": "select",
+					"options": [
+						{"value": "None", "label":"None"},
+						{"value": "Summary", "label":"Summary"},
+						{"value": "Description", "label":"Description"}
+					],
+					"value": "Summary",
+					"scope": [ "albums", "archive.albums", "sets", "set", "archives" ]
+				},
+				"albums_index_truncate": {
+					"label": "Truncate caption",
+					"type": "boolean",
+					"value": true,
+					"dependencies": {
+						"evaluate": "all",
+						"conditions": [
+							{
+								"option": "albums_index_show_caption",
+								"not": "None"
+							}
+						]
+					},
+					"scope": [ "albums", "archive.albums", "sets", "set", "archives" ]
+				},
+				"content_index_show_date": {
+					"label": "Show date",
+					"type": "boolean",
+					"value": false,
+					"control_first": true,
+					"scope": [ "contents", "favorites", "archive.contents", "archives" ]
+				},
+				"content_index_show_title": {
+					"label": "Show title",
+					"type": "boolean",
+					"value": true,
+					"control_first": true,
+					"scope": [ "contents", "favorites", "archive.contents", "archives" ]
+				},
+				"content_index_show_caption": {
+					"label": "Show caption",
+					"type": "boolean",
+					"value": true,
+					"control_first": true,
+					"scope": [ "contents", "favorites", "archive.contents", "archives" ]
+				},
+				"content_show_title": {
+					"label": "Show title",
+					"type": "boolean",
+					"value": true,
+					"control_first": true,
+					"scope": [ "content" ]
+				},
+				"content_show_caption": {
+					"label": "Show caption",
+					"type": "boolean",
+					"value": true,
+					"control_first": true,
+					"scope": [ "content" ]
+				},
+				"content_detail_show_share": {
+					"label": "Show share links",
+					"type": "boolean",
+					"value": true,
+					"control_first": true,
+					"scope": [ "content" ]
+				},
+				"content_index_truncate": {
+					"label": "Truncate caption",
+					"type": "boolean",
+					"value": true,
+					"control_first": true,
+					"dependencies": {
+						"evaluate": "all",
+						"conditions": [
+							{
+								"option": "content_index_show_caption",
+								"equals": true
+							}
+						]
+					},
+					"scope": [ "contents", "favorites", "archive.contents", "archives" ]
+				}
+			}
+		},
+		"Thumbnails": {
+			"icon": "img",
+			"settings": {
+				"albums_crop": {
+					"label": "Crop",
+					"type": "select",
+					"options": [
+						{"value": "proportional", "label":"None"},
+						{"value": "uniform", "label":"Uniform"}
+					],
+					"value": "uniform",
+					"scope": [ "index", "albums", "archive.albums", "sets", "set", "archives" ]
+				},
+				"albums_crop_size": {
+					"label": "Aspect ratio",
+					"type": "select",
+					"options": [
+						{ "label": "4:3", "value": "4:3" },
+						{ "label": "3:4", "value": "3:4" },
+						{ "label": "3:2", "value": "3:2" },
+						{ "label": "2:3", "value": "2:3" },
+						{ "label": "2:1", "value": "2:1" },
+						{ "label": "1:1", "value": "1:1" },
+						{ "label": "16:9", "value": "16:9" }
+					],
+					"value": "3:2",
+					"dependencies": {
+	                    "evaluate": "all",
+	                    "conditions": [
+	                         {
+	                              "option": "albums_crop",
+	                              "equals": "uniform"
+	                         }
+	                    ]
+	               	},
+					"scope": [ "index", "albums", "archive.albums", "sets", "set", "archives" ]
+				},
+				"albums_detail_crop": {
+					"label": "Crop",
+					"type": "select",
+					"options": [
+						{"value": "proportional", "label":"None"},
+						{"value": "uniform", "label":"Uniform"}
+					],
+					"value": "proportional",
+					"scope": [ "album" ]
+				},
+				"album_detail_crop_size": {
+					"label": "Aspect ratio",
+					"type": "select",
+					"options": [
+						{ "label": "4:3", "value": "4:3" },
+						{ "label": "3:4", "value": "3:4" },
+						{ "label": "3:2", "value": "3:2" },
+						{ "label": "2:3", "value": "2:3" },
+						{ "label": "2:1", "value": "2:1" },
+						{ "label": "1:1", "value": "1:1" },
+						{ "label": "16:9", "value": "16:9" }
+					],
+					"value": "1:1",
+					"dependencies": {
+	                    "evaluate": "all",
+	                    "conditions": [
+	                         {
+	                              "option": "albums_detail_crop",
+	                              "equals": "uniform"
+	                         }
+	                    ]
+	               	},
+					"scope": [ "album" ]
+				},
+				"content_index_crop": {
+					"label": "Crop",
+					"type": "select",
+					"options": [
+						{"value": "proportional", "label":"None"},
+						{"value": "uniform", "label":"Uniform"}
+					],
+					"value": "proportional",
+					"scope": [ "contents", "favorites", "archive.contents" ]
+				},
+				"contents_crop_size": {
+					"label": "Aspect ratio",
+					"type": "select",
+					"options": [
+						{ "label": "4:3", "value": "4:3" },
+						{ "label": "3:4", "value": "3:4" },
+						{ "label": "3:2", "value": "3:2" },
+						{ "label": "2:3", "value": "2:3" },
+						{ "label": "2:1", "value": "2:1" },
+						{ "label": "1:1", "value": "1:1" },
+						{ "label": "16:9", "value": "16:9" }
+					],
+					"value": "1:1",
+					"dependencies": {
+	                    "evaluate": "all",
+	                    "conditions": [
+	                         {
+	                              "option": "content_index_crop",
+	                              "equals": "uniform"
+	                         }
+	                    ]
+	               	},
+					"scope": [ "contents", "favorites", "archive.contents" ]
+				}
+			}
+		},
+		"Left column": {
+			"icon": "layout",
+			"settings": {
+				"essays_show_share": {
+					"label": "Show share links",
+					"type": "boolean",
+					"value": true,
+					"control_first": true,
+					"scope": [ "essays", "essay", "archive.essays" ]
+				},
+				"timeline_show_share": {
+					"label": "Show share links",
+					"type": "boolean",
+					"value": true,
+					"control_first": true,
+					"scope": [ "timeline", "date", "tag", "category" ]
+				}
+			}
+		},
+		"Right column": {
+			"icon": "layout",
+			"settings": {
+				"tags_show_list": {
+					"label": "Show tags",
+					"type": "boolean",
+					"value": true,
+					"control_first": true,
+					"scope": [ "tag" ]
+				},
+				"category_show_list": {
+					"label": "Show categories",
+					"type": "boolean",
+					"value": true,
+					"control_first": true,
+					"scope": [ "category" ]
+				},
+				"content_detail_show_tnav": {
+					"label": "Show thumbnails",
+					"type": "boolean",
+					"value": true,
+					"control_first": true,
+					"scope": [ "content" ]
+				},
+				"content_detail_neighbor_num": {
+					"label": "Thumbnails",
+					"type": "select",
+					"options": [
+						{ "label": "Three", "value": "2" },
+						{ "label": "Six", "value": "5" },
+						{ "label": "Nine", "value": "8" },
+						{ "label": "Twelve", "value": "11" },
+						{ "label": "Fifteen", "value": "14" }
+					],
+					"value": "2",
+					"dependencies": {
+	                    "evaluate": "all",
+	                    "conditions": [
+	                         {
+	                              "option": "content_detail_show_tnav",
+	                              "equals": "true"
+	                         }
+	                    ]
+	               	},
+	               	"scope": [ "content" ]
+				},
+				"content_detail_neighbor_opacity": {
+					"label": "Inactive opacity",
+					"type": "slider",
+					"min": "0",
+					"max": "1",
+					"step": "0.1",
+					"value": "1",
+					"dependencies": {
+	                    "evaluate": "all",
+	                    "conditions": [
+	                         {
+	                              "option": "content_detail_show_tnav",
+	                              "equals": "true"
+	                         }
+	                    ]
+	               	},
+	               	"scope": [ "content" ]
+				},
+				"content_detail_show_exif": {
+					"label": "Show EXIF",
+					"type": "boolean",
+					"value": true,
+					"control_first": true,
+					"scope": [ "content" ]
+				},
+				"content_detail_show_date_upload": {
+					"label": "Show date uploaded",
+					"type": "boolean",
+					"value": false,
+					"control_first": true,
+					"scope": [ "content" ]
+				},
+				"content_detail_show_date_capture": {
+					"label": "Show date captured",
+					"type": "boolean",
+					"value": true,
+					"control_first": true,
+					"scope": [ "content" ]
+				},
+				"content_detail_show_license": {
+					"label": "Show license",
+					"type": "boolean",
+					"value": true,
+					"control_first": true,
+					"scope": [ "content" ]
+				},
+				"content_detail_show_cats": {
+					"label": "Show categories and tags",
+					"type": "boolean",
+					"value": true,
+					"control_first": true,
+					"scope": [ "content" ]
+				},
+				"content_detail_show_source": {
+					"label": "Show imported items source link",
+					"type": "boolean",
+					"value": true,
+					"control_first": true,
+					"scope": [ "content" ]
+				},
+				"content_detail_show_dl": {
+					"label": "Show maximum download link",
+					"type": "boolean",
+					"value": true,
+					"control_first": true,
+					"scope": [ "content" ]
+				},
+				"content_detail_show_map": {
+					"label": "Show map link",
+					"type": "boolean",
+					"value": true,
+					"control_first": true,
+					"scope": [ "content" ]
+				},
+				"timeline_show_feat_albums": {
+					"label": "Show featured albums",
+					"type": "boolean",
+					"value": true,
+					"control_first": true,
+					"scope": [ "timeline", "date", "tag", "category" ]
+				},
+				"timeline_show_feat_essays": {
+					"label": "Show featured essays",
+					"type": "boolean",
+					"value": true,
+					"control_first": true,
+					"scope": [ "timeline", "date", "tag", "category" ]
+				},
+				"tags_show_latest": {
+					"label": "Show latest tagged content",
+					"type": "boolean",
+					"value": true,
+					"control_first": true,
+					"scope": [ "tags" ]
+				},
+				"tags_index_limit": {
+					"label": "Latest items",
+					"type": "slider",
+					"value": "5",
+					"min": "1",
+					"max": "10",
+					"value": "2",
+					"step": "1",
+					"dependencies": {
+	                    "evaluate": "all",
+	                    "conditions": [
+	                         {
+	                              "option": "tags_show_latest",
+	                              "equals": "true"
+	                         }
+	                    ]
+	               	},
+					"scope": [ "tags" ]
+				},
+				"show_aside_links": {
+					"label": "Show links",
+					"type": "boolean",
+					"value": true,
+					"control_first": true,
+					"scope": [ "timeline", "date", "tag", "tags", "categories", "category", "essay", "essays" ]
+				}
+			}
+		},
+		"Events": {
+			"icon": "layout",
+			"scope": [ "timeline", "date", "tag", "category" ],
+			"settings": {
+				"show_event_date_relative": {
+					"label": "Show relative dates",
+					"type": "boolean",
+					"value": true,
+					"control_first": "true"
+				},
+				"show_comment_counts": {
+					"label": "Show comment counts",
+					"type": "boolean",
+					"value": true,
+					"control_first": true,
+					"note": "Counts require the Disqus plugin",
+					"note_align": "left"
+				}
+			}
+		},
+		"Albums": {
+			"icon": "layout",
+			"scope": [ "timeline", "date", "tag", "category" ],
+			"settings": {
+				"album_time_type": {
+					"label": "New albums",
+					"type": "select",
+					"options": [
+						{ "label": "Primary cover", "value": "cover" },
+						{ "label": "Mosaic", "value": "mosaic" },
+						{ "label": "Slideshow", "value": "slideshow" }
+					],
+					"value": "mosaic"
+				},
+				"album_update_time_type": {
+					"label": "Updated albums",
+					"type": "select",
+					"options": [
+						{ "label": "Images", "value": "images" },
+						{ "label": "Mosaic", "value": "mosaic" },
+						{ "label": "Slideshow", "value": "slideshow" }
+					],
+					"value": "mosaic"
+				},
+				"mosaic_cols": {
+					"label": "Columns",
+					"type": "slider",
+					"value": 3,
+					"min": 1,
+					"max": 4,
+					"step": 1,
+					"dependencies": {
+	                    "evaluate": "any",
+	                    "conditions": [
+	                         {
+	                              "option": "album_time_type",
+	                              "equals": "mosaic"
+	                         },
+	                         {
+	                              "option": "album_update_time_type",
+	                              "equals": "mosaic"
+	                         }
+	                    ]
+	               	}
+				},
+				"mosaic_rows": {
+					"label": "Rows",
+					"type": "slider",
+					"value": 2,
+					"min": 1,
+					"max": 3,
+					"step": 1,
+					"dependencies": {
+	                    "evaluate": "any",
+	                    "conditions": [
+	                         {
+	                              "option": "album_time_type",
+	                              "equals": "mosaic"
+	                         },
+	                         {
+	                              "option": "album_update_time_type",
+	                              "equals": "mosaic"
+	                         }
+	                    ]
+	               	}
+				},
+				"mosaic_gutter": {
+					"label": "Gutter",
+					"type": "slider",
+					"value": 8,
+					"max":10,
+					"min": 0,
+					"step": 1,
+					"suffix": "px",
+					"dependencies": {
+	                    "evaluate": "any",
+	                    "conditions": [
+	                         {
+	                              "option": "album_time_type",
+	                              "equals": "mosaic"
+	                         },
+	                         {
+	                              "option": "album_update_time_type",
+	                              "equals": "mosaic"
+	                         }
+	                    ]
+	               	}
+				},
+				"album_cover_limit": {
+					"label": "Fill all columns and rows",
+					"type": "boolean",
+					"value": false,
+					"separate_lines": true,
+					"control_first": true,
+					"note": "Supplement covers with additional images",
+					"note_align": "left",
+					"dependencies": {
+	                    "evaluate": "all",
+	                    "conditions": [
+	                         {
+	                              "option": "album_time_type",
+	                              "equals": "mosaic"
+	                         }
+	                    ]
+	               	}
+				}
+			}
+		},
+		"Social": {
+			"icon":"social",
+			"settings": {
+				"show_social": {
+					"label": "Show social media buttons in footer",
+					"type": "boolean",
+					"value": false,
+					"control_first": true,
+					"reload_preview": true
+				},
+				"fb_href": {
+					"label": "Like link",
+					"type": "select",
+					"options": [
+						{ "label": "Site", "value": "site" },
+						{ "label": "Facebook profile", "value": "fbpage" }
+					],
+					"value": "site",
+					"dependencies": {
+						"evaluate": "all",
+						"conditions": [
+							{
+								"option": "show_social",
+								"equals": true
+							}
+						]
+					}
+				},
+				"social_spacing": {
+					"label": "Button spacing",
+					"type": "slider",
+					"min": 0,
+					"max": 20,
+					"step": 1,
+					"value": 5,
+					"suffix": "px",
+					"dependencies": {
+						"evaluate": "all",
+						"conditions": [
+							{
+								"option": "show_social",
+								"equals": true
+							}
+						]
+					}
+				}
+			}
+		},
+		"Discussions": {
+			"icon":"discuss",
+			"settings": {
+				"show_disc_essay": {
+					"label": "Show essay discussions",
+					"note": "Requires the Disqus plugin",
+					"note_align": "left",
+					"type": "boolean",
+					"value": true,
+					"control_first": true,
+					"scope": [ "essay" ]
+				},
+				"show_disc_content": {
+					"label": "Show content discussions",
+					"note": "Requires the Disqus plugin",
+					"note_align": "left",
+					"type": "boolean",
+					"value": true,
+					"control_first": true,
+					"scope": [ "content" ]
+				}
+			}
+		},
+		"Color": {
+			"icon": "color",
+			"settings": {
+				"color_bg": {
+					"label": "Background",
+					"type": "color",
+					"control_first": true
+				},
+				"color_text": {
+					"label": "Text",
+					"type": "color",
+					"control_first": true
+				},
+				"color_text_meta": {
+					"label": "Text meta",
+					"type": "color",
+					"control_first": true
+				},
+				"color_hr": {
+					"label": "Lines",
+					"type": "color",
+					"control_first": true
+				},
+				"color_links": {
+					"label": "Links",
+					"type": "color",
+					"control_first": true
+				},
+				"color_links_hover": {
+					"label": "Links hover",
+					"type": "color",
+					"control_first": true
+				},
+				"color_bq": {
+					"label": "Blockquote",
+					"type": "color",
+					"control_first": true
+				},
+				"color_h": {
+					"label": "Headers",
+					"type": "color",
+					"control_first": true
+				},
+				"color_nav": {
+					"label": "Nav",
+					"type": "color",
+					"control_first": true
+				},
+				"color_nav_hover": {
+					"label": "Nav hover",
+					"type": "color",
+					"control_first": true
+				},
+				"color_nav_current": {
+					"label": "Nav current",
+					"type": "color",
+					"control_first": true
+				},
+				"color_essay_caption": {
+					"label": "Essay caption bg",
+					"type": "color",
+					"control_first": true
+				},
+				"color_essay_caption_text": {
+					"label": "Essay caption text",
+					"type": "color",
+					"control_first": true
+				}
+			}
+		}
+	}
+}

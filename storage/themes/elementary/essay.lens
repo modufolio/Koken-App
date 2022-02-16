@@ -1,0 +1,95 @@
+<koken:include file="layouts/header.html" />
+
+<div id="layout">
+
+	<koken:load>
+
+		<koken:head>
+			<meta property="og:site_name" content="{{ site.title }}" />
+			<meta property="og:title" content="{{ essay.title strip_html='true' }}" />
+			<meta property="og:description" content="{{ essay.excerpt strip_html='true' }}" />
+			<meta property="og:url" content="{{ essay.url }}" />
+			<meta property="og:type" content="website" />
+			<koken:featured_image>
+			<meta property="og:image" content="{{ content.presets.medium_large.url }}" />
+			<meta property="og:image:width" content="{{ content.presets.medium_large.width }}" />
+			<meta property="og:image:height" content="{{ content.presets.medium_large.height }}" />
+			</koken:featured_image>
+			<meta name="medium" content="article" />
+			<koken:not empty="profile.twitter">
+				<koken:featured_image>
+				<meta name="twitter:card" content="summary_large_image" />
+				<meta name="twitter:site" content="@{{ profile.twitter }}" />
+				<meta name="twitter:creator" content="@{{ profile.twitter }}" />
+				<meta name="twitter:image" content="{{ content.presets.medium_large.url }}" />
+				</koken:featured_image>
+			</koken:not>
+		</koken:head>
+
+		<header class="content page">
+
+			<span class="wrap first">
+
+				<koken:breadcrumbs separator="/" />
+
+			</span>
+
+		</header>
+
+		<div class="mcol">
+
+			<koken:include file="layouts/article.html" />
+
+			<div class="paginate">
+
+				<span class="fright">
+
+					<koken:previous>
+						<koken:link class="paginate rarr" title="Read {{ essay.title }}">{{ essay.title truncate="42" }}</koken:link>
+					</koken:previous>
+
+				</span>
+
+				<koken:next>
+					<koken:link class="paginate larr" title="Read {{ essay.title }}">{{ essay.title truncate="42" }}</koken:link>
+				</koken:next>
+
+			</div>
+
+			<koken:if true="settings.show_disc_essay">
+
+				<div id="kdiscuss">
+
+					<koken:discussion>
+
+						{{ discussion }}
+
+					</koken:discussion>
+
+				</div>
+
+			</koken:if>
+
+		</div>
+
+		<div class="rcol">
+
+			<aside>
+
+				<koken:include file="layouts/essays-aside.html" />
+
+				<koken:include file="layouts/links_aside.html" />
+
+			</aside>
+
+		</div>
+
+		<koken:else>
+
+		No essay found. Create one in Text.
+
+	</koken:load>
+
+</div>
+
+<koken:include file="layouts/footer.html" />

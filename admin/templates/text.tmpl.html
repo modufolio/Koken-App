@@ -1,0 +1,1637 @@
+<!-- @BEGIN Text Interface Template -->
+<script id="text_interface" type="text/html">
+
+<div id="text-interface" data-bind="attr: { class: view() + '-view' }">
+
+	<div id="lay-three-col">
+
+		<div class="ui-sheet-bg"></div>
+
+		<!-- ko with: sheets.insert_link -->
+			<!-- ko template: 'sheets_mu' --><!-- /ko -->
+		<!-- /ko -->
+
+		<!-- ko with: sheets.create_text -->
+			<!-- ko template: 'sheets_mu' --><!-- /ko -->
+		<!-- /ko -->
+
+		<!-- ko with: sheets.shortcode_media -->
+			<!-- ko template: 'sheets_mu' --><!-- /ko -->
+		<!-- /ko -->
+
+		<!-- ko with: sheets.shortcode_collection -->
+			<!-- ko template: 'sheets_mu' --><!-- /ko -->
+		<!-- /ko -->
+
+		<!-- ko with: sheets.shortcode_edit -->
+			<!-- ko template: 'sheets_mu' --><!-- /ko -->
+		<!-- /ko -->
+
+		<!-- ko with: sheets.shortcode_custom -->
+			<!-- ko template: 'sheets_mu' --><!-- /ko -->
+		<!-- /ko -->
+
+		<!-- ko with: sheets.embed_item -->
+			<!-- ko template: 'sheets_mu' --><!-- /ko -->
+		<!-- /ko -->
+
+		<!-- ko with: sheets.shortcode_upload -->
+			<!-- ko template: 'sheets_mu' --><!-- /ko -->
+		<!-- /ko -->
+
+		<!-- ko with: sheets.add_topic -->
+			<!-- ko template: 'sheets_mu' --><!-- /ko -->
+		<!-- /ko -->
+
+		<!-- BEGIN LAYOUT -->
+
+		<div id="lay-three-col-wrap">
+
+			<div id="three-col-mid">
+
+				<!-- ko with: dropdowns.sort -->
+					<!-- ko template: 'dropdown_mu' --><!-- /ko -->
+				<!-- /ko -->
+
+				<!-- ko with: dropdowns.filter -->
+					<!-- ko template: 'dropdown_mu' --><!-- /ko -->
+				<!-- /ko -->
+
+				<div id="entry-list">
+
+					<div id="entry-list-bar" class="col-top">
+
+						<div class="ui-row">
+							<div class="l">
+								<!-- ko if: view() === 'list' -->
+								<a href="#" class="button-ui emb thin" data-bind="css: { selected: dropdowns.filter.active() == true, disabled: loading() || !list().length || type() != 'essay' || api_url().indexOf('text/featured') === 0 }" title="Filter view">Filter</a>
+								<!-- /ko -->
+
+								<!-- ko if: view() === 'edit' -->
+								<a href="#" class="button-ui thin emb" data-event="leave_edit" style="position:relative;top:4px;" title="Exit edit and return to list"><span class="bicon_sm bwd"></span></a>
+								<!-- /ko -->
+							</div>
+
+							<!-- ko if: (view() === 'list' && year() < 1 && month() < 1 && state() !== 'draft') || (view() !== 'list' && page_to_edit.draft_title) -->
+							<h5><a href="#" data-event="open_in_site" data-bind="text: view() === 'list' ? ( type() === 'essay' ? 'Essays' : 'Pages' ) : page_to_edit.draft_title()"></a></h5>
+							<!-- /ko -->
+
+							<div id="entry-list-filter" class="row-mid-filter" data-bind="visible: view() === 'list' && (year() > 0 || month() > 0 || state() === 'draft')">
+								<h5>
+									Found <span data-bind="text: total()"></span> <span data-bind="text: state() === 'draft' ? 'drafts' : type() + 's'"></span>
+									<!-- ko if: month() > 0 -->
+									from <span data-bind="text: moment(year() + '-' + (month().length === 1 ? '0' + month() : month()) + '-10').format('MMMM YYYY')"></span>
+									<!-- /ko -->
+									<!-- ko if: month() <= 0 && year() > 0 -->
+									from <span data-bind="text: moment(year() + '-01-10').format('YYYY')"></span>
+									<!-- /ko -->
+								</h5>
+								&nbsp;
+								<a href="#" class="button c0 tiny" data-event="clear_filters" title="Remove search">Remove search</a>
+							</div>
+
+							<div class="r" style="padding-top:4px;">
+								<!-- ko if: view() === 'edit' -->
+								<a href="#" class="button-ui thin emb" data-event="toggle_expand" title="Expand edit window"><span class="bicon_sm" data-bind="css: { contract: expand() === true, expand: expand() === false }"></span></a>
+								<!-- /ko -->
+							</div>
+
+						</div>
+
+					</div> <!-- close #entry-list-bar -->
+
+					<div id="entry-lists" class="top-off" data-bind="visible: view() == 'list'">
+
+						<div data-bind="visible: loading()" class="cmsg">
+							<div class="cmsg-wrap">
+								<div class="cmsg-msg">
+									<span class="kspinner"></span>
+								</div>
+							</div>
+						</div>
+
+						<div data-bind="visible: !list().length && !loading() && api_url().indexOf('text/featured') === -1" class="cmsg">
+							<div class="cmsg-wrap">
+								<div class="cmsg-msg">
+									<h1>No <span data-bind="text: type()"></span>s</h1>
+									<p style="font-size:12px;color:#484848;">Click the plus button below to create one.</p>
+								</div>
+							</div>
+						</div>
+
+						<div data-bind="visible: !list().length && !loading() && api_url().indexOf('text/featured') === 0" class="cmsg">
+							<div class="cmsg-wrap">
+								<div class="cmsg-msg">
+									<h1>No featured essays</h1>
+									<p style="font-size:12px;color:#484848;">Click the star button in the <a href="#/text/type:essay">essays list</a> to feature an essay.</p>
+								</div>
+							</div>
+						</div>
+
+						<!-- assign stacks and rows here -->
+						<div id="entry-list-all" data-bind="visible: !loading() && list().length, scrollbar: true">
+							<ul id="entries" class="entry-list">
+							</ul>
+						</div> <!-- close #entry-list-all -->
+
+					</div> <!-- close #entry-lists -->
+
+				</div> <!-- close #entry-list -->
+
+				<!-- ko if: page_to_edit.__loaded -->
+				<!-- ko with: page_to_edit -->
+				<div id="entry-edit-tmpl">
+
+					<div class="wrap">
+
+						<!-- close #text-edit-bar -->
+
+						<div id="entry-edit-area" data-bind="css: { dark : $parent.theme() == 1 }">
+
+							<div id="entry-scroll" data-bind="scrollbar: true">
+
+								<div id="entry-content-bg">
+
+									<div id="entry-title">
+										<div class="t-wrap">
+											<h2 contenteditable="true" data-bind="text: draft_title"></h2>
+										</div>
+									</div>
+
+									<div id="entry-editor">
+
+										<div id="edit-area" data-bind="html: draft() || '<p class=\'media-row\'><br /></p>'">
+										</div>
+
+									</div> <!-- close #entry-editor -->
+
+								</div> <!-- close #entry-content-bg -->
+
+							</div> <!-- close #entry-scroll -->
+
+						</div> <!-- close #entry-edit-area -->
+
+						<div id="docked_editor" style="display:none;">
+
+							<div id="textui-editor-frame" data-bind="css: { docked: $parent.editor_type() === 'dock' }">
+
+								<div class="col-top">
+
+									<div class="ui-row">
+
+										<div class="l push">
+											<a href="#" class="button-ui thin emb fleft" data-event="leave_edit" style="margin-right:5px;" title="Exit edit and return to list"><span class="bicon_sm bwd"></span></a>
+											<a data-event="toggle_editor_view" href="#" class="button-ui thin emb fleft" data-bind="attr: { title: ($parent.editor_type() === 'dock') ? 'Expand HTML Editor' : 'Dock HTML editor at bottom' }"><span class="bicon_sm dock_up" data-bind="css: { dock_down: $parent.editor_type() !== 'dock' }, text: ($parent.editor_type() === 'dock') ? '' : 'Dock'"></span></a>
+											<a id="" href="#" class="button-ui thin emb fleft" data-event="toggle_editor_theme" title="Toggle editor theme" style="margin-left:5px;"><span class="bicon_sm theme"></span></a>
+										</div>
+
+										<h5>Edit HTML</h5>
+
+										<div class="r push">
+											<a href="#" class="button-ui thin emb fright" title="Close HTML editor" style="margin-left:5px;" data-event="toggle_editor"><span class="bicon_sm close"></span></a>
+											<a href="#" data-bind="visible: $parent.editor_type() !== 'dock'" class="button-ui thin emb fright" data-event="update_state" data-state="expand" title="Expand preview window"><span class="bicon_sm expand"></span></a>
+										</div>
+
+									</div>
+
+								</div>
+
+								<div id="html-edit-area"></div>
+
+							</div> <!-- close #textui-editor-frame -->
+
+						</div> <!-- close #docked_editor -->
+
+					</div> <!-- close .wrap -->
+
+				</div> <!-- close entry-list -->
+
+				<!-- /ko -->
+				<!-- /ko -->
+
+				<div id="mid-menu-bot" class="col-bot">
+
+					<div class="ui-row" id="col-bot-entry-edit" data-bind="visible: view() === 'edit'">
+
+						<!-- ko with: dropdowns.theme -->
+							<!-- ko template: 'dropdown_mu' --><!-- /ko -->
+						<!-- /ko -->
+
+						<div class="l">
+							<a href="#" class="button-ui emb fleft" data-event="toggle_theme" title="Change editor theme" style="margin-top:6px;"><span class="bicon_lg text_theme"></span></a>
+						</div>
+
+						<div id="text-bot-count" data-bind="css: { saving: is_autosaving }" class="bot-count">
+
+							<div>
+							<!-- ko if: page_to_edit.__loaded -->
+
+							<!-- ko if: page_to_edit.published() -->
+							Published <!-- ko template: { name:'moment', data: page_to_edit.published_on.timestamp } --><!-- /ko -->.
+							<!-- /ko -->
+
+							<!-- ko if: !page_to_edit.published() || page_to_edit.content() !== page_to_edit.draft() || page_to_edit.draft_title() !== page_to_edit.title() -->
+							Draft saved <!-- ko template: { name:'moment', data: page_to_edit.modified_on.timestamp } --><!-- /ko -->.<!-- ko if: page_to_edit.published() --> <a href="#" data-event="undo_draft">Undo draft</a><!-- /ko -->
+							<!-- /ko -->
+
+							<!-- ko if: page_to_edit.published() && page_to_edit.draft_title() === page_to_edit.title() && page_to_edit.content() === page_to_edit.draft() && page_to_edit.published_on.timestamp() !== page_to_edit.modified_on.timestamp() -->
+							Updated <!-- ko template: { name:'moment', data: page_to_edit.modified_on.timestamp } --><!-- /ko -->.
+							<!-- /ko -->
+
+							<!-- /ko -->
+							</div>
+
+						</div>
+
+						<div class="r">
+							<a href="#" class="button-ui emb" data-event="toggle_html" style="margin-top:6px;cursor:pointer;" title="Edit HTML"><span class="bicon_lg html"></span></a>
+						</div>
+
+					</div> <!-- close #col-bot-text-edit -->
+
+					<div id="col-bot-entry-list" data-bind="visible: view() !== 'edit'">
+
+						<div class="ui-row">
+
+							<div class="l push">
+								<a href="#" id="" class="button-ui emb fleft" style="margin-right:5px;" data-dropdown="sort" data-event="toggle_dropdown" class="button-ui emb thin" data-bind="css: { disabled: !is_sortable() || loading() || view() == 'empty' || view() == 'edit', selected: dropdowns.sort.active() == true }">
+									Sort: <span data-bind="text: order_by_string()"></span> <span class="sort_arrow" data-bind="visible: order_by() !== 'manual', css: { asc: order_direction() == 'asc', desc: order_direction() == 'desc' }"></span>
+								</a>
+								<a href="#" id="" class="button-ui emb fleft" title="Reverse manual order" style="margin-right:5px;" data-bind="visible: order_by() === 'manual' && is_sortable" data-event="reverse_manual"><span class="bicon_lg reverse"></span></a>
+							</div>
+
+							<!-- ko if: total() !== false -->
+							<div class="bot-count" data-bind="text: total() + ' item' + (total() == 1 ? '' : 's')"></div>
+							<!-- /ko -->
+						</div>
+
+					</div> <!-- close #col-bot-text-list -->
+
+				</div> <!-- close .col-bot -->
+
+			</div> <!-- close #three-col-mid -->
+
+		</div> <!-- close #lay-three-col-wrap -->
+
+		<div id="three-col-left" class="ui-col">
+			<div class="col-top">
+				<div class="hoffx"><h5>Text</h5></div>
+			</div>
+			<div id="text-lcol" class="top-off" data-bind="scrollbar: true">
+				<div class="col-block no-head">
+					<ol class="lib-nav">
+						<li data-bind="css: { selected: type() == 'essay' && api_url().indexOf('text/featured') === -1 && api_url().indexOf('text/drafts') === -1 }">
+							<a href="#/text/type:essay" class="item" title="View all essays">
+								<span class="in">
+									<span class="icon16 label-essays">Essays</span>
+								</span>
+							</a>
+						</li>
+						<li data-bind="css: { selected: type() == 'essay' && api_url().indexOf('text/drafts') === 0 }">
+							<a href="#/text/drafts" class="item" title="View all essays">
+								<span class="in">
+									<span class="icon16 label-essay-draft">Drafts</span>
+								</span>
+							</a>
+						</li>
+						<li data-bind="css: { selected: api_url().indexOf('text/featured') === 0 }">
+							<a href="#/text/featured" class="item" title="View all essays">
+								<span class="in">
+									<span class="icon16 label-featured">Featured essays</span>
+								</span>
+							</a>
+						</li>
+						<li data-bind="css: { selected: type() == 'page' }">
+							<a href="#/text/type:page" class="item" title="View all pages">
+								<span class="in">
+									<span class="icon16 label-custompage">Pages</span>
+								</span>
+							</a>
+						</li>
+					</ol>
+				</div>
+				<div class="col-block">
+					<div data-event="toggle_visibility" class="col-head" data-bind="visible: years().length">
+						<span class="in">
+							<a href="#" class="arrow-toggle open"></a>
+							<h6><a class="fold" href="#" title="Toggle">Date published</a></h6>
+						</span>
+					</div>
+					<ol class="lib-nav">
+						<!-- ko foreach: years -->
+						<li data-event="sort_year" data-bind="css: { selected: $parent.month() <=0 && $parent.year() == year }">
+							<a href="#" class="arrow-toggle" data-event="arrow_toggle" data-bind="css: { open: $parent.year() == year || $parent.open_year().indexOf(parseInt(year,10)) >= 0 }"></a>
+							<a href="#" class="item" title="View documents by date">
+								<span class="in">
+									<span class="icon16 label-date" data-bind="text: year">
+									</span>
+								</span>
+							</a>
+							<ol data-bind="visible: $parent.year_open(year) || $parent.open_year().indexOf(parseInt(year,10)) >= 0">
+								<!-- ko foreach: months -->
+								<li data-event="sort_month" data-bind="css: { selected: $parents[1].month() == month && $parents[1].year() == year }">
+									<a href="#" class="item" title="View documents by date">
+										<span class="in" style="padding-left:33px;">
+											<span class="icon16 label-date" data-bind="text: moment(year + '-' + (month.length === 1 ? '0' + month : month) + '-10').format('MMMM')"/>
+										</span>
+									</a>
+								</li>
+								<!-- /ko -->
+							</ol>
+						</li>
+						<!-- /ko -->
+					</ol>
+				</div>
+			</div>
+			<div id="left-menu-bot" class="col-bot" style="z-index:15">
+				<div class="ui-row">
+					<div class="l push">
+						<a href="#" data-event="toggle_sheet" data-sheet="create_text" title="Create new essay or page" class="button-ui emb" data-bind="css: { disabled: loading }"><span class="bicon_lg new"></span></a>
+					</div>
+				</div>
+			</div>
+		</div> <!-- close #three-col-left -->
+
+		<div id="three-col-right" class="ui-col">
+
+			<div id="right-col-xtra">
+				<div class="col-top-panel">
+					<a class="button-ui emb thin" id="close_xtra" data-event="save_and_close" href="#" title="Close edit panel"><span class="bicon_sm panel_close"></span></a>
+					<div class="in">
+						<h5 data-bind="text: $data.drawer.title()"></h5>
+					</div>
+				</div>
+				<div id="right-col-data" data-event="sidebar" data-bind="template: { name: $data.drawer.template(), data: page_to_edit, afterRender: function() { new klass.scrollbar($('#right-col-data')); } }, scrollbar: true"></div>
+			</div>
+
+			<div class="col-top">
+				<div class="ui-row">
+					<div class="l label">
+						<h5>Inspector</h5>
+					</div>
+					<div class="r push">
+						<!-- ko if: view() === 'edit' && page_to_edit.url() -->
+						<a href="#" class="button-ui thin emb fright" data-event="open_in_site" title="View this on your web site"><span class="bicon_sm preview"></span></a>
+						<!-- /ko -->
+					</div>
+				</div>
+			</div> <!-- close .col-top -->
+
+			<!-- Essay list state -->
+			<div class="top-off">
+
+				<div id="rcol-entry-list" data-bind="visible: view() === 'list', scrollbar: true">
+
+					<div class="col-block">
+						<div data-event="toggle_visibility" class="col-head">
+							<span class="in">
+								<a href="#" class="arrow-toggle open"></a>
+								<h6><a class="fold" href="#" title="Toggle">Recent drafts</a></h6>
+							</span>
+						</div>
+						<ul data-event="edit_page" class="entry-list-side-col" style="overflow:hidden;">
+							<!-- ko if: drafts() && drafts().length -->
+							<!-- ko foreach: drafts -->
+							<li>
+								<span class="in">
+									<a data-bind="attr: { href: '#/text/drafts/selection:' + id }">
+									<h5 data-bind="text: title"></h5>
+									<span data-bind="text: $root.format_date(modified_on.timestamp, 'M/D/YY')"></span>&nbsp;&nbsp;<span data-bind="text: $parent.truncate(excerpt, 90)"></span>
+									</a>
+								</span>
+							</li>
+							<!-- /ko -->
+							<!-- /ko -->
+							<!-- ko ifnot: drafts() && drafts().length -->
+							<li>
+								<span class="in">
+									You do not have any saved drafts.
+								</span>
+							</li>
+							<!-- /ko -->
+						</ul>
+					</div>
+
+					<div class="col-block">
+						<div data-event="toggle_visibility" class="col-head" data-bind="visible: hasEditedItems()">
+							<span class="in">
+								<a href="#" class="arrow-toggle open"></a>
+								<h6><a class="fold" href="#" title="Toggle">Unpublished edits</a></h6>
+							</span>
+						</div>
+						<ul data-event="edit_page" class="entry-list-side-col" data-bind="visible: hasEditedItems(), foreach: $parent.interfaces.text.observers.list()">
+							<!-- ko if: $data.published && $data.content !== $data.draft -->
+							<li>
+								<span class="in">
+									<a data-bind="attr: { href: '#/text/type:' + $data.page_type + '/selection:' + $data.id }">
+									<h5 data-bind="text: $data.title"></h5>
+									<span data-bind="text: $root.format_date(modified_on.timestamp, 'M/D/YY')"></span>&nbsp;&nbsp;<span data-bind="text: $parent.truncate(excerpt, 90)"></span>
+									</a>
+								</span>
+							</li>
+							<!-- /ko -->
+						</ul>
+					</div>
+
+				</div> <!-- close #rcol-entry-list -->
+
+				<!-- Entry edit state -->
+
+				<!-- ko if: view() === 'edit' -->
+
+				<!-- Essay featured image -->
+				<div id="text_feat_img" class="col-select" data-bind="visible: page_to_edit.__featured_image">
+					<div class="col-block">
+						<div data-event="toggle_visibility" class="col-head">
+							<span class="in">
+								<a href="#" class="arrow-toggle open"></a>
+								<h6><a class="fold" href="#" title="Toggle">Featured image</a></h6>
+							</span>
+						</div>
+						<div class="w">
+							<span class="feat_img ks_parent loading">
+								<a href="#" class="remcover" title="Remove featured image" data-event="delete_feature"></a>
+								<!-- ko if: page_to_edit.__featured_image -->
+								<img class="inspect" />
+								<!-- /ko -->
+								<span class="kspinner ks_md ks_abs ks_abs_md"></span>
+							</span>
+						</div>
+					</div>
+					<hr class="first" />
+				</div>
+
+				<div id="rcol-entry-edit" data-event="sidebar" data-bind="scrollbar: true">
+
+					<!-- ko if: page_to_edit.__loaded -->
+					<div class="col-block">
+						<div data-event="toggle_visibility" class="col-head">
+							<span class="in">
+								<a href="#" class="arrow-toggle open"></a>
+								<h6><a class="fold" href="#" title="Toggle">Properties</a></h6>
+							</span>
+						</div>
+						<div class="col-group">
+							<div class="col-row" >
+								<div class="label"><label>Status</label></div>
+								<div class="value">
+									<span data-bind="text: page_to_edit.published() ? 'Published' : 'Draft'"></span>
+									<!-- ko if: page_to_edit.published() -->
+										<a href="#" data-drawer="text_status_edit" title="Save as draft" class="edit-link">edit</a>
+									<!-- /ko -->
+								</div>
+							</div>
+							<div class="col-row" >
+								<div class="label"><label>ID</label></div>
+								<div class="value">
+									<span data-bind="text: page_to_edit.id()"></span>
+								</div>
+							</div>
+							<div class="col-row">
+								<div class="label">Type</div>
+								<div class="value" data-bind="text: page_to_edit.page_type() === 'essay' ? 'Essay' : 'Page'">
+								</div>
+							</div>
+							<div class="col-row">
+								<div class="label"><label>Title</label></div>
+								<div class="value">
+									<input type="text" data-bind="value: page_to_edit.draft_title, valueUpdate: 'afterkeydown'" class="field side-col" />
+								</div>
+							</div>
+							<div class="col-row">
+								<div class="label"><label>Excerpt</label></div>
+								<div class="value">
+									<textarea id="excerpt-text" rows="2" type="text" class="field side-col expand tall" data-bind="value: page_to_edit.excerpt(), event: { keyup: function() { page_to_edit.excerpt( $('#excerpt-text').val() ); } }" maxlength="255"></textarea><span class="field-links" style="display: none;"><span data-bind="text: (255 - page_to_edit.excerpt().length)"></span> characters left</span>
+								</div>
+							</div>
+							<div class="col-row">
+								<div class="label">Topics</div>
+								<div class="value">
+									<!-- ko if: get_selected_topics() --><!-- /ko -->
+									<!-- ko if: $.isArray(selected_topics()) -->
+										<!-- ko foreach: selected_topics() --><span class="commafy" data-bind="text: $data.title"></span><!-- /ko -->
+									<!-- /ko -->
+									<!-- ko ifnot: $.isArray(selected_topics()) -->
+									<span data-bind="text:selected_topics()"></span>
+									<!-- /ko -->
+									<a href="#" class="edit-link" data-event="toggle_sheet" data-sheet="add_topic" title="Edit topics">edit</a>
+								</div>
+							</div>
+							<div class="col-row" data-bind="visible: page_to_edit.page_type() === 'essay'">
+								<div class="label">Categories</div>
+								<div class="value">
+									<!-- ko if: get_selected_cats() --><!-- /ko -->
+									<!-- ko if: $.isArray(selected_cats()) -->
+										<!-- ko foreach: selected_cats() --><span class="data commafy" data-bind="text: $data.title"></span><!-- /ko -->
+									<!-- /ko -->
+									<!-- ko ifnot: $.isArray(selected_cats()) -->
+									<span data-bind="text:selected_cats()"></span>
+									<!-- /ko -->
+									<a href="#" class="edit-link" data-drawer="edit_categories" title="Edit categories">edit</a>
+								</div>
+							</div>
+							<div class="col-row" data-bind="visible: page_to_edit.page_type() === 'essay'">
+								<div class="label">Tags</div>
+								<div class="value">
+									<!-- ko if: page_to_edit.tags().length -->
+									<span class="tag-display">
+										<!-- ko foreach: page_to_edit.tags() -->
+											<span class="tag" data-bind="text: $root.helpers.clean($data.title)"></span>
+										<!-- /ko -->
+									</span>
+									<!-- /ko -->
+									<!-- ko ifnot: page_to_edit.tags().length -->
+										<span class="none">- none -</span>
+									<!-- /ko -->
+									<a href="#" class="edit-link" data-drawer="edit_tags" title="Edit tags">edit</a>
+								</div>
+							</div>
+
+						</div>
+					</div>
+
+					<!-- ko if: page_to_edit.url() -->
+					<div class="col-block">
+						<div data-event="toggle_visibility" class="col-head">
+							<span class="in">
+								<a href="#" class="arrow-toggle open fold"></a>
+								<h6><a href="#" class="fold">Site</a></h6>
+							</span>
+						</div>
+						<div class="col-group">
+							<div class="col-row">
+								<div class="label"><label>Link</label></div>
+								<div class="value">
+									<textarea id="albums-link" rows="2" type="text" class="field side-col expand short" data-bind="value: page_to_edit.url()" readonly="readonly"></textarea>
+									<span class="field-links"><a href="#" class="edit-link" data-drawer="site_link_edit" data-bind="visible: page_to_edit.published" title="Edit URL slug">edit</a><a class="edit-link copier" href="#" title="Copy URL to clipboard">copy</a><a href="#" class="edit-link" data-event="open_in_site" title="See content in site">view</a></span>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- /ko -->
+
+					<div class="col-block">
+						<div data-event="toggle_visibility" class="col-head">
+							<span class="in">
+								<a href="#" class="arrow-toggle open"></a>
+								<h6><a class="fold" href="#" title="Toggle">History</a></h6>
+							</span>
+						</div>
+						<div class="col-group">
+							<!-- ko if: page_to_edit.page_type() === 'essay' -->
+							<div class="col-row">
+								<div class="label">
+									<label>Published</label>
+								</div>
+								<div class="value">
+									<span data-bind="text: page_to_edit.published() ? format_date(page_to_edit.published_on.timestamp(), 'M/D/YYYY h:mm a') : 'Not published'"></span> <a data-bind="visible: page_to_edit.published" href="#" class="edit-link" data-drawer="edit_timestamp" title="Edit date published">edit</a>
+								</div>
+							</div>
+							<!-- /ko -->
+							<div class="col-row">
+								<div class="label">
+									<label>Created</label>
+								</div>
+								<div class="value">
+									<span data-bind="text: format_date(page_to_edit.created_on.timestamp(), 'M/D/YYYY h:mm a')"></span> <a data-bind="visible: page_to_edit.published" href="#" class="edit-link" data-drawer="edit_created" title="Edit date created">edit</a>
+								</div>
+							</div>
+							<div class="col-row">
+								 <div class="label"><label>Modified</label></div>
+								 <div class="value" data-bind="text: format_date(page_to_edit.modified_on.timestamp(),'M/D/YYYY h:mm a')"></div>
+							</div>
+						</div>
+					</div>
+
+				<!-- /ko -->
+
+				</div> <!-- end #rcol-entry-edit -->
+
+				<!-- /ko -->
+
+			</div>
+
+			<div id="right-menu-bot" class="col-bot">
+
+				<!-- ko if: page_to_edit.__loaded && view() === 'edit' -->
+
+				<div class="save-publish">
+
+					<ul class="button-row" data-event="save">
+						<li><a href="#" data-bind="css: { disabled: !hasChanges() }" class="button-ui emb" data-action="save">Save draft</a></li>
+						<li><a href="#" class="button-ui emb c0" data-bind="css: { disabled: page_to_edit.published() && page_to_edit.content() === page_to_edit.draft() && page_to_edit.draft_title() === page_to_edit.title() && !hasChanges() }, text: page_to_edit.published() ? 'Update site' : 'Publish live', attr: { 'data-action': page_to_edit.published() ? 'update' : 'publish' }"></a></li>
+					</ul>
+
+				</div>
+
+				<!-- /ko -->
+
+			</div> <!-- close .col-bot -->
+
+		</div> <!-- close #three-col-right -->
+
+
+	</div> <!-- close #lay-three-col -->
+
+</div> <!-- close #text-interface -->
+</script>
+<!-- @END Text Interface Template -->
+
+<!-- @BEGIN Insert Link Sheet -->
+<script id="insert_link_sheet" type="text/html">
+
+<div class="sheet-head">
+
+	<div class="sheet-wrap">
+
+		<h1>Insert link</h1>
+
+		<p>Wrap selection with a clickable link</p>
+
+	</div>
+
+</div>
+
+<hr class="single dark" data-bind="visible: state.type() === 'internal'">
+
+<div id="sheetview-link-internal" class="sheet-middle no-pad media-browse-middle" data-bind="scrollbar: true, visible: state.type() === 'internal'">
+
+	<div id="sheetview-il-content">
+
+		<section>
+
+			<div class="sheet-wrap">
+
+				<div class="col-head" data-event="toggle_visibility">
+					<span class="in">
+						<a href="#" class="arrow-toggle sheet open"></a>
+						<h6>
+							<a href="#" title="" class="fold">
+								Albums
+							</a>
+						</h6>
+					</span>
+				</div>
+
+				<div class="section-content">
+					<ul data-event="" class="sheet-link-opts" data-bind="template: { name: 'text_edit_link_album_list_item', foreach: $parent.albums_full }">
+					</ul>
+				</div>
+
+			</div>
+
+		</section>
+
+	</div> <!-- close #sheetview-il-content -->
+
+</div> <!-- close .sheet-media-browsr -->
+
+<hr>
+
+<div class="sheet-middle fixed clearfix">
+
+	<section>
+
+		<div class="sheet-wrap">
+
+			<ul class="table">
+				<li>
+					<span class="cell label">
+						<label>Link URL</label>
+					</span>
+					<span class="cell" data-bind="visible: state.type() === 'external'">
+						<input type="text" class="field wide" data-validate="url" placeholder="http://" data-bind="value: state.url, valueUpdate: 'afterkeydown'" />
+						<span class="form-error-msg" data-bind="">This field cannot be left blank.</span>
+					</span>
+					<span class="cell" data-bind="visible: state.type() === 'internal', text: state.album() ? state.url().replace(/\/lightbox$/, '') + ( state.lightbox() ? 'lightbox/' : '' ) : 'Select an album above'">
+
+					</span>
+				</li>
+				<li>
+					<span class="cell label">Destination</span>
+					<span class="cell" data-event="browser_valid">
+						<input id="new_link_new_window" type="checkbox" data-bind="checked: state.new_window" /> <label for="new_link_new_window" class="sub">Open in new browser window</label>
+						<!-- ko if: state.type() === 'internal' && state.album_type() === 'standard' -->
+						&nbsp;&nbsp;
+						<input id="new_link_lightbox" type="checkbox" data-bind="checked: state.lightbox" /> <label for="new_link_lightbox" class="sub">Open in lightbox view</label>
+						<!-- /ko -->
+					</span>
+				</li>
+				<li data-bind="visible: state.type() === 'internal'">
+					<span class="cell label sub" style="padding-bottom:0;">
+						Topic
+					</span>
+					<span class="cell" style="padding-bottom:0;">
+						<!-- ko if: state.album() && $parent.is_topic( state.album() ) -->
+						This album is already assigned as a topic for this <span data-bind="text: $parent.page_to_edit.page_type()"></span>.
+						<!-- /ko -->
+						<!-- ko ifnot: state.album() && $parent.is_topic( state.album() ) -->
+						<input id="new_link_topic" type="checkbox" /> <label class="sub" for="new_link_topic">Add album as topic</label>
+						<!-- /ko -->
+
+					</span>
+				</li>
+			</ul>
+
+		</div>
+
+	</section>
+
+</div>
+
+<div class="sheet-actions">
+
+	<hr>
+
+	<div class="sheet-wrap">
+
+		<div class="sheet-action-l">
+			<a href="#" class="button lg" data-bind="text: state.type() === 'internal' ? 'Link externally' : 'Link to site content', click: function() { state.type( state.type() === 'internal' ? 'external' : 'internal' ); $root.valid(false); }" title="Create link"></a>
+		</div>
+
+		<div class="sheet-action">
+			<ul class="button-row">
+				<li><button class="button lg" data-event="toggle_sheet" data-bind="attr: { 'data-sheet': id() }">Cancel</button></li>
+				<li data-bind="visible: state.existing" data-event="clear_link"><button class="button lg c0">Unlink</li>
+				<li data-bind=""><button data-sheet="insert_link" data-event="insert_link" class="button lg c0" data-bind="css: { disabled: state.type() === 'external' ? $root.valid() === false : !state.album() }">Insert link</button></li>
+			</ul>
+		</div>
+
+	</div>
+
+</div> <!-- close .sheet-actions -->
+
+</script>
+<!-- @END Insert Link Sheet -->
+
+<!-- @BEGIN Add Topic Sheet -->
+<script id="add_topic_sheet" type="text/html">
+
+<div class="sheet-head">
+
+	<div class="sheet-wrap">
+
+		<h1>Add topic</h1>
+
+		<p>
+			Topics associate albums with essays and pages. Once assigned, essay/pages publish links to their assigned albums and vice versa.
+		</p>
+
+	</div>
+
+</div>
+
+<hr class="single dark" />
+
+<div id="sheetview-add-topic" class="sheet-middle media-browse-middle" data-bind="scrollbar: true">
+
+	<section class="slim">
+
+		<div class="sheet-wrap">
+
+			<div class="col-head" data-event="toggle_visibility">
+				<span class="in">
+					<a href="#" class="arrow-toggle open"></a>
+					<h6>
+						<a href="#" title="" class="fold">
+							Albums
+						</a>
+					</h6>
+				</span>
+			</div>
+
+		<div class="section-content">
+			<ul data-event="" id="" class="sheet-link-opts" data-bind="template: { name: 'topic_album_list_item', foreach: $parent.albums_full }">
+			</ul>
+		</div>
+
+	</section>
+
+</div> <!-- close .sheet-middle -->
+
+<div class="sheet-actions">
+
+	<hr>
+
+	<div class="sheet-wrap">
+
+		<div class="sheet-action">
+			<ul class="button-row">
+				<li data-bind=""><button class="button lg c0" data-sheet="add_topic" data-event="toggle_sheet">Done</button></li>
+			</ul>
+		</div>
+
+	</div>
+
+</div> <!-- close .sheet-actions -->
+
+</script>
+<!-- @END Add Topic Sheet -->
+
+<!-- @BEGIN Create Text Sheet -->
+<script id="create_text_sheet" type="text/html">
+<div class="sheet-head">
+
+	<div class="sheet-wrap">
+
+		<h1>Create new essay or page</h1>
+
+	</div>
+
+</div>
+
+<hr>
+
+<div id="sheetview-create-essay" class="sheet-middle" data-bind="scrollbar: true">
+
+	<section>
+
+		<div class="sheet-wrap">
+
+			<div class="col-head top_up" data-event="toggle_visibility">
+				<span class="in">
+					<a href="#" class="arrow-toggle open"></a>
+					<h6>
+						<a href="#" class="fold" title="">
+							Article type
+						</a>
+					</h6>
+				</span>
+			</div>
+
+			<div class="section-content">
+				<ul class="sheet-opt-types">
+					<li class="nobot" data-bind="css: { selected: type() === 'essay' }, click: function() { $parent.sheets.create_text.type('essay') }">
+						<a href="#" title="Create an essay"><span class="icon16 label-essays">Essay <span class="sub-title">Blog posts, news, stories</span></span></a>
+					</li>
+					<li class="nobot" data-bind="css: { selected: type() === 'page' }, click: function() { $parent.sheets.create_text.type('page') }">
+						<a href="#" title="Create a new page"><span class="icon16 label-custompage">Page <span class="sub-title">Empty page for custom content</span></span></a>
+					</li>
+				</ul>
+			</div>
+
+		</div>
+
+	</section>
+
+	<section>
+
+		<div class="sheet-wrap">
+
+			<div class="col-head" data-event="toggle_visibility">
+				<span class="in">
+					<a href="#" class="arrow-toggle open"></a>
+					<h6>
+						<a href="#" title="#" class="fold">
+							Properties
+						</a>
+					</h6>
+				</span>
+			</div>
+
+			<div class="section-content">
+				<ul class="table">
+					<li>
+						<span class="cell label">
+							<label>Title</label>
+						</span>
+						<span class="cell">
+							<input type="text" data-validate="not_empty" data-error-msg="This field cannot be left blank" class="field wide" placeholder="Enter title" data-bind="value: title, valueUpdate: 'afterkeydown'" />
+							<span class="form-error-msg" data-bind=""></span>
+						</span>
+					</li>
+				</ul>
+			</div>
+
+		</div>
+
+	</section>
+
+</div>
+
+<div class="sheet-actions">
+
+	<hr>
+
+	<div class="sheet-wrap">
+
+		<div class="sheet-action">
+			<ul class="button-row">
+				<li data-event="toggle_sheet" data-bind="attr: { 'data-sheet': id() }"><button class="button lg">Cancel</button></li>
+				<li data-validate="create_text" data-event="create_text"><button class="button lg c0" data-bind="css: { disabled: $root.valid() === false }">Create</button></li>
+			</ul>
+		</div>
+
+	</div>
+
+</div> <!-- close .sheet-actions -->
+</script>
+
+<!-- @BEGIN Edit shortcode sheet -->
+<script id="shortcode_custom_sheet" type="text/html">
+<div class="sheet-head">
+	<div class="sheet-wrap">
+		<!-- ko with: $root.interfaces.text.observers.current_shortcode -->
+		<h1 data-bind="text: $data.title"></h1>
+		<!-- ko if: $data.description -->
+		<p data-bind="text: $data.description"></p>
+		<!-- /ko -->
+		<!-- /ko -->
+	</div>
+</div>
+
+<hr>
+
+<div id="shortcode_custom_middle" class="clearfix sheet-middle" data-bind="scrollbar: true">
+
+	<section>
+
+		<div class="sheet-wrap sheet-options">
+
+			<ul class="table">
+
+				<!-- ko foreach: $root.interfaces.text.observers.current_shortcode_data -->
+				<li class="shortcode-settings">
+					<!-- ko if: $data.label -->
+					<span class="cell label">
+						<label data-bind="text: label"></label>
+					</span>
+					<!-- /ko -->
+					<span class="cell">
+						<!-- ko template: { name: 'form_' + type, data: { setting: $data, prefix: 'shortcode_' } } --><!-- /ko -->
+					</span>
+				</li>
+				<!-- /ko -->
+
+			</ul>
+
+		</div>
+
+	</section>
+
+</div> <!-- close .sheet-middle -->
+
+<div class="sheet-actions">
+
+	<hr>
+
+	<div class="sheet-wrap">
+
+		<div class="sheet-action">
+			<ul class="button-row">
+				<li><button class="button lg" data-event="toggle_sheet" data-bind="attr: { 'data-sheet': id() }">Cancel</button></li>
+				<li><button data-validate class="button lg c0" data-event="insert_custom" data-sheet="shortcode_custom">Insert</button></li>
+			</ul>
+		</div>
+
+	</div>
+
+</div> <!-- close .sheet-actions -->
+</script>
+<!-- @END Edit shortcode sheet -->
+
+<!-- @BEGIN Edit shortcode sheet -->
+<script id="shortcode_edit_sheet" type="text/html">
+<div class="sheet-head">
+	<div class="sheet-wrap">
+		<!-- ko with: $root.interfaces.text.observers.current_shortcode -->
+		<h1 class="sheet-title" data-bind="text: $data.title"></h1>
+		<!-- ko if: $data.description -->
+		<p class="sheet-desc" data-bind="text: $data.description"></p>
+		<!-- /ko -->
+		<!-- /ko -->
+	</div>
+</div>
+
+<hr>
+
+<div id="shortcode-edit-middle" class="clearfix sheet-middle" data-bind="scrollbar: true">
+
+	<section>
+
+		<div class="sheet-wrap sheet-options">
+
+			<ul class="table">
+				<!-- ko with: $root.interfaces.text.observers.current_shortcode -->
+				<li>
+					<!-- ko if: $data.media && $root.interfaces.text.observers.sheets.shortcode_edit.selected().indexOf('http') !== 0 -->
+					<span class="cell label">
+						<label style="text-transform: capitalize" data-bind="text: media"></label>
+					</span>
+					<span class="cell">
+						<span data-bind="text: $root.interfaces.text.observers.sheets.shortcode_edit.selected"></span>&nbsp;&nbsp;
+						<a href="#" class="hover-link" data-event="edit_shortcode_media">edit</a>
+					</span>
+					<!-- /ko -->
+					<!-- ko if: $data.media && $root.interfaces.text.observers.sheets.shortcode_edit.selected().indexOf('http') === 0 -->
+					<span class="cell label">
+						<label>Image</label>
+					</span>
+					<span class="cell">
+						<span data-bind="text: $root.interfaces.text.observers.sheets.shortcode_edit.selected"></span>&nbsp;&nbsp;
+					</span>
+					<!-- /ko -->
+				</li>
+				<!-- /ko -->
+
+				<!-- ko foreach: $root.interfaces.text.observers.current_shortcode_data -->
+				<li class="shortcode-settings">
+					<!-- ko if: $data.label -->
+					<span class="cell label">
+						<label data-bind="text: label"></label>
+					</span>
+					<!-- /ko -->
+					<span class="cell">
+						<!-- ko template: { name: 'form_' + type, data: { setting: $data, prefix: 'shortcode_' } } --><!-- /ko -->
+					</span>
+				</li>
+				<!-- /ko -->
+
+				<!-- ko if: $root.interfaces.text.observers.current_shortcode().supports_linking -->
+				<li class="shortcode-settings">
+					<span class="cell label top">
+						<label>Link</label>
+					</span>
+					<span class="cell">
+						<span class="cell-row">
+							<!-- Duplication below is intentional. See edit_shortcode() in text.js -->
+							<!-- ko if: albums().length -->
+							<select name="link" id="shortcode_link" name="link" data-bind="value: link">
+								<option value="none" data-bind="selected: link() === 'none'">
+									Do nothing
+								</option>
+								<option value="detail" data-bind="selected: link() === 'detail'">
+									Load content page
+								</option>
+								<option value="album" data-bind="selected: link() === 'album'">
+									Load album page
+								</option>
+								<option value="lightbox" data-bind="selected: link() === 'lightbox'">
+									View in lightbox
+								</option>
+								<option value="custom" data-bind="selected: link() === 'custom'">
+									Custom URL
+								</option>
+							</select>
+							<!-- /ko -->
+
+							<!-- ko ifnot: albums().length -->
+							<select name="link" id="shortcode_link" name="link" data-bind="value: link">
+								<option value="none" data-bind="selected: link() === 'none'">
+									Do nothing
+								</option>
+								<option value="detail" data-bind="selected: link() === 'detail'">
+									Load content page
+								</option>
+								<option value="lightbox" data-bind="selected: link() === 'lightbox'">
+									View in lightbox
+								</option>
+								<option value="custom" data-bind="selected: link() === 'custom'">
+									Custom URL
+								</option>
+							</select>
+							<!-- /ko -->
+							<select name="album" id="shortcode_link_albums" style="display:none" data-bind="visible: albums().length && link() === 'album', value: album, options: albums, optionsText: 'title', optionsValue: 'id'">
+							</select>
+						</span>
+						<span id="shortcode_links_custom" style="display: none" class="cell-row" data-bind="visible: link() === 'custom'">
+							<input name="custom_url" placeholder="Enter custom URL" class="field wide" data-validate="url" data-bind="value: $root.decodeUrl(custom_url), valueUpdate: 'afterkeydown'" />
+							<span class="form-error-msg"></span>
+						</span>
+					</span>
+				</li>
+				<!-- /ko -->
+
+			</ul>
+
+		</div>
+
+	</section>
+
+</div> <!-- close .sheet-middle -->
+
+<div class="sheet-actions">
+
+	<hr>
+
+	<div class="sheet-wrap">
+
+		<div class="sheet-action">
+			<ul class="button-row">
+				<li><button class="button lg" data-event="toggle_sheet" data-bind="attr: { 'data-sheet': id() }">Cancel</button></li>
+				<li><button data-validate class="button lg c0" data-event="update_shortcode" data-sheet="shortcode_edit">Update</button></li>
+			</ul>
+		</div>
+
+	</div>
+
+</div> <!-- close .sheet-actions -->
+</script>
+<!-- @END Edit shortcode sheet -->
+
+<!-- @BEGIN Insert Image Sheet -->
+<script id="shortcode_media_sheet" type="text/html">
+<div class="sheet-head">
+	<div class="sheet-wrap">
+		<!-- ko with: $root.interfaces.text.observers.current_shortcode -->
+		<h1 data-bind="text: $data.title"></h1>
+		<!-- ko if: $data.description -->
+		<p data-bind="text: $data.description"></p>
+		<!-- /ko -->
+		<!-- /ko -->
+	</div>
+</div>
+
+<hr>
+
+<div class="sheet-middle-no-pad" data-bind="visible: editing() === false">
+
+	<div class="media-browse-headr">
+
+		<div class="sheet-wrap">
+			<label>Show:</label>
+			<select id="view_select" class="tiny" data-bind="value: selected.view()">
+				<option class="all_content default_opt" value="content">All content</option>
+				<option class="last_upload default_opt" value="last_upload">Last upload</option>
+				<option class="quick_collection default_opt" value="quick_collection">Quick collection</option>
+				<option class="favorites default_opt" value="content/favorites:1">Favorites</option>
+				<option class="featured default_opt" value="content/featured:1">Featured content</option>
+				<option class="albums default_opt" value="public_albums">Public album</option>
+			</select>
+			<select id="album_select" class="tiny" data-bind="visible: selected.view() === 'public_albums' || $parent.sheet_media_chosen.secondary() !== '0'">
+				<option data-id="0">Select a public album</option>
+				<!-- ko foreach: $parent.albums -->
+					<!-- ko template: 'album_options' --><!-- /ko -->
+				<!-- /ko -->
+			</select>
+		</div>
+
+	</div> <!-- close .media-browse-headr -->
+
+</div>
+
+<div id="sheetview-insert-media" style="padding-top:0px" class="sheet-middle media-browse-middle" data-bind="visible: editing() === false">
+
+	<div class="media-browse-middle">
+
+		<div id="sheetview-img-insert" data-bind="scrollbar: true">
+
+			<div class="media-browse-viewr">
+				<ul id="media-browse-content" class="lib-content"></ul>
+			</div>
+
+		</div>
+
+	</div> <!-- close .media-browse-middle -->
+
+</div> <!-- close .sheet-media-browsr -->
+
+<div class="sheet-actions">
+
+	<hr>
+
+	<div class="sheet-wrap">
+
+		<div class="sheet-action-l" data-bind="visible: editing() === false">
+
+			<!-- ko if: $root.load_content.selected.text() != '' -->
+			<span class="text">
+				<strong>Selected:</strong>
+				<span data-bind="text:$root.load_content.selected.text()"></span>
+			</span>
+			<!-- /ko -->
+
+		</div>
+
+		<div class="sheet-action">
+			<ul class="button-row">
+				<li><button class="button lg" data-event="toggle_sheet" data-bind="attr: { 'data-sheet': id() }">Cancel</button></li>
+				<li><button data-bind="css: { disabled: $root.load_content.selected.content().length <= 0 }" class="button lg c0 disabled" data-event="insert_media" data-sheet="shortcode_media"><span data-bind="text: $root.interfaces.text.observers.current_shortcode().title"></span></button></li>
+			</ul>
+		</div>
+
+	</div>
+
+</div> <!-- close .sheet-actions -->
+</script>
+<!-- @END Insert Image Sheet -->
+
+<!-- @BEGIN Insert Slideshow Sheet -->
+<script id="shortcode_collection_sheet" type="text/html">
+<div class="sheet-head">
+
+	<div class="sheet-wrap">
+		<!-- ko with: $root.interfaces.text.observers.current_shortcode -->
+		<h1 data-bind="text: $data.title"></h1>
+		<!-- ko if: $data.description -->
+		<p data-bind="text: $data.description"></p>
+		<!-- /ko -->
+		<!-- /ko -->
+	</div>
+
+</div>
+
+<hr class="single dark">
+
+<div id="sheetview-insert-slideshow" class="sheet-middle media-browse-middle" data-bind="scrollbar: true">
+
+	<div id="sheetview-is-content">
+
+		<!-- ko if: typeof $root.interfaces.text.observers.selected_topics() !== 'string' && $root.interfaces.text.observers.selected_topics().length -->
+
+		<section>
+
+			<div class="sheet-wrap">
+
+				<div class="col-head" data-event="toggle_visibility">
+					<span class="in">
+						<a href="#" class="arrow-toggle open"></a>
+						<h6>
+							<a href="#" title="" class="fold">
+								Topics
+							</a>
+						</h6>
+					</span>
+				</div>
+
+				<div class="section-content">
+
+					<ul class="sheet-link-opts" data-bind="foreach: $root.interfaces.text.observers.selected_topics()" >
+						<li>
+							<span class="toggle">
+								<a data-event="" href="#" class="button opts" data-bind="click: function() { $root.interfaces.text.observers.sheets.shortcode_collection.state.selected('album-' + id); $root.interfaces.text.observers.sheets.shortcode_collection.state.selected_text(title); }, css: { c0: 'album-' + id === $root.interfaces.text.observers.sheets.shortcode_collection.state.selected(), c1: 'album-' + id !== $root.interfaces.text.observers.sheets.shortcode_collection.state.selected() }">Use</a>
+							</span>
+							<span class="preview">
+								<img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-bind="attr: { 'data-src': $root.get_album_cover($data) }" width="48" height="48" class="thumb loading" />
+							</span>
+							<span class="info">
+								<span class="titie"><h3 data-bind="text: title"></h3></span>
+								<span class="desc" data-bind="text: $root.truncate(description, 70)"></span>
+							</span>
+						</li>
+					</ul>
+
+				</div>
+
+			</div>
+
+		</section>
+
+		<!-- /ko -->
+
+		<section data-bind="visible: favorites().length || quick_collection().length || last_upload().length" style="margin-top:4px;">
+
+			<div class="sheet-wrap">
+
+				<div class="col-head" data-event="toggle_visibility">
+					<span class="in">
+						<a href="#" class="arrow-toggle open"></a>
+						<h6>
+							<a href="#" title="" class="fold">
+								Photos
+							</a>
+						</h6>
+					</span>
+				</div>
+
+				<div class="section-content">
+					<ul class="sheet-link-opts">
+						<li data-bind="visible: quick_collection().length">
+							<span class="toggle">
+								<a data-event="" href="#" class="button opts" data-bind="click: function() { state.selected('quick_collection'); state.selected_text('Quick collection'); }, css: { c0: 'quick_collection' === state.selected(), c1: 'quick_collection' !== state.selected() }">Use</a>
+							</span>
+							<span class="preview">
+								<span class="icon48 icon-page-quick"></span>
+							</span>
+							<span class="info">
+								<span class="title"><h3 data-bind="">Quick collection</h3></span>
+								<span class="desc">Use photos currently in your quick collection.</span>
+							</span>
+						</li>
+						<li>
+							<span class="toggle">
+								<a data-event="" href="#" class="button opts" data-bind="click: function() { state.selected('favorites'); state.selected_text('Favorites'); }, css: { c0: 'favorites' === state.selected(), c1: 'favorites' !== state.selected() }">Use</a>
+							</span>
+							<span class="preview">
+								<span class="icon48 icon-page-favorites"></span>
+							</span>
+							<span class="info">
+								<span class="title"><h3 data-bind="">Favorites</h3></span>
+								<span class="desc">Use photos currently assigned as favorites.</span>
+							</span>
+						</li>
+						<li data-bind="visible: last_upload().length">
+							<span class="toggle">
+								<a data-event="" href="#" class="button opts" data-bind="click: function() { state.selected('last_upload'); state.selected_text('Last upload'); }, css: { c0: 'last_upload' === state.selected(), c1: 'last_upload' !== state.selected() }">Use</a>
+							</span>
+							<span class="preview">
+								<span class="icon48 icon-page-last-upload"></span>
+							</span>
+							<span class="info">
+								<span class="title"><h3 data-bind="">Last import</h3></span>
+								<span class="desc">Use photos from your most recent import.</span>
+							</span>
+						</li>
+					</ul>
+				</div>
+
+			</div>
+
+		</section>
+
+		<section class="slim">
+
+			<div class="sheet-wrap">
+
+				<div class="col-head" data-event="toggle_visibility">
+					<span class="in">
+						<a href="#" class="arrow-toggle open"></a>
+						<h6>
+							<a href="#" title="" class="fold">
+								Albums
+							</a>
+						</h6>
+					</span>
+				</div>
+
+				<div class="section-content">
+					<ul id="i_s_albums" class="sheet-link-opts" data-bind="template: { name: 'text_edit_slideshow_album_list_item', foreach: $parent.albums_full }">
+					</ul>
+				</div>
+
+			</div>
+
+		</section>
+
+	</div> <!-- close #sheetview-il-content -->
+
+</div> <!-- close .sheet-middle -->
+
+<div class="sheet-actions">
+
+	<hr>
+
+	<div class="sheet-wrap">
+
+		<div class="sheet-action-l">
+
+			<div>
+				<div data-bind="visible: state.selected_text().length">
+					<strong>Selected:</strong>
+					<span data-bind="text: $root.truncate(state.selected_text(),30)"></span>
+					<span data-bind="visible: state.selected().indexOf('album') !== -1 && !$root.interfaces.text.observers.is_topic( Number(state.selected().split('-')[1]) )">
+						&nbsp;&nbsp;
+						<input id="album_sheet_topic" type="checkbox" />
+						<label for="album_sheet_topic">Add album as topic</label>
+					</span>
+				</div>
+			</div>
+
+		</div>
+
+		<div class="sheet-action">
+			<ul class="button-row">
+				<li><button class="button lg" data-event="toggle_sheet" data-bind="attr: { 'data-sheet': id() }">Cancel</button></li>
+				<li><button class="button lg c0" data-event="insert_collection" data-sheet="shortcode_collection" data-bind="css: { disabled: (state.selected().length === 0 || isNaN(state.selected()[0]) === false) }"><span data-bind="text:$root.interfaces.text.observers.current_shortcode().title"></span></button></li>
+			</ul>
+		</div>
+
+	</div>
+
+</div> <!-- close .sheet-actions -->
+</script>
+<!-- @END Insert Slideshow Sheet -->
+
+<!-- @BEGIN Embed Item Sheet -->
+<script id="embed_item_sheet" type="text/html">
+<div class="sheet-head">
+
+	<div class="sheet-wrap">
+
+		<h1>Embed item</h1>
+
+		<p>Display an image, video or other asset from elsewhere</p>
+
+	</div>
+
+</div>
+
+<hr>
+
+<div class="sheet-middle">
+
+	<section>
+
+		<div class="sheet-wrap">
+
+			<ul class="table">
+				<li>
+					<span class="cell">
+						<label>Paste HTML code below</label>
+					</span>
+				</li>
+				<li>
+				<span class="cell">
+					<textarea class="field wide" rows="10"></textarea>
+				</span>
+				</li>
+			</ul>
+
+		</div>
+
+	</section>
+
+</div> <!-- close .sheet-middle -->
+
+<div class="sheet-actions">
+
+	<hr>
+
+	<div class="sheet-wrap">
+
+		<div class="sheet-action">
+			<ul class="button-row">
+				<li><button class="button lg" data-event="toggle_sheet" data-bind="attr: { 'data-sheet': id() }">Cancel</button></li>
+				<li><button class="button lg c0" data-event="" data-sheet="">Embed</button></li>
+			</ul>
+		</div>
+
+	</div>
+
+</div> <!-- close .sheet-actions -->
+</script>
+<!-- @END Embed Item Sheet -->
+
+<!-- @BEGIN Insert New Image Sheet -->
+<script id="shortcode_upload_sheet" type="text/html">
+<div class="sheet-head">
+
+	<div class="sheet-wrap">
+		<!-- ko with: $root.interfaces.text.observers.current_shortcode -->
+		<h1 data-bind="text: $data.title"></h1>
+		<!-- ko if: $data.description -->
+		<p data-bind="text: $data.description"></p>
+		<!-- /ko -->
+		<!-- /ko -->
+	</div>
+
+</div>
+
+<hr class="single">
+
+<div class="sheet-middle" style="overflow:hidden;">
+
+	<section class="nom">
+
+		<div id="text-upload">
+
+			<div>
+
+				<div class="upload_well ks_parent ks_inithide" data-bind="css: { loading: state() === 'uploading', loaded: state() === 'ready' }">
+					<div class="in" data-bind="visible: state() === 'off'">
+						<h3>Click here or drag and drop an image</h3>
+						<p>JPG, GIF, PNG</p>
+					</div>
+					<!-- ko if: state() === 'ready' -->
+					<div class="preview" data-bind="attr: { style: state() === 'ready' ? 'background-image: url(\'' + $parent.paths.base + 'storage/custom/' + filename() + '\')' : '' }">
+					</div>
+					<!-- /ko -->
+					<span class="kspinner ks_abs ks_abs_lg"></span>
+				</div>
+
+			</div>
+
+		</div>
+
+	</section>
+
+</div>
+
+<div class="sheet-actions">
+
+	<hr>
+
+	<div class="sheet-wrap">
+
+		<div class="sheet-action-l" data-bind="visible: state() !== 'off'">
+			<span class="text" style="width:260px;">
+				<strong data-bind="text: state() === 'uploading' ? 'Uploading:' : 'Uploaded:'">Uploaded:</strong>
+				<span data-bind="text: filename"></span>
+				<span data-bind="visible: state() === 'uploading'">(<span id="text-upload-progress">0</span>%)</span>
+			</span>
+		</div>
+
+		<div class="sheet-action">
+			<ul class="button-row">
+				<li><button class="button lg" data-event="toggle_sheet" data-bind="attr: { 'data-sheet': id() }">Cancel</button></li>
+				<li><button class="button lg c0" data-bind="css: { disabled: state() !== 'ready' }" data-event="insert_upload" data-sheet="shortcode_upload">Insert</button></li>
+			</ul>
+		</div>
+
+	</div>
+
+</div> <!-- close .sheet-actions -->
+</script>
+<!-- @END Insert New Image Sheet -->
+
+<script id="text_edit_slideshow_album_list_item" type="text/html">
+<li data-bind="visible: album_type === 'standard' || albums().length">
+	<span class="toggle" data-bind="visible: album_type === 'standard'">
+		<a data-event="toggle_internal_link" href="#" class="button opts" data-bind="click: function() { $root.interfaces.text.observers.sheets.shortcode_collection.state.selected('album-' + id); $root.interfaces.text.observers.sheets.shortcode_collection.state.selected_text(title); }, css: { c0: 'album-' + id === $root.interfaces.text.observers.sheets.shortcode_collection.state.selected(), c1: 'album-' + id !== $root.interfaces.text.observers.sheets.shortcode_collection.state.selected() }">Use</a>
+	</span>
+	<span class="preview" data-bind="style: { 'padding-left': (level * 15) + 'px' }">
+		<img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-bind="attr: { 'data-src': $root.get_album_cover($data) }" width="48" height="48" class="thumb loading" />
+	</span>
+	<span class="info">
+		<h3 data-bind="text: title"></h3>
+		<!-- ko if: description -->
+		<span class="desc" data-bind="text: $root.truncate(description, 70 - (level*5))"></span>
+		<!-- /ko -->
+		<!-- ko ifnot: description -->
+		<span class="desc">No description available</span>
+		<!-- /ko -->
+	</span>
+</li>
+<!-- ko if: albums().length -->
+<!-- ko template: { name: 'text_edit_slideshow_album_list_item', foreach: albums } --><!-- /ko -->
+<!-- /ko -->
+</script>
+
+<script id="text_edit_link_album_list_item" type="text/html">
+<li>
+	<span class="toggle">
+		<a data-event="toggle_internal_link" href="#" class="button opts" data-bind="css: { c0: id === $root.interfaces.text.observers.sheets.insert_link.state.album(), c1: id !== $root.interfaces.text.observers.sheets.insert_link.state.album() }">Link</a>
+	</span>
+	<span class="preview" data-bind="style: { 'padding-left': (level * 15) + 'px' }">
+		<img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-bind="attr: { 'data-src': $root.get_album_cover($data) }" width="48" height="48" class="thumb loading" />
+	</span>
+	<span class="info">
+		<h3 data-bind="text: title"></h3>
+		<!-- ko if: description -->
+		<span class="desc" data-bind="text: $root.truncate(description, 70 - (level*5))"></span>
+		<!-- /ko -->
+		<!-- ko ifnot: description -->
+		<span class="desc">No description available</span>
+		<!-- /ko -->
+	</span>
+</li>
+<!-- ko if: albums().length -->
+<!-- ko template: { name: 'text_edit_link_album_list_item', foreach: albums } --><!-- /ko -->
+<!-- /ko -->
+</script>
+
+<script id="topic_album_list_item" type="text/html">
+<li>
+	<span class="toggle">
+		<a data-event="toggle_topic" href="#" class="button opts" data-bind="text: $root.interfaces.text.observers.is_topic(id) ? 'Added' : 'Add', css: { c1: !$root.interfaces.text.observers.is_topic(id), c0: $root.interfaces.text.observers.is_topic(id) }">Add</a>
+	</span>
+	<span class="preview" data-bind="style: { 'padding-left': (level * 15) + 'px' }">
+		<img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-bind="attr: { 'data-src': $root.get_album_cover($data) }" width="48" height="48" class="thumb loading" />
+	</span>
+	<span class="info">
+		<h3 data-bind="text: title"></h3>
+		<!-- ko if: description -->
+		<span class="desc" data-bind="text: $root.truncate(description, 70 - (level*5))"></span>
+		<!-- /ko -->
+		<!-- ko ifnot: description -->
+		<span class="desc">No description available</span>
+		<!-- /ko -->
+	</span>
+</li>
+<!-- ko if: albums().length -->
+<!-- ko template: { name: 'topic_album_list_item', foreach: albums } --><!-- /ko -->
+<!-- /ko -->
+</script>
+
+<!-- @BEGIN Default Drawer -->
+<script id="default_edit" type="text/html"></script>
+<!-- @END Default Drawer -->
+
+<!-- @BEGIN Album Options -->
+<script id="album_options" type="text/html">
+	<!-- ko if: $data.album_type === 'set' -->
+	<option data-bind="html: $parents[$parents.length-1].interfaces.text.observers.getSelectSpacing(($parents.length-3), $data.title)" disabled></option>
+		<!-- ko foreach: $data.children -->
+			<!-- ko with: $data -->
+				<!-- ko template: 'album_options' --><!-- /ko -->
+			<!-- /ko -->
+		<!-- /ko -->
+	<!-- /ko -->
+
+	<!-- ko if: $data.album_type === 'standard' -->
+	<option style="text-indent: 22px;" data-bind="label: $data.title, html: $parents[$parents.length-1].interfaces.text.observers.getSelectSpacing(($parents.length-3), $data.title), style: { 'padding-left': ($parents.length - 3) + 'px' }, attr: { 'data-id': $data.id, value: '/albums/' + $data.id + '/content', selected: ( $parents[1].secondary && $parents[1].sheet_media_chosen.secondary() === ('o' + $data.id) ) ? 'selected' : '' }"></option>
+	<!-- /ko -->
+</script>
+<!-- @END Album Options -->
+
+<!-- @BEGIN Status Edit Drawer Template -->
+<script id="text_status_edit" type="text/html">
+	<div class="col-row tall">
+		<button class="button c0 sm" data-action="unpublish" data-event="save" title="Unpublish and revert to draft status">Save as draft</a>
+	</div>
+	<div class="col-row hr"><hr></div>
+	<div class="col-row">
+		Unpublish this <span data-bind="text: $data.page_type()"></span> from your live site. The <span data-bind="text: $data.page_type()"></span> will revert to draft status so you may make edits and publish again.
+	</div>
+</script>
+<!-- @END Status Edit Drawer Template -->

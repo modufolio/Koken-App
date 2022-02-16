@@ -1,0 +1,75 @@
+<koken:include file="layouts/header.html" />
+
+<koken:load>
+
+    <koken:head>
+      <meta property="og:site_name" content="{{ site.title }}" />
+      <meta property="og:description" content="{{ site.description strip_html='true' }}" />
+      <meta property="og:title" content="{{ labels.timeline.plural }}" />
+      <meta property="og:type" content="blog" />
+      <meta property="og:url" content="{{ location.site_url }}{{ location.here }}" />
+    </koken:head>
+
+	<div id="twocol">
+
+		<div class="mcol">
+
+			<koken:loop>
+
+				<koken:event>
+
+					<koken:include file="layouts/event_album.html" />
+
+					<koken:include file="layouts/event_album_update.html" />
+
+					<koken:include file="layouts/event_content.html" />
+
+					<koken:include file="layouts/event_essay.html" />
+
+				</koken:event>
+
+			</koken:loop>
+
+		</div>
+
+		<div class="rcol">
+
+			<aside>
+
+				<section>
+
+					<header class="content">
+						<span class="wrap first">
+							View {{ labels.timeline.singular case="lower" }} by month
+						</span>
+					</header>
+
+					<koken:dates filter:scope="month">
+						<koken:select label="Select month" />
+					</koken:dates>
+
+				</section>
+
+				<koken:include file="layouts/timeline_aside.html" />
+
+			</aside>
+
+		</div>
+
+		<koken:include file="layouts/pagination.html" />
+
+	</div>
+
+	<koken:keyboard_scroll element="article.kevent" offset="-10" />
+
+<koken:else>
+
+	<koken:note>
+
+		<strong>No timeline data found.</strong> You need to upload content or publish an essay.
+
+	</koken:note>
+
+</koken:load>
+
+<koken:include file="layouts/footer.html" />

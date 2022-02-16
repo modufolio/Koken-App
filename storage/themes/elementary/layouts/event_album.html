@@ -1,0 +1,122 @@
+<koken:event_album>
+
+	<article class="kevent">
+
+		<header class="content">
+
+			<div class="right share">
+
+				<span class="wrap last share">
+
+					<koken:if true="settings.timeline_show_share">
+
+						<koken:include file="layouts/share_album.html" />
+
+					</koken:if>
+
+				</span>
+
+			</div>
+
+			<koken:if true="album.featured">
+				<span class="edge_right">
+					<span class="wrap">
+						<i class="kicon-star"></i>
+					</span>
+				</span>
+			</koken:if>
+
+			<span class="edge_right"><span class="wrap first {{ album.featured if_true="featured" }}" ><koken:link to="albums" title="View all {{ labels.album.plural case='lower' }}">{{ labels.album.singular }}</koken:link></span></span>
+
+			<span class="wrap">Published <koken:link to="date"><koken:time relative="{{ settings.show_event_date_relative }}" /></koken:link></span>
+
+		</header>
+
+		<div class="article_body">
+
+			<figure>
+
+				<koken:if data="settings.album_time_type" equals="mosaic">
+
+					<koken:link title="View {{ album.title }}">
+						<koken:if condition="{{ album.counts.total }} === 1">
+							<koken:img lazy="true" />
+						<koken:else>
+							<koken:if true="settings.album_cover_limit">
+								<koken:covers minimum="{{ settings.mosaic_cols * settings.mosaic_rows }}" limit="{{ settings.mosaic_cols * settings.mosaic_rows }}">
+									<ul class="k-mosaic k-mosaic-{{ settings.mosaic_cols }} edge">
+										<koken:loop>
+											<koken:background tag="li"></koken:background>
+										</koken:loop>
+									</ul>
+								</koken:covers>
+							<koken:else>
+								<koken:covers limit="{{ covers.length }}">
+									<ul class="k-mosaic k-mosaic-{{ settings.mosaic_cols }} edge">
+										<koken:loop>
+											<koken:background tag="li"></koken:background>
+										</koken:loop>
+									</ul>
+								</koken:covers>
+							</koken:if>
+						</koken:if>
+					</koken:link>
+
+				</koken:if>
+
+				<koken:if data="settings.album_time_type" equals="slideshow">
+
+					<koken:pulse group="timeline-albums" data="album.covers" link_to="album" />
+
+				</koken:if>
+
+				<koken:if data="settings.album_time_type" equals="cover">
+
+					<koken:link title="View {{ album.title }}">
+
+						<koken:img lazy="true" />
+
+					</koken:link>
+
+				</koken:if>
+
+				<figcaption>
+
+					<h3>
+						<koken:link title="View {{ album.title }}">
+							{{ album.title }}
+						</koken:link>
+					</h3>
+
+					<p>
+						{{ album.summary | album.description }}
+					</p>
+
+					<koken:tags>
+						<p class="meta-links">
+							<koken:loop separator="">
+								<koken:link class="tag" to="tag" title="View everything in {{ tag.title }}">{{ tag.title }}</koken:link>
+							</koken:loop>
+						</p>
+					</koken:tags>
+
+					<koken:categories>
+						<p class="meta-links">
+							See more in
+							<koken:loop separator=", ">
+								<koken:link class="norm" to="category" title="View everything in {{ category.title }}">
+									{{ category.title }}
+								</koken:link>
+							</koken:loop>
+						</p>
+					</koken:categories>
+
+				</figcaption>
+
+			</figure>
+
+		</div>
+
+	</article>
+
+	</koken:event_album>

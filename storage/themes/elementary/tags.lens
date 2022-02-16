@@ -1,0 +1,152 @@
+<koken:include file="layouts/header.html" />
+
+<koken:load>
+
+<koken:head>
+	<meta property="og:site_name" content="{{ site.title }}" />
+	<meta property="og:title" content="{{ labels.tag.plural }}" />
+	<meta property="og:description" content="{{ site.description strip_html='true' }}" />
+	<meta property="og:type" content="website" />
+	<meta property="og:url" content="{{ location.site_url }}{{ location.here }}" />
+</koken:head>
+
+<div id="twocol">
+
+	<div class="mcol">
+
+		<header class="content">
+
+			<span class="wrap first">
+
+				{{ labels.tag.plural }}
+
+			</span>
+
+		</header>
+
+		<ol class="meta_list">
+
+		<koken:loop>
+
+			<li>
+
+				<koken:link title="View everything in {{ tag.title }}">
+
+					<span class="count">{{ tag.counts.total }}</span>
+					<h3 class="tag">{{ tag.title }}</h3>
+
+				</koken:link>
+
+			</li>
+
+		</koken:loop>
+
+		</ol>
+
+	</div>
+
+	<div class="rcol">
+
+		<aside>
+
+			<koken:if true="settings.tags_show_latest">
+
+				<koken:load limit="{{ settings.tags_index_limit }}">
+
+					<koken:loop>
+
+						<section>
+
+							<header class="content">
+								<span class="wrap first">
+									Latest tagged <koken:link class="norm">{{ tag.title }}</koken:link> ({{ tag.counts.total }})
+								</span>
+							</header>
+
+							<koken:event limit="1">
+
+								<koken:event_album>
+
+									<koken:link class="thumb" title="View {{ album.title }}">
+
+										<koken:img size="3:2" lazy="true" />
+
+									</koken:link>
+
+									<h4>
+										<koken:link title="View {{ album.title }}">
+											{{ album.title }}
+										</koken:link>
+									</h4>
+
+									{{ album.summary paragraphs="true" }}
+
+								</koken:event_album>
+
+								<koken:event_content>
+
+									<koken:link class="thumb" title="View {{ content.title|content.filename }}">
+
+										<koken:img size="3:2" lazy="true" />
+
+									</koken:link>
+
+									<h4>
+										<koken:link title="View {{ content.title|content.filename }}">
+											{{ content.title|content.filename }}
+										</koken:link>
+									</h4>
+
+									{{ content.caption paragraphs="true" }}
+
+								</koken:event_content>
+
+								<koken:event_essay>
+
+									<koken:featured_image>
+
+										<koken:link class="thumb" title="View {{ essay.title }}">
+
+											<koken:img size="3:2" lazy="true" />
+
+										</koken:link>
+
+									</koken:featured_image>
+
+									<h4>
+										<koken:link title="View {{ essay.title }}">
+											{{ essay.title }}
+										</koken:link>
+									</h4>
+
+									{{ essay.excerpt paragraphs="true" }}
+
+								</koken:event_essay>
+
+							</koken:event>
+
+						</section>
+
+					</koken:loop>
+
+				</koken:load>
+
+			</koken:if>
+
+			<koken:include file="layouts/links_aside.html" />
+
+		</aside>
+
+	</div>
+
+</div>
+
+<koken:include file="layouts/pagination.html" />
+
+<koken:else>
+
+	No tags found.
+
+</koken:load>
+
+<koken:include file="layouts/footer.html" />

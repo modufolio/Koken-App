@@ -1,0 +1,69 @@
+<koken:include file="layouts/header.html" />
+
+<koken:load limit="4">
+	<koken:head>
+		<meta property="og:site_name" content="{{ site.title }}" />
+		<meta property="og:title" content="{{ labels.content.plural }}" />
+		<meta property="og:description" content="{{ site.description strip_html='true' }}" />
+		<meta property="og:type" content="website" />
+		<koken:first>
+		<meta property="og:image" content="{{ content.presets.medium_large.url }}" />
+		<meta property="og:image:width" content="{{ content.presets.medium_large.width }}" />
+		<meta property="og:image:height" content="{{ content.presets.medium_large.height }}" />
+		</koken:first>
+		<meta property="og:url" content="{{ location.site_url }}{{ location.here }}" />
+		<koken:not empty="profile.twitter">
+		<meta name="twitter:card" content="gallery" />
+		<meta name="twitter:site" content="@{{ profile.twitter }}" />
+		<meta name="twitter:creator" content="@{{ profile.twitter }}" />
+		<koken:loop>
+		<meta name="twitter:image{{ index }}" content="{{ content.presets.medium_large.cropped.url }}">
+		</koken:loop>
+		</koken:not>
+	</koken:head>
+</koken:load>
+
+<koken:load limit="{{ settings.content_index_limit }}">
+
+<koken:head>
+	<meta property="og:site_name" content="{{ site.title }}" />
+	<meta property="og:title" content="{{ labels.favorite.plural }}" />
+	<meta property="og:description" content="{{ site.description strip_html='true' }}" />
+	<meta property="og:type" content="website" />
+	<koken:first>
+	<meta property="og:image" content="{{ content.presets.medium_large.url }}" />
+	<meta property="og:image:width" content="{{ content.presets.medium_large.width }}" />
+	<meta property="og:image:height" content="{{ content.presets.medium_large.height }}" />
+	</koken:first>
+	<meta property="og:url" content="{{ location.site_url }}{{ location.here }}" />
+	<koken:not empty="profile.twitter">
+	<meta name="twitter:card" content="gallery" />
+	<meta name="twitter:site" content="@{{ profile.twitter }}" />
+	<meta name="twitter:creator" content="@{{ profile.twitter }}" />
+	<koken:loop limit="4">
+	<meta name="twitter:image{{ index }}" content="{{ content.presets.medium_large.cropped.url }}">
+	</koken:loop>
+	</koken:not>
+</koken:head>
+
+<ol class="thumbs">
+
+	<koken:loop>
+		<koken:include file="layouts/content_list_item.html" />
+	</koken:loop>
+
+</ol>
+
+<koken:include file="layouts/pagination.html" />
+
+<koken:else>
+
+	<koken:note>
+
+		This page displays favorites. Mark individual images/videos as favorites in the Library.
+
+	</koken:note>
+
+</koken:load>
+
+<koken:include file="layouts/footer.html" />

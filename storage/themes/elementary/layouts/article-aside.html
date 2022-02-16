@@ -1,0 +1,38 @@
+<div class="meta">
+
+	<koken:topics>
+		<div id="essay_topics">
+			<h4>See more</h4>
+			<p class="meta-links">
+				<koken:loop separator=", ">
+					<koken:link title="View {{ album.title }}">
+						{{ album.title }} ({{ album.counts.total}} items)
+					</koken:link>
+				</koken:loop>
+			</p>
+		</div>
+	</koken:topics>
+
+	<koken:categories>
+		<div id="essay_categories">
+			<p class="meta-links">
+				Read more in <koken:loop separator=", ">
+					<koken:link class="norm" title="View all {{ labels.essay.plural case='lower' }} in {{ category.title }}">
+						{{ category.title }}
+					</koken:link>
+				</koken:loop>
+			</p>
+		</div>
+	</koken:categories>
+
+	<koken:tags>
+		<div id="essay_tags">
+			<p class="meta-links">
+				<koken:loop separator="">
+					<koken:link class="tag" title="View all {{ labels.essay.plural case='lower' }} in {{ tag.title }}">{{ tag.title }}</koken:link>
+				</koken:loop>
+			</p>
+		</div>
+	</koken:tags>
+
+</div>

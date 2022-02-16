@@ -1,0 +1,110 @@
+/*
+	BUTTONS
+*/
+
+.button {
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#4c4c4c', endColorstr='#383838');
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#4c4c4c', endColorstr='#383838')";
+}
+
+.button:hover, .button.hover {
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#4d4d4d', endColorstr='#404040');
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#4d4d4d', endColorstr='#404040')";
+}
+
+.button:active {
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#424242', endColorstr='#2e2e2e');
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#424242', endColorstr='#2e2e2e')";
+}
+
+.button.c0 {
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#616e7c', endColorstr='#444d57');
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#616e7c', endColorstr='#444d57')";
+}
+
+.button.c0:hover {
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#6b7a8a', endColorstr='#4e5863');
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#6b7a8a', endColorstr='#4e5863')";
+}
+
+.button.c0:active {
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#586370', endColorstr='#3a414a');
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#586370', endColorstr='#3a414a')";
+}
+
+.button.c1 {
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#9c9c9c', endColorstr='#7e7e7e');
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#9c9c9c', endColorstr='#7e7e7e')";
+}
+
+.button.c1:hover {
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#b0b0b0', endColorstr='#929292');
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#b0b0b0', endColorstr='#929292')";
+}
+
+
+/*
+	MODALS
+*/
+	
+div.modal-bg {
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#99141414,endColorstr=#99141414);
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#99141414,endColorstr=#99141414)"; 
+}
+
+/*
+	SIGNIN PAGE
+*/
+
+div#signin {
+	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='.myBackground.jpg', sizingMethod='scale');
+	-ms-filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='myBackground.jpg', sizingMethod='scale')";
+}
+
+div#signin div.form-box div.bg {
+	background:transparent;
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#F2282828,endColorstr=#F2282828)"; /* IE8 */
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#F2282828,endColorstr=#F2282828);   /* IE6 & 7 */
+     zoom: 1;
+}
+
+/*
+	LIBRARY
+*/
+
+div#search_form {
+	top:-1px;
+}
+
+a.input-clear {
+	top:4px;
+}
+
+div#three-col-right div.col-top div.hoffx {
+	margin-top:4px;
+}
+
+div.replace-progress div {
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#bbbbbb');
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#bbbbbb')";
+}
+
+div.col-top {
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#383838', endColorstr='#2a2a2a');
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#383838', endColorstr='#2a2a2a')";
+}
+
+div.col-bot {
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#383838', endColorstr='#2a2a2a');
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#383838', endColorstr='#2a2a2a')";
+}
+
+div.upload-bar-bg {
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#000000', endColorstr='#141414');
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#000000', endColorstr='#141414')";	
+}
+
+div.upload-bar-item-prog {
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#616e7c', endColorstr='#444d57');
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#616e7c', endColorstr='#444d57')";
+}

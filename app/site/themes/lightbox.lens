@@ -1,0 +1,143 @@
+<koken:if true="pjax">
+	<koken:title />
+<koken:else>
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+
+	<koken:title />
+
+	<koken:asset file="lightbox.css" common="true" />
+
+	<koken:settings />
+</head>
+
+<body id="k-lightbox" class="loading">
+
+	<div id="lbox">
+
+</koken:if>
+
+	<koken:load>
+
+		<koken:head>
+			<meta property="og:site_name" content="{{ site.title }}" />
+			<meta property="og:type" content="website" />
+			<meta property="og:url" content="{{ content.url }}" />
+			<meta property="og:title" content="{{ content.title | content.filename strip_html="true" }}" />
+			<meta property="og:description" content="{{ content.caption strip_html="true" }}" />
+			<meta property="og:image" content="{{ content.presets.medium_large.url }}" />
+			<meta property="og:image:width" content="{{ content.presets.medium_large.width }}" />
+			<meta property="og:image:height" content="{{ content.presets.medium_large.height }}" />
+			<koken:content_image>
+				<koken:not empty="profile.twitter">
+					<meta name="twitter:card" content="photo" />
+					<meta name="twitter:site" content="@{{ profile.twitter }}" />
+					<meta name="twitter:creator" content="@{{ profile.twitter }}" />
+				</koken:not>
+			</koken:content_image>
+		</koken:head>
+
+		<a href="#" title="{{ language.close_lightbox }}" id="lbox-bttn-close" class="ibutton"><i class="icon-remove-sign"></i></a>
+
+		<a href="#" title="{{ language.view_fullscreen }}" id="lbox-bttn-fs" class="ibutton"><i class="icon-fullscreen"></i></a>
+
+		<a href="#" title="{{ language.exit_fullscreen }}" id="lbox-bttn-ns" class="ibutton"><i class="icon-resize-small"></i></a>
+
+		<div id="lnav" class="tnav">
+			<koken:previous>
+				<koken:link lightbox="true" bind_to_key="left" title="{{ language.view_previous }}">
+					<span class="ibutton"><i class="icon-angle-left"></i></span>
+				</koken:link>
+			</koken:previous>
+		</div>
+
+		<div id="tl_controls">
+			<koken:next>
+				<a href="#" id="lbox-bttn-play" class="ibutton" title="{{ language.start_slideshow }}">
+					<i class="icon-play icon-large"></i>
+				</a>
+			</koken:next>
+
+			<a href="#" id="lbox-bttn-pause" class="ibutton" title="{{ language.stop_slideshow }}">
+				<i class="icon-pause icon-large"></i>
+			</a>
+
+			<koken:rating>
+			<div id="lbox_rating">
+				{{ rating }}
+			</div>
+			</koken:rating>
+
+			<div id="lbox_share">
+				<div class="lbox_toggle">
+					<a href="#" id="lbox-bttn-share" class="ibutton" title="{{ language.share_this }}">
+						<i class="icon-export-alt icon-large"></i>
+					</a>
+					<div id="lbox_share_menu">
+						<ul class="social-links kshare">
+						  <li><koken:link share="twitter" class="ibutton share-twitter"><i class="icon-twitter"></i></koken:link></li><li><koken:link share="facebook" class="ibutton share-facebook"><i class="icon-facebook"></i></koken:link></li><li><koken:link share="pinterest" class="ibutton share-pinterest"><i class="icon-pinterest"></i></koken:link></li><li><koken:link share="tumblr" class="ibutton share-tumblr"><i class="icon-tumblr"></i></koken:link></li><li><koken:link share="google-plus" class="ibutton share-google"><i class="icon-gplus"></i></koken:link></li><koken:max_download><li><koken:link class="ibutton share-dl no-share" title="{{ language.download }} {{ max_download.width }} x {{ max_download.height }}"><i class="icon-download-alt"></i></koken:link></li></koken:max_download>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div id="main">
+
+			<div class="spinner_pos active"><div class="spinner"></div></div>
+
+			<div id="content">
+
+				<koken:parent>
+				<script>
+					window.albumId = {{ album.id }};
+				</script>
+				</koken:parent>
+
+				<script>
+					window.theContent = {{ content.to_json fields="aspect_ratio,id,presets,file_type,original,html,visibility" }};
+				</script>
+
+				<div class="caption" style="display:none">
+					<strong>{{ content.title }}</strong>
+					&nbsp;
+					{{ content.caption }}
+				</div>
+
+			</div>
+
+		</div>
+
+		<div id="rnav" class="tnav">
+			<koken:next>
+				<koken:link lightbox="true" bind_to_key="right" title="{{ language.view_next }}">
+					<span class="ibutton"><i class="icon-angle-right"></i></span>
+				</koken:link>
+			</koken:next>
+		</div>
+
+		<footer>
+
+			<koken:link to="front" title="{{ site.title }}">{{ site.title }}</koken:link><koken:parent>&nbsp;&nbsp;/&nbsp;&nbsp;<koken:link>{{ album.title }}</koken:link>&nbsp;&nbsp;/&nbsp;&nbsp;{{ _parent.content.context.position }} {{ language.of }} {{ album.counts.total }}<koken:else>&nbsp;&nbsp;/&nbsp;&nbsp;<koken:context><koken:if data="context.type" equals="favorite"><koken:link to="favorites">{{ language.favorites }}</koken:link><koken:else><koken:if data="context.type" equals="tag"><koken:link>#{{ context.title }}</koken:link><koken:else><koken:link>{{ context.title }}</koken:link></koken:if> </koken:if> &nbsp;&nbsp;/&nbsp;&nbsp;{{ context.position }} {{ language.of }} {{ context.total }} <koken:else><koken:link to="contents">{{ language.content }}</koken:link> </koken:context></koken:parent>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span id="caption-bttns"><a class="btn-toggle show" href="#" title="{{ language.show_caption }}">{{ language.show_caption }}</a><a class="btn-toggle hide" href="#" title="{{ language.hide_caption }}" style="display:none">{{ language.hide_caption }}</a></span>
+
+		</footer>
+
+	</koken:load>
+
+	</div> <!-- close lbox -->
+
+	<koken:if true="pjax">
+		<script>update();</script>
+	<koken:else>
+
+	<koken:asset file="jquery.pjax.js" common="true" />
+	<koken:asset file="lightbox.js" common="true" />
+
+</body>
+
+</html>
+
+</koken:if>

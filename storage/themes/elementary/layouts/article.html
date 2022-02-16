@@ -1,0 +1,59 @@
+<article>
+
+	<header class="content">
+
+		<koken:if true="settings.essays_show_share">
+
+			<div class="right">
+
+				<span class="wrap last share">
+
+				    <koken:include file="layouts/share_essay.html" />
+
+				</span>
+
+			</div>
+
+		</koken:if>
+
+			<span class="wrap first">
+
+				<koken:time />
+
+			</span>
+
+			<koken:if true="list">
+
+				<koken:discussion_count>
+
+					<span class="edge_left">
+
+						<span class="wrap">
+
+							<span class="comment_count">{{ discussion_count }}</span>
+
+						</span>
+
+					</span>
+
+				</koken:discussion_count>
+
+			</koken:if>
+
+	</header>
+
+	<h2>
+		<koken:link title="View {{ essay.title }}">{{ essay.title }}</koken:link>
+	</h2>
+
+	{{ essay.content }}
+
+	<koken:more>
+		<p>
+			<koken:link class="read_more rarr" title="{{ essay.title }}">{{ essay.read_more_label }}</koken:link>
+		</p>
+	</koken:more>
+
+	<koken:include file="layouts/article-aside.html" />
+
+</article>
