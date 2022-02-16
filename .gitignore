@@ -1,0 +1,23 @@
+# System files
+# ------------
+
+Icon
+.DS_Store
+node_modules
+yarn.lock
+.idea/
+package-lock.json
+*.cache
+*.map
+*.sqlite
+
+# Vendor files
+# ---------------
+/vendor/*
+
+
+# Storage files
+# ---------------
+/storage/cache/*
+/storage/configuration/*
+/storage/originals/*
