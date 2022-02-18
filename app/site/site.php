@@ -1415,7 +1415,7 @@
 	<meta name="generator" content="$generator" />
 	<meta name="theme" content="$theme" />$me
 
-	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<script src="/assets/js/jquery.min.js" type="text/javascript"></script>
 	<script>window.jQuery || document.write('<script src="{$location['real_root_folder']}/app/site/themes/common/js/jquery.min.js"><\/script>')</script>
 	<script src="{$koken_js}"></script>
 	<script>\$K.location = $.extend(\$K.location, $location_json);</script>
