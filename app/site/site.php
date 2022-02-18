@@ -927,10 +927,9 @@
 							if (strpos($f, ':') !== false)
 							{
 								$f = preg_replace_callback("/:([a-z_]+)/",
-										create_function(
-											'$matches',
-											'return Koken::$routed_variables[$matches[1]];'
-										), $f);
+										function($matches) {
+                                            return Koken::$routed_variables[$matches[1]];
+										}, $f);
 							}
 						}
 					}

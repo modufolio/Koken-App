@@ -9,8 +9,8 @@ class WebhostWhois
     // Ex. isMediaTempleGrid(), isDreamhost(), etc
     public function __call($name, $parameters)
     {
-        $key = preg_replace_callback('/^is([A-Z])/', create_function('$matches', 'return strtolower($matches[1]);'), $name);
-        $key = preg_replace_callback('/([A-Z])/', create_function('$matches', 'return \'-\' . strtolower($matches[1]);'), $key);
+        $key = preg_replace_callback('/^is([A-Z])/', function($matches){ return strtolower($matches[1]);}, $name);
+        $key = preg_replace_callback('/([A-Z])/', function($matches){ return strtolower($matches[1]);}, $key);
 
         if (isset($this->results[$key])) {
             return (bool) $this->results[$key];

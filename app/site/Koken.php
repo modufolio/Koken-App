@@ -1461,7 +1461,8 @@ META;
 
 						if (isset($parameters['field']) && isset($return[0][$parameters['field']]))
 						{
-							$return = array_map(create_function('$arr', 'return $arr["' . $parameters['field'] . '"];'), $return);
+							$return = array_map(function($arr) use ($parameters){
+                                return $arr[$parameters['field']];}, $return);
 						}
 						else
 						{
