@@ -78,7 +78,7 @@
 					</a>
 					<div id="lbox_share_menu">
 						<ul class="social-links kshare">
-						  <li><koken:link share="twitter" class="ibutton share-twitter"><i class="icon-twitter"></i></koken:link></li><li><koken:link share="facebook" class="ibutton share-facebook"><i class="icon-facebook"></i></koken:link></li><li><koken:link share="pinterest" class="ibutton share-pinterest"><i class="icon-pinterest"></i></koken:link></li><li><koken:link share="tumblr" class="ibutton share-tumblr"><i class="icon-tumblr"></i></koken:link></li><li><koken:link share="google-plus" class="ibutton share-google"><i class="icon-gplus"></i></koken:link></li><koken:max_download><li><koken:link class="ibutton share-dl no-share" title="{{ language.download }} {{ max_download.width }} x {{ max_download.height }}"><i class="icon-download-alt"></i></koken:link></li></koken:max_download>
+						  <li><koken:link share="twitter" class="ibutton share-twitter"><i class="icon-twitter"></i></koken:link></li><li><koken:link share="facebook" class="ibutton share-facebook"><i class="icon-facebook"></i></koken:link></li><li><koken:link share="pinterest" class="ibutton share-pinterest"><i class="icon-pinterest"></i></koken:link></li><li><koken:link share="tumblr" class="ibutton share-tumblr"><i class="icon-tumblr"></i></koken:link></li><koken:max_download><li><koken:link class="ibutton share-dl no-share" title="{{ language.download }} {{ max_download.width }} x {{ max_download.height }}"><i class="icon-download-alt"></i></koken:link></li></koken:max_download>
 						</ul>
 					</div>
 				</div>
