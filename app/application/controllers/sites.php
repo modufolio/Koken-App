@@ -537,7 +537,8 @@ class Sites extends Koken_Controller {
 								{
 									if (strpos($f, 'id=') === 0)
 									{
-										$id = array_pop( explode('=', $f) );
+                                        $array = explode('=', $f);
+                                        $id = array_pop($array);
 										break;
 									}
 								}
