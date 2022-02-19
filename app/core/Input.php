@@ -348,37 +348,7 @@ class CI_Input
     */
     public function valid_ip($ip, $which = '')
     {
-        $which = strtolower($which);
-
-        // First check if filter_var is available
-        if (is_callable('filter_var')) {
-            switch ($which) {
-                case 'ipv4':
-                    $flag = FILTER_FLAG_IPV4;
-                    break;
-                case 'ipv6':
-                    $flag = FILTER_FLAG_IPV6;
-                    break;
-                default:
-                    $flag = '';
-                    break;
-            }
-
-            return (bool) filter_var($ip, FILTER_VALIDATE_IP, $flag);
-        }
-
-        if ($which !== 'ipv6' && $which !== 'ipv4') {
-            if (strpos($ip, ':') !== false) {
-                $which = 'ipv6';
-            } elseif (strpos($ip, '.') !== false) {
-                $which = 'ipv4';
-            } else {
-                return false;
-            }
-        }
-
-        $func = '_valid_'.$which;
-        return $this->$func($ip);
+        return filter_var($ip, FILTER_VALIDATE_IP);
     }
 
     // --------------------------------------------------------------------
