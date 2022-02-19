@@ -9,9 +9,9 @@ class History extends DataMapper
     );
 
     // Override save method for delayed queries
-    public function save($user_id = false)
-    {
-        if ($user_id) {
+    public function save($object = '', $related_field = '')
+    {   $user_id = $object;
+        if ($user_id !== '') {
             $message = serialize($this->message);
             $this->where('user_id', $user_id)->order_by('created_on DESC')->limit(1)->get();
             if ($this->message == $message) {
