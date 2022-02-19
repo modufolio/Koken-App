@@ -1,8 +1,8 @@
 <?php
 
-class Trash extends DataMapper {
-	
-	var $table = 'trash';
+class Trash extends DataMapper
+{
+    public $table = 'trash';
 }
 
 /* End of file trash.php */

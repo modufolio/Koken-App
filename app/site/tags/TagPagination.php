@@ -1,18 +1,18 @@
 <?php
 
-	class TagPagination extends Tag {
+    class TagPagination extends Tag
+    {
+        protected $allows_close = true;
+        public $tokenize = true;
 
-		protected $allows_close = true;
-		public $tokenize = true;
+        public function generate()
+        {
+            $token = Koken::$tokens[0];
+            $page = '$page' . Koken::$tokens[1];
+            $limit_var = '$limit' . Koken::$tokens[0];
+            $limit = $limit_var . ' = ' . (isset($this->parameters['limit']) ? '"' . $this->attr_parse($this->parameters['limit']) . '"' : 'false') . ';';
 
-		function generate()
-		{
-			$token = Koken::$tokens[0];
-			$page = '$page' . Koken::$tokens[1];
-			$limit_var = '$limit' . Koken::$tokens[0];
-			$limit = $limit_var . ' = ' . (isset($this->parameters['limit']) ? '"' . $this->attr_parse($this->parameters['limit']) . '"' : 'false') . ';';
-
-			return <<<DOC
+            return <<<DOC
 <?php
 
 	if(isset($page) && {$page}['pages'] > 1):
@@ -78,6 +78,5 @@
 		endif;
 ?>
 DOC;
-		}
-
-	}
+        }
+    }

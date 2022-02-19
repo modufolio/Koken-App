@@ -55,25 +55,29 @@ use com\grandt\BinStringStatic;
  *            same method, either bit 11 or extra fields, should be used in both
  *            the local and central directory headers.
  */
-class UnicodeCommentExtraField extends AbstractUnicodeExtraField {
-    public function __construct($handle = null) {
+class UnicodeCommentExtraField extends AbstractUnicodeExtraField
+{
+    public function __construct($handle = null)
+    {
         parent::__construct($handle);
         if ($handle == null) {
             $this->header = parent::HEADER_UNICODE_COMMENT;
         }
     }
-    
+
     /**
      * @return string The version of the field for the Local Header.
      */
-    public function getLocalField() {
+    public function getLocalField()
+    {
         return ''; // Comments are not added to the Local header.
     }
 
     /**
      * @return string The version of the field for the Central Header.
      */
-    public function getCentralField() {
-        return parent::HEADER_UNICODE_COMMENT . pack('vV',  BinStringStatic::_strlen($this->utf8Data) + 5, $this->CRC32) .  $this->version . $this->utf8Data;
+    public function getCentralField()
+    {
+        return parent::HEADER_UNICODE_COMMENT . pack('vV', BinStringStatic::_strlen($this->utf8Data) + 5, $this->CRC32) .  $this->version . $this->utf8Data;
     }
 }

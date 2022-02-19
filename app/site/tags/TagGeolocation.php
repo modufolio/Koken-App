@@ -1,17 +1,16 @@
 <?php
 
-	class TagGeolocation extends Tag {
+    class TagGeolocation extends Tag
+    {
+        protected $allows_close = true;
+        public $tokenize = true;
 
-		protected $allows_close = true;
-		public $tokenize = true;
+        public function generate()
+        {
+            $token = '$value' . Koken::$tokens[1];
+            $ref = '$value' . Koken::$tokens[0];
 
-		function generate()
-		{
-
-			$token = '$value' . Koken::$tokens[1];
-			$ref = '$value' . Koken::$tokens[0];
-
-			return <<<OUT
+            return <<<OUT
 <?php
 
 	if ({$token}['geolocation']):
@@ -20,5 +19,5 @@
 		{$ref}['geolocation'] = $ref;
 ?>
 OUT;
-		}
-	}
+        }
+    }

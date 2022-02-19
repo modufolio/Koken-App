@@ -88,8 +88,10 @@ class Swift_Plugins_DecoratorPlugin implements Swift_Events_SendListener, Swift_
             $search = array_keys($replacements);
             $replace = array_values($replacements);
             $bodyReplaced = str_replace(
-                $search, $replace, $body
-                );
+                $search,
+                $replace,
+                $body
+            );
             if ($body != $bodyReplaced) {
                 $this->_originalBody = $body;
                 $message->setBody($bodyReplaced);
@@ -127,8 +129,10 @@ class Swift_Plugins_DecoratorPlugin implements Swift_Events_SendListener, Swift_
                 if ('text' == $type) {
                     $body = $child->getBody();
                     $bodyReplaced = str_replace(
-                        $search, $replace, $body
-                        );
+                        $search,
+                        $replace,
+                        $body
+                    );
                     if ($body != $bodyReplaced) {
                         $child->setBody($bodyReplaced);
                         $this->_originalChildBodies[$child->getId()] = $body;

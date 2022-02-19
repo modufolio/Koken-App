@@ -11,14 +11,15 @@ namespace ZipMerge\Zip\Core\ExtraField;
 
 use com\grandt\BinStringStatic;
 
-abstract class AbstractExtraField {
-    const HEADER_UNIX_TYPE_1 = 'UX';            // \x55\x58 or 0x5855 It has been replaced by the extended-timestamp extra block 'UT' (0x5455) and the Unix type 2 extra block 'Ux' (0x7855).
-    const HEADER_UNIX_TYPE_2 = 'Ux';            // \x55\x78 or 0x7855
-    const HEADER_UNIX_TYPE_3 = 'ux';            // \x75\x78 or 0x7875
-    const HEADER_EXTENDED_TIMESTAMP = 'UT';        // \x55\x54 or 0x5455
-    const HEADER_UNICODE_PATH = 'up';            // \x75\x70 or 0x7075
-    const HEADER_UNICODE_COMMENT = 'uc';        // \x75\x63 or 0x6375
-    
+abstract class AbstractExtraField
+{
+    public const HEADER_UNIX_TYPE_1 = 'UX';            // \x55\x58 or 0x5855 It has been replaced by the extended-timestamp extra block 'UT' (0x5455) and the Unix type 2 extra block 'Ux' (0x7855).
+    public const HEADER_UNIX_TYPE_2 = 'Ux';            // \x55\x78 or 0x7855
+    public const HEADER_UNIX_TYPE_3 = 'ux';            // \x75\x78 or 0x7875
+    public const HEADER_EXTENDED_TIMESTAMP = 'UT';        // \x55\x54 or 0x5455
+    public const HEADER_UNICODE_PATH = 'up';            // \x75\x70 or 0x7075
+    public const HEADER_UNICODE_COMMENT = 'uc';        // \x75\x63 or 0x6375
+
     public $header = null;
     public $length = 0;
     public $localData = "";
@@ -52,19 +53,20 @@ abstract class AbstractExtraField {
      * @param resource $handle
      * @param bool $isLocalHeader
      */
-    public function __construct($handle = null, $isLocalHeader = true) {
+    public function __construct($handle = null, $isLocalHeader = true)
+    {
         if ($handle != null) {
             $this->header                    = fread($handle, 2);
             $arr = unpack('v', fread($handle, 2));
             $this->length                    = $arr[1];
-            if($isLocalHeader) {
+            if ($isLocalHeader) {
                 $this->localData            = fread($handle, $this->length);
             } else {
                 $this->centralData            = fread($handle, $this->length);
             }
         }
     }
-    
+
     /**
      * @return string The version of the field for the Local Header.
      */
@@ -81,7 +83,8 @@ abstract class AbstractExtraField {
      * @param bool $isLocalHeader default true
      * @return GenericExtraField|UnicodeCommentExtraField|UnicodePathExtraField|ExtendedTimeStampExtraField
      */
-    public static function decodeField($handle, $isLocalHeader = true) {
+    public static function decodeField($handle, $isLocalHeader = true)
+    {
         $header            = fread($handle, 2);
         fseek($handle, -2, SEEK_CUR);
         switch ($header) {
@@ -96,14 +99,16 @@ abstract class AbstractExtraField {
         }
     }
 
-    public static function encodeField($header, $data) {
+    public static function encodeField($header, $data)
+    {
         if ($header != null) {
-            return $header . pack('v',  BinStringStatic::_strlen($data)) . $data;
+            return $header . pack('v', BinStringStatic::_strlen($data)) . $data;
         }
         return '';
     }
 
-    public function setFieldData($localFieldData, $centralFieldData = null) {
+    public function setFieldData($localFieldData, $centralFieldData = null)
+    {
         $this->localData    = $localFieldData;
         $this->centralData    = $centralFieldData;
     }

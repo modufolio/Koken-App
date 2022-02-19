@@ -13,8 +13,8 @@ namespace PHPZip\Zip\Exception;
 
 use PHPZip\Zip\Core\AbstractException;
 
-class InvalidPhpConfiguration extends AbstractException {
-
+class InvalidPhpConfiguration extends AbstractException
+{
     private $_setting = null;
     private $_expected = null;
     private $_actual = null;
@@ -26,7 +26,8 @@ class InvalidPhpConfiguration extends AbstractException {
      *
      * @param array $config Configuration array containing php.ini settings: setting and expected (value)
      */
-    public function __construct(array $config){
+    public function __construct(array $config)
+    {
         $this->_setting = $config['setting'];
         $this->_expected = $config['expected'];
         $this->_actual = (string)@ini_get($this->_setting);
@@ -44,15 +45,18 @@ class InvalidPhpConfiguration extends AbstractException {
         parent::__construct($message);
     }
 
-    public function getSetting(){
+    public function getSetting()
+    {
         return $this->_setting;
     }
 
-    public function getExpected(){
+    public function getExpected()
+    {
         return $this->_expected;
     }
 
-    public function getActual(){
+    public function getActual()
+    {
         return $this->_actual;
     }
 }

@@ -1,4 +1,8 @@
-<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php
+
+ if (! defined('BASEPATH')) {
+    exit('No direct script access allowed');
+}
 
 /*
 |--------------------------------------------------------------------------
@@ -42,26 +46,18 @@ $config['index_page'] = "api.php";
 |
 */
 
-if (isset($_SERVER['QUERY_STRING']) && strpos($_SERVER['QUERY_STRING'], '/') === 0)
-{
-	// All use QUERY_STRING since 0.6.0
-	$config['uri_protocol']	= "QUERY_STRING";
-}
-else
-{
-	// Fallbacks for any old links to old PATH_INFO setup. Should be removed at some point (1.0?)
-	if (isset($_SERVER['PATH_INFO']))
-	{
-		$config['uri_protocol']	= "PATH_INFO";
-	}
-	else if (isset($_SERVER['ORIG_PATH_INFO']))
-	{
-		$config['uri_protocol']	= "ORIG_PATH_INFO";
-	}
-	else
-	{
-		$config['uri_protocol']	= "AUTO";
-	}
+if (isset($_SERVER['QUERY_STRING']) && strpos($_SERVER['QUERY_STRING'], '/') === 0) {
+    // All use QUERY_STRING since 0.6.0
+    $config['uri_protocol']	= "QUERY_STRING";
+} else {
+    // Fallbacks for any old links to old PATH_INFO setup. Should be removed at some point (1.0?)
+    if (isset($_SERVER['PATH_INFO'])) {
+        $config['uri_protocol']	= "PATH_INFO";
+    } elseif (isset($_SERVER['ORIG_PATH_INFO'])) {
+        $config['uri_protocol']	= "ORIG_PATH_INFO";
+    } else {
+        $config['uri_protocol']	= "AUTO";
+    }
 }
 
 /*
@@ -109,7 +105,7 @@ $config['charset'] = "UTF-8";
 | setting this variable to TRUE (boolean).  See the user guide for details.
 |
 */
-$config['enable_hooks'] = TRUE;
+$config['enable_hooks'] = true;
 
 
 /*
@@ -169,7 +165,7 @@ $config['permitted_uri_chars'] = 'a-z 0-9~%.:_\-,&=()+';
 | use segment based URLs.
 |
 */
-$config['enable_query_strings'] = FALSE;
+$config['enable_query_strings'] = false;
 $config['controller_trigger'] 	= 'c';
 $config['function_trigger'] 	= 'm';
 $config['directory_trigger'] 	= 'd'; // experimental not currently in use
@@ -254,12 +250,12 @@ $config['encryption_key'] = "";
 */
 $config['sess_cookie_name']		= 'koken_session_ci';
 $config['sess_expiration']		= 0;
-$config['sess_encrypt_cookie']	= TRUE;
-$config['sess_expire_on_close']	= TRUE;
-$config['sess_use_database']	= FALSE;
+$config['sess_encrypt_cookie']	= true;
+$config['sess_expire_on_close']	= true;
+$config['sess_use_database']	= false;
 $config['sess_table_name']		= 'ci_sessions';
-$config['sess_match_ip']		= FALSE;
-$config['sess_match_useragent']	= TRUE;
+$config['sess_match_ip']		= false;
+$config['sess_match_useragent']	= true;
 $config['sess_time_to_update'] 	= 300;
 
 /*
@@ -275,7 +271,7 @@ $config['sess_time_to_update'] 	= 300;
 $config['cookie_prefix']	= "";
 $config['cookie_domain']	= "";
 $config['cookie_path']		= "/";
-$config['cookie_httponly']  = TRUE;
+$config['cookie_httponly']  = true;
 
 /*
 |--------------------------------------------------------------------------
@@ -286,7 +282,7 @@ $config['cookie_httponly']  = TRUE;
 | COOKIE data is encountered
 |
 */
-$config['global_xss_filtering'] = TRUE;
+$config['global_xss_filtering'] = true;
 
 /*
 |--------------------------------------------------------------------------
@@ -305,7 +301,7 @@ $config['global_xss_filtering'] = TRUE;
 | by the output class.  Do not "echo" any values with compression enabled.
 |
 */
-$config['compress_output'] = FALSE;
+$config['compress_output'] = false;
 
 /*
 |--------------------------------------------------------------------------
@@ -331,7 +327,7 @@ $config['time_reference'] = 'gmt';
 | in your view files.  Options are TRUE or FALSE (boolean)
 |
 */
-$config['rewrite_short_tags'] = FALSE;
+$config['rewrite_short_tags'] = false;
 
 
 /*

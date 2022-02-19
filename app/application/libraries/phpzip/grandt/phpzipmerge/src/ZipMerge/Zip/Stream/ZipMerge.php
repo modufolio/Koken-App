@@ -25,15 +25,16 @@ use ZipMerge\Zip\Exception\HeadersSent;
 use ZipMerge\Zip\Exception\IncompatiblePhpVersion;
 use ZipMerge\Zip\Listener\ZipArchiveListener;
 
-class ZipMerge {
-    const APP_NAME = 'PHPZipMerge';
-    const VERSION = "1.0.2";
-    const MIN_PHP_VERSION = 5.3; // for namespaces
-    
-    const CONTENT_TYPE = 'application/zip';
+class ZipMerge
+{
+    public const APP_NAME = 'PHPZipMerge';
+    public const VERSION = "1.0.2";
+    public const MIN_PHP_VERSION = 5.3; // for namespaces
 
-    const MODE_STREAM = 0;
-    const MODE_INLINE = 1;
+    public const CONTENT_TYPE = 'application/zip';
+
+    public const MODE_STREAM = 0;
+    public const MODE_INLINE = 1;
 
     private $_listeners = array();
 
@@ -59,7 +60,8 @@ class ZipMerge {
      * @param String $utf8FileName The name of the Zip archive, in UTF-8 encoding. Optional, defaults to NULL, which means that no UTF-8 encoded file name will be specified.
      * @param bool $inline Use Content-Disposition with "inline" instead of "attached". Optional, defaults to false.
      */
-    public function __construct($fileName = null, $contentType = "application/zip", $utf8FileName = null, $inline = false) {
+    public function __construct($fileName = null, $contentType = "application/zip", $utf8FileName = null, $inline = false)
+    {
         $this->checkVersion();
 
         if ($fileName !== null) {
@@ -71,9 +73,10 @@ class ZipMerge {
         }
     }
 
-    public function __destruct() {
+    public function __destruct()
+    {
         $this->isFinalized = true;
-        unset ($this->FILES);
+        unset($this->FILES);
     }
 
     /**
@@ -86,7 +89,8 @@ class ZipMerge {
      *        instead of the stream.
      * @return bool true for success.
      */
-    public function appendZip($file, $subPath = '', $writer = null) {
+    public function appendZip($file, $subPath = '', $writer = null)
+    {
         if ($this->isFinalized) {
             return false;
         }
@@ -116,20 +120,21 @@ class ZipMerge {
                 }
             }
         }
-        
+
         if (is_string($file) && is_file($file)) {
             $handle = fopen($file, 'r');
             $this->processStream($handle, $subPath);
             fclose($handle);
-        } else if (is_resource($file) && get_resource_type($file) == "stream") {
+        } elseif (is_resource($file) && get_resource_type($file) == "stream") {
             $curPos = ftell($file);
             $this->processStream($file, $subPath);
             fseek($file, $curPos, SEEK_SET);
         }
         return true;
     }
-    
-    private function processStream($handle, $subPath = '') {
+
+    private function processStream($handle, $subPath = '')
+    {
         $pkHeader = null;
 
         do {
@@ -152,7 +157,7 @@ class ZipMerge {
                 $fileEntry = $this->FILES[$this->CDRindex++];
                 /* @var $fileEntry ZipFileEntry */
                 $fileEntry->parseHeader($handle);
-            } else if ($pkHeader === AbstractZipHeader::ZIP_LOCAL_FILE_HEADER) {
+            } elseif ($pkHeader === AbstractZipHeader::ZIP_LOCAL_FILE_HEADER) {
                 $fileEntry = new ZipFileEntry($handle);
                 $this->FILES[$this->LFHindex++] = $fileEntry;
 
@@ -176,13 +181,13 @@ class ZipMerge {
 
                 $fileEntry->offset = $this->entryOffset;
                 $this->entryOffset += $lfLen + $fileEntry->gzLength;
-            } else if ($pkHeader === AbstractZipHeader::ZIP_END_OF_CENTRAL_DIRECTORY) {
+            } elseif ($pkHeader === AbstractZipHeader::ZIP_END_OF_CENTRAL_DIRECTORY) {
                 fread($handle, 4);
                 $this->eocd = new EndOfCentralDirectory($handle);
             }
         } while (!feof($handle));
     }
-    
+
     /**
      * Close the archive.
      * A closed archive can no longer have new files added to it.
@@ -191,7 +196,8 @@ class ZipMerge {
      *
      * @return array|bool boole true/false for stream mode, an array of ZipFileEntry for inline mode.
      */
-    public function finalize() {
+    public function finalize()
+    {
         if ($this->mode == self::MODE_STREAM) {
             if (!$this->isFinalized) {
                 $this->eocd->cdrStart = $this->entryOffset;
@@ -219,21 +225,24 @@ class ZipMerge {
         }
     }
 
-    public function getFileEntries() {
+    public function getFileEntries()
+    {
         return $this->FILES;
     }
 
     /**
      * @return null|\ZipMerge\Zip\Core\Header\EndOfCentralDirectory
      */
-    public function getEocd() {
+    public function getEocd()
+    {
         return $this->eocd;
     }
 
     /**
      * @return int
      */
-    public function getEntryOffset() {
+    public function getEntryOffset()
+    {
         return $this->entryOffset;
     }
 
@@ -254,10 +263,11 @@ class ZipMerge {
      * @param bool   $inline Use Content-Disposition with "inline" instead of "attached". Optional, defaults to false.
      *
      * @return bool Always returns true (for backward compatibility).
-     * 
+     *
       * @throws \ZipMerge\Zip\Exception\BufferNotEmpty, HeadersSent In case of errors
      */
-    protected function buildResponseHeader($fileName = null, $contentType = self::CONTENT_TYPE, $utf8FileName = null, $inline = false) {
+    protected function buildResponseHeader($fileName = null, $contentType = self::CONTENT_TYPE, $utf8FileName = null, $inline = false)
+    {
         $ob = null;
         $headerFile = null;
         $headerLine = null;
@@ -282,7 +292,7 @@ class ZipMerge {
         if (@ini_get($zlibConfig)) {
             @ini_set($zlibConfig, 'Off');
         }
-        
+
         $cd = 'Content-Disposition: ' . ($inline ? 'inline' : 'attached');
 
         if ($fileName) {
@@ -309,8 +319,9 @@ class ZipMerge {
      *
      * @author A. Grandt <php@grandt.com>
      */
-    public function checkVersion() {
-        if (version_compare(PHP_VERSION, self::MIN_PHP_VERSION, '<') || !function_exists('sys_get_temp_dir') ) {
+    public function checkVersion()
+    {
+        if (version_compare(PHP_VERSION, self::MIN_PHP_VERSION, '<') || !function_exists('sys_get_temp_dir')) {
             $this->_throwException(new IncompatiblePhpVersion(array(
                 'appName' => self::APP_NAME,
                 'appVersion' => self::VERSION,
@@ -334,7 +345,8 @@ class ZipMerge {
      *
      * @param ZipArchiveListener $listener Class that implements the ZipArchiveListener interface.
      */
-    public function addListener(ZipArchiveListener $listener) {
+    public function addListener(ZipArchiveListener $listener)
+    {
         $this->_listeners[] = $listener;
     }
 
@@ -345,7 +357,8 @@ class ZipMerge {
      *
      * @param ZipArchiveListener $listener Class that implements the ZipArchiveListener interface.
      */
-    public function removeListener(ZipArchiveListener $listener) {
+    public function removeListener(ZipArchiveListener $listener)
+    {
         $key = array_search($listener, $this->_listeners);
 
         if ($key !== false) {
@@ -361,7 +374,8 @@ class ZipMerge {
      * @param string|null $method (Optional) The name of the event to fire. If this is null, then the calling method is used.
      * @param array       $data Method parameters passed as an array.
      */
-    private function _notifyListeners($method = null, array $data = array()) {
+    private function _notifyListeners($method = null, array $data = array())
+    {
         if (is_null($method)) {
             $trace = debug_backtrace();
             $trace = $trace[1];
@@ -386,7 +400,8 @@ class ZipMerge {
      *
      * @throws AbstractException $exception
      */
-    private function _throwException(AbstractException $exception) {
+    private function _throwException(AbstractException $exception)
+    {
         $this->_notifyListeners('Exception', array(
             'exception' => $exception,
         ));
@@ -406,7 +421,8 @@ class ZipMerge {
      *
      * @param int $gzLength length of the pending data.
      */
-    public function zipVerifyMemBuffer($gzLength) {
+    public function zipVerifyMemBuffer($gzLength)
+    {
         // Does nothing, used to "streamline" code differences between PHPZip and PHPZipStream
     }
 
@@ -416,7 +432,8 @@ class ZipMerge {
      *
      * @param string $data
      */
-    public function zipWrite($data) {
+    public function zipWrite($data)
+    {
         if ($this->writer == null || $this->mode == self::MODE_STREAM) {
             print($data);
         } else {
@@ -431,7 +448,8 @@ class ZipMerge {
      * @author A. Grandt <php@grandt.com>
      *
      */
-    public function zipFlush() {
+    public function zipFlush()
+    {
         // Does nothing, used to "streamline" code differences between PHPZip and PHPZipStream
     }
 
@@ -440,7 +458,8 @@ class ZipMerge {
      * @author A. Grandt <php@grandt.com>
      *
      */
-    public function zipFlushBuffer() {
+    public function zipFlushBuffer()
+    {
         if ($this->mode == self::MODE_STREAM) {
             flush();
         }

@@ -1,13 +1,13 @@
 <?php
 
-class TagPublic extends Tag {
+class TagPublic extends Tag
+{
+    protected $allows_close = true;
 
-	protected $allows_close = true;
-
-	function generate()
-	{
-		return <<<DOC
+    public function generate()
+    {
+        return <<<DOC
 <?php if (Koken::\$public): ?>
 DOC;
-	}
+    }
 }

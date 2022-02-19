@@ -12,8 +12,8 @@
 
 namespace ZipMerge\Zip\Listener;
 
-interface ZipArchiveListener {
-
+interface ZipArchiveListener
+{
     /**
      * Event fired after a zip entry has been successfully built.
      *
@@ -67,5 +67,4 @@ interface ZipArchiveListener {
      * @param array $params Array that contains file (zipEntry).
      */
     public function onException(array $params);
-
 }

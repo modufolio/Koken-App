@@ -13,14 +13,14 @@
 
 namespace ZipMerge\Zip\File;
 
-
 use com\grandt\BinStringStatic;
 use ZipMerge\Zip\Core\AbstractZipWriter;
 use ZipMerge\Zip\Core\Header\EndOfCentralDirectory;
 use ZipMerge\Zip\Core\Header\ZipFileEntry;
 use ZipMerge\Zip\Stream\ZipMerge;
 
-class ZipMergeToFile extends AbstractZipWriter {
+class ZipMergeToFile extends AbstractZipWriter
+{
     private $_zipMerge = null;
     private $_zipFileName = null;
     private $_zipFile = null;
@@ -34,7 +34,8 @@ class ZipMergeToFile extends AbstractZipWriter {
     /**
      * @param $fileName
      */
-    public function __construct($fileName) {
+    public function __construct($fileName)
+    {
         $this->_zipMerge = new ZipMerge(null);
         $this->eocd = new EndOfCentralDirectory();
 
@@ -47,7 +48,8 @@ class ZipMergeToFile extends AbstractZipWriter {
         $this->_zipFile = fopen($fileName, "x+b");
     }
 
-    public function __destruct() {
+    public function __destruct()
+    {
         $this->_zipMerge = null;
     }
 
@@ -58,15 +60,18 @@ class ZipMergeToFile extends AbstractZipWriter {
      * @param string $subPath place the contents in the $subPath sub-folder, default is '', and places the
      *        content in the root of the new zip file.
      */
-    public function appendZip($file, $subPath = '') {
+    public function appendZip($file, $subPath = '')
+    {
         $this->_zipMerge->appendZip($file, $subPath, $this);
     }
 
-    public function setFileComment($comment) {
+    public function setFileComment($comment)
+    {
         $this->eocd->zipComment = $comment;
     }
 
-    public function finalize() {
+    public function finalize()
+    {
         if (!$this->isFinalized) {
             $files = $this->_zipMerge->finalize();
 
@@ -99,7 +104,8 @@ class ZipMergeToFile extends AbstractZipWriter {
      *
      * @param string $data
      */
-    public function zipWrite($data) {
+    public function zipWrite($data)
+    {
         fwrite($this->_zipFile, $data);
         fflush($this->_zipFile);
     }

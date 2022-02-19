@@ -16,10 +16,10 @@
 interface Swift_Transport_IoBuffer extends Swift_InputByteStream, Swift_OutputByteStream
 {
     /** A socket buffer over TCP */
-    const TYPE_SOCKET = 0x0001;
+    public const TYPE_SOCKET = 0x0001;
 
     /** A process buffer with I/O support */
-    const TYPE_PROCESS = 0x0010;
+    public const TYPE_PROCESS = 0x0010;
 
     /**
      * Perform any initialization needed, using the given $params.

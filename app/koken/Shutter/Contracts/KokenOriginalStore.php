@@ -2,6 +2,6 @@
 
 interface KokenOriginalStore
 {
-	public function send($localFile, $key);
-	public function delete($url);
+    public function send($localFile, $key);
+    public function delete($url);
 }

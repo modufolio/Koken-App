@@ -39,11 +39,14 @@ class Swift_Encoder_Base64Encoder implements Swift_Encoder
 
         if (0 != $firstLineOffset) {
             $firstLine = substr(
-                $encodedString, 0, $maxLineLength - $firstLineOffset
-                )."\r\n";
+                $encodedString,
+                0,
+                $maxLineLength - $firstLineOffset
+            )."\r\n";
             $encodedString = substr(
-                $encodedString, $maxLineLength - $firstLineOffset
-                );
+                $encodedString,
+                $maxLineLength - $firstLineOffset
+            );
         }
 
         return $firstLine.trim(chunk_split($encodedString, $maxLineLength, "\r\n"));

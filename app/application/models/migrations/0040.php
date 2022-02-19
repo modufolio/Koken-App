@@ -1,14 +1,13 @@
 <?php
 
-$s = new Setting;
+$s = new Setting();
 $s->where('name', 'email_delivery_address')->get();
 
-if (!$s->exists())
-{
-    $user = new User;
+if (!$s->exists()) {
+    $user = new User();
     $user->get();
 
-    $email = new Setting;
+    $email = new Setting();
     $email->name = 'email_delivery_address';
     $email->value = $user->email;
     $email->save();

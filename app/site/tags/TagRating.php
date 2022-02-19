@@ -1,16 +1,15 @@
 <?php
 
-	class TagRating extends Tag {
+    class TagRating extends Tag
+    {
+        protected $allows_close	= true;
 
-		protected $allows_close	= true;
-
-		function generate()
-		{
-			return <<<DOC
+        public function generate()
+        {
+            return <<<DOC
 <?php
 	if (Shutter::hook_exists('rating')):
 ?>
 DOC;
-		}
-
-	}
+        }
+    }

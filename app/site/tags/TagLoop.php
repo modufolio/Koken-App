@@ -1,60 +1,49 @@
 <?php
 
-	class TagLoop extends Tag {
+    class TagLoop extends Tag
+    {
+        public $tokenize = true;
 
-		public $tokenize = true;
+        public function generate()
+        {
+            $token = Koken::$tokens[0];
+            if (isset($this->parameters['data'])) {
+                $looper = $this->field_to_keys('data', 'value', 1);
+            } else {
+                $looper = '$value' . Koken::$tokens[1] . "['__loop__']";
+            }
 
-		function generate()
-		{
-			$token = Koken::$tokens[0];
-			if (isset($this->parameters['data']))
-			{
-				$looper = $this->field_to_keys('data', 'value', 1);
-			}
-			else
-			{
-				$looper = '$value' . Koken::$tokens[1] . "['__loop__']";
-			}
-
-			$separate = '';
-			if (isset($this->parameters['separator']))
-			{
-				$separate = <<<DOC
+            $separate = '';
+            if (isset($this->parameters['separator'])) {
+                $separate = <<<DOC
 	if (\$i$token > 0):
 		echo '{$this->parameters['separator']}';
 	endif;
 DOC;
-			}
+            }
 
-			$ref = "\$value{$token}['__koken__']";
-			if ($looper)
-			{
-				if (Koken::$main_load_token === Koken::$tokens[1] && !isset($this->parameters['data']))
-				{
-					$current_token = Koken::$tokens[0];
-					$last_token = Koken::$tokens[1];
-					$infinite = <<<DOC
+            $ref = "\$value{$token}['__koken__']";
+            if ($looper) {
+                if (Koken::$main_load_token === Koken::$tokens[1] && !isset($this->parameters['data'])) {
+                    $current_token = Koken::$tokens[0];
+                    $last_token = Koken::$tokens[1];
+                    $infinite = <<<DOC
 	if (isset(Koken::\$location['__infinite_token']) && Koken::\$location['__infinite_token'] === '$last_token')
 	{
 		\$infinite{$current_token} = true;
 		echo '<span class="k-infinite-load">';
 	}
 DOC;
-				$this->parameters['limit'] = 'false';
-				}
-				else
-				{
-					$infinite = '';
-					if (isset($this->parameters['limit']))
-					{
-						$this->parameters['limit'] = '"' . $this->attr_parse($this->parameters['limit']) . '"';
-					}
-					else
-					{
-						$this->parameters['limit'] = 'false';
-					}
-				}
-				return <<<DOC
+                    $this->parameters['limit'] = 'false';
+                } else {
+                    $infinite = '';
+                    if (isset($this->parameters['limit'])) {
+                        $this->parameters['limit'] = '"' . $this->attr_parse($this->parameters['limit']) . '"';
+                    } else {
+                        $this->parameters['limit'] = 'false';
+                    }
+                }
+                return <<<DOC
 <?php
 	$infinite
 	\$i$token = 0;
@@ -82,13 +71,13 @@ DOC;
 
 ?>
 DOC;
-			}
-		}
+            }
+        }
 
-		function close()
-		{
-			$current_token = Koken::$tokens[0];
-			return <<<DOC
+        public function close()
+        {
+            $current_token = Koken::$tokens[0];
+            return <<<DOC
 <?php
 
 	endforeach;
@@ -99,6 +88,5 @@ DOC;
 
 ?>
 DOC;
-		}
-
-	}
+        }
+    }

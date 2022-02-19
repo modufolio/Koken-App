@@ -4,41 +4,42 @@ require_once 'RelativePath.php';
 $docRoot = $_SERVER["DOCUMENT_ROOT"] . "/";
 
 if (!empty($_POST['path'])) {
-	$paths = array(stripslashes($_POST['path']));
+    $paths = array(stripslashes($_POST['path']));
 } else {
-	// These paths are designed to be as insane as reasonably possible. Do not try to make much sense of them please :)
-	$paths = array(
-	"../testdir/subdir/anotherdir\\testfile.html",
-	$docRoot . "/../../home/./John Doe/work/site/test/../../www/Project.1",
-	$docRoot . "/../../../../../../../../home//./\\\\/John Doe/work\\site/test/../../www/Project.1",
-	"../../../home/./John Doe/work/site/test/../../www/Project.1/",
-	"../../../home/./John Doe/work/site/test/../../www/Project.1/" . "/../Project.2/index.html",
-	"./././../../../../../../../../../home/./John Doe/work/site/test/../../www/Project.1" . "/" . "../Project.2/index.html",
-	"../../home/../../../John Doe/work/site/test/../../www/Project.1" . "/" . "../Project.2/index.html/../",
-	"/media/Projects/www/test/images/../../home/../../../John Doe/work/site/test.2/../../www/Project.1");
+    // These paths are designed to be as insane as reasonably possible. Do not try to make much sense of them please :)
+    $paths = array(
+    "../testdir/subdir/anotherdir\\testfile.html",
+    $docRoot . "/../../home/./John Doe/work/site/test/../../www/Project.1",
+    $docRoot . "/../../../../../../../../home//./\\\\/John Doe/work\\site/test/../../www/Project.1",
+    "../../../home/./John Doe/work/site/test/../../www/Project.1/",
+    "../../../home/./John Doe/work/site/test/../../www/Project.1/" . "/../Project.2/index.html",
+    "./././../../../../../../../../../home/./John Doe/work/site/test/../../www/Project.1" . "/" . "../Project.2/index.html",
+    "../../home/../../../John Doe/work/site/test/../../www/Project.1" . "/" . "../Project.2/index.html/../",
+    "/media/Projects/www/test/images/../../home/../../../John Doe/work/site/test.2/../../www/Project.1");
 }
 
 /**
- * 
+ *
  * Time execution time for a function
  *
  * @param unknown_type $function
  * @param unknown_type $title
  * @param unknown_type $iterations
  */
-function execTime($function, $title="", $iterations = 100000) {
-	list($usec, $sec) = explode(" ", microtime());
-	$t1 = ($sec+$usec) * 1000;
-	for ($i = 0 ; $i < $iterations ; $i++) {
-		$function();
-	}
-	list($usec, $sec) = explode(" ", microtime());
-	$t2 = ($sec+$usec) * 1000;
-	$t2 = $t2 - $t1;
-	if (!empty($title)) {
-		print "<pre>$title: " . number_format((double)$t2, 2) . " ms.</pre>\n";
-	}
-	return $t2;
+function execTime($function, $title="", $iterations = 100000)
+{
+    list($usec, $sec) = explode(" ", microtime());
+    $t1 = ($sec+$usec) * 1000;
+    for ($i = 0 ; $i < $iterations ; $i++) {
+        $function();
+    }
+    list($usec, $sec) = explode(" ", microtime());
+    $t2 = ($sec+$usec) * 1000;
+    $t2 = $t2 - $t1;
+    if (!empty($title)) {
+        print "<pre>$title: " . number_format((float)$t2, 2) . " ms.</pre>\n";
+    }
+    return $t2;
 }
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
@@ -88,10 +89,10 @@ print "<p>docRoot: $docRoot</p>\n";
 <dl>
 <?php
 foreach ($paths as $path) {
-	echo "<dt><pre>Path '$path' becomes:</pre></dt>\n";
-	echo "<dd><pre>";
-	echo "'" . RelativePath::getRelativePath($path) . "'\n";
-	print "</pre></dd>\n";
+    echo "<dt><pre>Path '$path' becomes:</pre></dt>\n";
+    echo "<dd><pre>";
+    echo "'" . RelativePath::getRelativePath($path) . "'\n";
+    print "</pre></dd>\n";
 }
 ?>
 </dl>

@@ -1,15 +1,14 @@
 <?php
 
-	class TagHead extends Tag {
-			
+    class TagHead extends Tag
+    {
+        public function generate()
+        {
+            return '<!-- KOKEN HEAD BEGIN -->';
+        }
 
-		function generate()
-		{
-			return '<!-- KOKEN HEAD BEGIN -->';
-		}
-
-		function close() {
-			return '<!-- KOKEN HEAD END -->';
-		}
-		
-	}
+        public function close()
+        {
+            return '<!-- KOKEN HEAD END -->';
+        }
+    }

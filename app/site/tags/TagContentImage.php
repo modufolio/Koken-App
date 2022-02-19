@@ -1,20 +1,19 @@
 <?php
 
-	class TagContentImage extends Tag {
+    class TagContentImage extends Tag
+    {
+        protected $allows_close = true;
 
-		protected $allows_close = true;
+        public function generate()
+        {
+            $token = '$value' . Koken::$tokens[0];
 
-		function generate()
-		{
-
-			$token = '$value' . Koken::$tokens[0];
-
-			return <<<OUT
+            return <<<OUT
 <?php
 
 	if ({$token}['file_type'] === 'image'):
 
 ?>
 OUT;
-		}
-	}
+        }
+    }

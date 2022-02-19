@@ -13,8 +13,8 @@ namespace PHPZip\Zip\Exception;
 
 use PHPZip\Zip\Core\AbstractException;
 
-class LengthMismatch extends AbstractException {
-
+class LengthMismatch extends AbstractException
+{
     private $_expected = null;
     private $_written = null;
 
@@ -26,7 +26,8 @@ class LengthMismatch extends AbstractException {
      *
      * @param array $config Configuration array containing expected and written
      */
-    public function __construct(array $config){
+    public function __construct(array $config)
+    {
         $this->_expected = (string)$config['expected'];
         $this->_written = (string)$config['written'];
 
@@ -41,11 +42,13 @@ class LengthMismatch extends AbstractException {
         parent::__construct($message);
     }
 
-    public function getExpected(){
+    public function getExpected()
+    {
         return $this->_expected;
     }
 
-    public function getWritten(){
+    public function getWritten()
+    {
         return $this->_written;
     }
 }

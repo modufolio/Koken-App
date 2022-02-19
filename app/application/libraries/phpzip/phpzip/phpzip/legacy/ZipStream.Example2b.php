@@ -1,4 +1,5 @@
 <?php
+
 set_error_handler("customError");
 error_reporting(E_ALL | E_STRICT);
 ini_set('error_reporting', E_ALL | E_STRICT);
@@ -147,10 +148,11 @@ $rv = $zip->finalize();
 //  already due to the error happening in the first place.
 // The idea is that errors will be very easy to spot.
 if (!empty($errors)) {
-	echo "\n<pre>\n**************\n*** ERRORS ***\n**************\n\n$errors\n</pre>\n";
+    echo "\n<pre>\n**************\n*** ERRORS ***\n**************\n\n$errors\n</pre>\n";
 }
 
-function getMem() {
+function getMem()
+{
     global $tLast;
     global $tStart;
     global $mLast;
@@ -179,39 +181,40 @@ function getMem() {
     $tT    = $tTemp['sec'] + (((int)($tTemp['usec'] / 100)) / 10000);
 
     $tLast = $tTemp;
-/*
-    return  sprintf("\r\n+%08.04f; Δ+%08.04f; ", ($tT - $tS), ($tT - $tL))
-    . sprintf("\r\n  - Alloc.....: %08.02f kiB (Real: %08.02f kiB)", (memory_get_usage()/1024), (memory_get_usage(true)/1024))
-    . sprintf("\r\n  - Peak alloc: %08.02f kiB (Real: %08.02f kiB)", (memory_get_peak_usage()/1024), (memory_get_peak_usage(true)/1024));
-*/
+    /*
+        return  sprintf("\r\n+%08.04f; Δ+%08.04f; ", ($tT - $tS), ($tT - $tL))
+        . sprintf("\r\n  - Alloc.....: %08.02f kiB (Real: %08.02f kiB)", (memory_get_usage()/1024), (memory_get_usage(true)/1024))
+        . sprintf("\r\n  - Peak alloc: %08.02f kiB (Real: %08.02f kiB)", (memory_get_peak_usage()/1024), (memory_get_peak_usage(true)/1024));
+    */
     return  sprintf("\r\n+%08.04f; +%08.04f; ", ($tT - $tS), ($tT - $tL))
-        . sprintf("\r\n  - Alloc.....: %10s kiB (Δ%10s) | Real: %10s kiB (Δ%10s)", number_format($m/1024,2),  ($md<0?'-':'+').number_format($md/1024,2),  number_format($mr/1024,2),  ($md<0?'-':'+').number_format($mrd/1024,2))
-        . sprintf("\r\n  - Peak alloc: %10s kiB (Δ%10s) | Real: %10s kiB (Δ%10s)", number_format($mp/1024,2), ($md<0?'-':'+').number_format($mpd/1024,2), number_format($mpr/1024,2), ($md<0?'-':'+').number_format($mprd/1024,2));
+        . sprintf("\r\n  - Alloc.....: %10s kiB (Δ%10s) | Real: %10s kiB (Δ%10s)", number_format($m/1024, 2), ($md<0 ? '-' : '+').number_format($md/1024, 2), number_format($mr/1024, 2), ($md<0 ? '-' : '+').number_format($mrd/1024, 2))
+        . sprintf("\r\n  - Peak alloc: %10s kiB (Δ%10s) | Real: %10s kiB (Δ%10s)", number_format($mp/1024, 2), ($md<0 ? '-' : '+').number_format($mpd/1024, 2), number_format($mpr/1024, 2), ($md<0 ? '-' : '+').number_format($mprd/1024, 2));
 }
 
-function customError($error_level, $error_message, $error_file, $error_line) {
-	global $errors;
-	switch ($error_level) {
-		case 1:	 $e_type = 'E_ERROR'; $exit_now = true; break;
-		case 2:	 $e_type = 'E_WARNING'; break;
-		case 4:	 $e_type = 'E_PARSE'; break;
-		case 8:	 $e_type = 'E_NOTICE'; break;
-		case 16:	$e_type = 'E_CORE_ERROR'; $exit_now = true; break;
-		case 32:	$e_type = 'E_CORE_WARNING'; break;
-		case 64:	$e_type = 'E_COMPILE_ERROR'; $exit_now = true; break;
-		case 128:   $e_type = 'E_COMPILE_WARNING'; break;
-		case 256:   $e_type = 'E_USER_ERROR'; $exit_now = true; break;
-		case 512:   $e_type = 'E_USER_WARNING'; break;
-		case 1024:  $e_type = 'E_USER_NOTICE'; break;
-		case 2048:  $e_type = 'E_STRICT'; break;
-		case 4096:  $e_type = 'E_RECOVERABLE_ERROR'; $exit_now = true; break;
-		case 8192:  $e_type = 'E_DEPRECATED'; break;
-		case 16384: $e_type = 'E_USER_DEPRECATED'; break;
-		case 30719: $e_type = 'E_ALL'; $exit_now = true; break;
-		default:	$e_type = 'E_UNKNOWN'; break;
-	}
+function customError($error_level, $error_message, $error_file, $error_line)
+{
+    global $errors;
+    switch ($error_level) {
+        case 1:	 $e_type = 'E_ERROR'; $exit_now = true; break;
+        case 2:	 $e_type = 'E_WARNING'; break;
+        case 4:	 $e_type = 'E_PARSE'; break;
+        case 8:	 $e_type = 'E_NOTICE'; break;
+        case 16:	$e_type = 'E_CORE_ERROR'; $exit_now = true; break;
+        case 32:	$e_type = 'E_CORE_WARNING'; break;
+        case 64:	$e_type = 'E_COMPILE_ERROR'; $exit_now = true; break;
+        case 128:   $e_type = 'E_COMPILE_WARNING'; break;
+        case 256:   $e_type = 'E_USER_ERROR'; $exit_now = true; break;
+        case 512:   $e_type = 'E_USER_WARNING'; break;
+        case 1024:  $e_type = 'E_USER_NOTICE'; break;
+        case 2048:  $e_type = 'E_STRICT'; break;
+        case 4096:  $e_type = 'E_RECOVERABLE_ERROR'; $exit_now = true; break;
+        case 8192:  $e_type = 'E_DEPRECATED'; break;
+        case 16384: $e_type = 'E_USER_DEPRECATED'; break;
+        case 30719: $e_type = 'E_ALL'; $exit_now = true; break;
+        default:	$e_type = 'E_UNKNOWN'; break;
+    }
 
-	$errors .= "[$error_level: $e_type]: $error_message\n	in $error_file ($error_line)\n\n";
+    $errors .= "[$error_level: $e_type]: $error_message\n	in $error_file ($error_line)\n\n";
 }
 
 return $rv;

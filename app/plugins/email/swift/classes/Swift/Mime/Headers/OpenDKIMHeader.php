@@ -119,8 +119,8 @@ class Swift_Mime_Headers_OpenDKIMHeader implements Swift_Mime_Header
 
     /**
      * Set the Header FieldName
-	 * @see Swift_Mime_Header::getFieldName()
-	 */
+     * @see Swift_Mime_Header::getFieldName()
+     */
     public function getFieldName()
     {
         return $this->_fieldName;

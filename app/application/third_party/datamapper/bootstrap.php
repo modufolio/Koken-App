@@ -25,66 +25,57 @@
 * @param	string	the class name prefix
 * @return	object
 */
-if ( ! function_exists('load_class'))
-{
-	function &load_class($class, $directory = 'libraries', $prefix = 'CI_')
-	{
-		static $_classes = array();
+if (! function_exists('load_class')) {
+    function &load_class($class, $directory = 'libraries', $prefix = 'CI_')
+    {
+        static $_classes = array();
 
-		// Does the class exist?  If so, we're done...
-		if (isset($_classes[$class]))
-		{
-			return $_classes[$class];
-		}
+        // Does the class exist?  If so, we're done...
+        if (isset($_classes[$class])) {
+            return $_classes[$class];
+        }
 
-		$name = FALSE;
+        $name = false;
 
-		// Look for the class first in the native system/libraries folder
-		// thenin the local application/libraries folder
-		foreach (array(BASEPATH, APPPATH) as $path)
-		{
-			if (file_exists($path.$directory.'/'.$class.'.php'))
-			{
-				$name = $prefix.$class;
+        // Look for the class first in the native system/libraries folder
+        // thenin the local application/libraries folder
+        foreach (array(BASEPATH, APPPATH) as $path) {
+            if (file_exists($path.$directory.'/'.$class.'.php')) {
+                $name = $prefix.$class;
 
-				if (class_exists($name) === FALSE)
-				{
-					require($path.$directory.'/'.$class.'.php');
-				}
+                if (class_exists($name) === false) {
+                    require($path.$directory.'/'.$class.'.php');
+                }
 
-				break;
-			}
-		}
+                break;
+            }
+        }
 
-		// Is the request a class extension?  If so we load it too
-		if (file_exists(APPPATH.$directory.'/'.config_item('subclass_prefix').$class.'.php'))
-		{
-			$name = config_item('subclass_prefix').$class;
+        // Is the request a class extension?  If so we load it too
+        if (file_exists(APPPATH.$directory.'/'.config_item('subclass_prefix').$class.'.php')) {
+            $name = config_item('subclass_prefix').$class;
 
-			if (class_exists($name) === FALSE)
-			{
-				require(APPPATH.$directory.'/'.config_item('subclass_prefix').$class.'.php');
-			}
-		}
+            if (class_exists($name) === false) {
+                require(APPPATH.$directory.'/'.config_item('subclass_prefix').$class.'.php');
+            }
+        }
 
-		// Do we have a DataMapper extension for this class?
-		if (file_exists($file = APPPATH.'third_party/datamapper/system/'.$class.'.php'))
-		{
-			require_once($file);
-		}
+        // Do we have a DataMapper extension for this class?
+        if (file_exists($file = APPPATH.'third_party/datamapper/system/'.$class.'.php')) {
+            require_once($file);
+        }
 
-		// Did we find the class?
-		if ($name === FALSE)
-		{
-			// Note: We use exit() rather then show_error() in order to avoid a
-			// self-referencing loop with the Excptions class
-			exit('Unable to locate the specified class: '.$class.'.php');
-		}
+        // Did we find the class?
+        if ($name === false) {
+            // Note: We use exit() rather then show_error() in order to avoid a
+            // self-referencing loop with the Excptions class
+            exit('Unable to locate the specified class: '.$class.'.php');
+        }
 
-		// Keep track of what we just loaded
-		is_loaded($class);
+        // Keep track of what we just loaded
+        is_loaded($class);
 
-		$_classes[$class] = new $name();
-		return $_classes[$class];
-	}
+        $_classes[$class] = new $name();
+        return $_classes[$class];
+    }
 }

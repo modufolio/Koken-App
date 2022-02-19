@@ -16,16 +16,16 @@
 interface Swift_Mime_MimeEntity extends Swift_Mime_CharsetObserver, Swift_Mime_EncodingObserver
 {
     /** Main message document; there can only be one of these */
-    const LEVEL_TOP = 16;
+    public const LEVEL_TOP = 16;
 
     /** An entity which nests with the same precedence as an attachment */
-    const LEVEL_MIXED = 256;
+    public const LEVEL_MIXED = 256;
 
     /** An entity which nests with the same precedence as a mime part */
-    const LEVEL_ALTERNATIVE = 4096;
+    public const LEVEL_ALTERNATIVE = 4096;
 
     /** An entity which nests with the same precedence as embedded content */
-    const LEVEL_RELATED = 65536;
+    public const LEVEL_RELATED = 65536;
 
     /**
      * Get the level at which this entity shall be nested in final document.

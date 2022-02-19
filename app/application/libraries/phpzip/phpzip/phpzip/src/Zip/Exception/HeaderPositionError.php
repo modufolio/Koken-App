@@ -13,8 +13,8 @@ namespace PHPZip\Zip\Exception;
 
 use PHPZip\Zip\Core\AbstractException;
 
-class HeaderPositionError extends AbstractException {
-
+class HeaderPositionError extends AbstractException
+{
     private $_expected = null;
     private $_actual = null;
 
@@ -26,13 +26,14 @@ class HeaderPositionError extends AbstractException {
      *
      * @param array $config Configuration array containing expected and written
      */
-    public function __construct(array $config){
+    public function __construct(array $config)
+    {
         $this->_expected = (string)$config['expected'];
         $this->_actual = (string)$config['actual'];
-        
+
         $message = sprintf(
             '%s %s %s %s %s',
-            (string)($this->_actual - $this->_expected), 
+            (string)($this->_actual - $this->_expected),
             ' extra bytes before header. Expected pos ',
             $this->_expected,
             ' but found the header at ',
@@ -42,11 +43,13 @@ class HeaderPositionError extends AbstractException {
         parent::__construct($message);
     }
 
-    public function getExpected(){
+    public function getExpected()
+    {
         return $this->_expected;
     }
 
-    public function getActual(){
+    public function getActual()
+    {
         return $this->_actual;
     }
 }

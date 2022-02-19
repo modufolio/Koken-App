@@ -1,22 +1,18 @@
 <?php
 
-	class TagSelect extends Tag {
+    class TagSelect extends Tag
+    {
+        public function generate()
+        {
+            $token = '$value' . Koken::$tokens[0];
 
-		function generate()
-		{
+            if (isset($this->parameters['label'])) {
+                $label = '<option value="__label__">' . $this->parameters['label'] . '</option>';
+            } else {
+                $label = '';
+            }
 
-			$token = '$value' . Koken::$tokens[0];
-
-			if (isset($this->parameters['label']))
-			{
-				$label = '<option value="__label__">' . $this->parameters['label'] . '</option>';
-			}
-			else
-			{
-				$label = '';
-			}
-
-			return <<<OUT
+            return <<<OUT
 <select class="k-select">
 	$label
 	<?php foreach({$token}['__loop__'] as \$__item): ?>
@@ -37,5 +33,5 @@
 	<?php endforeach; ?>
 </select>
 OUT;
-		}
-	}
+        }
+    }

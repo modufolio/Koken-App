@@ -1,5 +1,5 @@
 <?php
 
-	// DUMMY
-	sleep(1);
-	$done = true;
+    // DUMMY
+    sleep(1);
+    $done = true;

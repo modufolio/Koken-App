@@ -20,50 +20,48 @@
  *
  * @package		DMZ-Included-Extensions
  */
-class DMZ_SimpleCache {
-	
-	/**
-	 * Allows CodeIgniter's caching method to cache large result sets.
-	 * Call it exactly as get();
-	 * 
-	 * @param	DataMapper $object The DataMapper Object.
-	 * @return	DataMapper The DataMapper object for chaining.
-	 */
-    function get_cached($object)
-	{
-        if( ! empty($object->_should_delete_cache) )
-		{
+class DMZ_SimpleCache
+{
+    /**
+     * Allows CodeIgniter's caching method to cache large result sets.
+     * Call it exactly as get();
+     *
+     * @param	DataMapper $object The DataMapper Object.
+     * @return	DataMapper The DataMapper object for chaining.
+     */
+    public function get_cached($object)
+    {
+        if (! empty($object->_should_delete_cache)) {
             $object->db->cache_delete();
-            $object->_should_delete_cache = FALSE;
+            $object->_should_delete_cache = false;
         }
-		
-		$object->db->cache_on();
-		// get the arguments, but pop the object.
-		$args = func_get_args();
-		array_shift($args);
-		call_user_func_array(array($object, 'get'), $args);
+
+        $object->db->cache_on();
+        // get the arguments, but pop the object.
+        $args = func_get_args();
+        array_shift($args);
+        call_user_func_array(array($object, 'get'), $args);
         $object->db->cache_off();
         return $object;
     }
 
     /**
      * Clears the cached query the next time get_cached is called.
-     * 
+     *
      * @param	DataMapper $object The DataMapper Object.
      * @return	DataMapper The DataMapper $object for chaining.
      */
-    function clear_cache($object)
-	{
-		$args = func_get_args();
-		array_shift($args);
-		if( ! empty($args)) {
-			call_user_func_array(array($object->db, 'cache_delete'), $args);
-		} else {
-	        $object->_should_delete_cache = TRUE;
-		}
+    public function clear_cache($object)
+    {
+        $args = func_get_args();
+        array_shift($args);
+        if (! empty($args)) {
+            call_user_func_array(array($object->db, 'cache_delete'), $args);
+        } else {
+            $object->_should_delete_cache = true;
+        }
         return $object;
     }
-	
 }
 
 /* End of file simplecache.php */

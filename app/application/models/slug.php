@@ -1,3 +1,5 @@
 <?php
 
-class Slug extends DataMapper {}
+class Slug extends DataMapper
+{
+}
