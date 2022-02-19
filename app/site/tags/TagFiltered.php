@@ -1,17 +1,18 @@
 <?php
 
-    class TagFiltered extends Tag
-    {
-        public $tokenize = true;
-        public $allows_close = true;
-        public $untokenize_on_else = true;
+	class TagFiltered extends Tag {
 
-        public function generate()
-        {
-            $token = '$value' . Koken::$tokens[0];
-            $parent = '$value' . Koken::$tokens[1];
+		public $tokenize = true;
+		public $allows_close = true;
+		public $untokenize_on_else = true;
 
-            return <<<DOC
+		function generate()
+		{
+
+			$token = '$value' . Koken::$tokens[0];
+			$parent = '$value' . Koken::$tokens[1];
+
+			return <<<DOC
 <?php
 
 	if (count(Koken::\$location['parameters']['__overrides'])):
@@ -28,5 +29,6 @@
 		{$token}['__loop__'] = \$__arr;
 ?>
 DOC;
-        }
-    }
+		}
+
+	}

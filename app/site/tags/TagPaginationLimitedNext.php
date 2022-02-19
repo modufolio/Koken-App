@@ -1,21 +1,22 @@
 <?php
 
-    class TagPaginationLimitedNext extends Tag
-    {
-        protected $allows_close = true;
-        public $tokenize = true;
+	class TagPaginationLimitedNext extends Tag {
 
-        public function generate()
-        {
-            $pag = '$value' . Koken::$tokens[1];
-            $token = '$value' . Koken::$tokens[0];
+		protected $allows_close = true;
+		public $tokenize = true;
 
-            return <<<OUT
+		function generate()
+		{
+
+			$pag = '$value' . Koken::$tokens[1];
+			$token = '$value' . Koken::$tokens[0];
+
+			return <<<OUT
 <?php
 
 	if ({$pag}['limited']['next']):
 		$token =& {$pag}['limited']['next'];
 ?>
 OUT;
-        }
-    }
+		}
+	}

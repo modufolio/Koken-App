@@ -277,13 +277,9 @@ class Swift_Mime_Headers_MailboxHeader extends Swift_Mime_Headers_AbstractHeader
      */
     protected function createDisplayNameString($displayName, $shorten = false)
     {
-        return $this->createPhrase(
-            $this,
-            $displayName,
-            $this->getCharset(),
-            $this->getEncoder(),
-            $shorten
-        );
+        return $this->createPhrase($this, $displayName,
+            $this->getCharset(), $this->getEncoder(), $shorten
+            );
     }
 
     /**
@@ -347,14 +343,12 @@ class Swift_Mime_Headers_MailboxHeader extends Swift_Mime_Headers_AbstractHeader
      */
     private function _assertValidAddress($address)
     {
-        if (!preg_match(
-            '/^'.$this->getGrammar()->getDefinition('addr-spec').'$/D',
-            $address
-        )) {
+        if (!preg_match('/^'.$this->getGrammar()->getDefinition('addr-spec').'$/D',
+            $address)) {
             throw new Swift_RfcComplianceException(
                 'Address in mailbox given ['.$address.
                 '] does not comply with RFC 2822, 3.6.2.'
-            );
+                );
         }
     }
 }

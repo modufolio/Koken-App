@@ -1,25 +1,28 @@
 <?php
 
-    class TagEvent extends Tag
-    {
-        protected $allows_close = true;
-        public $tokenize = true;
+	class TagEvent extends Tag {
 
-        public function generate()
-        {
-            $token = '$value' . Koken::$tokens[1];
-            $ref = Koken::$tokens[0];
-            $merged = '$merged' . Koken::$tokens[0];
-            $limit = $limit_str = '$limit' . Koken::$tokens[0];
-            $url = '$url' . Koken::$tokens[0];
+		protected $allows_close = true;
+		public $tokenize = true;
 
-            if (isset($this->parameters['limit'])) {
-                $limit_str .= ' = ' . $this->attr_parse($this->parameters['limit']) . ';';
-            } else {
-                $limit_str .= ' = false;';
-            }
+		function generate()
+		{
+			$token = '$value' . Koken::$tokens[1];
+			$ref = Koken::$tokens[0];
+			$merged = '$merged' . Koken::$tokens[0];
+			$limit = $limit_str = '$limit' . Koken::$tokens[0];
+			$url = '$url' . Koken::$tokens[0];
 
-            return <<<OUT
+			if (isset($this->parameters['limit']))
+			{
+				$limit_str .= ' = ' . $this->attr_parse($this->parameters['limit']) . ';';
+			}
+			else
+			{
+				$limit_str .= ' = false;';
+			}
+
+			return <<<OUT
 <?php
 	$limit_str;
 
@@ -42,12 +45,13 @@
 	foreach({$merged}['items'] as \$key$ref => \$value$ref):
 ?>
 OUT;
-        }
+		}
 
-        public function close()
-        {
-            return <<<DOC
+		function close()
+		{
+			return <<<DOC
 <?php endforeach; ?>
 DOC;
-        }
-    }
+		}
+
+	}

@@ -1,23 +1,26 @@
 <?php
 
-    class TagTags extends Tag
-    {
-        protected $allows_close = true;
-        public $tokenize = true;
+	class TagTags extends Tag {
 
-        public function generate()
-        {
-            if (count(Koken::$tokens) > 1) {
-                $token = '$value' . Koken::$tokens[1];
-            } else {
-                $token = '$value' . Koken::$tokens[0];
-            }
+		protected $allows_close = true;
+		public $tokenize = true;
 
-            $ref = '$value' . Koken::$tokens[0];
+		function generate()
+		{
+			if (count(Koken::$tokens) > 1)
+			{
+				$token = '$value' . Koken::$tokens[1];
+			}
+			else
+			{
+				$token = '$value' . Koken::$tokens[0];
+			}
 
-            $params = $this->params_to_array_str();
+			$ref = '$value' . Koken::$tokens[0];
 
-            return <<<OUT
+			$params = $this->params_to_array_str();
+
+			return <<<OUT
 <?php
 
 	\$__params = array($params);
@@ -67,5 +70,5 @@
 		}
 ?>
 OUT;
-        }
-    }
+		}
+	}

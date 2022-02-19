@@ -17,8 +17,8 @@
  */
 class Swift_Transport_Esmtp_Auth_NTLMAuthenticator implements Swift_Transport_Esmtp_Authenticator
 {
-    public const NTLMSIG = "NTLMSSP\x00";
-    public const DESCONST = "KGS!@#$%";
+    const NTLMSIG = "NTLMSSP\x00";
+    const DESCONST = "KGS!@#$%";
 
     /**
      * Get the name of the AUTH mechanism this Authenticator handles.

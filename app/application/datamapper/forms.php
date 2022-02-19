@@ -19,43 +19,49 @@
  *
  * @package		DMZ-ExiteCMS-Extensions
  */
-class DMZ_Forms
-{
-    /**
-     * update the DMZ object from $_POST for all field values that match, plus optional values requested
-     *
-     * @param	DataMapper $object The DataMapper Object to convert
-     * @param	array $fields Array of fields to include.  If empty, includes all database columns.
-     * @return	object, the Datamapper object
-     */
-    public function update_from_post($object, $fields = array(), $allfields = true)
-    {
-        // make sure $fields is an array
-        $fields = (array) $fields;
+class DMZ_Forms {
 
-        // if all table columns must be included, add them
-        if ($allfields) {
-            $fields = array_merge($object->fields, $fields);
-        }
+	/**
+	 * update the DMZ object from $_POST for all field values that match, plus optional values requested
+	 *
+	 * @param	DataMapper $object The DataMapper Object to convert
+	 * @param	array $fields Array of fields to include.  If empty, includes all database columns.
+	 * @return	object, the Datamapper object
+	 */
+	function update_from_post($object, $fields = array(), $allfields = TRUE)
+	{
+		// make sure $fields is an array
+		$fields = (array) $fields;
 
-        $CI =& get_instance();
+		// if all table columns must be included, add them
+		if ( $allfields )
+		{
+			$fields = array_merge($object->fields, $fields);
+		}
 
-        // loop through the fields
-        foreach ($fields as $f) {
-            // fetch the post value
-            $value = $CI->input->post($f);
+		$CI =& get_instance();
 
-            // did we receive a value?
-            if ($value !== false) {
-                $object->{$f} = $value;
-            } elseif (! isset($object->{$f})) {
-                $object->{$f} = null;
-            }
-        }
+		// loop through the fields
+		foreach($fields as $f)
+		{
+			// fetch the post value
+			$value = $CI->input->post($f);
 
-        // return the Datamapper object
-        return $object;
-    }
+			// did we receive a value?
+			if ( $value !== FALSE )
+			{
+				$object->{$f} = $value;
+			}
+			elseif ( ! isset($object->{$f}) )
+			{
+				$object->{$f} = NULL;
+			}
+		}
+
+		// return the Datamapper object
+		return $object;
+	}
+
 }
 
 /* End of file forms.php */

@@ -1,43 +1,59 @@
 <?php
 
-    class TagNavigation extends Tag
-    {
-        public function generate()
-        {
-            if (isset($this->parameters['group'])) {
-                $group = $this->parameters['group'];
-            } else {
-                $group = '';
-            }
+	class TagNavigation extends Tag {
 
-            if (isset($this->parameters['list'])) {
-                $list = $this->parameters['list'] == 'true';
-            } else {
-                $list = true;
-            }
+		function generate()
+		{
+			if (isset($this->parameters['group']))
+			{
+				$group = $this->parameters['group'];
+			}
+			else
+			{
+				$group = '';
+			}
 
-            if ($list) {
-                if (isset($this->parameters['nested'])) {
-                    $nested = $this->attr_parse($this->parameters['nested']);
-                } else {
-                    $nested = 'false';
-                }
-            } else {
-                $nested = 'false';
-            }
+			if (isset($this->parameters['list']))
+			{
+				$list = $this->parameters['list'] == 'true';
+			}
+			else
+			{
+				$list = true;
+			}
 
-            if (!isset($this->parameters['class'])) {
-                $this->parameters['class'] = '';
-            }
+			if ($list)
+			{
+				if (isset($this->parameters['nested']))
+				{
+					$nested = $this->attr_parse($this->parameters['nested']);
+				}
+				else
+				{
+					$nested = 'false';
+				}
+			}
+			else
+			{
+				$nested = 'false';
+			}
 
-            if (isset($this->parameters['fallbacktext'])) {
-                $fallback = '<span class=\"k-note\">' . $this->parameters['fallbacktext'] . '</span>';
-            } else {
-                $fallback = '';
-            }
-            $list = $list ? 'true' : 'false';
+			if (!isset($this->parameters['class']))
+			{
+				$this->parameters['class'] = '';
+			}
 
-            return <<<OUT
+			if (isset($this->parameters['fallbacktext']))
+			{
+				$fallback = '<span class=\"k-note\">' . $this->parameters['fallbacktext'] . '</span>';
+			}
+			else
+			{
+				$fallback = '';
+			}
+			$list = $list ? 'true' : 'false';
+
+			return <<<OUT
 <?php
 	\$__nested = "$nested";
 	\$__nested = \$__nested === '1' || \$__nested === 'true';
@@ -61,5 +77,7 @@
 	echo empty(\$__nav) ? (Koken::\$draft ? "$fallback" : '') : Koken::render_nav(\$__nav, $list, true, '{$this->parameters['class']}');
 ?>
 OUT;
-        }
-    }
+
+		}
+
+	}

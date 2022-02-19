@@ -1,8 +1,4 @@
-<?php
-
- if (! defined('BASEPATH')) {
-    exit('No direct script access allowed');
-}
+<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
  * CodeIgniter
  *
@@ -43,12 +39,13 @@
  * @param	integer
  * @return	string
  */
-if (! function_exists('heading')) {
-    function heading($data = '', $h = '1', $attributes = '')
-    {
-        $attributes = ($attributes != '') ? ' '.$attributes : $attributes;
-        return "<h".$h.$attributes.">".$data."</h".$h.">";
-    }
+if ( ! function_exists('heading'))
+{
+	function heading($data = '', $h = '1', $attributes = '')
+	{
+		$attributes = ($attributes != '') ? ' '.$attributes : $attributes;
+		return "<h".$h.$attributes.">".$data."</h".$h.">";
+	}
 }
 
 // ------------------------------------------------------------------------
@@ -63,11 +60,12 @@ if (! function_exists('heading')) {
  * @param	mixed
  * @return	string
  */
-if (! function_exists('ul')) {
-    function ul($list, $attributes = '')
-    {
-        return _list('ul', $list, $attributes);
-    }
+if ( ! function_exists('ul'))
+{
+	function ul($list, $attributes = '')
+	{
+		return _list('ul', $list, $attributes);
+	}
 }
 
 // ------------------------------------------------------------------------
@@ -82,11 +80,12 @@ if (! function_exists('ul')) {
  * @param	mixed
  * @return	string
  */
-if (! function_exists('ol')) {
-    function ol($list, $attributes = '')
-    {
-        return _list('ol', $list, $attributes);
-    }
+if ( ! function_exists('ol'))
+{
+	function ol($list, $attributes = '')
+	{
+		return _list('ol', $list, $attributes);
+	}
 }
 
 // ------------------------------------------------------------------------
@@ -103,60 +102,70 @@ if (! function_exists('ol')) {
  * @param	integer
  * @return	string
  */
-if (! function_exists('_list')) {
-    function _list($type = 'ul', $list, $attributes = '', $depth = 0)
-    {
-        // If an array wasn't submitted there's nothing to do...
-        if (! is_array($list)) {
-            return $list;
-        }
+if ( ! function_exists('_list'))
+{
+	function _list($type = 'ul', $list, $attributes = '', $depth = 0)
+	{
+		// If an array wasn't submitted there's nothing to do...
+		if ( ! is_array($list))
+		{
+			return $list;
+		}
 
-        // Set the indentation based on the depth
-        $out = str_repeat(" ", $depth);
+		// Set the indentation based on the depth
+		$out = str_repeat(" ", $depth);
 
-        // Were any attributes submitted?  If so generate a string
-        if (is_array($attributes)) {
-            $atts = '';
-            foreach ($attributes as $key => $val) {
-                $atts .= ' ' . $key . '="' . $val . '"';
-            }
-            $attributes = $atts;
-        } elseif (is_string($attributes) and strlen($attributes) > 0) {
-            $attributes = ' '. $attributes;
-        }
+		// Were any attributes submitted?  If so generate a string
+		if (is_array($attributes))
+		{
+			$atts = '';
+			foreach ($attributes as $key => $val)
+			{
+				$atts .= ' ' . $key . '="' . $val . '"';
+			}
+			$attributes = $atts;
+		}
+		elseif (is_string($attributes) AND strlen($attributes) > 0)
+		{
+			$attributes = ' '. $attributes;
+		}
 
-        // Write the opening list tag
-        $out .= "<".$type.$attributes.">\n";
+		// Write the opening list tag
+		$out .= "<".$type.$attributes.">\n";
 
-        // Cycle through the list elements.  If an array is
-        // encountered we will recursively call _list()
+		// Cycle through the list elements.  If an array is
+		// encountered we will recursively call _list()
 
-        static $_last_list_item = '';
-        foreach ($list as $key => $val) {
-            $_last_list_item = $key;
+		static $_last_list_item = '';
+		foreach ($list as $key => $val)
+		{
+			$_last_list_item = $key;
 
-            $out .= str_repeat(" ", $depth + 2);
-            $out .= "<li>";
+			$out .= str_repeat(" ", $depth + 2);
+			$out .= "<li>";
 
-            if (! is_array($val)) {
-                $out .= $val;
-            } else {
-                $out .= $_last_list_item."\n";
-                $out .= _list($type, $val, '', $depth + 4);
-                $out .= str_repeat(" ", $depth + 2);
-            }
+			if ( ! is_array($val))
+			{
+				$out .= $val;
+			}
+			else
+			{
+				$out .= $_last_list_item."\n";
+				$out .= _list($type, $val, '', $depth + 4);
+				$out .= str_repeat(" ", $depth + 2);
+			}
 
-            $out .= "</li>\n";
-        }
+			$out .= "</li>\n";
+		}
 
-        // Set the indentation for the closing tag
-        $out .= str_repeat(" ", $depth);
+		// Set the indentation for the closing tag
+		$out .= str_repeat(" ", $depth);
 
-        // Write the closing list tag
-        $out .= "</".$type.">\n";
+		// Write the closing list tag
+		$out .= "</".$type.">\n";
 
-        return $out;
-    }
+		return $out;
+	}
 }
 
 // ------------------------------------------------------------------------
@@ -168,11 +177,12 @@ if (! function_exists('_list')) {
  * @param	integer
  * @return	string
  */
-if (! function_exists('br')) {
-    function br($num = 1)
-    {
-        return str_repeat("<br />", $num);
-    }
+if ( ! function_exists('br'))
+{
+	function br($num = 1)
+	{
+		return str_repeat("<br />", $num);
+	}
 }
 
 // ------------------------------------------------------------------------
@@ -186,38 +196,49 @@ if (! function_exists('br')) {
  * @param	mixed
  * @return	string
  */
-if (! function_exists('img')) {
-    function img($src = '', $index_page = false)
-    {
-        if (! is_array($src)) {
-            $src = array('src' => $src);
-        }
+if ( ! function_exists('img'))
+{
+	function img($src = '', $index_page = FALSE)
+	{
+		if ( ! is_array($src) )
+		{
+			$src = array('src' => $src);
+		}
 
-        // If there is no alt attribute defined, set it to an empty string
-        if (! isset($src['alt'])) {
-            $src['alt'] = '';
-        }
+		// If there is no alt attribute defined, set it to an empty string
+		if ( ! isset($src['alt']))
+		{
+			$src['alt'] = '';
+		}
 
-        $img = '<img';
+		$img = '<img';
 
-        foreach ($src as $k=>$v) {
-            if ($k == 'src' and strpos($v, '://') === false) {
-                $CI =& get_instance();
+		foreach ($src as $k=>$v)
+		{
 
-                if ($index_page === true) {
-                    $img .= ' src="'.$CI->config->site_url($v).'"';
-                } else {
-                    $img .= ' src="'.$CI->config->slash_item('base_url').$v.'"';
-                }
-            } else {
-                $img .= " $k=\"$v\"";
-            }
-        }
+			if ($k == 'src' AND strpos($v, '://') === FALSE)
+			{
+				$CI =& get_instance();
 
-        $img .= '/>';
+				if ($index_page === TRUE)
+				{
+					$img .= ' src="'.$CI->config->site_url($v).'"';
+				}
+				else
+				{
+					$img .= ' src="'.$CI->config->slash_item('base_url').$v.'"';
+				}
+			}
+			else
+			{
+				$img .= " $k=\"$v\"";
+			}
+		}
 
-        return $img;
-    }
+		$img .= '/>';
+
+		return $img;
+	}
 }
 
 // ------------------------------------------------------------------------
@@ -235,29 +256,38 @@ if (! function_exists('img')) {
  * @param	string	type	The doctype to be generated
  * @return	string
  */
-if (! function_exists('doctype')) {
-    function doctype($type = 'xhtml1-strict')
-    {
-        global $_doctypes;
+if ( ! function_exists('doctype'))
+{
+	function doctype($type = 'xhtml1-strict')
+	{
+		global $_doctypes;
 
-        if (! is_array($_doctypes)) {
-            if (defined('ENVIRONMENT') and is_file(APPPATH.'config/'.ENVIRONMENT.'/doctypes.php')) {
-                include(APPPATH.'config/'.ENVIRONMENT.'/doctypes.php');
-            } elseif (is_file(APPPATH.'config/doctypes.php')) {
-                include(APPPATH.'config/doctypes.php');
-            }
+		if ( ! is_array($_doctypes))
+		{
+			if (defined('ENVIRONMENT') AND is_file(APPPATH.'config/'.ENVIRONMENT.'/doctypes.php'))
+			{
+				include(APPPATH.'config/'.ENVIRONMENT.'/doctypes.php');
+			}
+			elseif (is_file(APPPATH.'config/doctypes.php'))
+			{
+				include(APPPATH.'config/doctypes.php');
+			}
 
-            if (! is_array($_doctypes)) {
-                return false;
-            }
-        }
+			if ( ! is_array($_doctypes))
+			{
+				return FALSE;
+			}
+		}
 
-        if (isset($_doctypes[$type])) {
-            return $_doctypes[$type];
-        } else {
-            return false;
-        }
-    }
+		if (isset($_doctypes[$type]))
+		{
+			return $_doctypes[$type];
+		}
+		else
+		{
+			return FALSE;
+		}
+	}
 }
 
 // ------------------------------------------------------------------------
@@ -276,52 +306,70 @@ if (! function_exists('doctype')) {
  * @param	boolean	should index_page be added to the css path
  * @return	string
  */
-if (! function_exists('link_tag')) {
-    function link_tag($href = '', $rel = 'stylesheet', $type = 'text/css', $title = '', $media = '', $index_page = false)
-    {
-        $CI =& get_instance();
+if ( ! function_exists('link_tag'))
+{
+	function link_tag($href = '', $rel = 'stylesheet', $type = 'text/css', $title = '', $media = '', $index_page = FALSE)
+	{
+		$CI =& get_instance();
 
-        $link = '<link ';
+		$link = '<link ';
 
-        if (is_array($href)) {
-            foreach ($href as $k=>$v) {
-                if ($k == 'href' and strpos($v, '://') === false) {
-                    if ($index_page === true) {
-                        $link .= 'href="'.$CI->config->site_url($v).'" ';
-                    } else {
-                        $link .= 'href="'.$CI->config->slash_item('base_url').$v.'" ';
-                    }
-                } else {
-                    $link .= "$k=\"$v\" ";
-                }
-            }
+		if (is_array($href))
+		{
+			foreach ($href as $k=>$v)
+			{
+				if ($k == 'href' AND strpos($v, '://') === FALSE)
+				{
+					if ($index_page === TRUE)
+					{
+						$link .= 'href="'.$CI->config->site_url($v).'" ';
+					}
+					else
+					{
+						$link .= 'href="'.$CI->config->slash_item('base_url').$v.'" ';
+					}
+				}
+				else
+				{
+					$link .= "$k=\"$v\" ";
+				}
+			}
 
-            $link .= "/>";
-        } else {
-            if (strpos($href, '://') !== false) {
-                $link .= 'href="'.$href.'" ';
-            } elseif ($index_page === true) {
-                $link .= 'href="'.$CI->config->site_url($href).'" ';
-            } else {
-                $link .= 'href="'.$CI->config->slash_item('base_url').$href.'" ';
-            }
+			$link .= "/>";
+		}
+		else
+		{
+			if ( strpos($href, '://') !== FALSE)
+			{
+				$link .= 'href="'.$href.'" ';
+			}
+			elseif ($index_page === TRUE)
+			{
+				$link .= 'href="'.$CI->config->site_url($href).'" ';
+			}
+			else
+			{
+				$link .= 'href="'.$CI->config->slash_item('base_url').$href.'" ';
+			}
 
-            $link .= 'rel="'.$rel.'" type="'.$type.'" ';
+			$link .= 'rel="'.$rel.'" type="'.$type.'" ';
 
-            if ($media	!= '') {
-                $link .= 'media="'.$media.'" ';
-            }
+			if ($media	!= '')
+			{
+				$link .= 'media="'.$media.'" ';
+			}
 
-            if ($title	!= '') {
-                $link .= 'title="'.$title.'" ';
-            }
+			if ($title	!= '')
+			{
+				$link .= 'title="'.$title.'" ';
+			}
 
-            $link .= '/>';
-        }
+			$link .= '/>';
+		}
 
 
-        return $link;
-    }
+		return $link;
+	}
 }
 
 // ------------------------------------------------------------------------
@@ -333,32 +381,38 @@ if (! function_exists('link_tag')) {
  * @param	array
  * @return	string
  */
-if (! function_exists('meta')) {
-    function meta($name = '', $content = '', $type = 'name', $newline = "\n")
-    {
-        // Since we allow the data to be passes as a string, a simple array
-        // or a multidimensional one, we need to do a little prepping.
-        if (! is_array($name)) {
-            $name = array(array('name' => $name, 'content' => $content, 'type' => $type, 'newline' => $newline));
-        } else {
-            // Turn single array into multidimensional
-            if (isset($name['name'])) {
-                $name = array($name);
-            }
-        }
+if ( ! function_exists('meta'))
+{
+	function meta($name = '', $content = '', $type = 'name', $newline = "\n")
+	{
+		// Since we allow the data to be passes as a string, a simple array
+		// or a multidimensional one, we need to do a little prepping.
+		if ( ! is_array($name))
+		{
+			$name = array(array('name' => $name, 'content' => $content, 'type' => $type, 'newline' => $newline));
+		}
+		else
+		{
+			// Turn single array into multidimensional
+			if (isset($name['name']))
+			{
+				$name = array($name);
+			}
+		}
 
-        $str = '';
-        foreach ($name as $meta) {
-            $type		= (! isset($meta['type']) or $meta['type'] == 'name') ? 'name' : 'http-equiv';
-            $name		= (! isset($meta['name'])) ? '' : $meta['name'];
-            $content	= (! isset($meta['content'])) ? '' : $meta['content'];
-            $newline	= (! isset($meta['newline'])) ? "\n" : $meta['newline'];
+		$str = '';
+		foreach ($name as $meta)
+		{
+			$type		= ( ! isset($meta['type']) OR $meta['type'] == 'name') ? 'name' : 'http-equiv';
+			$name		= ( ! isset($meta['name']))		? ''	: $meta['name'];
+			$content	= ( ! isset($meta['content']))	? ''	: $meta['content'];
+			$newline	= ( ! isset($meta['newline']))	? "\n"	: $meta['newline'];
 
-            $str .= '<meta '.$type.'="'.$name.'" content="'.$content.'" />'.$newline;
-        }
+			$str .= '<meta '.$type.'="'.$name.'" content="'.$content.'" />'.$newline;
+		}
 
-        return $str;
-    }
+		return $str;
+	}
 }
 
 // ------------------------------------------------------------------------
@@ -370,11 +424,12 @@ if (! function_exists('meta')) {
  * @param	integer
  * @return	string
  */
-if (! function_exists('nbs')) {
-    function nbs($num = 1)
-    {
-        return str_repeat("&nbsp;", $num);
-    }
+if ( ! function_exists('nbs'))
+{
+	function nbs($num = 1)
+	{
+		return str_repeat("&nbsp;", $num);
+	}
 }
 
 

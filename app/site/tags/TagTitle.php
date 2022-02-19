@@ -1,32 +1,41 @@
 <?php
 
-    class TagTitle extends Tag
-    {
-        public function generate()
-        {
-            if (isset($this->parameters['separator'])) {
-                $sep = $this->parameters['separator'];
-            } else {
-                $sep = '-';
-            }
+	class TagTitle extends Tag {
 
-            $sep = " $sep ";
+		function generate()
+		{
 
-            if (Koken::$source && Koken::$source['type'] && !Koken::$custom_page_title) {
-                $list = Koken::$source['type'] === 'timeline' || substr(strrev(Koken::$source['type']), 0, 1) === 's';
+			if (isset($this->parameters['separator']))
+			{
+				$sep = $this->parameters['separator'];
+			}
+			else
+			{
+				$sep = '-';
+			}
 
-                if ($list) {
-                    $obj = Koken::$source['type'] === 'categories' ? 'category' : rtrim(Koken::$source['type'], 's');
-                    $pre = '{{ labels.' . $obj . '.plural case="title" }}';
-                }
-            }
+			$sep = " $sep ";
 
-            if (isset($pre)) {
-                $pre = "$pre{$sep}";
-            } else {
-                $pre = '';
-            }
-            return <<<DOC
+			if (Koken::$source && Koken::$source['type'] && !Koken::$custom_page_title)
+			{
+				$list = Koken::$source['type'] === 'timeline' || substr( strrev(Koken::$source['type']), 0, 1 ) === 's';
+
+				if ($list)
+				{
+					$obj = Koken::$source['type'] === 'categories' ? 'category' : rtrim(Koken::$source['type'], 's');
+					$pre = '{{ labels.' . $obj . '.plural case="title" }}';
+				}
+			}
+
+			if (isset($pre))
+			{
+				$pre = "$pre{$sep}";
+			}
+			else
+			{
+				$pre = '';
+			}
+			return <<<DOC
 <?php
 
 	if (!Koken::\$the_title_separator)
@@ -52,5 +61,6 @@
 	<?php echo Koken::\$site['page_title']; ?>
 </koken_title>
 DOC;
-        }
-    }
+		}
+
+	}

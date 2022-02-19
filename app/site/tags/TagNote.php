@@ -1,26 +1,27 @@
 <?php
 
-    class TagNote extends Tag
-    {
-        protected $allows_close = true;
+	class TagNote extends Tag {
 
-        public function generate()
-        {
-            return <<<DOC
+		protected $allows_close = true;
+
+		function generate()
+		{
+			return <<<DOC
 <?php
 	if (Koken::\$draft):
 ?>
 <span class="k-note">
 DOC;
-        }
+		}
 
-        public function close()
-        {
-            return <<<DOC
+		function close()
+		{
+			return <<<DOC
 </span>
 <?php
 	endif;
 ?>
 DOC;
-        }
-    }
+		}
+
+	}

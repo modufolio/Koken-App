@@ -1,10 +1,10 @@
 <?php
 
-class Application extends DataMapper
-{
-    public $has_one = array(
-        'user'
-    );
+class Application extends DataMapper {
+		
+	var $has_one = array(
+		'user'
+	);
 }
 
 /* End of file application.php */

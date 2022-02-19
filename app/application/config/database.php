@@ -1,8 +1,4 @@
-<?php
-
- if (! defined('BASEPATH')) {
-    exit('No direct script access allowed');
-}
+<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /*
 | -------------------------------------------------------------------
 | DATABASE CONNECTIVITY SETTINGS
@@ -21,7 +17,7 @@
 |	['password'] The password used to connect to the database
 |	['database'] The name of the database you want to connect to
 |	['dbdriver'] The database type. ie: mysql.  Currently supported:
-                 mysql, mysqli, postgre, odbc, mssql, sqlite, oci8
+				 mysql, mysqli, postgre, odbc, mssql, sqlite, oci8
 |	['dbprefix'] You can add an optional prefix, which will be added
 |				 to the table name when using the  Active Record class
 |	['pconnect'] TRUE/FALSE - Whether to use a persistent connection
@@ -39,7 +35,7 @@
 */
 
 $active_group = "default";
-$active_record = true;
+$active_record = TRUE;
 
 $db_config = Shutter::get_db_configuration();
 
@@ -52,9 +48,9 @@ $db['default']['password'] = $db_config['password'];
 $db['default']['database'] = $db_config['database'];
 $db['default']['dbdriver'] = $db_config['driver'];
 $db['default']['dbprefix'] = ''; // DO NOT SET THIS HERE, HAS TO BE DONE IN DATAMAPPER
-$db['default']['pconnect'] = false;
-$db['default']['db_debug'] = false;
-$db['default']['cache_on'] = false;
+$db['default']['pconnect'] = FALSE;
+$db['default']['db_debug'] = FALSE;
+$db['default']['cache_on'] = FALSE;
 $db['default']['cachedir'] = "";
 $db['default']['char_set'] = 'utf8';
 $db['default']['dbcollat'] = "utf8_general_ci";

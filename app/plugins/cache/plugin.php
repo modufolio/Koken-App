@@ -1,151 +1,171 @@
 <?php
 
-class DDI_Cache extends KokenPlugin implements KokenCache
-{
-    private $stamp;
-    private $base_path;
+class DDI_Cache extends KokenPlugin implements KokenCache {
 
-    public function __construct()
-    {
-        $this->register_cache_handler('all');
+	private $stamp;
+	private $base_path;
 
-        $this->base_path = $this->get_main_storage_path() . '/cache/';
-        $this->stamp = $this->base_path . 'api/stamp';
+	function __construct()
+	{
+		$this->register_cache_handler('all');
 
-        if (!file_exists($this->stamp)) {
-            $this->make_child_dir(dirname($this->stamp));
-            touch($this->stamp);
-        }
-    }
+		$this->base_path = $this->get_main_storage_path() . '/cache/';
+		$this->stamp = $this->base_path . 'api/stamp';
 
-    private function make_full_path($path)
-    {
-        if ($path === 'plugins/compiled.cache') {
-            $path = str_replace('compiled', $this->request_read_token(), $path);
-        }
+		if (!file_exists($this->stamp))
+		{
+			$this->make_child_dir(dirname($this->stamp));
+			touch($this->stamp);
+		}
+	}
 
-        if (strpos($path, 'api/') === 0) {
-            return $this->base_path . 'api/' . md5($path) . '.cache';
-        }
+	private function make_full_path($path)
+	{
+		if ($path === 'plugins/compiled.cache')
+		{
+			$path = str_replace('compiled', $this->request_read_token(), $path);
+		}
 
-        return $this->base_path . $path;
-    }
+		if (strpos($path, 'api/') === 0)
+		{
+			return $this->base_path . 'api/' . md5($path) . '.cache';
+		}
 
-    public function get($path, $lastModified = false)
-    {
-        $is_api = strpos($path, 'api') === 0;
+		return $this->base_path . $path;
+	}
 
-        $path = $this->make_full_path($path);
+	function get($path, $lastModified = false)
+	{
+		$is_api = strpos($path, 'api') === 0;
 
-        if (file_exists($path)) {
-            $cache_stamp = filemtime($this->stamp);
+		$path = $this->make_full_path($path);
 
-            $mtime = filemtime($path);
+		if (file_exists($path))
+		{
+			$cache_stamp = filemtime($this->stamp);
 
-            if (!$is_api || $mtime > $cache_stamp) {
-                if ($lastModified && strtotime($lastModified) && is_int($mtime) && strtotime($lastModified) >= $mtime) {
-                    return array(
-                        'status' => 304
-                    );
-                }
+			$mtime = filemtime($path);
 
-                // Path traversal check
-                $realpath = realpath($this->base_path);
-                $realpathfile = realpath($path);
+			if (!$is_api || $mtime > $cache_stamp)
+			{
+				if ($lastModified && strtotime($lastModified) && is_int($mtime) && strtotime($lastModified) >= $mtime) {
+					return array(
+						'status' => 304
+					);
+				}
 
-                if (!$realpathfile || strpos($realpathfile, $realpath) !== 0) {
-                    return false;
-                }
+				// Path traversal check
+				$realpath = realpath($this->base_path);
+				$realpathfile = realpath($path);
 
-                return array(
-                    'data' => file_get_contents($path),
-                    'status' => 200,
-                    'modified' => $mtime
-                );
-            }
-        }
+				if (!$realpathfile || strpos($realpathfile, $realpath) !== 0)
+				{
+					return false;
+				}
 
-        return false;
-    }
+				return array(
+					'data' => file_get_contents($path),
+					'status' => 200,
+					'modified' => $mtime
+				);
+			}
+		}
 
-    public function write($path, $content)
-    {
-        $full_path = $this->make_full_path($path);
-        $this->make_child_dir(dirname($full_path));
-        file_put_contents($full_path, $content);
-    }
+		return false;
+	}
 
-    public function clear($path)
-    {
-        $full_path = $this->make_full_path($path);
-        if (strpos($path, 'api') === 0) {
-            touch($this->stamp);
-        } elseif (is_dir($full_path)) {
-            $this->delete_files($full_path, true, 1);
-        } elseif (file_exists($full_path)) {
-            unlink($full_path);
-        }
-    }
+	function write($path, $content)
+	{
+		$full_path = $this->make_full_path($path);
+		$this->make_child_dir(dirname($full_path));
+		file_put_contents($full_path, $content);
+	}
 
-    private function make_child_dir($path)
-    {
-        // No need to continue if the directory already exists
-        if (is_dir($path)) {
-            return true;
-        }
+	function clear($path)
+	{
+		$full_path = $this->make_full_path($path);
+		if (strpos($path, 'api') === 0)
+		{
+			touch($this->stamp);
+		}
+		else if (is_dir($full_path))
+		{
+			$this->delete_files($full_path, true, 1);
+		}
+		else if (file_exists($full_path))
+		{
+			unlink($full_path);
+		}
+	}
 
-        // Make sure parent exists
-        $parent = dirname($path);
-        if (!is_dir($parent)) {
-            $this->make_child_dir($parent);
-        }
+	private function make_child_dir($path)
+	{
+		// No need to continue if the directory already exists
+		if (is_dir($path)) return true;
 
-        $created = false;
-        $old = umask(0);
+		// Make sure parent exists
+		$parent = dirname($path);
+		if (!is_dir($parent))
+		{
+			$this->make_child_dir($parent);
+		}
 
-        // Try to create new directory with parent directory's permissions
-        $permissions = substr(sprintf('%o', fileperms($parent)), -4);
-        if (is_dir($path) || mkdir($path, octdec($permissions), true)) {
-            $created = true;
-        }
-        // If above doesn't work, chmod to 777 and try again
-        elseif ($permissions == '0755' &&
-                    chmod($parent, 0777) &&
-                    mkdir($path, 0777, true)
-                ) {
-            $created = true;
-        }
-        umask($old);
-        return $created;
-    }
+		$created = false;
+		$old = umask(0);
 
-    private function delete_files($path, $del_dir = false, $level = 0)
-    {
-        // Trim the trailing slash
-        $path = rtrim($path, DIRECTORY_SEPARATOR);
+		// Try to create new directory with parent directory's permissions
+		$permissions = substr(sprintf('%o', fileperms($parent)), -4);
+		if (is_dir($path) || mkdir($path, octdec($permissions), true))
+		{
+			$created = true;
+		}
+		// If above doesn't work, chmod to 777 and try again
+		else if (	$permissions == '0755' &&
+					chmod($parent, 0777) &&
+					mkdir($path, 0777, true)
+				)
+		{
+			$created = true;
+		}
+		umask($old);
+		return $created;
+	}
 
-        if (! $current_dir = @opendir($path)) {
-            return false;
-        }
+	private function delete_files($path, $del_dir = FALSE, $level = 0)
+	{
+		// Trim the trailing slash
+		$path = rtrim($path, DIRECTORY_SEPARATOR);
 
-        while (false !== ($filename = @readdir($current_dir))) {
-            if ($filename != "." and $filename != "..") {
-                if (is_dir($path.DIRECTORY_SEPARATOR.$filename)) {
-                    // Ignore empty folders
-                    if (substr($filename, 0, 1) != '.') {
-                        $this->delete_files($path.DIRECTORY_SEPARATOR.$filename, $del_dir, $level + 1);
-                    }
-                } else {
-                    unlink($path.DIRECTORY_SEPARATOR.$filename);
-                }
-            }
-        }
-        @closedir($current_dir);
+		if ( ! $current_dir = @opendir($path))
+		{
+			return FALSE;
+		}
 
-        if ($del_dir == true and $level > 0) {
-            return @rmdir($path);
-        }
+		while (FALSE !== ($filename = @readdir($current_dir)))
+		{
+			if ($filename != "." and $filename != "..")
+			{
+				if (is_dir($path.DIRECTORY_SEPARATOR.$filename))
+				{
+					// Ignore empty folders
+					if (substr($filename, 0, 1) != '.')
+					{
+						$this->delete_files($path.DIRECTORY_SEPARATOR.$filename, $del_dir, $level + 1);
+					}
+				}
+				else
+				{
+					unlink($path.DIRECTORY_SEPARATOR.$filename);
+				}
+			}
+		}
+		@closedir($current_dir);
 
-        return true;
-    }
+		if ($del_dir == TRUE AND $level > 0)
+		{
+			return @rmdir($path);
+		}
+
+		return TRUE;
+	}
 }

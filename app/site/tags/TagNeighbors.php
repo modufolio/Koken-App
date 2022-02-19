@@ -1,21 +1,25 @@
 <?php
 
-    class TagNeighbors extends Tag
-    {
-        protected $allows_close = true;
-        public function generate()
-        {
-            $token = '$value' . Koken::$tokens[0];
-            $ref = '$__neighbors';
+	class TagNeighbors extends Tag {
 
-            if (isset($this->parameters['count'])) {
-                $limit = $this->attr_parse($this->parameters['count']);
-                Koken::$max_neighbors[] = $limit;
-            } else {
-                $limit = 2;
-            }
+		protected $allows_close = true;
+		function generate()
+		{
 
-            return <<<OUT
+			$token = '$value' . Koken::$tokens[0];
+			$ref = '$__neighbors';
+
+			if (isset($this->parameters['count']))
+			{
+				$limit = $this->attr_parse($this->parameters['count']);
+				Koken::$max_neighbors[] = $limit;
+			}
+			else
+			{
+				$limit = 2;
+			}
+
+			return <<<OUT
 <?php
 	if (isset({$token}['context']) || (isset({$token}['album']['context']))):
 		$ref = array();
@@ -43,15 +47,15 @@
 		}
 ?>
 OUT;
-        }
+		}
 
-        public function close()
-        {
-            return <<<OUT
+		function close()
+		{
+			return <<<OUT
 <?php
 	unset(\$__neighbors);
 	endif;
 ?>
 OUT;
-        }
-    }
+		}
+	}

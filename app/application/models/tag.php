@@ -1,107 +1,124 @@
 <?php
 
-class Tag extends Koken
-{
-    public $has_many = array(
-        'content',
-        'album',
-        'text'
-    );
+class Tag extends Koken {
 
-    public function to_array($params = array())
-    {
-        $params = array_merge(array('limit_to' => false), $params);
+	var $has_many = array(
+		'content',
+		'album',
+		'text'
+	);
 
-        $data = array(
-            'id' => $this->id,
-            'title' => $this->name,
-            '__koken__' => 'tag',
-        );
+	function to_array($params = array())
+	{
+		$params = array_merge(array('limit_to' => false), $params);
 
-        $data['counts'] = array(
-            'content' => (int) $this->content_count,
-            'albums' => (int) $this->album_count,
-            'essays' => (int) $this->text_count
-        );
+		$data = array(
+			'id' => $this->id,
+			'title' => $this->name,
+			'__koken__' => 'tag',
+		);
 
-        $data['counts']['total'] = $data['counts']['content'] + $data['counts']['albums'] + $data['counts']['essays'];
+		$data['counts'] = array(
+			'content' => (int) $this->content_count,
+			'albums' => (int) $this->album_count,
+			'essays' => (int) $this->text_count
+		);
 
-        $data['url'] = $this->url($params);
+		$data['counts']['total'] = $data['counts']['content'] + $data['counts']['albums'] + $data['counts']['essays'];
 
-        if ($data['url']) {
-            list($data['__koken_url'], $data['url']) = $data['url'];
-        }
+		$data['url'] = $this->url($params);
 
-        $koken_url_info = $this->config->item('koken_url_info');
-        $base = $koken_url_info->base;
+		if ($data['url'])
+		{
+			list($data['__koken_url'], $data['url']) = $data['url'];
+		}
 
-        $data['items'] = $base . 'api.php?/tags/' . $this->id;
+		$koken_url_info = $this->config->item('koken_url_info');
+		$base = $koken_url_info->base;
 
-        return $data;
-    }
+		$data['items'] = $base . 'api.php?/tags/' . $this->id;
 
-    public function listing($params = array())
-    {
-        $defaults = array(
-            'order_by' => 'count',
-            'order_direction' => 'DESC',
-            'floor' => 1,
-            'tags' => false,
-            'limit_to' => false,
-            'page' => false,
-            'limit' => false
-        );
+		return $data;
+	}
 
-        $options = array_merge($defaults, $params);
+	function listing($params = array())
+	{
+		$defaults = array(
+			'order_by' => 'count',
+			'order_direction' => 'DESC',
+			'floor' => 1,
+			'tags' => false,
+			'limit_to' => false,
+			'page' => false,
+			'limit' => false
+		);
 
-        if ($options['order_by'] === 'essay_count') {
-            $options['order_by'] = 'text_count';
-        } elseif ($options['order_by'] === 'title') {
-            $options['order_by'] = 'name';
-            if (!isset($params['order_direction'])) {
-                $options['order_direction'] = 'ASC';
-            }
-        } elseif (strpos($options['order_by'], 'count') === false) {
-            $options['order_by'] = 'count';
-        }
+		$options = array_merge($defaults, $params);
 
-        if ($options['limit_to']) {
-            $count_col = str_replace('essay', 'text', rtrim($options['limit_to'], 's')) . '_count';
-            if (!in_array($options['order_by'], array('last_used', 'name'))) {
-                $options['order_by'] = $count_col;
-            }
+		if ($options['order_by'] === 'essay_count')
+		{
+			$options['order_by'] = 'text_count';
+		}
+		else if ($options['order_by'] === 'title')
+		{
+			$options['order_by'] = 'name';
+			if (!isset($params['order_direction']))
+			{
+				$options['order_direction'] = 'ASC';
+			}
+		}
+		else if (strpos($options['order_by'], 'count') === false)
+		{
+			$options['order_by'] = 'count';
+		}
 
-            $this->where($count_col . ' >=', $options['floor']);
-        } else {
-            $this->where_func('', array('@content_count', '+', '@text_count',  '+',  '@album_count', '>=', $options['floor']), null);
-        }
+		if ($options['limit_to'])
+		{
+			$count_col = str_replace('essay', 'text', rtrim($options['limit_to'], 's')) . '_count';
+			if (!in_array($options['order_by'], array('last_used', 'name')))
+			{
+				$options['order_by'] = $count_col;
+			}
 
-        $final = $this->paginate($options);
+			$this->where($count_col . ' >=', $options['floor']);
+		}
+		else
+		{
+			$this->where_func('', array('@content_count', '+', '@text_count',  '+',  '@album_count', '>=', $options['floor']), null);
+		}
 
-        if ($options['order_by'] === 'count') {
-            $this->order_by_func('', array('@content_count', '+', '@text_count',  '+',  '@album_count'), $options['order_direction']);
-        } else {
-            $this->order_by($options['order_by'] . ' ' . $options['order_direction']);
-        }
+		$final = $this->paginate($options);
 
-        // If count based order, add secondary sort to break ties
-        if (strpos($options['order_by'], 'count') !== false) {
-            $this->order_by('name ASC');
-        }
+		if ($options['order_by'] === 'count')
+		{
+			$this->order_by_func('', array('@content_count', '+', '@text_count',  '+',  '@album_count'), $options['order_direction']);
+		}
+		else
+		{
+			$this->order_by($options['order_by'] . ' ' . $options['order_direction']);
+		}
 
-        $data = $this->get_iterated();
+		// If count based order, add secondary sort to break ties
+		if (strpos($options['order_by'], 'count') !== false)
+		{
+			$this->order_by('name ASC');
+		}
 
-        if (!$options['limit']) {
-            $final['per_page'] = $data->result_count();
-            $final['total'] = $data->result_count();
-        }
+		$data = $this->get_iterated();
 
-        $final['tags'] = array();
-        foreach ($data as $tag) {
-            $final['tags'][] = $tag->to_array($options);
-        }
-        return $final;
-    }
+		if (!$options['limit'])
+		{
+			$final['per_page'] = $data->result_count();
+			$final['total'] = $data->result_count();
+		}
+
+		$final['tags'] = array();
+		foreach($data as $tag)
+		{
+			$final['tags'][] = $tag->to_array($options);
+		}
+		return $final;
+	}
 }
 
 /* End of file trash.php */

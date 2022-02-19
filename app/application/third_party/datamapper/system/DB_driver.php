@@ -1,8 +1,4 @@
-<?php
-
-if (! defined('BASEPATH')) {
-    exit('No direct script access allowed');
-}
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 /**
  * Data Mapper ORM bootstrap
@@ -21,8 +17,9 @@ if (! defined('BASEPATH')) {
 $org_driver = $driver;
 $driver = str_replace('CI_DB_', 'DM_DB_', $driver);
 
-if (! class_exists($driver, false)) {
-    $dmclass = <<<CODE
+if ( ! class_exists($driver, FALSE) )
+{
+	$dmclass = <<<CODE
 class $driver extends $org_driver
 {
 	// public interface to internal driver methods
@@ -65,9 +62,9 @@ class $driver extends $org_driver
 }
 CODE;
 
-    // dynamically add our class extension
-    eval($dmclass);
-    unset($dmclass);
+	// dynamically add our class extension
+	eval($dmclass);
+	unset($dmclass);
 }
 
 /* End of file DB_driver.php */

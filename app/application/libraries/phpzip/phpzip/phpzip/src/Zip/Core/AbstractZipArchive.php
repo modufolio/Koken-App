@@ -21,45 +21,45 @@ use ZipMerge\Zip\Core\AbstractZipWriter;
 use ZipMerge\Zip\Core\Header\ZipFileEntry;
 use ZipMerge\Zip\Stream\ZipMerge;
 
-abstract class AbstractZipArchive extends AbstractZipWriter
-{
-    public const APP_NAME = 'PHPZip';
-    public const VERSION = "2.0.8";
-    public const MIN_PHP_VERSION = 5.3; // for namespaces
 
-    public const CONTENT_TYPE = 'application/zip';
+abstract class AbstractZipArchive extends AbstractZipWriter {
+    const APP_NAME = 'PHPZip';
+    const VERSION = "2.0.8";
+    const MIN_PHP_VERSION = 5.3; // for namespaces
 
-    public const NULL_BYTE = "\x00";
-    public const NULL_WORD = "\x00\x00"; // Two nul bytes, used often enough.
-    public const NULL_DWORD = "\x00\x00\x00\x00";
+    const CONTENT_TYPE = 'application/zip';
 
-    public const ZIP_CENTRAL_FILE_HEADER = "PK\x01\x02"; // Central file header signature
-    public const ZIP_LOCAL_FILE_HEADER = "PK\x03\x04"; // Local file header signature
-    public const ZIP_LOCAL_DATA_DESCRIPTOR = "PK\x07\x08"; // Local Header, data descriptor
-    public const ZIP_END_OF_CENTRAL_DIRECTORY = "PK\x05\x06"; // End of Central directory record
+    const NULL_BYTE = "\x00";
+    const NULL_WORD = "\x00\x00"; // Two nul bytes, used often enough.
+    const NULL_DWORD = "\x00\x00\x00\x00";
 
-    public const HEADER_UNIX_TYPE_1 = 'UX';            // \x55\x58 or 0x5855 It has been replaced by the extended-timestamp extra block 'UT' (0x5455) and the Unix type 2 extra block 'Ux' (0x7855).
-    public const HEADER_UNIX_TYPE_2 = 'Ux';            // \x55\x78 or 0x7855
-    public const HEADER_UNIX_TYPE_3 = 'ux';            // \x75\x78 or 0x7875
-    public const HEADER_EXTENDED_TIMESTAMP = 'UT';     // \x55\x54 or 0x5455
-    public const HEADER_UNICODE_PATH = 'up';           // \x75\x70 or 0x7075
-    public const HEADER_UNICODE_COMMENT = 'uc';        // \x75\x63 or 0x6375
+    const ZIP_CENTRAL_FILE_HEADER = "PK\x01\x02"; // Central file header signature
+    const ZIP_LOCAL_FILE_HEADER = "PK\x03\x04"; // Local file header signature
+    const ZIP_LOCAL_DATA_DESCRIPTOR = "PK\x07\x08"; // Local Header, data descriptor
+    const ZIP_END_OF_CENTRAL_DIRECTORY = "PK\x05\x06"; // End of Central directory record
 
-    public const EXT_FILE_ATTR_DIR = 010173200020;     // Permission 755 drwxr-xr-x = (((S_IFDIR | 0755) << 16) | S_DOS_D);
-    public const EXT_FILE_ATTR_FILE = 020151000040;    // Permission 644 -rw-r--r-- = (((S_IFREG | 0644) << 16) | S_DOS_A);
+    const HEADER_UNIX_TYPE_1 = 'UX';            // \x55\x58 or 0x5855 It has been replaced by the extended-timestamp extra block 'UT' (0x5455) and the Unix type 2 extra block 'Ux' (0x7855).
+    const HEADER_UNIX_TYPE_2 = 'Ux';            // \x55\x78 or 0x7855
+    const HEADER_UNIX_TYPE_3 = 'ux';            // \x75\x78 or 0x7875
+    const HEADER_EXTENDED_TIMESTAMP = 'UT';     // \x55\x54 or 0x5455
+    const HEADER_UNICODE_PATH = 'up';           // \x75\x70 or 0x7075
+    const HEADER_UNICODE_COMMENT = 'uc';        // \x75\x63 or 0x6375
 
-    public const ATTR_VERSION_TO_EXTRACT = "\x14\x00"; // Version needed to extract = 20 (File is compressed using Deflate compression)
-    public const ATTR_MADE_BY_VERSION = "\x1E\x03";    // Made By Version
+    const EXT_FILE_ATTR_DIR = 010173200020;     // Permission 755 drwxr-xr-x = (((S_IFDIR | 0755) << 16) | S_DOS_D);
+    const EXT_FILE_ATTR_FILE = 020151000040;    // Permission 644 -rw-r--r-- = (((S_IFREG | 0644) << 16) | S_DOS_A);
 
-    public const DEFAULT_GZ_TYPE = "\x08\x00";         // Compression type 8 = deflate
-    public const DEFAULT_GP_FLAGS = self::NULL_WORD;     // General Purpose bit flags for compression type 8 it is: 0=Normal, 1=Maximum, 2=Fast, 3=super fast compression.
+    const ATTR_VERSION_TO_EXTRACT = "\x14\x00"; // Version needed to extract = 20 (File is compressed using Deflate compression)
+    const ATTR_MADE_BY_VERSION = "\x1E\x03";    // Made By Version
 
-    public const DEFAULT_GZ_TYPE_STORED = self::NULL_WORD;  // Compression type 0 = stored
-    public const DEFAULT_GP_FLAGS_STORED = self::NULL_WORD; // Compression type 0 = stored
+    const DEFAULT_GZ_TYPE = "\x08\x00";         // Compression type 8 = deflate
+    const DEFAULT_GP_FLAGS = self::NULL_WORD;     // General Purpose bit flags for compression type 8 it is: 0=Normal, 1=Maximum, 2=Fast, 3=super fast compression.
+
+    const DEFAULT_GZ_TYPE_STORED = self::NULL_WORD;  // Compression type 0 = stored
+    const DEFAULT_GP_FLAGS_STORED = self::NULL_WORD; // Compression type 0 = stored
 
     // UID 1000, GID 0
-    public const EXTRA_FIELD_NEW_UNIX_GUID = "ux\x0B\x00\x01\x04\xE8\x03\x00\x00\x04\x00\x00\x00\x00"; // \x75\x78 3rd gen Unis GUID
-    public const EXTRA_FIELD_NEW_UNIX_GUID_CD = "ux\x00\x00"; // \x75\x78 3rd gen Unis GUID CD record version must have length 0.
+    const EXTRA_FIELD_NEW_UNIX_GUID = "ux\x0B\x00\x01\x04\xE8\x03\x00\x00\x04\x00\x00\x00\x00"; // \x75\x78 3rd gen Unis GUID
+    const EXTRA_FIELD_NEW_UNIX_GUID_CD = "ux\x00\x00"; // \x75\x78 3rd gen Unis GUID CD record version must have length 0.
 
     protected $zipComment = null;
     protected $cdRec = array(); // central directory
@@ -97,8 +97,7 @@ abstract class AbstractZipArchive extends AbstractZipWriter
      *
      * @throws \PHPZip\Zip\Exception\InvalidPhpConfiguration In case of errors
      */
-    protected function __construct($streamChunkSize)
-    {
+    protected function __construct($streamChunkSize) {
         $this->streamChunkSize = $streamChunkSize;
 
         if (count($this->_phpConfigurationWatch) > 0) {
@@ -123,8 +122,7 @@ abstract class AbstractZipArchive extends AbstractZipWriter
      *
      * @param bool $setExtraField true (default) will enable adding of extra fields, anything else will disable it.
      */
-    public function setExtraField($setExtraField = true)
-    {
+    public function setExtraField($setExtraField = true) {
         $this->addExtraField = ($setExtraField === true);
     }
 
@@ -137,8 +135,7 @@ abstract class AbstractZipArchive extends AbstractZipWriter
      *
      * @return bool $success
      */
-    public function setComment($newComment = null)
-    {
+    public function setComment($newComment = null) {
         if ($this->isFinalized) {
             return false;
         }
@@ -162,8 +159,7 @@ abstract class AbstractZipArchive extends AbstractZipWriter
      *
      * @return bool  $success
      */
-    public function addDirectory($directoryPath, $timestamp = 0, $fileComment = null, $extFileAttr = self::EXT_FILE_ATTR_DIR)
-    {
+    public function addDirectory($directoryPath, $timestamp = 0, $fileComment = null, $extFileAttr = self::EXT_FILE_ATTR_DIR) {
         // TODO: get rid of magic numbers.
         $result = false;
 
@@ -171,18 +167,14 @@ abstract class AbstractZipArchive extends AbstractZipWriter
             $directoryPath = str_replace("\\", '/', $directoryPath);
             $directoryPath = rtrim($directoryPath, '/');
 
-            if (BinStringStatic::_strlen($directoryPath) > 0) {
-                $this->buildZipEntry(
-                    $directoryPath.'/',
+        if (BinStringStatic::_strlen($directoryPath) > 0) {
+                $this->buildZipEntry($directoryPath.'/',
                     $fileComment,
                     self::DEFAULT_GZ_TYPE_STORED,
                     self::DEFAULT_GP_FLAGS_STORED,
                     $timestamp,
                     "\x00\x00\x00\x00",
-                    0,
-                    0,
-                    $extFileAttr
-                );
+                    0, 0, $extFileAttr);
                 $result = true;
             }
         }
@@ -204,8 +196,7 @@ abstract class AbstractZipArchive extends AbstractZipWriter
      *
      * @return bool  $success
      */
-    public function addFile($data, $filePath, $timestamp = 0, $fileComment = null, $compress = null, $extFileAttr = self::EXT_FILE_ATTR_FILE)
-    {
+    public function addFile($data, $filePath, $timestamp = 0, $fileComment = null, $compress = null, $extFileAttr = self::EXT_FILE_ATTR_FILE) {
         if ($this->isFinalized) {
             return false;
         }
@@ -275,17 +266,8 @@ abstract class AbstractZipArchive extends AbstractZipWriter
      * @param int    $extDirAttr     Permissions for directories.
      * @param int    $extFileAttr    Permissions for files.
      */
-    public function addDirectoryContent(
-        $realPath,
-        $zipPath,
-        $recursive = true,
-        $followSymlinks = true,
-        &$addedFiles = array(),
-        $overrideFilePermissions = false,
-        $extDirAttr = self::EXT_FILE_ATTR_DIR,
-        $extFileAttr = self::EXT_FILE_ATTR_FILE
-    )
-    {
+    public function addDirectoryContent($realPath, $zipPath, $recursive = true, $followSymlinks = true, &$addedFiles = array(),
+                                        $overrideFilePermissions = false, $extDirAttr = self::EXT_FILE_ATTR_DIR, $extFileAttr = self::EXT_FILE_ATTR_FILE) {
         if (file_exists($realPath) && !isset($addedFiles[realpath($realPath)])) {
             if (is_dir($realPath)) {
                 $this->addDirectory(
@@ -319,7 +301,7 @@ abstract class AbstractZipArchive extends AbstractZipWriter
                             null,
                             $overrideFilePermissions ? $extFileAttr : ZipUtils::getFileExtAttr($newRealPath)
                         );
-                    } elseif ($recursive) {
+                    } else if ($recursive) {
                         $this->addDirectoryContent(
                             $newRealPath,
                             $newZipPath,
@@ -350,8 +332,7 @@ abstract class AbstractZipArchive extends AbstractZipWriter
      * @param string $subPath place the contents in the $subPath sub-folder, default is '', and places the
      *        content in the root of the new zip file.
      */
-    public function appendZip($file, $subPath = '')
-    {
+    public function appendZip($file, $subPath = '') {
         $zipMerge = new ZipMerge(null);
         $zipMerge->appendZip($file, $subPath, $this);
         $files = $zipMerge->finalize();
@@ -361,7 +342,7 @@ abstract class AbstractZipArchive extends AbstractZipWriter
             /* @var $fileEntry ZipFileEntry */
             $fileEntry->offset = $this->offset;
             $this->cdRec[] = $fileEntry->getCentralDirectoryHeader();
-            $this->offset += BinStringStatic::_strlen($fileEntry->getLocalHeader()) + $fileEntry->gzLength;
+            $this->offset += BinStringStatic::_strlen( $fileEntry->getLocalHeader()) + $fileEntry->gzLength;
         }
     }
 
@@ -379,14 +360,14 @@ abstract class AbstractZipArchive extends AbstractZipWriter
      *
      * @return bool  $success
      */
-    public function addLargeFile($dataFile, $filePath, $timestamp = 0, $fileComment = null, $extFileAttr = self::EXT_FILE_ATTR_FILE)
-    {
+    public function addLargeFile($dataFile, $filePath, $timestamp = 0, $fileComment = null, $extFileAttr = self::EXT_FILE_ATTR_FILE) {
         $result = false;
 
         if (!$this->isFinalized) {
+
             if (is_string($dataFile) && is_file($dataFile)) {
                 $this->processFile($dataFile, $filePath, $timestamp, $fileComment, $extFileAttr);
-            } elseif (is_resource($dataFile) && get_resource_type($dataFile) == "stream") {
+            } else if (is_resource($dataFile) && get_resource_type($dataFile) == "stream") {
                 $fh = $dataFile;
                 $this->openStream($filePath, $timestamp, $fileComment, $extFileAttr);
 
@@ -421,8 +402,8 @@ abstract class AbstractZipArchive extends AbstractZipWriter
      *
      * @return bool $success
      */
-    public function openStream($filePath, $timestamp = 0, $fileComment = null, $extFileAttr = self::EXT_FILE_ATTR_FILE)
-    {
+    public function openStream($filePath, $timestamp = 0, $fileComment = null, $extFileAttr = self::EXT_FILE_ATTR_FILE) {
+
         $result = false;
 
         if (!function_exists('sys_get_temp_dir')) {
@@ -471,8 +452,7 @@ abstract class AbstractZipArchive extends AbstractZipWriter
      *
      * @return mixed length in bytes added or false if the archive is finalized or there are no open stream.
      */
-    public function addStreamData($data)
-    {
+    public function addStreamData($data) {
         if ($this->isFinalized || BinStringStatic::_strlen($this->streamFilePath) == 0) {
             return false;
         }
@@ -499,8 +479,7 @@ abstract class AbstractZipArchive extends AbstractZipWriter
      *
      * @return bool $success
      */
-    public function closeStream()
-    {
+    public function closeStream() {
         if ($this->isFinalized || BinStringStatic::_strlen($this->streamFilePath) == 0) {
             return false;
         }
@@ -544,8 +523,7 @@ abstract class AbstractZipArchive extends AbstractZipWriter
      *
      * @return bool     $success
      */
-    protected function processFile($dataFile, $filePath, $timestamp = 0, $fileComment = null, $extFileAttr = self::EXT_FILE_ATTR_FILE)
-    {
+    protected function processFile($dataFile, $filePath, $timestamp = 0, $fileComment = null, $extFileAttr = self::EXT_FILE_ATTR_FILE) {
 
         // TODO: change the magic numbers below to constants.
 
@@ -555,7 +533,7 @@ abstract class AbstractZipArchive extends AbstractZipWriter
 
         $tempZip = self::getTemporaryFile();
 
-        $zip = new \ZipArchive();
+        $zip = new \ZipArchive;
         $rv = $zip->open($tempZip, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
 
         if ($rv === true) { // open returns true if successful, however one of the error values is 1, which will also read as true.
@@ -628,8 +606,7 @@ abstract class AbstractZipArchive extends AbstractZipWriter
      * @param int    $dataLength
      * @param int    $extFileAttr Use self::EXT_FILE_ATTR_FILE for files, self::EXT_FILE_ATTR_DIR for Directories.
      */
-    protected function buildZipEntry($filePath, $fileComment, $gpFlags, $gzType, $timestamp, $fileCRC32, $gzLength, $dataLength, $extFileAttr)
-    {
+    protected function buildZipEntry($filePath, $fileComment, $gpFlags, $gzType, $timestamp, $fileCRC32, $gzLength, $dataLength, $extFileAttr) {
         $filePath = str_replace("\\", "/", $filePath);
         $fileCommentLength = (empty($fileComment) ? 0 : BinStringStatic::_strlen($fileComment));
         $timestamp = (int)$timestamp;
@@ -667,7 +644,7 @@ abstract class AbstractZipArchive extends AbstractZipWriter
 
             if ($isFileUTF8) {
                 $utfExField = self::HEADER_UNICODE_PATH // utf8 encoded File path extra field
-                    . pack("v", (5 + BinStringStatic::_strlen($filePath)))
+                    . pack ("v", (5 + BinStringStatic::_strlen($filePath)))
                     . "\x01"
                     . pack("V", crc32($filePath))
                     . $filePath;
@@ -677,7 +654,7 @@ abstract class AbstractZipArchive extends AbstractZipWriter
             }
             if ($isCommentUTF8) {
                 $cenExField .= self::HEADER_UNICODE_COMMENT // utf8 encoded file comment extra field
-                    . pack("v", (5 + BinStringStatic::_strlen($fileComment)))
+                    . pack ("v", (5 + BinStringStatic::_strlen($fileComment)))
                     . "\x01"
                     . pack("V", crc32($fileComment))
                     . $fileComment;
@@ -738,8 +715,7 @@ abstract class AbstractZipArchive extends AbstractZipWriter
      *
      * @return bool Always returns true (for backward compatibility).
      */
-    public function buildResponseHeader($fileName = null, $contentType = self::CONTENT_TYPE, $utf8FileName = null, $inline = false)
-    {
+    public function buildResponseHeader($fileName = null, $contentType = self::CONTENT_TYPE, $utf8FileName = null, $inline = false) {
         $ob = null;
         $headerFile = null;
         $headerLine = null;
@@ -811,8 +787,7 @@ abstract class AbstractZipArchive extends AbstractZipWriter
      *
      * @return bool Success
      */
-    public function finalize()
-    {
+    public function finalize() {
         if (!$this->isFinalized) {
             if (BinStringStatic::_strlen($this->streamFilePath) > 0) {
                 $this->closeStream();
@@ -850,10 +825,9 @@ abstract class AbstractZipArchive extends AbstractZipWriter
      *
      * @author A. Grandt <php@grandt.com>
      */
-    public function checkVersion()
-    {
-        if (version_compare(PHP_VERSION, self::MIN_PHP_VERSION, '<') || !function_exists('sys_get_temp_dir')) {
-            die("ERROR: " . self::APP_NAME . " " . self::VERSION . " requires PHP version " . self::MIN_PHP_VERSION . " or above.");
+    public function checkVersion() {
+        if (version_compare(PHP_VERSION, self::MIN_PHP_VERSION, '<') || !function_exists('sys_get_temp_dir') ) {
+            die ("ERROR: " . self::APP_NAME . " " . self::VERSION . " requires PHP version " . self::MIN_PHP_VERSION . " or above.");
         }
     }
 
@@ -981,8 +955,7 @@ abstract class AbstractZipArchive extends AbstractZipWriter
      *
      * @param ZipArchiveListener $listener Class that implements the ZipArchiveListener interface.
      */
-    public function addListener(ZipArchiveListener $listener)
-    {
+    public function addListener(ZipArchiveListener $listener) {
         $this->_listeners[] = $listener;
     }
 
@@ -993,8 +966,7 @@ abstract class AbstractZipArchive extends AbstractZipWriter
      *
      * @param ZipArchiveListener $listener Class that implements the ZipArchiveListener interface.
      */
-    public function removeListener(ZipArchiveListener $listener)
-    {
+    public function removeListener(ZipArchiveListener $listener) {
         $key = array_search($listener, $this->_listeners);
 
         if ($key !== false) {
@@ -1010,8 +982,7 @@ abstract class AbstractZipArchive extends AbstractZipWriter
      * @param string|null $method (Optional) The name of the event to fire. If this is null, then the calling method is used.
      * @param array       $data Method parameters passed as an array.
      */
-    private function _notifyListeners($method = null, array $data = array())
-    {
+    private function _notifyListeners($method = null, array $data = array()) {
         if (is_null($method)) {
             $backtrace = debug_backtrace();
             if (sizeof($backtrace) > 0) {
@@ -1038,8 +1009,7 @@ abstract class AbstractZipArchive extends AbstractZipWriter
      *
      * @throws AbstractException $exception
      */
-    private function _throwException(AbstractException $exception)
-    {
+    private function _throwException(AbstractException $exception) {
         $this->_notifyListeners('onException', array(
             'exception' => $exception,
         ));
@@ -1060,8 +1030,7 @@ abstract class AbstractZipArchive extends AbstractZipWriter
      *
      * @return string The full path to a temporary file.
      */
-    public static function getTemporaryFile()
-    {
+    public static function getTemporaryFile() {
         if (is_callable(self::$temp)) {
             $file = @call_user_func(self::$temp);
 

@@ -12,9 +12,9 @@ namespace PHPZip\Zip\Stream;
 
 use PHPZip\Zip\Core\AbstractZipArchive;
 
-class ZipStream extends AbstractZipArchive
-{
-    public const STREAM_CHUNK_SIZE = 16384; // 16 KB
+class ZipStream extends AbstractZipArchive {
+
+    const STREAM_CHUNK_SIZE = 16384; // 16 KB
     private $maxStreamBufferLength = 1048576;
 
     /**
@@ -30,21 +30,19 @@ class ZipStream extends AbstractZipArchive
      *
      * @throws \PHPZip\Zip\Exception\BufferNotEmpty, HeadersSent, IncompatiblePhpVersion, InvalidPhpConfiguration In case of errors
      */
-    public function __construct($fileName = '', $contentType = self::CONTENT_TYPE, $utf8FileName = null, $inline = false)
-    {
+    public function __construct($fileName = '', $contentType = self::CONTENT_TYPE, $utf8FileName = null, $inline = false) {
         parent::__construct(self::STREAM_CHUNK_SIZE);
         $this->buildResponseHeader($fileName, $contentType, $utf8FileName, $inline);
     }
 
     /**
      * Destructor.
-     * Perform clean up actions.
+     * Perform clean up actions. 
      * Please note that frameworks are absolutely prohibited from sending ANYTHING to the output after the Zip is sent.
      *
      * @author A. Grandt <php@grandt.com>
      */
-    public function __destruct()
-    {
+    public function __destruct(){
         $this->isFinalized = true;
         $this->cdRec = null;
     }
@@ -64,8 +62,7 @@ class ZipStream extends AbstractZipArchive
      *
      * @param array $params Array that contains zipEntry.
      */
-    public function onBuildZipEntry(array $params)
-    {
+    public function onBuildZipEntry(array $params){
         print($params['zipEntry']);
     }
 
@@ -78,8 +75,7 @@ class ZipStream extends AbstractZipArchive
      *
      * @param array $params Array that contains gzLength.
      */
-    public function onBeginAddFile(array $params)
-    {
+    public function onBeginAddFile(array $params){
         // Do nothing.
     }
 
@@ -92,8 +88,7 @@ class ZipStream extends AbstractZipArchive
      *
      * @param array $params Array that contains gzData.
      */
-    public function onEndAddFile(array $params)
-    {
+    public function onEndAddFile(array $params){
         print($params['gzData']);
     }
 
@@ -104,8 +99,7 @@ class ZipStream extends AbstractZipArchive
      * @author A. Grandt <php@grandt.com>
      * @author Greg Kappatos
      */
-    public function onBeginBuildResponseHeader()
-    {
+    public function onBeginBuildResponseHeader(){
         // Do nothing.
     }
 
@@ -116,8 +110,7 @@ class ZipStream extends AbstractZipArchive
      * @author A. Grandt <php@grandt.com>
      * @author Greg Kappatos
      */
-    public function onEndBuildResponseHeader()
-    {
+    public function onEndBuildResponseHeader(){
         //header("Connection: Keep-Alive");
         $this->zipFlushBuffer();
     }
@@ -129,8 +122,7 @@ class ZipStream extends AbstractZipArchive
      * @author A. Grandt <php@grandt.com>
      * @author Greg Kappatos
      */
-    public function onOpenStream()
-    {
+    public function onOpenStream(){
         // Do nothing.
     }
 
@@ -143,8 +135,7 @@ class ZipStream extends AbstractZipArchive
      *
      * @param array $params Array that contains data.
      */
-    public function onProcessFile(array $params)
-    {
+    public function onProcessFile(array $params){
         print($params['data']);
         $this->zipFlushBuffer();
     }
@@ -156,9 +147,9 @@ class ZipStream extends AbstractZipArchive
      *
      * @param int $gzLength length of the pending data.
      */
-    public function zipVerifyMemBuffer($gzLength)
-    {
-        if (ob_get_length() !== false && ob_get_length() > $this->maxStreamBufferLength) {
+    public function zipVerifyMemBuffer($gzLength) {
+        if (ob_get_length() !== FALSE && ob_get_length() > $this->maxStreamBufferLength) {
+
             ob_flush();
 
             while (ob_get_length() > $this->maxStreamBufferLength) {
@@ -173,8 +164,7 @@ class ZipStream extends AbstractZipArchive
      *
      * @param string $data
      */
-    public function zipWrite($data)
-    {
+    public function zipWrite($data) {
         print($data);
     }
 
@@ -184,8 +174,7 @@ class ZipStream extends AbstractZipArchive
      * @author A. Grandt <php@grandt.com>
      *
      */
-    public function zipFlush()
-    {
+    public function zipFlush() {
         // Does nothing.
     }
 
@@ -194,8 +183,7 @@ class ZipStream extends AbstractZipArchive
      * @author A. Grandt <php@grandt.com>
      *
      */
-    public function zipFlushBuffer()
-    {
+    public function zipFlushBuffer() {
         flush();
         $this->zipVerifyMemBuffer(0);
     }
@@ -203,16 +191,14 @@ class ZipStream extends AbstractZipArchive
     /**
      * @return int
      */
-    public function getMaxStreamBufferLength()
-    {
+    public function getMaxStreamBufferLength() {
         return $this->maxStreamBufferLength;
     }
 
     /**
      * @param int $maxStreamBufferLength
      */
-    public function setMaxStreamBufferLength($maxStreamBufferLength)
-    {
+    public function setMaxStreamBufferLength($maxStreamBufferLength) {
         $this->maxStreamBufferLength = $maxStreamBufferLength;
     }
 }

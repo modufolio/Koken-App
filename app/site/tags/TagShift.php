@@ -1,28 +1,35 @@
 <?php
 
-    class TagShift extends Tag
-    {
-        public $tokenize = true;
+	class TagShift extends Tag {
 
-        public function generate()
-        {
-            $token = Koken::$tokens[0];
-            if (isset($this->parameters['data'])) {
-                $looper = $this->field_to_keys('data', 'value', 1);
-            } else {
-                $looper = '$value' . Koken::$tokens[1] . "['__loop__']";
-            }
+		public $tokenize = true;
 
-            $ref = "\$value{$token}['__koken__']";
+		function generate()
+		{
+			$token = Koken::$tokens[0];
+			if (isset($this->parameters['data']))
+			{
+				$looper = $this->field_to_keys('data', 'value', 1);
+			}
+			else
+			{
+				$looper = '$value' . Koken::$tokens[1] . "['__loop__']";
+			}
 
-            if (isset($this->parameters['_pop'])) {
-                $action = 'array_pop';
-            } else {
-                $action = 'array_shift';
-            }
+			$ref = "\$value{$token}['__koken__']";
 
-            if ($looper) {
-                return <<<DOC
+			if (isset($this->parameters['_pop']))
+			{
+				$action = 'array_pop';
+			}
+			else
+			{
+				$action = 'array_shift';
+			}
+
+			if ($looper)
+			{
+				return <<<DOC
 <?php
 
 	\$value$token = $action($looper);
@@ -32,6 +39,7 @@
 
 ?>
 DOC;
-            }
-        }
-    }
+			}
+		}
+
+	}

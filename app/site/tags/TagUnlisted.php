@@ -1,13 +1,13 @@
 <?php
 
-class TagUnlisted extends Tag
-{
-    protected $allows_close = true;
+class TagUnlisted extends Tag {
 
-    public function generate()
-    {
-        return <<<DOC
+	protected $allows_close = true;
+
+	function generate()
+	{
+		return <<<DOC
 <?php if (!Koken::\$public): ?>
 DOC;
-    }
+	}
 }

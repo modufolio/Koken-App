@@ -1,193 +1,194 @@
 <?php
 
-class DarkroomImageMagick extends Darkroom
-{
-    private $sourceArgs = array();
-    private $destinationArgs = array();
-    private $pathToConvert;
-    private $limits = array();
-    private $isGmagick = false;
+class DarkroomImageMagick extends Darkroom {
 
-    public function __construct($path = 'convert', $limits = array())
-    {
-        $this->pathToConvert = $path;
+	private $sourceArgs = array();
+	private $destinationArgs = array();
+	private $pathToConvert;
+	private $limits = array();
+	private $isGmagick = false;
 
-        $this->isGmagick = strpos($this->pathToConvert, 'gm convert') !== false;
+	function __construct($path = 'convert', $limits = array())
+	{
+		$this->pathToConvert = $path;
 
-        $this->limits = array_merge(array(
-            'thread' => false,
-            'memory' => false,
-            'map' => false,
-        ), $limits);
+		$this->isGmagick = strpos($this->pathToConvert, 'gm convert') !== false;
 
-        if ($this->limits['thread'] !== false) {
-            /*
-                Thread limit is supported in GraphicsMagick, but is a newer addition. It
-                also uses "-limit threads" instead of ImageMagick's "-limit thread". Would
-                need a way to detect this, so just turn it off for now.
+		$this->limits = array_merge(array(
+			'thread' => false,
+			'memory' => false,
+			'map' => false,
+		), $limits);
 
-                http://www.graphicsmagick.org/OpenMP.html
-            */
-            if ($this->isGmagick) {
-                $this->limits['thread'] = false;
-            } else {
-                $cache = dirname(__FILE__).'/thread';
+		if ($this->limits['thread'] !== false) {
+			/*
+				Thread limit is supported in GraphicsMagick, but is a newer addition. It
+				also uses "-limit threads" instead of ImageMagick's "-limit thread". Would
+				need a way to detect this, so just turn it off for now.
 
-                if (file_exists($cache)) {
-                    if (trim(file_get_contents($cache)) !== 'on') {
-                        $this->limits['thread'] = false;
-                    }
-                } else {
-                    // Also not supported if it isn't listed in the idenfify output
-                    // (not compiled with OpenMP)
-                    $resourceOutput = shell_exec(str_replace('convert', 'identify -list resource', $this->pathToConvert));
-                    if (strpos(strtolower($resourceOutput), 'thread') === false) {
-                        $this->limits['thread'] = false;
-                    }
+				http://www.graphicsmagick.org/OpenMP.html
+			*/
+			if ($this->isGmagick) {
+				$this->limits['thread'] = false;
+			} else {
+				$cache = dirname(__FILE__).'/thread';
 
-                    file_put_contents($cache, $this->limits['thread'] === false ? 'off' : 'on');
-                }
-            }
-        }
-    }
+				if (file_exists($cache)) {
+					if (trim(file_get_contents($cache)) !== 'on') {
+						$this->limits['thread'] = false;
+					}
+				} else {
+					// Also not supported if it isn't listed in the idenfify output
+					// (not compiled with OpenMP)
+					$resourceOutput = shell_exec(str_replace('convert', 'identify -list resource', $this->pathToConvert));
+					if (strpos(strtolower($resourceOutput), 'thread') === false) {
+						$this->limits['thread'] = false;
+					}
 
-    private function setupArgs()
-    {
-        $this->sourceArgs = array($this->pathToConvert);
-        $this->destinationArgs = array_merge(
-            $this->setupLimitArgs(),
-            array('-density 72', "-quality {$this->quality}")
-        );
+					file_put_contents($cache, $this->limits['thread'] === false ? 'off' : 'on');
+				}
+			}
+		}
+	}
 
-        if ($this->stripMetadata) {
-            $this->sourceArgs[] = '-strip';
-        }
+	private function setupArgs()
+	{
+		$this->sourceArgs = array($this->pathToConvert);
+		$this->destinationArgs = array_merge(
+			$this->setupLimitArgs(),
+			array('-density 72', "-quality {$this->quality}")
+		);
 
-        if ($this->isAnimatedGif) {
-            if ($this->isGmagick) {
-                // GraphicsMagick has inline coalesce issues, so this uses an interstitial in-memory image instead
-                // http://sourceforge.net/p/graphicsmagick/mailman/message/32004613/
-                array_unshift($this->destinationArgs, '-coalesce miff:- | ' . $this->pathToConvert . ' miff:-');
-            } else {
-                array_unshift($this->destinationArgs, '-coalesce');
-            }
-        }
-    }
+		if ($this->stripMetadata) {
+			$this->sourceArgs[] = '-strip';
+		}
 
-    private function setupLimitArgs()
-    {
-        $array = array();
+		if ($this->isAnimatedGif) {
+			if ($this->isGmagick) {
+				// GraphicsMagick has inline coalesce issues, so this uses an interstitial in-memory image instead
+				// http://sourceforge.net/p/graphicsmagick/mailman/message/32004613/
+				array_unshift($this->destinationArgs, '-coalesce miff:- | ' . $this->pathToConvert . ' miff:-');
+			} else {
+				array_unshift($this->destinationArgs, '-coalesce');
+			}
+		}
+	}
 
-        if ($this->limits['thread']) {
-            $array[] = '-limit thread ' . $this->limits['thread'];
-        }
+	private function setupLimitArgs()
+	{
+		$array = array();
 
-        if ($this->limits['memory']) {
-            $array[] = '-limit memory ' . $this->limits['memory'];
-        }
+		if ($this->limits['thread']) {
+			$array[] = '-limit thread ' . $this->limits['thread'];
+		}
 
-        if ($this->limits['map']) {
-            $array[] = '-limit map ' . $this->limits['map'];
-        }
+		if ($this->limits['memory']) {
+			$array[] = '-limit memory ' . $this->limits['memory'];
+		}
 
-        return $array;
-    }
+		if ($this->limits['map']) {
+			$array[] = '-limit map ' . $this->limits['map'];
+		}
 
-    public function getQuality()
-    {
-        $sourcePath = $this->sourcePath;
+		return $array;
+	}
 
-        if ($this->isGmagick && strpos($sourcePath, 'https://') === 0) {
-            $sourcePath = str_replace('https://', 'http://', $sourcePath);
-        }
+	public function getQuality()
+	{
+		$sourcePath = $this->sourcePath;
 
-        if ($this->isGmagick) {
-            $cmd = "gm identify -format '%[JPEG-Quality]' ";
-        } else {
-            $cmd = "identify -format '%Q' ";
-        }
+		if ($this->isGmagick && strpos($sourcePath, 'https://') === 0) {
+			$sourcePath = str_replace('https://', 'http://', $sourcePath);
+		}
 
-        $cmd .= $sourcePath;
+		if ($this->isGmagick) {
+			$cmd = "gm identify -format '%[JPEG-Quality]' ";
+		}
+		else {
+			$cmd = "identify -format '%Q' ";
+		}
 
-        $quality = (int) shell_exec($cmd);
-        return $quality;
-    }
+		$cmd .= $sourcePath;
 
-    public function rotate($path, $degrees)
-    {
-        if ($this->isGmagick && strpos($path, 'https://') === 0) {
-            $path = str_replace('https://', 'http://', $path);
-        }
-        $path = '"' . $path . '"';
-        $limits = join(' ', $this->setupLimitArgs());
-        $cmd = "{$this->pathToConvert} $path -rotate $degrees $limits $path";
-        shell_exec($cmd);
+		$quality = (int) shell_exec($cmd);
+		return $quality;
+	}
 
-        return $this;
-    }
+	public function rotate($path, $degrees)
+	{
+		if ($this->isGmagick && strpos($path, 'https://') === 0) {
+			$path = str_replace('https://', 'http://', $path);
+		}
+		$path = '"' . $path . '"';
+		$limits = join(' ', $this->setupLimitArgs());
+		$cmd = "{$this->pathToConvert} $path -rotate $degrees $limits $path";
+		shell_exec($cmd);
 
-    public function createImage()
-    {
-        $this->setupArgs();
+		return $this;
+	}
 
-        $this->sourceArgs[] = "-size {$this->width}x{$this->height}";
-        $this->destinationArgs[] = "-scale {$this->width}x{$this->height}";
+	public function createImage()
+	{
+		$this->setupArgs();
 
-        return $this->output();
-    }
+		$this->sourceArgs[] = "-size {$this->width}x{$this->height}";
+		$this->destinationArgs[] = "-scale {$this->width}x{$this->height}";
 
-    public function createCroppedImage($interstitialWidth, $interstitialHeight, $cropX, $cropY)
-    {
-        $this->setupArgs();
+		return $this->output();
+	}
 
-        $this->sourceArgs[] = "-size {$interstitialWidth}x{$interstitialHeight}";
+	public function createCroppedImage($interstitialWidth, $interstitialHeight, $cropX, $cropY)
+	{
+		$this->setupArgs();
 
-        if ($this->sourceAspect >= $this->aspect) {
-            $resizeString = 'x' . $this->height;
-        } else {
-            $resizeString = $this->width . 'x';
-        }
+		$this->sourceArgs[] = "-size {$interstitialWidth}x{$interstitialHeight}";
 
-        $this->destinationArgs[] = "-scale $resizeString";
-        $this->destinationArgs[] = "-crop {$this->width}x{$this->height}+{$cropX}+{$cropY}";
-        $this->destinationArgs[] = "-repage {$this->width}x{$this->height}+0+0";
+		if ($this->sourceAspect >= $this->aspect) {
+			$resizeString = 'x' . $this->height;
+		} else {
+			$resizeString = $this->width . 'x';
+		}
 
-        return $this->output();
-    }
+		$this->destinationArgs[] = "-scale $resizeString";
+		$this->destinationArgs[] = "-crop {$this->width}x{$this->height}+{$cropX}+{$cropY}";
+		$this->destinationArgs[] = "-repage {$this->width}x{$this->height}+0+0";
 
-    private function output()
-    {
-        $sourcePath = $this->sourcePath;
+		return $this->output();
+	}
 
-        if ($this->isGmagick && strpos($sourcePath, 'https://') === 0) {
-            $sourcePath = str_replace('https://', 'http://', $sourcePath);
-        }
+	private function output()
+	{
+		$sourcePath = $this->sourcePath;
 
-        $this->sourceArgs[] = '-depth 8';
-        $this->sourceArgs[] = '"' . $sourcePath . '"';
+		if ($this->isGmagick && strpos($sourcePath, 'https://') === 0) {
+			$sourcePath = str_replace('https://', 'http://', $sourcePath);
+		}
 
-        if ($this->sharpening !== false) {
-            $sigma = $this->sharpening * 1.3;
-            $this->destinationArgs[] = "-unsharp 0x{$sigma}+{$this->sharpening}+0.05";
-        }
+		$this->sourceArgs[] = '-depth 8';
+		$this->sourceArgs[] = '"' . $sourcePath . '"';
 
-        if ($this->isAnimatedGif) {
-            $this->destinationArgs[] = '-deconstruct';
-        }
+		if ($this->sharpening !== false) {
+			$sigma = $this->sharpening * 1.3;
+			$this->destinationArgs[] = "-unsharp 0x{$sigma}+{$this->sharpening}+0.05";
+		}
 
-        $cmd = join(' ', array_merge(
-            $this->sourceArgs,
-            $this->destinationArgs
-        ));
+		if ($this->isAnimatedGif) {
+			$this->destinationArgs[] = '-deconstruct';
+		}
 
-        $cmd = $this->emitBeforeRender($cmd);
+		$cmd = join(' ', array_merge(
+			$this->sourceArgs,
+			$this->destinationArgs
+		));
 
-        if ($this->path) {
-            $cmd .= ' "' . $this->path . '"';
-        } else {
-            $cmd .= ' -';
-        }
+		$cmd = $this->emitBeforeRender($cmd);
 
-        return shell_exec($cmd);
-    }
+		if ($this->path) {
+			$cmd .= ' "' . $this->path . '"';
+		} else {
+			$cmd .= ' -';
+		}
+
+		return shell_exec($cmd);
+	}
 }

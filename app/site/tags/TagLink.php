@@ -1,25 +1,26 @@
 <?php
 
-    class TagLink extends Tag
-    {
-        protected $allows_close = true;
+	class TagLink extends Tag {
 
-        public function generate()
-        {
-            $attr = array();
-            $get = false;
+		protected $allows_close = true;
 
-            $params = $this->params_to_array_str();
+		function generate()
+		{
+			$attr = array();
+			$get = false;
 
-            if (isset($this->parameters['echo'])) {
-                $this->allows_close = false;
-            }
+			$params = $this->params_to_array_str();
 
-            return "<?php Koken::link(array($params)); ?>";
-        }
+			if (isset($this->parameters['echo']))
+			{
+				$this->allows_close = false;
+			}
 
-        public function close()
-        {
-            return $this->allows_close ? '</a>' : '';
-        }
-    }
+			return "<?php Koken::link(array($params)); ?>";
+		}
+
+		function close()
+		{
+			return $this->allows_close ? '</a>' : '';
+		}
+	}

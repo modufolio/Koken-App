@@ -31,6 +31,7 @@ namespace ReCaptcha\RequestMethod;
  */
 class Curl
 {
+
     /**
      * @see http://php.net/curl_init
      * @param string $url

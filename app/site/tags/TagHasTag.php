@@ -1,15 +1,16 @@
 <?php
 
-    class TagHasTag extends Tag
-    {
-        protected $allows_close = true;
+	class TagHasTag extends Tag {
 
-        public function generate()
-        {
-            $token = '$value' . Koken::$tokens[0];
-            $tag = $this->attr_parse($this->parameters['title']);
+		protected $allows_close = true;
 
-            return <<<OUT
+		function generate()
+		{
+
+			$token = '$value' . Koken::$tokens[0];
+			$tag = $this->attr_parse($this->parameters['title']);
+
+			return <<<OUT
 <?php
 
 	if (!isset({$token}['tags']) && isset({$token}['album']))
@@ -33,5 +34,5 @@
 
 ?>
 OUT;
-        }
-    }
+		}
+	}

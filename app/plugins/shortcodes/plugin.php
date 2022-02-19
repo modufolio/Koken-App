@@ -1,147 +1,162 @@
 <?php
 
-class BD_Shortcodes extends KokenPlugin
-{
-    public function __construct()
-    {
-        $this->register_shortcode('koken_photo', 'koken_media');
-        $this->register_shortcode('koken_video', 'koken_media');
-        $this->register_shortcode('koken_oembed', 'koken_oembed');
-        $this->register_shortcode('koken_slideshow', 'koken_slideshow');
-        $this->register_shortcode('koken_upload', 'koken_upload');
-        $this->register_shortcode('koken_code', 'koken_code');
-        $this->register_shortcode('koken_contact_form', 'koken_contact_form');
+class BD_Shortcodes extends KokenPlugin {
 
-        $this->register_hook('site.url', 'koken_contact_submit');
-    }
+	function __construct()
+	{
+		$this->register_shortcode('koken_photo', 'koken_media');
+		$this->register_shortcode('koken_video', 'koken_media');
+		$this->register_shortcode('koken_oembed', 'koken_oembed');
+		$this->register_shortcode('koken_slideshow', 'koken_slideshow');
+		$this->register_shortcode('koken_upload', 'koken_upload');
+		$this->register_shortcode('koken_code', 'koken_code');
+		$this->register_shortcode('koken_contact_form', 'koken_contact_form');
 
-    public function koken_contact_submit()
-    {
-        if (isset($_POST) && isset($_POST['koken_contact_form'])) {
-            if (!empty($_POST['k-contact-field-dummy'])) {
-                header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
-                exit;
-            } elseif (!empty($_POST['g-recaptcha-response']) && !empty($_POST['g-recaptcha-key'])) {
-                $gRecaptchaResponse = $_POST['g-recaptcha-response'];
-                $secret_key = $_POST['g-recaptcha-key'];
+		$this->register_hook('site.url', 'koken_contact_submit');
+	}
 
-                $key = Shutter::get_encryption_key();
-                $secret_key = base64_decode($secret_key);
-                $iv = substr($secret_key, 0, 16);
-                $secret_key = substr($secret_key, 16);
-                $secret_key = openssl_decrypt($secret_key, 'AES-256-CTR', $key, 0, $iv);
+	function koken_contact_submit()
+	{
+		if (isset($_POST) && isset($_POST['koken_contact_form']))
+		{
+			if (!empty($_POST['k-contact-field-dummy']))
+			{
+				header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
+				exit;
+			}
+			else if (!empty($_POST['g-recaptcha-response']) && !empty($_POST['g-recaptcha-key']))
+			{
+				$gRecaptchaResponse = $_POST['g-recaptcha-response'];
+				$secret_key = $_POST['g-recaptcha-key'];
 
-                if (isset($secret_key)) {
-                    require(Koken::$root_path . '/app/application/libraries/ReCaptcha/autoload.php');
-                    $recaptcha = new \ReCaptcha\ReCaptcha($secret_key);
-                    $resp = $recaptcha->verify($gRecaptchaResponse);
+				$key = Shutter::get_encryption_key();
+				$secret_key = base64_decode($secret_key);
+				$iv = substr($secret_key, 0, 16);
+				$secret_key = substr($secret_key, 16);
+				$secret_key = openssl_decrypt($secret_key, 'AES-256-CTR', $key, 0, $iv);
 
-                    if (!$resp->isSuccess()) {
-                        header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
-                        exit;
-                    }
-                }
-            } elseif (!isset($_POST['g-recaptcha-response'], $_POST['g-recaptcha-key']) && !isset($_POST['k-contact-field-dummy'])) {
-                header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
-                exit;
-            }
+				if (isset($secret_key))
+				{
+					require(Koken::$root_path . '/app/application/libraries/ReCaptcha/autoload.php');
+					$recaptcha = new \ReCaptcha\ReCaptcha($secret_key);
+					$resp = $recaptcha->verify($gRecaptchaResponse);
 
-            // convert unicode escaped to utf-8
-            $labels = preg_replace_callback('/\\\\u([0-9a-fA-F]{4})/', function ($match) {
-                return mb_convert_encoding(pack('H*', $match[1]), 'UTF-8', 'UCS-2BE');
-            }, $_POST['labels']);
+					if (!$resp->isSuccess()) {
+						header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
+						exit;
+					}
+				}
+			}
+			else if (!isset($_POST['g-recaptcha-response'], $_POST['g-recaptcha-key']) && !isset($_POST['k-contact-field-dummy']))
+			{
+				header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
+				exit;
+			}
 
-            // stripslashes required here for PHP 5.3 weirdness
-            $labels = json_decode(stripslashes($labels), true);
-            $separator = str_repeat('–', 30);
+			// convert unicode escaped to utf-8
+			$labels = preg_replace_callback('/\\\\u([0-9a-fA-F]{4})/', function ($match) {
+			    return mb_convert_encoding(pack('H*', $match[1]), 'UTF-8', 'UCS-2BE');
+			}, $_POST['labels']);
 
-            $msg = array("You have received a new Koken contact form submission. The details of the submission are below.");
-            foreach ($labels as $index => $label) {
-                $key = 'k-contact-field-' . $index;
-                $value = isset($_POST[$key]) ? $_POST[$key] : 'No';
+			// stripslashes required here for PHP 5.3 weirdness
+			$labels = json_decode(stripslashes($labels), true);
+			$separator = str_repeat('–', 30);
 
-                if (empty($value)) {
-                    continue;
-                }
+			$msg = array("You have received a new Koken contact form submission. The details of the submission are below.");
+			foreach($labels as $index => $label)
+			{
+				$key = 'k-contact-field-' . $index;
+				$value = isset($_POST[$key]) ? $_POST[$key] : 'No';
 
-                $msg[] = "$label\n$separator\n$value";
-            }
+				if (empty($value)) continue;
 
-            $msg = join("\n\n\n", $msg);
+				$msg[] = "$label\n$separator\n$value";
+			}
 
-            $from = $_POST[$_POST['from_field']];
+			$msg = join("\n\n\n", $msg);
 
-            $this->deliver_email($from, $from, '[' . $_SERVER['HTTP_HOST'] . '] Koken Contact Form Submission', $msg);
+			$from = $_POST[$_POST['from_field']];
 
-            exit;
-        }
-    }
+			$this->deliver_email($from, $from, '[' . $_SERVER['HTTP_HOST'] . '] Koken Contact Form Submission', $msg);
 
-    public function koken_contact_form($attr)
-    {
-        $id = 'k-contact-form-' . md5(uniqid('', true));
-        $out = <<<HTML
+			exit;
+		}
+	}
+
+	function koken_contact_form($attr)
+	{
+		$id = 'k-contact-form-' . md5(uniqid('', true));
+		$out = <<<HTML
 <figure class="k-content-embed">
 	<p class="k-contact-form-success" style="display: none">{$attr['success_message']}</p>
 	<koken:form id="$id" class="k-contact-form">
 		<input type="hidden" name="koken_contact_form" value="1" />
 HTML;
 
-        $required = array();
-        $labels = array();
+		$required = array();
+		$labels = array();
 
-        $fromEmail = false;
+		$fromEmail = false;
 
-        foreach (json_decode($attr['fields']) as $index => $field) {
-            $labels[] = htmlentities($field[0], ENT_QUOTES);
-            $name = 'k-contact-field-' . $index;
-            $type = $field[1];
+		foreach(json_decode($attr['fields']) as $index => $field)
+		{
+			$labels[] = htmlentities($field[0], ENT_QUOTES);
+			$name = 'k-contact-field-' . $index;
+			$type = $field[1];
 
-            $field_id = $id . '-' . $name;
+			$field_id = $id . '-' . $name;
 
-            if ($field[2]) {
-                $required[] = $name;
-            }
+			if ($field[2]) {
+				$required[] = $name;
+			}
 
-            if ($type === 'email' && !$fromEmail) {
-                $fromEmail = $name;
-            }
+			if ($type === 'email' && !$fromEmail)
+			{
+				$fromEmail = $name;
+			}
 
-            if ($type === 'textarea') {
-                $input = '<textarea id="' . $field_id . '" name="' . $name . '" rows="10"></textarea>';
-            } else {
-                $input = '<input id="' . $field_id . '" name="' . $name . '" type="' . $type . ($type === 'checkbox' ? '" value="Yes"' : '"') . ' />';
-            }
+			if ($type === 'textarea')
+			{
+				$input = '<textarea id="' . $field_id . '" name="' . $name . '" rows="10"></textarea>';
+			}
+			else
+			{
+				$input = '<input id="' . $field_id . '" name="' . $name . '" type="' . $type . ($type === 'checkbox' ? '" value="Yes"' : '"') . ' />';
+			}
 
-            $required_class = $field[2] ? ' k-contact-form-required-field' : '';
+			$required_class = $field[2] ? ' k-contact-form-required-field' : '';
 
-            $before_label = $after_label = '';
+			$before_label = $after_label = '';
 
-            if ($type === 'checkbox') {
-                $before_label = $input;
-            } else {
-                $after_label = $input;
-            }
+			if ($type === 'checkbox')
+			{
+				$before_label = $input;
+			}
+			else
+			{
+				$after_label = $input;
+			}
 
-            $out .= <<<HTML
+			$out .= <<<HTML
 <fieldset class="k-contact-form-$type-field{$required_class}">
 	{$before_label}
 	<label for="$field_id">{$field[0]}</label>
 	{$after_label}
 </fieldset>
 HTML;
-        }
+		}
 
-        list($recaptcha, $site_key, $secret_key) = json_decode($attr['recaptcha']);
+		list($recaptcha, $site_key, $secret_key) = json_decode($attr['recaptcha']);
 
-        if ($recaptcha) {
-            $key = Shutter::get_encryption_key();
-            $iv = openssl_random_pseudo_bytes(16);
-            $secret_key = openssl_encrypt($secret_key, 'AES-256-CTR', $key, 0, $iv);
-            $secret_key = base64_encode($iv . $secret_key);
-            $required[] = 'g-recaptcha-response';
+		if ($recaptcha)
+		{
+			$key = Shutter::get_encryption_key();
+			$iv = openssl_random_pseudo_bytes(16);
+			$secret_key = openssl_encrypt($secret_key, 'AES-256-CTR', $key, 0, $iv);
+			$secret_key = base64_encode($iv . $secret_key);
+			$required[] = 'g-recaptcha-response';
 
-            $out .= <<<HTML
+			$out .= <<<HTML
 <script src='https://www.google.com/recaptcha/api.js'></script>
 <fieldset class="k-contact-form-captcha-field k-contact-form-required-field">
 	<label>Captcha</label>
@@ -149,16 +164,18 @@ HTML;
 	<input type="hidden" name="g-recaptcha-key" value="{$secret_key}" />
 </fieldset>
 HTML;
-        } else {
-            $out .= <<<HTML
+		}
+		else
+		{
+			$out .= <<<HTML
 <input type="text" name="k-contact-field-dummy" style="display:none" />
 HTML;
-        }
+		}
 
-        $required = json_encode($required);
-        $labels = json_encode($labels);
+		$required = json_encode($required);
+		$labels = json_encode($labels);
 
-        $out .= <<<HTML
+		$out .= <<<HTML
 <fieldset class="k-contact-form-submit">
 	<input type="hidden" name="labels" value='$labels' />
 	<input type="hidden" name="from_field" value="$fromEmail" />
@@ -207,101 +224,125 @@ HTML;
 </script>
 HTML;
 
-        return $out;
-    }
+		return $out;
+	}
 
-    public function koken_oembed($attr)
-    {
-        if (!isset($attr['url']) || !isset($attr['endpoint'])) {
-            return '';
-        }
+	function koken_oembed($attr)
+	{
+		if (!isset($attr['url']) || !isset($attr['endpoint'])) { return ''; }
 
-        $endpoint = $attr['endpoint'];
+		$endpoint = $attr['endpoint'];
 
-        if (strpos($endpoint, 'maxwidth=') === false) {
-            if (strpos($endpoint, '?') !== false) {
-                $endpoint .= '&';
-            } else {
-                $endpoint .= '?';
-            }
+		if (strpos($endpoint, 'maxwidth=') === false)
+		{
+			if (strpos($endpoint, '?') !== false)
+			{
+				$endpoint .= '&';
+			}
+			else
+			{
+				$endpoint .= '?';
+			}
 
-            $endpoint .= 'maxwidth=1920&maxheight=1080';
-        }
+			$endpoint .= 'maxwidth=1920&maxheight=1080';
+		}
 
-        if (strpos($endpoint, '?') !== false) {
-            $endpoint .= '&';
-        } else {
-            $endpoint .= '?';
-        }
+		if (strpos($endpoint, '?') !== false)
+		{
+			$endpoint .= '&';
+		}
+		else
+		{
+			$endpoint .= '?';
+		}
 
-        $info = Shutter::get_oembed($endpoint . 'url=' . $attr['url']);
+		$info = Shutter::get_oembed($endpoint . 'url=' . $attr['url']);
 
-        if (isset($info['html'])) {
-            $html = preg_replace('/<iframe/', '<iframe style="display:none"', $info['html']);
-        } elseif (isset($info['url'])) {
-            $html = '<img src="' . $info['url'] . '" />';
-        } else {
-            return '';
-        }
-        return '<figure class="k-content-embed"><div class="k-content">' . $html . '</div></figure>';
-    }
+		if (isset($info['html']))
+		{
+			$html = preg_replace('/<iframe/', '<iframe style="display:none"', $info['html']);
+		}
+		else if (isset($info['url'])) {
+			$html = '<img src="' . $info['url'] . '" />';
+		}
+		else
+		{
+			return '';
+		}
+		return '<figure class="k-content-embed"><div class="k-content">' . $html . '</div></figure>';
+	}
 
-    public function koken_media($attr)
-    {
-        if (!isset($attr['id'])) {
-            return '';
-        }
+	function koken_media($attr)
+	{
+		if (!isset($attr['id'])) { return ''; }
 
-        if ($attr['media_type'] === 'image') {
-            $tag = 'img lazy="true"';
+		if ($attr['media_type'] === 'image')
+		{
+			$tag = 'img lazy="true"';
 
-            if (isset($attr['height']) && is_numeric($attr['height'])) {
-                $tag .= ' height="' . $attr['height'] . '"';
-            }
-        } else {
-            $tag = 'video';
-        }
+			if (isset($attr['height']) && is_numeric($attr['height']))
+			{
+				$tag .= ' height="' . $attr['height'] . '"';
+			}
+		}
+		else
+		{
+			$tag = 'video';
+		}
 
-        $fig_style = '';
-        if (isset($attr['width']) && is_numeric($attr['width'])) {
-            $tag .= ' width="' . $attr['width'] . '"';
-            $fig_style = ' style="width:' . $attr['width'] . 'px;"';
-        }
+		$fig_style = '';
+		if (isset($attr['width']) && is_numeric($attr['width']))
+		{
+			$tag .= ' width="' . $attr['width'] . '"';
+			$fig_style = ' style="width:' . $attr['width'] . 'px;"';
+		}
 
-        $text = '';
-        if (!isset($attr['caption']) || $attr['caption'] !== 'none') {
-            if (!isset($attr['caption']) || $attr['caption'] === 'both') {
-                $text .= '<koken:not empty="content.title && content.caption">';
-            } else {
-                $text .= '<koken:not empty="content.' .  $attr['caption'] . '">';
-            }
-            $text .= '<figcaption class="k-content-text">';
-            if (!isset($attr['caption']) || $attr['caption'] !== 'caption') {
-                $text .= '<koken:not empty="content.title"><span class="k-content-title">{{ content.title }}</span></koken:if>';
-            }
-            if (!isset($attr['caption']) || $attr['caption'] !== 'title') {
-                $text .= '<koken:not empty="content.caption"><span class="k-content-caption">{{ content.caption }}</span></koken:if>';
-            }
-            $text .= '</figcaption></koken:not>';
-        }
+		$text = '';
+		if (!isset($attr['caption']) || $attr['caption'] !== 'none')
+		{
+			if (!isset($attr['caption']) || $attr['caption'] === 'both')
+			{
+				$text .= '<koken:not empty="content.title && content.caption">';
+			}
+			else
+			{
+				$text .= '<koken:not empty="content.' .  $attr['caption'] . '">';
+			}
+			$text .= '<figcaption class="k-content-text">';
+			if (!isset($attr['caption']) || $attr['caption'] !== 'caption')
+			{
+				$text .= '<koken:not empty="content.title"><span class="k-content-title">{{ content.title }}</span></koken:if>';
+			}
+			if (!isset($attr['caption']) || $attr['caption'] !== 'title')
+			{
+				$text .= '<koken:not empty="content.caption"><span class="k-content-caption">{{ content.caption }}</span></koken:if>';
+			}
+			$text .= '</figcaption></koken:not>';
+		}
 
-        $link_pre = $link_post = $context_param = '';
+		$link_pre = $link_post = $context_param = '';
 
-        if (isset($attr['link']) && $attr['link'] !== 'none') {
-            if ($attr['link'] === 'detail' || $attr['link'] === 'lightbox') {
-                $link_pre = '<koken:link' . ($attr['link'] === 'lightbox' ? ' lightbox="true"' : '') . '>';
-                $link_post = '</koken:link>';
-            } elseif ($attr['link'] === 'album') {
-                $context_param = " filter:context=\"{$attr['album']}\"";
-                $link_pre = '<koken:link data="context.album">';
-                $link_post = '</koken:link>';
-            } else {
-                $link_pre = '<a href="' . $attr['custom_url'] . '">';
-                $link_post = '</a>';
-            }
-        }
+		if (isset($attr['link']) && $attr['link'] !== 'none')
+		{
+			if ($attr['link'] === 'detail' || $attr['link'] === 'lightbox')
+			{
+				$link_pre = '<koken:link' . ( $attr['link'] === 'lightbox' ? ' lightbox="true"': '' ) . '>';
+				$link_post = '</koken:link>';
+			}
+			else if ($attr['link'] === 'album')
+			{
+				$context_param = " filter:context=\"{$attr['album']}\"";
+				$link_pre = '<koken:link data="context.album">';
+				$link_post = '</koken:link>';
+			}
+			else
+			{
+				$link_pre = '<a href="' . $attr['custom_url'] . '">';
+				$link_post = '</a>';
+			}
+		}
 
-        return <<<HTML
+		return <<<HTML
 <figure class="k-content-embed" ${fig_style}>
 	<koken:load source="content" filter:id="{$attr['id']}"$context_param>
 		<div class="k-content">
@@ -313,33 +354,39 @@ HTML;
 	</koken:load>
 </figure>
 HTML;
-    }
 
-    public function koken_upload($attr)
-    {
-        $text = '';
-        $src = $attr['filename'];
-        $link_pre = $link_post = '';
+	}
 
-        if (isset($attr['link']) && !empty($attr['link'])) {
-            $link_pre = '<a href="' . $attr['link'] . '"' . (isset($attr['target']) && $attr['target'] !== 'none' ? ' target="_blank"' : '') . '>';
-            $link_post = '</a>';
-        }
+	function koken_upload($attr)
+	{
+		$text = '';
+		$src = $attr['filename'];
+		$link_pre = $link_post = '';
 
-        if (isset($attr['title']) && !empty($attr['title'])) {
-            $text .= '<span class="k-content-title">' . $attr['title'] . '</span>';
-        }
+		if (isset($attr['link']) && !empty($attr['link']))
+		{
+			$link_pre = '<a href="' . $attr['link'] . '"' . ( isset($attr['target']) && $attr['target'] !== 'none' ? ' target="_blank"' : '' ) . '>';
+			$link_post = '</a>';
+		}
 
-        if (isset($attr['caption']) && !empty($attr['caption'])) {
-            $text .= '<span class="k-content-caption">' . $attr['caption'] . '</span>';
-        }
+		if (isset($attr['title']) && !empty($attr['title']))
+		{
+			$text .= '<span class="k-content-title">' . $attr['title'] . '</span>';
+		}
 
-        if (!empty($text)) {
-            $text = "<figcaption class=\"k-content-text\">$text</figcaption>";
-        }
+		if (isset($attr['caption']) && !empty($attr['caption']))
+		{
+			$text .= '<span class="k-content-caption">' . $attr['caption'] . '</span>';
+		}
 
-        if (strpos($src, 'http://') === 0) {
-            return <<<HTML
+		if (!empty($text))
+		{
+			$text = "<figcaption class=\"k-content-text\">$text</figcaption>";
+		}
+
+		if (strpos($src, 'http://') === 0)
+		{
+			return <<<HTML
 <figure class="k-content-embed">
 	<div class="k-content">
 		$link_pre
@@ -349,8 +396,10 @@ HTML;
 	$text
 </figure>
 HTML;
-        } else {
-            return <<<HTML
+		}
+		else
+		{
+			return <<<HTML
 <figure class="k-content-embed">
 	<koken:load source="content" filter:custom="$src">
 		<div class="k-content">
@@ -362,45 +411,56 @@ HTML;
 	</koken:load>
 </figure>
 HTML;
-        }
-    }
+		}
 
-    public function koken_code($attr)
-    {
-        if (isset($attr['code'])) {
-            return $attr['code'];
-        } else {
-            return '';
-        }
-    }
+	}
 
-    public function koken_slideshow($attr)
-    {
-        $rand = 'p' . md5(uniqid(function_exists('mt_rand') ? mt_rand() : rand(), true));
+	function koken_code($attr)
+	{
+		if (isset($attr['code']))
+		{
+			return $attr['code'];
+		}
+		else
+		{
+			return '';
+		}
+	}
 
-        if (!isset($attr['link_to'])) {
-            $attr['link_to'] = 'default';
-        }
+	function koken_slideshow($attr)
+	{
+		$rand = 'p' . md5(uniqid(function_exists('mt_rand') ? mt_rand() : rand(), true));
 
-        $attr['link_to'] = 'link_to="' . $attr['link_to'] . '"';
+		if (!isset($attr['link_to']))
+		{
+			$attr['link_to'] = 'default';
+		}
 
-        if (isset($attr['content'])) {
-            $path = '/content/' . $attr['content'];
-        } elseif (isset($attr['album'])) {
-            $path = '/albums/' . $attr['album'] . '/content';
-        }
+		$attr['link_to'] = 'link_to="' . $attr['link_to'] . '"';
 
-        $text = '';
-        if (isset($attr['caption']) && $attr['caption'] !== 'none') {
-            $text .= '<figcaption id="' . $rand .'_text" class="k-content-text">';
-            if ($attr['caption'] !== 'caption') {
-                $text .= '<span class="k-content-title">&nbsp;</span>';
-            }
-            if ($attr['caption'] !== 'title') {
-                $text .= '<span class="k-content-caption">&nbsp;</span>';
-            }
-            $text .= '</figcaption>';
-            $text .= <<<JS
+		if (isset($attr['content']))
+		{
+			$path = '/content/' . $attr['content'];
+		}
+		else if (isset($attr['album']))
+		{
+			$path = '/albums/' . $attr['album'] . '/content';
+		}
+
+		$text = '';
+		if (isset($attr['caption']) && $attr['caption'] !== 'none')
+		{
+			$text .= '<figcaption id="' . $rand .'_text" class="k-content-text">';
+			if ($attr['caption'] !== 'caption')
+			{
+				$text .= '<span class="k-content-title">&nbsp;</span>';
+			}
+			if ($attr['caption'] !== 'title')
+			{
+				$text .= '<span class="k-content-caption">&nbsp;</span>';
+			}
+			$text .= '</figcaption>';
+			$text .= <<<JS
 	<script>
 		$rand.on( 'transitionstart', function(e) {
 			var title = $('#{$rand}_text').find('.k-content-title'),
@@ -416,9 +476,9 @@ HTML;
 		});
 	</script>
 JS;
-        }
+		}
 
-        return <<<HTML
+		return <<<HTML
 <figure class="k-content-embed">
 	<div class="k-content">
 		<koken:pulse jsvar="$rand" data_from_url="$path" size="auto" {$attr['link_to']} group="essays" />
@@ -426,5 +486,6 @@ JS;
 	$text
 </figure>
 HTML;
-    }
+
+	}
 }

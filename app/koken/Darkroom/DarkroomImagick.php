@@ -1,151 +1,152 @@
 <?php
 
-class DarkroomImagick extends Darkroom
-{
-    private $image;
-    private $limits = array();
-    private $rotate = false;
+class DarkroomImagick extends Darkroom {
 
-    public function __construct($limits = array())
-    {
-        $this->limits = array_merge(array(
-            'thread' => false,
-            'memory' => false,
-            'map' => false,
-        ), $limits);
+	private $image;
+	private $limits = array();
+	private $rotate = false;
 
-        $memory_limit = (int) ini_get('memory_limit');
+	function __construct($limits = array())
+	{
+		$this->limits = array_merge(array(
+			'thread' => false,
+			'memory' => false,
+			'map' => false,
+		), $limits);
 
-        if (is_numeric($memory_limit) && $memory_limit < 256) {
-            ini_set('memory_limit', '256M');
-        }
-    }
+		$memory_limit = (int) ini_get('memory_limit');
 
-    public function getQuality()
-    {
-        $image = new Imagick();
-        $this->setLimits($image);
+		if (is_numeric($memory_limit) && $memory_limit < 256)
+		{
+			ini_set('memory_limit', '256M');
+		}
+	}
 
-        $image->readImage($this->sourcePath);
-        $quality = $image->getImageCompressionQuality();
+	public function getQuality()
+	{
+		$image = new Imagick();
+		$this->setLimits($image);
 
-        return $quality;
-    }
+		$image->readImage($this->sourcePath);
+		$quality = $image->getImageCompressionQuality();
 
-    public function rotate($path, $degrees)
-    {
-        $image = new Imagick();
-        $this->setLimits($image);
+		return $quality;
+	}
 
-        $image->readImage($path);
-        $image->rotateImage(new ImagickPixel(), $degrees);
-        $image->writeImage($path);
-        $image->destroy();
+	public function rotate($path, $degrees)
+	{
+		$image = new Imagick();
+		$this->setLimits($image);
 
-        return $this;
-    }
+		$image->readImage($path);
+		$image->rotateImage( new ImagickPixel(), $degrees );
+		$image->writeImage($path);
+		$image->destroy();
 
-    private function setLimits($image)
-    {
-        if ($this->limits['thread']) {
-            $image->setResourceLimit(6, $this->limits['thread']);
-        }
+		return $this;
+	}
 
-        if ($this->limits['memory']) {
-            $image->setResourceLimit(IMagick::RESOURCETYPE_MEMORY, $this->limits['memory']);
-        }
+	private function setLimits($image)
+	{
+		if ($this->limits['thread']) {
+			$image->setResourceLimit(6, $this->limits['thread']);
+		}
 
-        if ($this->limits['map']) {
-            $image->setResourceLimit(IMagick::RESOURCETYPE_MAP, $this->limits['map']);
-        }
-    }
+		if ($this->limits['memory']) {
+			$image->setResourceLimit(IMagick::RESOURCETYPE_MEMORY, $this->limits['memory']);
+		}
 
-    private function init($hintWidth, $hintHeight)
-    {
-        $this->image = new Imagick();
+		if ($this->limits['map']) {
+			$image->setResourceLimit(IMagick::RESOURCETYPE_MAP, $this->limits['map']);
+		}
+	}
 
-        $this->setLimits($this->image);
+	private function init($hintWidth, $hintHeight)
+	{
+		$this->image = new Imagick();
 
-        $this->image->setSize($hintWidth, $hintHeight);
-        $this->image->readImage($this->sourcePath);
+		$this->setLimits($this->image);
 
-        if ($this->stripMetadata) {
-            $this->image->stripImage();
-        }
+		$this->image->setSize($hintWidth, $hintHeight);
+		$this->image->readImage($this->sourcePath);
 
-        if ($this->isAnimatedGif) {
-            $this->image = $this->image->coalesceImages();
-        }
+		if ($this->stripMetadata) {
+			$this->image->stripImage();
+		}
 
-        $this->image->setImageCompressionQuality($this->quality);
-        $this->image->setImageResolution(72, 72);
-        $this->image->setImageDepth(8);
-    }
+		if ($this->isAnimatedGif) {
+			$this->image = $this->image->coalesceImages();
+		}
 
-    private function createImageFrame($image)
-    {
-        $image->scaleImage($this->width, $this->height, $this->bestfit);
-    }
+		$this->image->setImageCompressionQuality($this->quality);
+		$this->image->setImageResolution(72, 72);
+		$this->image->setImageDepth(8);
+	}
 
-    public function createImage()
-    {
-        $this->init($this->width, $this->height);
+	private function createImageFrame($image)
+	{
+		$image->scaleImage($this->width, $this->height, $this->bestfit);
+	}
 
-        if ($this->isAnimatedGif) {
-            foreach ($this->image as $frame) {
-                $this->createImageFrame($frame);
-            }
-        } else {
-            $this->createImageFrame($this->image);
-        }
+	public function createImage()
+	{
+		$this->init($this->width, $this->height);
 
-        return $this->output();
-    }
+		if ($this->isAnimatedGif) {
+			foreach ($this->image as $frame) {
+				$this->createImageFrame($frame);
+			}
+		} else {
+			$this->createImageFrame($this->image);
+		}
 
-    private function createCroppedImageFrame($image, $width, $height, $x, $y)
-    {
-        $image->scaleImage($width, $height);
-        $image->cropImage($this->width, $this->height, $x, $y);
-        $image->setImagePage($this->width, $this->height, 0, 0);
-    }
+		return $this->output();
+	}
 
-    public function createCroppedImage($interstitialWidth, $interstitialHeight, $cropX, $cropY)
-    {
-        $this->init($interstitialWidth, $interstitialHeight);
+	private function createCroppedImageFrame($image, $width, $height, $x, $y)
+	{
+		$image->scaleImage($width, $height);
+		$image->cropImage($this->width, $this->height, $x, $y);
+		$image->setImagePage($this->width, $this->height, 0, 0);
+	}
 
-        if ($this->isAnimatedGif) {
-            foreach ($this->image as $frame) {
-                $this->createCroppedImageFrame($frame, $interstitialWidth, $interstitialHeight, $cropX, $cropY);
-            }
-        } else {
-            $this->createCroppedImageFrame($this->image, $interstitialWidth, $interstitialHeight, $cropX, $cropY);
-        }
+	public function createCroppedImage($interstitialWidth, $interstitialHeight, $cropX, $cropY)
+	{
+		$this->init($interstitialWidth, $interstitialHeight);
 
-        return $this->output();
-    }
+		if ($this->isAnimatedGif) {
+			foreach ($this->image as $frame) {
+				$this->createCroppedImageFrame($frame, $interstitialWidth, $interstitialHeight, $cropX, $cropY);
+			}
+		} else {
+			$this->createCroppedImageFrame($this->image, $interstitialWidth, $interstitialHeight, $cropX, $cropY);
+		}
 
-    private function output()
-    {
-        if ($this->sharpening !== false) {
-            $sigma = $this->sharpening * 1.3;
-            $this->image->unsharpMaskImage(0, $sigma, $this->sharpening, 0.05);
-        }
+		return $this->output();
+	}
 
-        $this->image = $this->emitBeforeRender($this->image);
+	private function output()
+	{
+		if ($this->sharpening !== false) {
+			$sigma = $this->sharpening * 1.3;
+			$this->image->unsharpMaskImage( 0, $sigma, $this->sharpening, 0.05 );
+		}
 
-        if ($this->path) {
-            if ($this->isAnimatedGif) {
-                $this->image = $this->image->deconstructImages();
-                $this->image->writeImages($this->path, true);
-            } else {
-                $this->image->writeImage($this->path);
-            }
-            $this->image->destroy();
-        } else {
-            $method = $this->isAnimatedGif ? 'getImagesBlob' : 'getImageBlob';
-            $image = (string) $this->image->$method();
-            $this->image->destroy();
-            return $image;
-        }
-    }
+		$this->image = $this->emitBeforeRender($this->image);
+
+		if ($this->path) {
+			if ($this->isAnimatedGif) {
+				$this->image = $this->image->deconstructImages();
+				$this->image->writeImages($this->path, true);
+			} else {
+				$this->image->writeImage($this->path);
+			}
+			$this->image->destroy();
+		} else {
+			$method = $this->isAnimatedGif ? 'getImagesBlob' : 'getImageBlob';
+			$image = (string) $this->image->$method();
+			$this->image->destroy();
+			return $image;
+		}
+	}
 }

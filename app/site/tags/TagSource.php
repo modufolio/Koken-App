@@ -1,17 +1,18 @@
 <?php
 
-    class TagSource extends Tag
-    {
-        protected $allows_close = true;
+	class TagSource extends Tag {
 
-        public function generate()
-        {
-            $token = '$value' . Koken::$tokens[0];
+		protected $allows_close = true;
 
-            return <<<OUT
+		function generate()
+		{
+
+			$token = '$value' . Koken::$tokens[0];
+
+			return <<<OUT
 <?php
 	if (isset({$token}['source'])):
 ?>
 OUT;
-        }
-    }
+		}
+	}

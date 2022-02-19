@@ -1,12 +1,13 @@
 <?php
 
-    class TagValue extends Tag
-    {
-        public function generate()
-        {
-            $token = '$value' . Koken::$tokens[0];
-            return <<<DOC
+	class TagValue extends Tag {
+
+		function generate()
+		{
+			$token = '$value' . Koken::$tokens[0];
+			return <<<DOC
 <?php echo $token; ?>
 DOC;
-        }
-    }
+		}
+
+	}

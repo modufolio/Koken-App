@@ -1,8 +1,4 @@
-<?php
-
- if (! defined('BASEPATH')) {
-    exit('No direct script access allowed');
-}
+<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
  * CodeIgniter
  *
@@ -29,147 +25,158 @@
  * @author		EllisLab Dev Team
  * @link		http://codeigniter.com/user_guide/database/
  */
-class CI_DB_pdo_result extends CI_DB_result
-{
-    public $num_rows;
+class CI_DB_pdo_result extends CI_DB_result {
 
-    /**
-     * Number of rows in the result set
-     *
-     * @return	int
-     */
-    public function num_rows()
-    {
-        if (is_int($this->num_rows)) {
-            return $this->num_rows;
-        } elseif (($this->num_rows = $this->result_id->rowCount()) > 0) {
-            return $this->num_rows;
-        }
+	public $num_rows;
 
-        $this->num_rows = count($this->result_id->fetchAll());
-        $this->result_id->execute();
-        return $this->num_rows;
-    }
+	/**
+	 * Number of rows in the result set
+	 *
+	 * @return	int
+	 */
+	public function num_rows()
+	{
+		if (is_int($this->num_rows))
+		{
+			return $this->num_rows;
+		}
+		elseif (($this->num_rows = $this->result_id->rowCount()) > 0)
+		{
+			return $this->num_rows;
+		}
 
-    // --------------------------------------------------------------------
+		$this->num_rows = count($this->result_id->fetchAll());
+		$this->result_id->execute();
+		return $this->num_rows;
+	}
 
-    /**
-     * Number of fields in the result set
-     *
-     * @access	public
-     * @return	integer
-     */
-    public function num_fields()
-    {
-        return $this->result_id->columnCount();
-    }
+	// --------------------------------------------------------------------
 
-    // --------------------------------------------------------------------
+	/**
+	 * Number of fields in the result set
+	 *
+	 * @access	public
+	 * @return	integer
+	 */
+	function num_fields()
+	{
+		return $this->result_id->columnCount();
+	}
 
-    /**
-     * Fetch Field Names
-     *
-     * Generates an array of column names
-     *
-     * @access	public
-     * @return	array
-     */
-    public function list_fields()
-    {
-        if ($this->db->db_debug) {
-            return $this->db->display_error('db_unsuported_feature');
-        }
-        return false;
-    }
+	// --------------------------------------------------------------------
 
-    // --------------------------------------------------------------------
+	/**
+	 * Fetch Field Names
+	 *
+	 * Generates an array of column names
+	 *
+	 * @access	public
+	 * @return	array
+	 */
+	function list_fields()
+	{
+		if ($this->db->db_debug)
+		{
+			return $this->db->display_error('db_unsuported_feature');
+		}
+		return FALSE;
+	}
 
-    /**
-     * Field data
-     *
-     * Generates an array of objects containing field meta-data
-     *
-     * @access	public
-     * @return	array
-     */
-    public function field_data()
-    {
-        $data = array();
+	// --------------------------------------------------------------------
 
-        try {
-            for ($i = 0; $i < $this->num_fields(); $i++) {
-                $data[] = $this->result_id->getColumnMeta($i);
-            }
+	/**
+	 * Field data
+	 *
+	 * Generates an array of objects containing field meta-data
+	 *
+	 * @access	public
+	 * @return	array
+	 */
+	function field_data()
+	{
+		$data = array();
+	
+		try
+		{
+			for($i = 0; $i < $this->num_fields(); $i++)
+			{
+				$data[] = $this->result_id->getColumnMeta($i);
+			}
+			
+			return $data;
+		}
+		catch (Exception $e)
+		{
+			if ($this->db->db_debug)
+			{
+				return $this->db->display_error('db_unsuported_feature');
+			}
+			return FALSE;
+		}
+	}
 
-            return $data;
-        } catch (Exception $e) {
-            if ($this->db->db_debug) {
-                return $this->db->display_error('db_unsuported_feature');
-            }
-            return false;
-        }
-    }
+	// --------------------------------------------------------------------
 
-    // --------------------------------------------------------------------
+	/**
+	 * Free the result
+	 *
+	 * @return	null
+	 */
+	function free_result()
+	{
+		if (is_object($this->result_id))
+		{
+			$this->result_id = FALSE;
+		}
+	}
 
-    /**
-     * Free the result
-     *
-     * @return	null
-     */
-    public function free_result()
-    {
-        if (is_object($this->result_id)) {
-            $this->result_id = false;
-        }
-    }
+	// --------------------------------------------------------------------
 
-    // --------------------------------------------------------------------
+	/**
+	 * Data Seek
+	 *
+	 * Moves the internal pointer to the desired offset.  We call
+	 * this internally before fetching results to make sure the
+	 * result set starts at zero
+	 *
+	 * @access	private
+	 * @return	array
+	 */
+	function _data_seek($n = 0)
+	{
+		return FALSE;
+	}
 
-    /**
-     * Data Seek
-     *
-     * Moves the internal pointer to the desired offset.  We call
-     * this internally before fetching results to make sure the
-     * result set starts at zero
-     *
-     * @access	private
-     * @return	array
-     */
-    public function _data_seek($n = 0)
-    {
-        return false;
-    }
+	// --------------------------------------------------------------------
 
-    // --------------------------------------------------------------------
+	/**
+	 * Result - associative array
+	 *
+	 * Returns the result set as an array
+	 *
+	 * @access	private
+	 * @return	array
+	 */
+	function _fetch_assoc()
+	{
+		return $this->result_id->fetch(PDO::FETCH_ASSOC);
+	}
 
-    /**
-     * Result - associative array
-     *
-     * Returns the result set as an array
-     *
-     * @access	private
-     * @return	array
-     */
-    public function _fetch_assoc()
-    {
-        return $this->result_id->fetch(PDO::FETCH_ASSOC);
-    }
+	// --------------------------------------------------------------------
 
-    // --------------------------------------------------------------------
+	/**
+	 * Result - object
+	 *
+	 * Returns the result set as an object
+	 *
+	 * @access	private
+	 * @return	object
+	 */
+	function _fetch_object()
+	{	
+		return $this->result_id->fetchObject();
+	}
 
-    /**
-     * Result - object
-     *
-     * Returns the result set as an object
-     *
-     * @access	private
-     * @return	object
-     */
-    public function _fetch_object()
-    {
-        return $this->result_id->fetchObject();
-    }
 }
 
 

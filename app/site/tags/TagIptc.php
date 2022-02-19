@@ -1,16 +1,17 @@
 <?php
 
-    class TagIptc extends Tag
-    {
-        protected $allows_close = true;
-        public $tokenize = true;
+	class TagIptc extends Tag {
 
-        public function generate()
-        {
-            $token = '$value' . Koken::$tokens[1];
-            $ref = '$value' . Koken::$tokens[0];
+		protected $allows_close = true;
+		public $tokenize = true;
 
-            return <<<OUT
+		function generate()
+		{
+
+			$token = '$value' . Koken::$tokens[1];
+			$ref = '$value' . Koken::$tokens[0];
+
+			return <<<OUT
 <?php
 	if (isset({$token}['iptc']) && !empty({$token}['iptc'])):
 
@@ -28,5 +29,5 @@
 		}
 ?>
 OUT;
-        }
-    }
+		}
+	}

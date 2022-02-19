@@ -1,105 +1,141 @@
 <?php
 
-    class TagPulse extends Tag
-    {
-        public function _clean_val($val)
-        {
-            if (strpos($val, '$') === 0) {
-                return $val;
-            } elseif (strpos($val, '{$') === false) {
-                if ($val != 'true' && $val != 'false' && !is_numeric($val)) {
-                    $val = "\"$val\"";
-                }
-            } else {
-                $val = "trim('" . preg_replace('/\{(\$[^}]+)\}/', "' . $1 . '", $val) . "')";
-                $val = "is_numeric($val) ? (int) $val : ( $val == 'false' || $val == 'true' ? $val === 'true' : $val)";
-            }
-            return $val;
-        }
+	class TagPulse extends Tag {
 
-        public function generate()
-        {
-            $options = array(
-                'group' => 'default',
-                'relative' => true,
-            );
-            $disabled = array();
+		function _clean_val($val)
+		{
+			if (strpos($val, '$') === 0)
+			{
+				return $val;
+			}
+			else if (strpos($val, '{$') === false)
+			{
+				if ($val != 'true' && $val != 'false' && !is_numeric($val))
+				{
+					$val = "\"$val\"";
+				}
+			}
+			else
+			{
+				$val = "trim('" . preg_replace('/\{(\$[^}]+)\}/', "' . $1 . '", $val) . "')";
+				$val = "is_numeric($val) ? (int) $val : ( $val == 'false' || $val == 'true' ? $val === 'true' : $val)";
+			}
+			return $val;
+		}
 
-            $group_wrap = '<?php echo "default"; ?>';
+		function generate()
+		{
 
-            $style = 'clear:left;';
+			$options = array(
+				'group' => 'default',
+				'relative' => true,
+			);
+			$disabled = array();
 
-            $params = array();
-            foreach ($this->parameters as $key => $val) {
-                if ($key === 'source' || strpos($key, 'filter:') === 0) {
-                    $params[] = "'$key' => \"" . $this->attr_parse($val) . '"';
-                    unset($this->parameters[$key]);
-                } elseif ($key === 'style') {
-                    $style .= $this->parameters[$key];
-                    unset($this->parameters[$key]);
-                } else {
-                    if ($key === 'group') {
-                        $group_wrap = $this->attr_parse($val, true);
-                    }
-                    $val = $this->attr_parse($val);
-                    if (strpos($key, ':') !== false) {
-                        $bits = explode(':', $key);
-                        if (in_array($bits[0], $disabled)) {
-                            continue;
-                        }
-                        if ($bits[1] === 'enabled' && $val == 'false') {
-                            $disabled[] = $bits[0];
-                            unset($options[$bits[0]]);
-                        } else {
-                            if (!isset($options[$bits[0]])) {
-                                $options[$bits[0]] = array();
-                            }
-                            $options[$bits[0]][$bits[1]] = $val;
-                        }
-                    } else {
-                        $options[$key] = $val;
-                    }
-                }
-            }
+			$group_wrap = '<?php echo "default"; ?>';
 
-            $params = join(',', $params);
+			$style = 'clear:left;';
 
-            if (isset($options['jsvar'])) {
-                $js = 'var ' . $this->attr_parse($options['jsvar'], true) . ' = ';
-            } else {
-                $js = '';
-            }
-            if (isset($options['data_from_url'])) {
-                $options['dataUrl'] = Koken::$location['real_root_folder'] . '/api.php?' . $this->attr_parse($options['data_from_url']);
-                unset($options['data_from_url']);
-            } elseif (isset($options['data'])) {
-                $data = $this->field_to_keys('data');
-                if (strpos($data, 'covers') !== false) {
-                    $base = str_replace("['covers']", '', $data);
-                    $options['data'] = "array( 'content' => $data, 'album_id' => {$base}['id'], 'album_type' => {$base}['album_type'] )";
-                } else {
-                    $options['data'] = "array( 'content' => $data )";
-                }
-            }
+			$params = array();
+			foreach($this->parameters as $key => $val)
+			{
+				if ($key === 'source' || strpos($key, 'filter:') === 0)
+				{
+					$params[] = "'$key' => \"" . $this->attr_parse($val) . '"';
+					unset($this->parameters[$key]);
+				}
+				else if ($key === 'style')
+				{
+					$style .= $this->parameters[$key];
+					unset($this->parameters[$key]);
+				}
+				else
+				{
+					if ($key === 'group')
+					{
+						$group_wrap = $this->attr_parse($val, true);
+					}
+					$val = $this->attr_parse($val);
+					if (strpos($key, ':') !== false)
+					{
+						$bits = explode(':', $key);
+						if (in_array($bits[0], $disabled))
+						{
+							continue;
+						}
+						if ($bits[1] === 'enabled' && $val == 'false')
+						{
+							$disabled[] = $bits[0];
+							unset($options[$bits[0]]);
+						}
+						else
+						{
+							if (!isset($options[$bits[0]]))
+							{
+								$options[$bits[0]] = array();
+							}
+							$options[$bits[0]][$bits[1]] = $val;
+						}
+					}
+					else
+					{
+						$options[$key] = $val;
+					}
+				}
+			}
 
-            unset($options['source']);
+			$params = join(',', $params);
 
-            $native = array();
+			if (isset($options['jsvar']))
+			{
+				$js = 'var ' . $this->attr_parse($options['jsvar'], true) . ' = ';
+			}
+			else
+			{
+				$js = '';
+			}
+			if (isset($options['data_from_url']))
+			{
+				$options['dataUrl'] = Koken::$location['real_root_folder'] . '/api.php?' . $this->attr_parse($options['data_from_url']);
+				unset($options['data_from_url']);
+			}
+			else if (isset($options['data']))
+			{
+				$data = $this->field_to_keys('data');
+				if (strpos($data, 'covers') !== false)
+				{
+					$base = str_replace("['covers']", '', $data);
+					$options['data'] = "array( 'content' => $data, 'album_id' => {$base}['id'], 'album_type' => {$base}['album_type'] )";
+				}
+				else
+				{
+					$options['data'] = "array( 'content' => $data )";
+				}
+			}
 
-            foreach ($options as $key => $val) {
-                if ($key === 'data') {
-                    $native[] = "'$key' => $val";
-                } elseif ($key !== 'group') {
-                    $native[] = "'$key' => " . $this->_clean_val($val);
-                }
-            }
+			unset($options['source']);
 
-            if (isset(Koken::$site['urls']['album'])) {
-                $native[] = "'albumUrl' => '" . Koken::$site['urls']['album'] . "'";
-            }
-            $native = join(', ', $native);
+			$native = array();
 
-            return <<<OUT
+			foreach($options as $key => $val)
+			{
+				if ($key === 'data')
+				{
+					$native[] = "'$key' => $val";
+				}
+				else if ($key !== 'group')
+				{
+					$native[] = "'$key' => " . $this->_clean_val($val);
+				}
+			}
+
+			if (isset(Koken::$site['urls']['album']))
+			{
+				$native[] = "'albumUrl' => '" . Koken::$site['urls']['album'] . "'";
+			}
+			$native = join(', ', $native);
+
+			return <<<OUT
 <?php
 	\$__id = 'pulse_' . md5(uniqid());
 	\$__group = '{$options['group']}';
@@ -170,5 +206,7 @@
 	{$js}\$K.pulse.register({ id: '<?php echo \$__id; ?>', options: <?php echo json_encode(\$__native); ?> })
 </script>
 OUT;
-        }
-    }
+
+		}
+
+	}

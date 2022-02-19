@@ -1,43 +1,53 @@
 <?php
 
-    // This class responds to koken:content, koken:albums and koken:essays
-    class TagLoader extends Tag
-    {
-        protected $allows_close = true;
-        public $tokenize = true;
+	// This class responds to koken:content, koken:albums and koken:essays
+	class TagLoader extends Tag {
 
-        public function generate()
-        {
-            $obj = $this->parameters['_obj'];
-            unset($this->parameters['_obj']);
+		protected $allows_close = true;
+		public $tokenize = true;
 
-            if (count(Koken::$tokens) > 1) {
-                $token = '$value' . Koken::$tokens[1];
-                $copy = '$copy' . Koken::$tokens[1];
-            } else {
-                $token = '$value' . Koken::$tokens[0];
-                $copy = '$copy' . Koken::$tokens[0];
-            }
-            $ref = '$value' . Koken::$tokens[0];
-            $tmp = '$tmp' . Koken::$tokens[0];
-            $limit = '$limit' . Koken::$tokens[0];
-            $archive = '$archive' . Koken::$tokens[0];
+		function generate()
+		{
 
-            if (isset($this->parameters['limit'])) {
-                $l = $this->attr_parse($this->parameters['limit']);
-            } else {
-                $l = 'false';
-            }
+			$obj = $this->parameters['_obj'];
+			unset($this->parameters['_obj']);
 
-            if (isset($this->parameters['include_current'])) {
-                $current = $this->attr_parse($this->parameters['include_current']);
-            } else {
-                $current = 'true';
-            }
+			if (count(Koken::$tokens) > 1)
+			{
+				$token = '$value' . Koken::$tokens[1];
+				$copy = '$copy' . Koken::$tokens[1];
+			}
+			else
+			{
+				$token = '$value' . Koken::$tokens[0];
+				$copy = '$copy' . Koken::$tokens[0];
+			}
+			$ref = '$value' . Koken::$tokens[0];
+			$tmp = '$tmp' . Koken::$tokens[0];
+			$limit = '$limit' . Koken::$tokens[0];
+			$archive = '$archive' . Koken::$tokens[0];
 
-            $params = $this->params_to_array_str();
+			if (isset($this->parameters['limit']))
+			{
+				$l = $this->attr_parse($this->parameters['limit']);
+			}
+			else
+			{
+				$l = 'false';
+			}
 
-            return <<<OUT
+			if (isset($this->parameters['include_current']))
+			{
+				$current = $this->attr_parse($this->parameters['include_current']);
+			}
+			else
+			{
+				$current = 'true';
+			}
+
+			$params = $this->params_to_array_str();
+
+			return <<<OUT
 <?php
 
 	$archive = $limit = false;
@@ -136,5 +146,5 @@
 		}
 ?>
 OUT;
-        }
-    }
+		}
+	}

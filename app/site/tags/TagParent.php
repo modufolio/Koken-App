@@ -1,31 +1,33 @@
 <?php
 
-    class TagParent extends Tag
-    {
-        protected $allows_close = true;
-        public $tokenize = true;
-        public $untokenize_on_else = true;
+	class TagParent extends Tag {
 
-        public function generate()
-        {
-            $parent = count(Koken::$tokens) > 2 ? '$value' . Koken::$tokens[2] : '$dummy';
-            $token = '$value' . Koken::$tokens[1];
-            $id = '$id' . Koken::$tokens[0];
-            $main = '$value' . Koken::$tokens[0];
-            $curl = '$curl' . Koken::$tokens[0];
+		protected $allows_close = true;
+		public $tokenize = true;
+		public $untokenize_on_else = true;
 
-            $order_by = '';
-            $order_direction = '';
+		function generate()
+		{
+			$parent = count(Koken::$tokens) > 2 ? '$value' . Koken::$tokens[2] : '$dummy';
+			$token = '$value' . Koken::$tokens[1];
+			$id = '$id' . Koken::$tokens[0];
+			$main = '$value' . Koken::$tokens[0];
+			$curl = '$curl' . Koken::$tokens[0];
 
-            if (isset($this->parameters['order_by'])) {
-                $order_by = '/order_by:' . $this->attr_parse($this->parameters['order_by']);
+			$order_by = '';
+			$order_direction = '';
 
-                if (isset($this->parameters['order_direction'])) {
-                    $order_direction = '/order_direction:' . $this->attr_parse($this->parameters['order_direction']);
-                }
-            }
+			if (isset($this->parameters['order_by']))
+			{
+				$order_by = '/order_by:' . $this->attr_parse($this->parameters['order_by']);
 
-            return <<<OUT
+				if (isset($this->parameters['order_direction']))
+				{
+					$order_direction = '/order_direction:' . $this->attr_parse($this->parameters['order_direction']);
+				}
+			}
+
+			return <<<OUT
 <?php
 
 	if (isset($parent) && isset({$parent}['album']))
@@ -67,5 +69,5 @@
 
 ?>
 OUT;
-        }
-    }
+		}
+	}

@@ -16,13 +16,13 @@
 class Swift_KeyCache_DiskKeyCache implements Swift_KeyCache
 {
     /** Signal to place pointer at start of file */
-    public const POSITION_START = 0;
+    const POSITION_START = 0;
 
     /** Signal to place pointer at end of file */
-    public const POSITION_END = 1;
+    const POSITION_END = 1;
 
     /** Signal to leave pointer in whatever position it currently is */
-    public const POSITION_CURRENT = 2;
+    const POSITION_CURRENT = 2;
 
     /**
      * An InputStream for cloning.
@@ -95,7 +95,7 @@ class Swift_KeyCache_DiskKeyCache implements Swift_KeyCache
                 throw new Swift_SwiftException(
                     'Invalid mode ['.$mode.'] used to set nsKey='.
                     $nsKey.', itemKey='.$itemKey
-                );
+                    );
                 break;
         }
         fwrite($fp, $string);
@@ -128,7 +128,7 @@ class Swift_KeyCache_DiskKeyCache implements Swift_KeyCache
                 throw new Swift_SwiftException(
                     'Invalid mode ['.$mode.'] used to set nsKey='.
                     $nsKey.', itemKey='.$itemKey
-                );
+                    );
                 break;
         }
         while (false !== $bytes = $os->read(8192)) {

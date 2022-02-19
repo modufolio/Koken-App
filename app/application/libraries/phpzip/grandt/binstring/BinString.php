@@ -9,29 +9,26 @@
  * @copyright 2014 A. Grandt
  * @license GNU LGPL 2.1
  */
-
 namespace com\grandt;
 
-class BinString
-{
-    public const VERSION = 1.00;
+class BinString {
+    const VERSION = 1.00;
 
-    private $has_mbstring = false;
-    private $has_mb_shadow = false;
-    private $has_mb_mail_overload = false;
-    private $has_mb_string_overload = false;
-    private $has_mb_regex_overload = false;
+    private $has_mbstring = FALSE;
+    private $has_mb_shadow = FALSE;
+    private $has_mb_mail_overload = FALSE;
+    private $has_mb_string_overload = FALSE;
+    private $has_mb_regex_overload = FALSE;
 
     /**
-     * mbstring.func_overload has an undocumented feature, to retain access to the original function.
+     * mbstring.func_overload has an undocumented feature, to retain access to the original function. 
      * As it is undocumented, it is uncertain if it'll remain, therefore it's being made an optional.
-     *
-     * @var boolean
+     * 
+     * @var boolean 
      */
     public $USE_MB_ORIG = false;
 
-    public function __construct()
-    {
+    function __construct() {
         $this->has_mbstring = extension_loaded('mbstring');
         $this->has_mb_shadow = (int) ini_get('mbstring.func_overload');
         $this->has_mb_mail_overload = $this->has_mbstring && ($this->has_mb_shadow & 1);
@@ -39,8 +36,7 @@ class BinString
         $this->has_mb_regex_overload = $this->has_mbstring && ($this->has_mb_shadow & 4);
     }
 
-    public function getPHPVersionId()
-    {
+    public function getPHPVersionId() {
         if (!defined('PHP_VERSION_ID')) {
             $version = explode('.', PHP_VERSION);
 
@@ -53,8 +49,7 @@ class BinString
     /**
      * @link http://php.net/manual/en/function.mail.php
      */
-    public function _mail($to, $subject, $message, $additional_headers = null, $additional_parameters = null)
-    {
+    public function _mail($to, $subject, $message, $additional_headers = null, $additional_parameters = null) {
         if ($this->has_mb_mail_overload) {
             if ($this->USE_MB_ORIG) {
                 return mb_orig_mail($to, $subject, $message, $additional_headers, $additional_parameters);
@@ -72,8 +67,7 @@ class BinString
     /**
      * @link http://php.net/manual/en/function.strlen.php
      */
-    public function _strlen($string)
-    {
+    public function _strlen($string) {
         if ($this->has_mb_string_overload) {
             if ($this->USE_MB_ORIG) {
                 return mb_orig_strlen($string);
@@ -87,8 +81,7 @@ class BinString
     /**
      * @link http://php.net/manual/en/function.strpos.php
      */
-    public function _strpos($haystack, $needle, $offset = 0)
-    {
+    public function _strpos($haystack, $needle, $offset = 0) {
         if ($this->has_mb_string_overload) {
             if ($this->USE_MB_ORIG) {
                 return mb_orig_strpos($haystack, $needle, $offset);
@@ -102,8 +95,7 @@ class BinString
     /**
      * @link http://php.net/manual/en/function.strrpos.php
      */
-    public function _strrpos($haystack, $needle, $offset = 0)
-    {
+    public function _strrpos($haystack, $needle, $offset = 0) {
         if ($this->has_mb_string_overload) {
             if ($this->USE_MB_ORIG) {
                 return mb_orig_strrpos($haystack, $needle, $offset);
@@ -117,8 +109,7 @@ class BinString
     /**
      * @link http://php.net/manual/en/function.stripos.php
      */
-    public function _stripos($haystack, $needle, $offset = 0)
-    {
+    public function _stripos($haystack, $needle, $offset = 0) {
         if ($this->getPHPVersionId() >= 50200 && $this->has_mb_string_overload) {
             if ($this->USE_MB_ORIG) {
                 return mb_orig_stripos($haystack, $needle, $offset);
@@ -132,8 +123,7 @@ class BinString
     /**
      * @link http://php.net/manual/en/function.strripos.php
      */
-    public function _strripos($haystack, $needle, $offset = 0)
-    {
+    public function _strripos($haystack, $needle, $offset = 0) {
         if ($this->getPHPVersionId() >= 50200 && $this->has_mb_string_overload) {
             if ($this->USE_MB_ORIG) {
                 return mb_orig_strripos($haystack, $needle, $offset);
@@ -147,8 +137,7 @@ class BinString
     /**
      * @link http://php.net/manual/en/function.strstr.php
      */
-    public function _strstr($haystack, $needle, $before_needle = false)
-    {
+    public function _strstr($haystack, $needle, $before_needle = false) {
         if ($this->getPHPVersionId() >= 50200 && $this->has_mb_string_overload) {
             if ($this->USE_MB_ORIG) {
                 return mb_orig_strstr($haystack, $needle, $before_needle);
@@ -162,8 +151,7 @@ class BinString
     /**
      * @link http://php.net/manual/en/function.stristr.php
      */
-    public function _stristr($haystack, $needle, $before_needle = false)
-    {
+    public function _stristr($haystack, $needle, $before_needle = false) {
         if ($this->getPHPVersionId() >= 50200 && $this->has_mb_string_overload) {
             if ($this->USE_MB_ORIG) {
                 return mb_orig_stristr($haystack, $needle, $before_needle);
@@ -177,8 +165,7 @@ class BinString
     /**
      * @link http://php.net/manual/en/function.strrchr.php
      */
-    public function _strrchr($haystack, $needle)
-    {
+    public function _strrchr($haystack, $needle) {
         if ($this->getPHPVersionId() >= 50200 && $this->has_mb_string_overload) {
             if ($this->USE_MB_ORIG) {
                 return mb_orig_strrchr($haystack, $needle);
@@ -192,8 +179,7 @@ class BinString
     /**
      * @link http://php.net/manual/en/function.substr.php
      */
-    public function _substr($string, $start, $length = null)
-    {
+    public function _substr($string, $start, $length = null) {
         if ($this->has_mb_string_overload) {
             if ($this->USE_MB_ORIG) {
                 if (func_num_args() == 2) { // Kludgry hack, as PHP substr is lobotomized.
@@ -206,9 +192,9 @@ class BinString
             }
             return mb_substr($string, $start, $length, 'latin1');
         } else {
-            if (func_num_args() == 2) { // Kludgry hack, as PHP substr is lobotomized.
-                return substr($string, $start);
-            }
+                if (func_num_args() == 2) { // Kludgry hack, as PHP substr is lobotomized.
+                    return substr($string, $start);
+                }
             return substr($string, $start, $length);
         }
     }
@@ -216,8 +202,7 @@ class BinString
     /**
      * @link http://php.net/manual/en/function.strtolower.php
      */
-    public function _strtolower($string)
-    {
+    public function _strtolower($string) {
         if ($this->has_mb_string_overload) {
             if ($this->USE_MB_ORIG) {
                 return mb_orig_strtolower($string);
@@ -231,8 +216,7 @@ class BinString
     /**
      * @link http://php.net/manual/en/function.strtoupper.php
      */
-    public function _strtoupper($string)
-    {
+    public function _strtoupper($string) {
         if ($this->has_mb_string_overload) {
             if ($this->USE_MB_ORIG) {
                 return mb_orig_strtoupper($string);
@@ -246,8 +230,7 @@ class BinString
     /**
      * @link http://php.net/manual/en/function.substr_count.php
      */
-    public function _substr_count($haystack, $needle, $offset = 0, $length = null)
-    {
+    public function _substr_count($haystack, $needle, $offset = 0, $length = null) {
         if ($this->has_mb_string_overload) {
             if ($this->USE_MB_ORIG) {
                 if (func_num_args() > 3) { // Kludgry hack, as PHP substr_count is lobotomized.
@@ -268,8 +251,7 @@ class BinString
      * @link http://php.net/manual/en/function.ereg.php
      * @deprecated ereg_* functions are deprecated in PHP 5.3 onwards, use the PCRE preg_* instead.
      */
-    public function _ereg($pattern, $string, array &$regs)
-    {
+    public function _ereg($pattern, $string, array &$regs) {
         if ($this->has_mb_regex_overload) {
             if ($this->USE_MB_ORIG) {
                 return mb_orig_ereg($pattern, $string, $regs);
@@ -288,8 +270,7 @@ class BinString
      * @link http://php.net/manual/en/function.eregi.php
      * @deprecated ereg_* functions are deprecated in PHP 5.3 onwards, use the PCRE preg_* instead.
      */
-    public function _eregi($pattern, $string, array &$regs)
-    {
+    public function _eregi($pattern, $string, array &$regs) {
         if ($this->has_mb_regex_overload) {
             if ($this->USE_MB_ORIG) {
                 return mb_orig_eregi($pattern, $string, $regs);
@@ -308,8 +289,7 @@ class BinString
      * @link http://php.net/manual/en/function.ereg_replace.php
      * @deprecated ereg_* functions are deprecated in PHP 5.3 onwards, use the PCRE preg_* instead.
      */
-    public function _ereg_replace($pattern, $replacement, $string, $mb_specific_option = "msr")
-    {
+    public function _ereg_replace($pattern, $replacement, $string, $mb_specific_option = "msr") {
         if ($this->has_mb_regex_overload) {
             if ($this->USE_MB_ORIG) {
                 return mb_orig_ereg_replace($pattern, $replacement, $string);
@@ -328,8 +308,7 @@ class BinString
      * @link http://php.net/manual/en/function.eregi_replace.php
      * @deprecated ereg_* functions are deprecated in PHP 5.3 onwards, use the PCRE preg_* instead.
      */
-    public function _eregi_replace($pattern, $replacement, $string, $mb_specific_option = "msri")
-    {
+    public function _eregi_replace($pattern, $replacement, $string, $mb_specific_option = "msri") {
         if ($this->has_mb_regex_overload) {
             if ($this->USE_MB_ORIG) {
                 return mb_orig_eregi_replace($pattern, $replacement, $string);
@@ -348,8 +327,7 @@ class BinString
      * @link http://php.net/manual/en/function.split.php
      * @deprecated Split is deprecated in PHP 5.3 onwards, use preg_split instead. It'll bypass mb_* anyway.
      */
-    public function _split($pattern, $string, $limit = -1)
-    {
+    public function _split($pattern, $string, $limit = -1) {
         if ($this->has_mb_regex_overload) {
             if ($this->USE_MB_ORIG) {
                 return mb_orig_split($pattern, $string, $limit);
@@ -372,8 +350,7 @@ class BinString
      *
      * @return bool
      */
-    public function startsWith($haystack, $needle)
-    {
+    public function startsWith($haystack, $needle) {
         return $needle === '' || $this->_strpos($haystack, $needle) === 0;
     }
 
@@ -386,8 +363,7 @@ class BinString
      *
      * @return bool
      */
-    public function endsWith($haystack, $needle)
-    {
+    public function endsWith($haystack, $needle) {
         return $needle === '' || $this->_substr($haystack, -$this->_strlen($needle)) === $needle;
     }
 }

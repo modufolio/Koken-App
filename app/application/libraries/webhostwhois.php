@@ -9,12 +9,8 @@ class WebhostWhois
     // Ex. isMediaTempleGrid(), isDreamhost(), etc
     public function __call($name, $parameters)
     {
-        $key = preg_replace_callback('/^is([A-Z])/', function ($matches) {
-            return strtolower($matches[1]);
-        }, $name);
-        $key = preg_replace_callback('/([A-Z])/', function ($matches) {
-            return strtolower($matches[1]);
-        }, $key);
+        $key = preg_replace_callback('/^is([A-Z])/', function($matches){ return strtolower($matches[1]);}, $name);
+        $key = preg_replace_callback('/([A-Z])/', function($matches){ return strtolower($matches[1]);}, $key);
 
         if (isset($this->results[$key])) {
             return (bool) $this->results[$key];
@@ -27,35 +23,38 @@ class WebhostWhois
     {
         $disabled_functions = explode(',', str_replace(' ', '', ini_get('disable_functions')));
 
-        if (ini_get('suhosin.executor.func.blacklist')) {
+        if (ini_get('suhosin.executor.func.blacklist'))
+        {
             $disabled_functions = array_merge($disabled_functions, explode(',', str_replace(' ', '', ini_get('suhosin.executor.func.blacklist'))));
         }
 
-        if (in_array($function_name, $disabled_functions)) {
+        if (in_array($function_name, $disabled_functions))
+        {
             return false;
-        } else {
+        }
+        else
+        {
             return is_callable($function_name);
         }
     }
 
     public function __construct($options = array())
     {
-        if (!$this->is_really_callable('php_uname')) {
-            return;
-        }
+        if (!$this->is_really_callable('php_uname')) return;
 
-        $options = array_merge(
-            array(
-                'uname' => php_uname(),
-                'server' => $_SERVER,
-                'useDns' => false,
-            ),
-            $options
-        );
+    	$options = array_merge(
+    		array(
+    			'uname' => php_uname(),
+    			'server' => $_SERVER,
+    			'useDns' => false,
+    		),
+    		$options
+    	);
 
-        if (!$this->is_really_callable('dns_get_record')) {
-            $options['useDns'] = false;
-        }
+    	if (!$this->is_really_callable('dns_get_record'))
+    	{
+    		$options['useDns'] = false;
+    	}
 
         // Tests for each webhost go here. Each test should evaluate to a boolean.
         // Keep tests in alphabetical order by key.

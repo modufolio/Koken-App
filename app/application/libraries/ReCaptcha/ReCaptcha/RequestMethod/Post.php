@@ -38,7 +38,7 @@ class Post implements RequestMethod
      * URL to which requests are POSTed.
      * @const string
      */
-    public const SITE_VERIFY_URL = 'https://www.google.com/recaptcha/api/siteverify';
+    const SITE_VERIFY_URL = 'https://www.google.com/recaptcha/api/siteverify';
 
     /**
      * Submit the POST request with the specified parameters.

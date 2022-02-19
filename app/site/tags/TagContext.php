@@ -1,16 +1,17 @@
 <?php
 
-    class TagContext extends Tag
-    {
-        protected $allows_close = true;
-        public $tokenize = true;
+	class TagContext extends Tag {
 
-        public function generate()
-        {
-            $token = '$value' . Koken::$tokens[1];
-            $ref = '$value' . Koken::$tokens[0];
+		protected $allows_close = true;
+		public $tokenize = true;
 
-            return <<<OUT
+		function generate()
+		{
+
+			$token = '$value' . Koken::$tokens[1];
+			$ref = '$value' . Koken::$tokens[0];
+
+			return <<<OUT
 <?php
 
 	if (isset({$token}['context']) && isset({$token}['context']['type'])):
@@ -32,5 +33,5 @@
 		{$ref}['context'] = $ref;
 ?>
 OUT;
-        }
-    }
+		}
+	}

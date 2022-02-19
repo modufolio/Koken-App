@@ -16,10 +16,10 @@
 interface Swift_KeyCache
 {
     /** Mode for replacing existing cached data */
-    public const MODE_WRITE = 1;
+    const MODE_WRITE = 1;
 
     /** Mode for appending data to the end of existing cached data */
-    public const MODE_APPEND = 2;
+    const MODE_APPEND = 2;
 
     /**
      * Set a string into the cache under $itemKey for the namespace $nsKey.

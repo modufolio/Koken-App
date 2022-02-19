@@ -1,9 +1,10 @@
 <?php
 
-    $c = new Category();
+	$c = new Category;
 
-    foreach ($c->get_iterated() as $category) {
-        $category->update_counts();
-    }
+	foreach($c->get_iterated() as $category)
+	{
+		$category->update_counts();
+	}
 
-    $done = true;
+	$done = true;

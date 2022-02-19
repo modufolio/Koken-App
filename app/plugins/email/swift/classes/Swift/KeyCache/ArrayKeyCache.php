@@ -67,7 +67,7 @@ class Swift_KeyCache_ArrayKeyCache implements Swift_KeyCache
                 throw new Swift_SwiftException(
                     'Invalid mode ['.$mode.'] used to set nsKey='.
                     $nsKey.', itemKey='.$itemKey
-                );
+                    );
         }
     }
 
@@ -87,7 +87,6 @@ class Swift_KeyCache_ArrayKeyCache implements Swift_KeyCache
         switch ($mode) {
             case self::MODE_WRITE:
                 $this->clearKey($nsKey, $itemKey);
-                // no break
             case self::MODE_APPEND:
                 if (!$this->hasKey($nsKey, $itemKey)) {
                     $this->_contents[$nsKey][$itemKey] = '';
@@ -100,7 +99,7 @@ class Swift_KeyCache_ArrayKeyCache implements Swift_KeyCache
                 throw new Swift_SwiftException(
                     'Invalid mode ['.$mode.'] used to set nsKey='.
                     $nsKey.', itemKey='.$itemKey
-                );
+                    );
         }
     }
 

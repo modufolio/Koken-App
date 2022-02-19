@@ -1,51 +1,57 @@
 <?php
 
-    class TagLoad extends Tag
-    {
-        public $tokenize = true;
-        protected $allows_close = true;
-        public $source = false;
+	class TagLoad extends Tag {
 
-        public function generate()
-        {
-            $params = array();
-            foreach ($this->parameters as $key => $val) {
-                if ($key === 'tree') {
-                    continue;
-                }
-                $params[] = "'$key' => \"" . $this->attr_parse($val) . '"';
-            }
+		public $tokenize = true;
+		protected $allows_close = true;
+		public $source = false;
 
-            $params = join(',', $params);
+		function generate()
+		{
 
-            if (!Koken::$main_load_token && !isset($this->parameters['source']) && isset($this->parameters['infinite'])) {
-                $infinite = $this->attr_parse($this->parameters['infinite']);
-                Koken::$main_load_token = Koken::$tokens[0];
-                if (isset($this->parameters['infinite_toggle'])) {
-                    $infinite_selector = $this->attr_parse($this->parameters['infinite_toggle']);
-                    unset($this->parameters['infinite_toggle']);
-                } else {
-                    $infinite_selector = '';
-                }
-                unset($this->parameters['infinite']);
-            } else {
-                $infinite = 'false';
-                $infinite_selector = '';
-            }
+			$params = array();
+			foreach($this->parameters as $key => $val)
+			{
+				if ($key === 'tree') continue;
+				$params[] = "'$key' => \"" . $this->attr_parse($val) . '"';
+			}
 
-            $main = '$value' . Koken::$tokens[0];
-            $curl = '$curl' . Koken::$tokens[0];
-            $page = '$page' . Koken::$tokens[0];
-            $options = '$options' . Koken::$tokens[0];
-            $collection_name = '$collection' . Koken::$tokens[0];
-            $paginate = '$paginate' . Koken::$tokens[0];
-            $custom_source_var = '$source' . Koken::$tokens[0];
-            $custom_source = $custom_source_var . ' = ' . (isset($this->parameters['source']) ? 'true' : 'false');
-            $load_url = '$url' . Koken::$tokens[0];
-            $load_url_var = '\$url' . Koken::$tokens[0];
-            $top_token = Koken::$tokens[0];
+			$params = join(',', $params);
 
-            return <<<DOC
+			if (!Koken::$main_load_token && !isset($this->parameters['source']) && isset($this->parameters['infinite']))
+			{
+				$infinite = $this->attr_parse($this->parameters['infinite']);
+				Koken::$main_load_token = Koken::$tokens[0];
+				if (isset($this->parameters['infinite_toggle']))
+				{
+					$infinite_selector = $this->attr_parse($this->parameters['infinite_toggle']);
+					unset($this->parameters['infinite_toggle']);
+				}
+				else
+				{
+					$infinite_selector = '';
+				}
+				unset($this->parameters['infinite']);
+			}
+			else
+			{
+				$infinite = 'false';
+				$infinite_selector = '';
+			}
+
+			$main = '$value' . Koken::$tokens[0];
+			$curl = '$curl' . Koken::$tokens[0];
+			$page = '$page' . Koken::$tokens[0];
+			$options = '$options' . Koken::$tokens[0];
+			$collection_name = '$collection' . Koken::$tokens[0];
+			$paginate = '$paginate' . Koken::$tokens[0];
+			$custom_source_var = '$source' . Koken::$tokens[0];
+			$custom_source = $custom_source_var . ' = ' . (isset($this->parameters['source']) ? 'true' : 'false');
+			$load_url = '$url' . Koken::$tokens[0];
+			$load_url_var = '\$url' . Koken::$tokens[0];
+			$top_token = Koken::$tokens[0];
+
+			return <<<DOC
 <?php
 
 	list($load_url, $options, $collection_name, $paginate) = Koken::load( array($params) );
@@ -322,5 +328,7 @@ CSS;
 		}
 ?>
 DOC;
-        }
-    }
+
+		}
+
+	}

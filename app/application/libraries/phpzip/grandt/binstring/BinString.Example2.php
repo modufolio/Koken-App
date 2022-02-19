@@ -49,8 +49,7 @@
         $mbNeedle = "\xC3\xB8";
         $isoNeedle = "\xF8";
 
-        function test($result, $expected)
-        {
+        function test($result, $expected) {
             if ($result == $expected) {
                 if (is_bool($result)) {
                     $result = $result ? "<em>true</em>" : "<em>false</em>";
@@ -64,8 +63,7 @@
             }
         }
 
-        function test_enc($result, $expected)
-        {
+        function test_enc($result, $expected) {
             if ($result == $expected) {
                 if (is_bool($result)) {
                     $result = $result ? "<em>true</em>" : "<em>false</em>";
@@ -135,7 +133,7 @@
             </tr>
             <?php
             if (BinStringStatic::getPHPVersionId() >= 50200) {
-                ?>
+            ?>
                 <tr class="new">
                     <td rowspan="2">stripos()</td><td>yes</td>
                     <td><?= test(stripos($mbStr, $mbNeedle), 6) ?></td>

@@ -1,162 +1,161 @@
 <?php
 
-class DarkroomGD2 extends Darkroom
-{
-    private $sourceImage = false;
-    private $sourceType;
-    private $finalImage;
+class DarkroomGD2 extends Darkroom {
 
-    public function __construct()
-    {
-        $memory_limit = (int) ini_get('memory_limit');
+	private $sourceImage = false;
+	private $sourceType;
+	private $finalImage;
 
-        if (is_numeric($memory_limit) && $memory_limit < 256) {
-            ini_set('memory_limit', '256M');
-        }
-    }
+	function __construct()
+	{
+		$memory_limit = (int) ini_get('memory_limit');
 
-    public function getQuality()
-    {
-        return 100;
-    }
+		if (is_numeric($memory_limit) && $memory_limit < 256)
+		{
+			ini_set('memory_limit', '256M');
+		}
+	}
 
-    public function rotate($path, $degrees)
-    {
-        $this->createSource($path);
-        $this->finalImage = imagerotate($this->sourceImage, -$degrees, 0);
+	public function getQuality() {
+		return 100;
+	}
 
-        imagedestroy($this->sourceImage);
+	public function rotate($path, $degrees)
+	{
+		$this->createSource($path);
+		$this->finalImage = imagerotate($this->sourceImage, -$degrees, 0);
 
-        $this->path = $path;
-        $this->quality = 100;
-        $this->output();
+		imagedestroy($this->sourceImage);
 
-        return $this;
-    }
+		$this->path = $path;
+		$this->quality = 100;
+		$this->output();
 
-    public function createImage()
-    {
-        $this->createSource();
-        $this->finalImage = $this->createProportionalCopy($this->width, $this->height);
-        return $this->output();
-    }
+		return $this;
+	}
 
-    public function createCroppedImage($interstitialWidth, $interstitialHeight, $cropX, $cropY)
-    {
-        $this->createSource();
+	public function createImage()
+	{
+		$this->createSource();
+		$this->finalImage = $this->createProportionalCopy($this->width, $this->height);
+		return $this->output();
+	}
 
-        $interstitial = $this->createProportionalCopy($interstitialWidth, $interstitialHeight);
+	public function createCroppedImage($interstitialWidth, $interstitialHeight, $cropX, $cropY)
+	{
+		$this->createSource();
 
-        $this->finalImage = imagecreatetruecolor($this->width, $this->height);
+		$interstitial = $this->createProportionalCopy($interstitialWidth, $interstitialHeight);
 
-        if ($this->sourceType == IMAGETYPE_PNG) {
-            $transparency = imagecolorallocatealpha($final, 0, 0, 0, 127);
-            imagefill($final, 0, 0, $transparency);
-        }
+		$this->finalImage = imagecreatetruecolor($this->width, $this->height);
 
-        imagecopy($this->finalImage, $interstitial, 0, 0, $cropX, $cropY, $this->width, $this->height);
-        imagedestroy($interstitial);
+		if ($this->sourceType == IMAGETYPE_PNG)	{
+			$transparency = imagecolorallocatealpha($final, 0, 0, 0, 127);
+			imagefill($final, 0, 0, $transparency);
+		}
 
-        return $this->output();
-    }
+		imagecopy($this->finalImage, $interstitial, 0, 0, $cropX, $cropY, $this->width, $this->height);
+		imagedestroy($interstitial);
 
-    private function applySharpening()
-    {
-        if (!function_exists('imageconvolution')) {
-            return;
-        }
+		return $this->output();
+	}
 
-        if ($this->sharpening !== 1) {
-            $this->sharpening = abs(1 - $this->sharpening);
-        }
+	private function applySharpening()
+	{
+		if (!function_exists('imageconvolution')) return;
 
-        $matrix = array(
-            array(-1, -1, -1),
-            array(-1, ceil($this->sharpening*60), -1),
-            array(-1, -1, -1),
-        );
+		if ($this->sharpening !== 1) {
+			$this->sharpening = abs(1 - $this->sharpening);
+		}
 
-        $divisor = array_sum(array_map('array_sum', $matrix));
+		$matrix = array(
+			array(-1, -1, -1),
+			array(-1, ceil($this->sharpening*60), -1),
+			array(-1, -1, -1),
+		);
 
-        imageconvolution($this->finalImage, $matrix, $divisor, 0);
-    }
+		$divisor = array_sum(array_map('array_sum', $matrix));
 
-    private function output()
-    {
-        if ($this->sharpening !== false) {
-            $this->applySharpening();
-        }
+		imageconvolution($this->finalImage, $matrix, $divisor, 0);
+	}
 
-        $this->finalImage = $this->emitBeforeRender($this->finalImage);
+	private function output()
+	{
+		if ($this->sharpening !== false) {
+			$this->applySharpening();
+		}
 
-        $path = $this->path;
+		$this->finalImage = $this->emitBeforeRender($this->finalImage);
 
-        if (!$this->path) {
-            ob_start();
-            $path = null;
-        }
+		$path = $this->path;
 
-        if ($this->sourceType === IMAGETYPE_PNG) {
-            imagealphablending($this->finalImage, false);
-            imagesavealpha($this->finalImage, true);
-            imagepng($this->finalImage, $path);
-        } elseif ($this->sourceType === IMAGETYPE_GIF) {
-            imagegif($this->finalImage, $path);
-        } else {
-            imagejpeg($this->finalImage, $path, min($this->quality, 99));
-        }
+		if (!$this->path) {
+			ob_start();
+			$path = null;
+		}
 
-        if (!$this->path) {
-            $data = ob_get_contents();
-            ob_end_clean();
-            imagedestroy($this->finalImage);
+		if ($this->sourceType === IMAGETYPE_PNG) {
+			imagealphablending($this->finalImage, false);
+			imagesavealpha($this->finalImage, true);
+			imagepng($this->finalImage, $path);
+		} elseif ($this->sourceType === IMAGETYPE_GIF) {
+			imagegif($this->finalImage, $path);
+		} else {
+			imagejpeg($this->finalImage, $path, min($this->quality, 99));
+		}
 
-            return $data;
-        }
+		if (!$this->path) {
+			$data = ob_get_contents();
+			ob_end_clean();
+			imagedestroy($this->finalImage);
 
-        imagedestroy($this->finalImage);
-    }
+			return $data;
+		}
 
-    private function createSource($path = false)
-    {
-        if (!$path) {
-            $path = $this->sourcePath;
-        }
+		imagedestroy($this->finalImage);
+	}
 
-        list(, , $this->sourceType) = getimagesize($path);
+	private function createSource($path = false)
+	{
+		if (!$path) {
+			$path = $this->sourcePath;
+		}
 
-        switch ($this->sourceType) {
-            case IMAGETYPE_JPEG:
-                $this->sourceImage = imagecreatefromjpeg($path);
-                break;
+		list(,,$this->sourceType) = getimagesize($path);
 
-            case IMAGETYPE_PNG:
-                $this->sourceImage = imagecreatefrompng($path);
-                break;
+		switch($this->sourceType) {
+			case IMAGETYPE_JPEG:
+				$this->sourceImage = imagecreatefromjpeg($path);
+				break;
 
-            case IMAGETYPE_GIF:
-                $this->sourceImage = imagecreatefromgif($path);
-                break;
-        }
+			case IMAGETYPE_PNG:
+				$this->sourceImage = imagecreatefrompng($path);
+				break;
 
-        if ($this->sourceImage) {
-            // Throw error
-        }
-    }
+			case IMAGETYPE_GIF:
+				$this->sourceImage = imagecreatefromgif($path);
+				break;
+		}
 
-    private function createProportionalCopy($width, $height)
-    {
-        $copy = imagecreatetruecolor($width, $height);
+		if ($this->sourceImage)
+		{
+			// Throw error
+		}
+	}
 
-        if ($this->sourceType === IMAGETYPE_PNG) {
-            $transparency = imagecolorallocatealpha($copy, 0, 0, 0, 127);
-            imagefill($copy, 0, 0, $transparency);
-        }
+	private function createProportionalCopy($width, $height)
+	{
+		$copy = imagecreatetruecolor($width, $height);
 
-        imagecopyresampled($copy, $this->sourceImage, 0, 0, 0, 0, $width, $height, $this->sourceWidth, $this->sourceHeight);
+		if ($this->sourceType === IMAGETYPE_PNG) {
+			$transparency = imagecolorallocatealpha($copy, 0, 0, 0, 127);
+			imagefill($copy, 0, 0, $transparency);
+		}
 
-        imagedestroy($this->sourceImage);
+		imagecopyresampled($copy, $this->sourceImage, 0, 0, 0, 0, $width, $height, $this->sourceWidth, $this->sourceHeight);
 
-        return $copy;
-    }
+		imagedestroy($this->sourceImage);
+
+		return $copy;
+	}
 }

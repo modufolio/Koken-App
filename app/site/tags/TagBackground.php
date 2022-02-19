@@ -1,65 +1,77 @@
 <?php
 
-    class TagBackground extends Tag
-    {
-        public $tag = 'div';
+	class TagBackground extends Tag {
 
-        public function generate()
-        {
-            $defaults = array(
-                'tag' => 'div',
-                'data' => false,
-                'position' => 'focal',
-                'lazy' => false,
-                'fade' => true,
-                'relative' => true,
-            );
+		public $tag = 'div';
 
-            $options = array_merge($defaults, $this->parameters);
+		function generate()
+		{
 
-            $options['lazy'] = $options['lazy'] === 'true';
-            $options['fade'] = $options['fade'] !== 'false';
+			$defaults = array(
+				'tag' => 'div',
+				'data' => false,
+				'position' => 'focal',
+				'lazy' => false,
+				'fade' => true,
+				'relative' => true,
+			);
 
-            if (isset($this->parameters['data'])) {
-                $token = $this->field_to_keys($this->parameters['data']);
-                unset($this->parameters['data']);
-            } else {
-                $token = '$value' . Koken::$tokens[0];
-            }
+			$options = array_merge($defaults, $this->parameters);
 
-            if ($options['lazy']) {
-                $klass = 'k-lazy-loading-background';
-                if ($options['fade']) {
-                    $this->parameters['data-lazy-fade'] = is_numeric($options['fade']) ? $options['fade'] : '400';
-                }
-                if (isset($this->parameters['class'])) {
-                    $this->parameters['class'] .= ' ' . $klass;
-                } else {
-                    $this->parameters['class'] = $klass;
-                }
-            }
+			$options['lazy'] = $options['lazy'] === 'true';
+			$options['fade'] = $options['fade'] !== 'false';
 
-            $cache_path_prefix = $options['relative'] ? 'relative_prefix' : 'prefix';
+			if (isset($this->parameters['data']))
+			{
+				$token = $this->field_to_keys($this->parameters['data']);
+				unset($this->parameters['data']);
+			}
+			else
+			{
+				$token = '$value' . Koken::$tokens[0];
+			}
 
-            $this->tag = $options['tag'];
+			if ($options['lazy'])
+			{
+				$klass = 'k-lazy-loading-background';
+				if ($options['fade'])
+				{
+					$this->parameters['data-lazy-fade'] = is_numeric($options['fade']) ? $options['fade'] : '400';
+				}
+				if (isset($this->parameters['class']))
+				{
+					$this->parameters['class'] .= ' ' . $klass;
+				}
+				else
+				{
+					$this->parameters['class'] = $klass;
+				}
+			}
 
-            unset($this->parameters['tag']);
+			$cache_path_prefix = $options['relative'] ? 'relative_prefix' : 'prefix';
 
-            $params = array();
+			$this->tag = $options['tag'];
 
-            foreach ($this->parameters as $key => $val) {
-                if ($key === 'position' || !isset($defaults[$key])) {
-                    if ($key === 'position') {
-                        $key = 'data-position';
-                    }
-                    $val = $this->attr_parse($val, true);
-                    $params[] = "$key=\"$val\"";
-                }
-            }
+			unset($this->parameters['tag']);
 
-            $params = join(' ', $params);
+			$params = array();
 
-            return <<<DOC
+			foreach($this->parameters as $key => $val)
+			{
+				if ($key === 'position' || !isset($defaults[$key]))
+				{
+					if ($key === 'position')
+					{
+						$key = 'data-position';
+					}
+					$val = $this->attr_parse($val, true);
+					$params[] = "$key=\"$val\"";
+				}
+			}
+
+			$params = join(' ', $params);
+
+			return <<<DOC
 <?php
 		\$__presets = array();
 		if (isset({$token}['presets']))
@@ -99,10 +111,11 @@
 
 <{$this->tag} $params data-aspect="<?php echo \$__item['aspect_ratio']; ?>" data-focal-point="<?php echo \$__item['focal_point']['x']; ?>,<?php echo \$__item['focal_point']['y']; ?>" data-bg-presets="<?php echo \$__presets; ?>" data-base="<?php echo \$__item['cache_path']["{$cache_path_prefix}"]; ?>" data-extension="<?php echo \$__item['cache_path']['extension']; ?>">
 DOC;
-        }
+		}
 
-        public function close()
-        {
-            return '</' . $this->tag . '><?php endif; ?>';
-        }
-    }
+		function close()
+		{
+			return '</' . $this->tag . '><?php endif; ?>';
+		}
+
+	}

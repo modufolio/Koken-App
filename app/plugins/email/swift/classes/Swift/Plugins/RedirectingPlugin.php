@@ -116,7 +116,7 @@ class Swift_Plugins_RedirectingPlugin implements Swift_Events_SendListener
             $to = array();
         }
 
-        foreach ((array) $this->_recipient as $recipient) {
+        foreach ( (array) $this->_recipient as $recipient) {
             if (!array_key_exists($recipient, $to)) {
                 $message->addTo($recipient);
             }

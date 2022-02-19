@@ -16,16 +16,16 @@
 class Swift_DependencyContainer
 {
     /** Constant for literal value types */
-    public const TYPE_VALUE = 0x0001;
+    const TYPE_VALUE = 0x0001;
 
     /** Constant for new instance types */
-    public const TYPE_INSTANCE = 0x0010;
+    const TYPE_INSTANCE = 0x0010;
 
     /** Constant for shared instance types */
-    public const TYPE_SHARED = 0x0100;
+    const TYPE_SHARED = 0x0100;
 
     /** Constant for aliases */
-    public const TYPE_ALIAS = 0x1000;
+    const TYPE_ALIAS = 0x1000;
 
     /** Singleton instance */
     private static $_instance = null;
@@ -100,7 +100,7 @@ class Swift_DependencyContainer
         if (!$this->has($itemName)) {
             throw new Swift_DependencyException(
                 'Cannot lookup dependency "'.$itemName.'" since it is not registered.'
-            );
+                );
         }
 
         switch ($this->_store[$itemName]['lookupType']) {
@@ -309,7 +309,7 @@ class Swift_DependencyContainer
         if ($reflector->getConstructor()) {
             return $reflector->newInstanceArgs(
                 $this->createDependenciesFor($itemName)
-            );
+                );
         } else {
             return $reflector->newInstance();
         }
@@ -331,7 +331,7 @@ class Swift_DependencyContainer
         if (!isset($this->_endPoint)) {
             throw new BadMethodCallException(
                 'Component must first be registered by calling register()'
-            );
+                );
         }
 
         return $this->_endPoint;

@@ -138,9 +138,8 @@ class Swift_Transport_StreamBuffer extends Swift_ByteStream_AbstractFilterableIn
         foreach ($replacements as $search => $replace) {
             if (!isset($this->_translations[$search])) {
                 $this->addFilter(
-                    $this->_replacementFactory->createFilter($search, $replace),
-                    $search
-                );
+                    $this->_replacementFactory->createFilter($search, $replace), $search
+                    );
                 $this->_translations[$search] = true;
             }
         }
@@ -266,7 +265,7 @@ class Swift_Transport_StreamBuffer extends Swift_ByteStream_AbstractFilterableIn
             throw new Swift_TransportException(
                 'Connection could not be established with host '.$this->_params['host'].
                 ' ['.$errstr.' #'.$errno.']'
-            );
+                );
         }
         if (!empty($this->_params['blocking'])) {
             stream_set_blocking($this->_stream, 1);
@@ -294,7 +293,7 @@ class Swift_Transport_StreamBuffer extends Swift_ByteStream_AbstractFilterableIn
         if ($err = stream_get_contents($pipes[2])) {
             throw new Swift_TransportException(
                 'Process could not be started ['.$err.']'
-            );
+                );
         }
         $this->_in = & $pipes[0];
         $this->_out = & $pipes[1];

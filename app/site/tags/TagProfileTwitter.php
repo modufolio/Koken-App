@@ -1,17 +1,18 @@
 <?php
 
-    class TagProfileTwitter extends Tag
-    {
-        protected $allows_close = true;
+	class TagProfileTwitter extends Tag {
 
-        public function generate()
-        {
-            return <<<OUT
+		protected $allows_close = true;
+
+		function generate()
+		{
+
+			return <<<OUT
 <?php
 
 	if (!empty(Koken::\$profile['twitter'])):
 
 ?>
 OUT;
-        }
-    }
+		}
+	}

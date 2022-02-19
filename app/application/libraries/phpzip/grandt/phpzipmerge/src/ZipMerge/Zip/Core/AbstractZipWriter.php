@@ -1,9 +1,8 @@
 <?php
-
 namespace ZipMerge\Zip\Core;
 
-abstract class AbstractZipWriter
-{
+abstract class AbstractZipWriter {
+
     /**
      *
      * @author A. Grandt <php@grandt.com>

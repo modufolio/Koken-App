@@ -486,17 +486,12 @@ class Swift_Mime_SimpleMimeEntity implements Swift_Mime_MimeEntity
             if ($this->_cache->hasKey($this->_cacheKey, 'body')) {
                 $body = $this->_cache->getString($this->_cacheKey, 'body');
             } else {
-                $body = "\r\n".$this->_encoder->encodeString(
-                    $this->getBody(),
-                    0,
+                $body = "\r\n".$this->_encoder->encodeString($this->getBody(), 0,
                     $this->getMaxLineLength()
-                );
-                $this->_cache->setString(
-                    $this->_cacheKey,
-                    'body',
-                    $body,
+                    );
+                $this->_cache->setString($this->_cacheKey, 'body', $body,
                     Swift_KeyCache::MODE_WRITE
-                );
+                    );
             }
             $string .= $body;
         }
@@ -642,11 +637,9 @@ class Swift_Mime_SimpleMimeEntity implements Swift_Mime_MimeEntity
     protected function _fixHeaders()
     {
         if (count($this->_immediateChildren)) {
-            $this->_setHeaderParameter(
-                'Content-Type',
-                'boundary',
+            $this->_setHeaderParameter('Content-Type', 'boundary',
                 $this->getBoundary()
-            );
+                );
             $this->_headers->remove('Content-Transfer-Encoding');
         } else {
             $this->_setHeaderParameter('Content-Type', 'boundary', null);
@@ -723,8 +716,7 @@ class Swift_Mime_SimpleMimeEntity implements Swift_Mime_MimeEntity
     {
         if (!preg_match(
             '/^[a-z0-9\'\(\)\+_\-,\.\/:=\?\ ]{0,69}[a-z0-9\'\(\)\+_\-,\.\/:=\?]$/Di',
-            $boundary
-        )) {
+            $boundary)) {
             throw new Swift_RfcComplianceException('Mime boundary set is not RFC 2046 compliant.');
         }
     }
@@ -773,12 +765,8 @@ class Swift_Mime_SimpleMimeEntity implements Swift_Mime_MimeEntity
 
     private function _createChild()
     {
-        return new self(
-            $this->_headers->newInstance(),
-            $this->_encoder,
-            $this->_cache,
-            $this->_grammar
-        );
+        return new self($this->_headers->newInstance(),
+            $this->_encoder, $this->_cache, $this->_grammar);
     }
 
     private function _notifyEncoderChanged(Swift_Mime_ContentEncoder $encoder)
@@ -853,10 +841,10 @@ class Swift_Mime_SimpleMimeEntity implements Swift_Mime_MimeEntity
             '/^'.$this->_grammar->getDefinition('id-left').'@'.
             $this->_grammar->getDefinition('id-right').'$/D',
             $id
-        )) {
+            )) {
             throw new Swift_RfcComplianceException(
                 'Invalid ID given <'.$id.'>'
-            );
+                );
         }
     }
 

@@ -11,8 +11,7 @@ namespace ZipMerge\Zip\Core\Header;
 
 use com\grandt\BinStringStatic;
 
-class EndOfCentralDirectory extends AbstractZipHeader
-{
+class EndOfCentralDirectory extends AbstractZipHeader {
     public $offset;
 
     public $thisDisk = 0;
@@ -39,15 +38,13 @@ class EndOfCentralDirectory extends AbstractZipHeader
      *
      * @param resource $handle
      */
-    public function __construct($handle = null)
-    {
+    public function __construct($handle = null) {
         if ($handle != null) {
             $this->parseHeader($handle);
         }
     }
 
-    public function parseHeader($handle)
-    {
+    public function parseHeader($handle) {
         if ($handle != null) {
             $this->offset = (int)ftell($handle) - 4;
 
@@ -66,8 +63,7 @@ class EndOfCentralDirectory extends AbstractZipHeader
         }
     }
 
-    public function __toString()
-    {
+    public function __toString() {
         $this->zipCommentLength = BinStringStatic::_strlen($this->zipComment);
         $eocd = AbstractZipHeader::ZIP_END_OF_CENTRAL_DIRECTORY;
         $eocd .= pack("vvvv", $this->thisDisk, $this->firstCDDisk, $this->cdrCount1, $this->cdrCount2);

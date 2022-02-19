@@ -19,49 +19,57 @@
  *
  * @package		DMZ-Included-Extensions
  */
-class DMZ_Translate
-{
-    /**
-     * do language translations of the field list.
-     *
-     * @param	DataMapper $object The DataMapper Object to convert
-     * @param	array $fields Array of fields to include.  If empty, includes all database columns.
-     * @return	object, the Datamapper object
-     */
-    public function translate($object, $fields = array())
-    {
-        // make sure $fields is an array
-        $fields = (array) $fields;
+class DMZ_Translate {
 
-        // assume all database columns if $fields is not provided.
-        if (empty($fields)) {
-            $fields = $object->fields;
-        }
+	/**
+	 * do language translations of the field list.
+	 *
+	 * @param	DataMapper $object The DataMapper Object to convert
+	 * @param	array $fields Array of fields to include.  If empty, includes all database columns.
+	 * @return	object, the Datamapper object
+	 */
+	function translate( $object, $fields = array() )
+	{
+		// make sure $fields is an array
+		$fields = (array) $fields;
 
-        // loop through the fields
-        foreach ($fields as $f) {
-            // first, deal with the loaded fields
-            if (isset($object->{$f})) {
-                $line = lang($object->{$f});
-                if ($line) {
-                    $object->{$f};
-                }
-            }
+		// assume all database columns if $fields is not provided.
+		if(empty($fields))
+		{
+			$fields = $object->fields;
+		}
 
-            // then, loop through the all array
-            foreach ($object->all as $key => $all_object) {
-                if (isset($all_object->{$f})) {
-                    $line = lang($all_object->{$f});
-                    if ($line) {
-                        $object->all[$key]->{$f} = $line;
-                    }
-                }
-            }
-        }
+		// loop through the fields
+		foreach($fields as $f)
+		{
+			// first, deal with the loaded fields
+			if ( isset($object->{$f}) )
+			{
+				$line = lang($object->{$f});
+				if ( $line )
+				{
+					$object->{$f};
+				}
+			}
 
-        // return the Datamapper object
-        return $object;
-    }
+			// then, loop through the all array
+			foreach($object->all as $key => $all_object)
+			{
+				if ( isset($all_object->{$f}) )
+				{
+					$line = lang($all_object->{$f});
+					if ( $line )
+					{
+						$object->all[$key]->{$f} = $line;
+					}
+				}
+			}
+		}
+
+		// return the Datamapper object
+		return $object;
+	}
+
 }
 
 /* End of file translate.php */
