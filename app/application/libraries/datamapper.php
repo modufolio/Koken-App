@@ -5963,7 +5963,7 @@ class DataMapper implements IteratorAggregate
         if ($CI || $CI =& get_instance()) {
             // make sure these exists to not trip __get()
             $this->load = null;
-            $this->config = null;
+            @$this->config = null;
             $this->lang = null;
 
             // access to the loader
