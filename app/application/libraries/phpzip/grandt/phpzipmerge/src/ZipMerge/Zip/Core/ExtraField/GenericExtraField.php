@@ -9,21 +9,24 @@
 
 namespace ZipMerge\Zip\Core\ExtraField;
 
-class GenericExtraField extends AbstractExtraField {
+class GenericExtraField extends AbstractExtraField
+{
     /**
      * @return string The version of the field for the Local Header.
      */
-    public function getLocalField() {
+    public function getLocalField()
+    {
         return parent::encodeField($this->header, $this->localData);
     }
 
     /**
      * @return string The version of the field for the Central Header.
      */
-    public function getCentralField() {
+    public function getCentralField()
+    {
         if ($this->centralData != null) {
             return parent::encodeField($this->header, $this->centralData);
         }
-        return $this->getLocalField();        
+        return $this->getLocalField();
     }
 }

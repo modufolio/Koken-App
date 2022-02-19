@@ -13,8 +13,8 @@ namespace PHPZip\Zip\Exception;
 
 use PHPZip\Zip\Core\AbstractException;
 
-class HeadersSent extends AbstractException {
-
+class HeadersSent extends AbstractException
+{
     private $_headerFile = null;
     private $_headerLine = null;
     private $_fileName = null;
@@ -27,7 +27,8 @@ class HeadersSent extends AbstractException {
      *
      * @param array $config Configuration array containing headerFile, headerLine and fileName
      */
-    public function __construct(array $config){
+    public function __construct(array $config)
+    {
         $this->_headerFile = $config['headerFile'];
         $this->_headerLine = $config['headerLine'];
         $this->_fileName = isset($config['fileName']) ? $config['fileName'] : null;
@@ -38,15 +39,18 @@ class HeadersSent extends AbstractException {
         parent::__construct($message);
     }
 
-    public function getHeaderFile(){
+    public function getHeaderFile()
+    {
         return $this->_headerFile;
     }
 
-    public function getHeaderLine(){
+    public function getHeaderLine()
+    {
         return $this->_headerLine;
     }
 
-    public function getFileName(){
+    public function getFileName()
+    {
         return $this->_fileName;
     }
 }

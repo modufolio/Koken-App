@@ -1,17 +1,14 @@
 <?php
 
-	class TagKeyboardScroll extends Tag {
+    class TagKeyboardScroll extends Tag
+    {
+        public function generate()
+        {
+            $defaults = array('offset' => '0');
+            $options = array_merge($defaults, $this->parameters);
 
-		function generate()
-		{
-
-			$defaults = array('offset' => '0');
-			$options = array_merge($defaults, $this->parameters);
-
-			return <<<OUT
+            return <<<OUT
 <script>\$K.keyboard.scroll.init('{$options['element']}', {$options['offset']});</script>
 OUT;
-
-		}
-
-	}
+        }
+    }

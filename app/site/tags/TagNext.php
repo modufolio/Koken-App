@@ -1,42 +1,35 @@
 <?php
 
-	class TagNext extends Tag {
+    class TagNext extends Tag
+    {
+        protected $allows_close = true;
+        public $tokenize = true;
 
-		protected $allows_close = true;
-		public $tokenize = true;
+        public function generate()
+        {
+            $token = '$value' . Koken::$tokens[1];
+            $ref = '$value' . Koken::$tokens[0];
+            $neighbors = '$__neighbors';
 
-		function generate()
-		{
+            if (isset($this->parameters['count'])) {
+                $limit = $this->parameters['count'];
+            } else {
+                $limit = 1;
+            }
 
-			$token = '$value' . Koken::$tokens[1];
-			$ref = '$value' . Koken::$tokens[0];
-			$neighbors = '$__neighbors';
+            Koken::$max_neighbors[] = $limit*2;
 
-			if (isset($this->parameters['count']))
-			{
-				$limit = $this->parameters['count'];
-			}
-			else
-			{
-				$limit = 1;
-			}
+            if (isset($this->parameters['_prev'])) {
+                $key = 'previous';
+                $opposite = 'next';
+                $slice = '$__next = array_slice($__next, max(0, count($__next) - ' . $limit . '));';
+            } else {
+                $key = 'next';
+                $opposite = 'previous';
+                $slice = '$__next = array_slice($__next, 0, ' . $limit . ');';
+            }
 
-			Koken::$max_neighbors[] = $limit*2;
-
-			if (isset($this->parameters['_prev']))
-			{
-				$key = 'previous';
-				$opposite = 'next';
-				$slice = '$__next = array_slice($__next, max(0, count($__next) - ' . $limit . '));';
-			}
-			else
-			{
-				$key = 'next';
-				$opposite = 'previous';
-				$slice = '$__next = array_slice($__next, 0, ' . $limit . ');';
-			}
-
-			return <<<OUT
+            return <<<OUT
 <?php
 	\$__limit = $limit;
 	\$__force_loop = false;
@@ -91,5 +84,5 @@
 
 ?>
 OUT;
-		}
-	}
+        }
+    }

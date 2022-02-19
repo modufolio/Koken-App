@@ -16,13 +16,14 @@ use ZipMerge\Zip\Core\ExtraField\GenericExtraField;
 use ZipMerge\Zip\Core\ExtraField\UnicodeCommentExtraField;
 use ZipMerge\Zip\Core\ZipUtils;
 
-class ZipFileEntry extends AbstractZipHeader {
+class ZipFileEntry extends AbstractZipHeader
+{
     public $versionMadeBy = AbstractZipHeader::ATTR_MADE_BY_VERSION;
     public $versionNeeded = AbstractZipHeader::ATTR_VERSION_TO_EXTRACT;
 
     public $originalLFH = null;
     public $originalCDR = null;
-    
+
     public $offset;
     public $dataOffset;
 
@@ -44,13 +45,15 @@ class ZipFileEntry extends AbstractZipHeader {
     public $internalFileAttributes = AbstractZipHeader::NULL_WORD;
     public $externalFileAttributes = AbstractZipHeader::NULL_DWORD;
 
-    public function __construct($handle = null) {
+    public function __construct($handle = null)
+    {
         if ($handle != null) {
             $this->parseHeader($handle);
         }
     }
-    
-    public function parseHeader($handle) {
+
+    public function parseHeader($handle)
+    {
         $pk = fread($handle, 4);
         if ($pk == AbstractZipHeader::ZIP_LOCAL_FILE_HEADER) {
             /*
@@ -108,9 +111,9 @@ class ZipFileEntry extends AbstractZipHeader {
                 fseek($handle, $this->gzLength, SEEK_CUR);
             }
             $this->isDirectory = !$hasDataDescriptor && $this->dataLength == 0 && $this->fileCRC32 == 0;
-        } else if ($pk == AbstractZipHeader::ZIP_CENTRAL_FILE_HEADER) {
+        } elseif ($pk == AbstractZipHeader::ZIP_CENTRAL_FILE_HEADER) {
             /*
-            * 
+            *
             * central file header signature   4 bytes  (0x02014b50)
             * version made by                 2 bytes
             * version needed to extract       2 bytes
@@ -135,7 +138,7 @@ class ZipFileEntry extends AbstractZipHeader {
             *  extra field (variable size)
             *  file comment (variable size)
              */
-            
+
             // $this->offset = (int)ftell($handle) - 4;
 
             $this->versionMadeBy            = fread($handle, 2);
@@ -183,12 +186,14 @@ class ZipFileEntry extends AbstractZipHeader {
             fseek($handle, -4, SEEK_CUR);
         }
     }
-    
-        public function addExtraField($extraField) {
+
+    public function addExtraField($extraField)
+    {
         $this->extraFieldsArray[$extraField->header] = $extraField;
     }
 
-    public function addPath($path) {
+    public function addPath($path)
+    {
         $this->path = AbstractZipHeader::pathJoin($path, $this->path);
         if (in_array(AbstractExtraField::HEADER_UNICODE_PATH, $this->extraFieldsArray)
             && isset($this->extraFieldsArray[AbstractExtraField::HEADER_UNICODE_PATH])) {
@@ -198,7 +203,8 @@ class ZipFileEntry extends AbstractZipHeader {
         }
     }
 
-    public function getLocalHeader() {
+    public function getLocalHeader()
+    {
         $ef = '';
         foreach ($this->extraFieldsArray as $value) {
             /* @var $value AbstractExtraField */
@@ -214,11 +220,12 @@ class ZipFileEntry extends AbstractZipHeader {
 
         $lf .= $this->path;
         $lf .= $ef;
-        
-        return $lf;        
+
+        return $lf;
     }
 
-    public function getCentralDirectoryHeader() {
+    public function getCentralDirectoryHeader()
+    {
         $ef = '';
         foreach ($this->extraFieldsArray as $value) {
             /* @var $value AbstractExtraField */
@@ -234,7 +241,7 @@ class ZipFileEntry extends AbstractZipHeader {
         $cd .= pack("v", BinStringStatic::_strlen($this->comment));
         $cd .= $this->discNumberStart. $this->internalFileAttributes . $this->externalFileAttributes;
         $cd .= pack("V", $this->offset);
-        
+
         $cd .= $this->path;
         $cd .= $ef;
         $cd .= $this->comment;
@@ -242,7 +249,8 @@ class ZipFileEntry extends AbstractZipHeader {
         return $cd;
     }
 
-    public function prependPath($path) {
+    public function prependPath($path)
+    {
         $this->path = AbstractZipHeader::pathJoin($path, $this->path);
         if (in_array(AbstractExtraField::HEADER_UNICODE_PATH, $this->extraFieldsArray)
             && isset($this->extraFieldsArray[AbstractExtraField::HEADER_UNICODE_PATH])) {
@@ -252,7 +260,8 @@ class ZipFileEntry extends AbstractZipHeader {
         }
     }
 
-    public function setFileComment($comment) {
+    public function setFileComment($comment)
+    {
         $this->comment = $comment;
         if (in_array(AbstractExtraField::HEADER_UNICODE_COMMENT, $this->extraFieldsArray)
             && isset($this->extraFieldsArray[AbstractExtraField::HEADER_UNICODE_COMMENT])) {
@@ -261,7 +270,8 @@ class ZipFileEntry extends AbstractZipHeader {
         }
     }
 
-    public function setUTF8FileComment($comment) {
+    public function setUTF8FileComment($comment)
+    {
         if (in_array(AbstractExtraField::HEADER_UNICODE_COMMENT, $this->extraFieldsArray)
             && isset($this->extraFieldsArray[AbstractExtraField::HEADER_UNICODE_COMMENT])) {
             $ef = $this->extraFieldsArray[AbstractExtraField::HEADER_UNICODE_COMMENT];
@@ -274,7 +284,8 @@ class ZipFileEntry extends AbstractZipHeader {
         }
     }
 
-    public static function createDirEntry($path, $timestamp) {
+    public static function createDirEntry($path, $timestamp)
+    {
         $fileEntry = new ZipFileEntry();
 
         $fileEntry->gzType = 0;

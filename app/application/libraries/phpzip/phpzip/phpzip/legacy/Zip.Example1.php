@@ -1,4 +1,5 @@
 <?php
+
 //set_error_handler("customError");
 error_reporting(E_ALL | E_STRICT);
 ini_set('error_reporting', E_ALL | E_STRICT);
@@ -62,7 +63,8 @@ if (!empty($errors)) {
     echo "\n<pre>\n**************\n*** ERRORS ***\n**************\n\n$errors\n</pre>\n";
 }
 
-function customError($error_level, $error_message, $error_file, $error_line) {
+function customError($error_level, $error_message, $error_file, $error_line)
+{
     global $errors;
     switch ($error_level) {
         case 1:     $e_type = 'E_ERROR'; $exit_now = true; break;

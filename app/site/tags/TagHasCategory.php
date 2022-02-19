@@ -1,16 +1,15 @@
 <?php
 
-	class TagHasCategory extends Tag {
+    class TagHasCategory extends Tag
+    {
+        protected $allows_close = true;
 
-		protected $allows_close = true;
+        public function generate()
+        {
+            $token = '$value' . Koken::$tokens[0];
+            $cat = $this->attr_parse($this->parameters['title']);
 
-		function generate()
-		{
-
-			$token = '$value' . Koken::$tokens[0];
-			$cat = $this->attr_parse($this->parameters['title']);
-
-			return <<<OUT
+            return <<<OUT
 <?php
 
 	if (!isset({$token}['categories']) && isset({$token}['album']))
@@ -40,5 +39,5 @@
 	if (\$__has_cat):
 ?>
 OUT;
-		}
-	}
+        }
+    }

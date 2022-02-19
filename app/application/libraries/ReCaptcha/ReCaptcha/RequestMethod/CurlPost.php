@@ -40,7 +40,7 @@ class CurlPost implements RequestMethod
      * URL to which requests are sent via cURL.
      * @const string
      */
-    const SITE_VERIFY_URL = 'https://www.google.com/recaptcha/api/siteverify';
+    public const SITE_VERIFY_URL = 'https://www.google.com/recaptcha/api/siteverify';
 
     /**
      * Curl connection to the reCAPTCHA service

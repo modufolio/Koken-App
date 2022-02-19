@@ -252,8 +252,10 @@ abstract class Swift_Mime_Headers_AbstractHeader implements Swift_Mime_Header
             // and make it a quoted-string
             if (preg_match('/^'.$this->getGrammar()->getDefinition('text').'*$/D', $phraseStr)) {
                 $phraseStr = $this->getGrammar()->escapeSpecials(
-                    $phraseStr, array('"'), $this->getGrammar()->getSpecials()
-                    );
+                    $phraseStr,
+                    array('"'),
+                    $this->getGrammar()->getSpecials()
+                );
                 $phraseStr = '"'.$phraseStr.'"';
             } else {
                 // ... otherwise it needs encoding
@@ -371,17 +373,21 @@ abstract class Swift_Mime_Headers_AbstractHeader implements Swift_Mime_Header
         }
         $encodingWrapperLength = strlen(
             '=?'.$charsetDecl.'?'.$this->_encoder->getName().'??='
-            );
+        );
 
         if ($firstLineOffset >= 75) {
             //Does this logic need to be here?
             $firstLineOffset = 0;
         }
 
-        $encodedTextLines = explode("\r\n",
+        $encodedTextLines = explode(
+            "\r\n",
             $this->_encoder->encodeString(
-                $token, $firstLineOffset, 75 - $encodingWrapperLength, $this->_charset
-                )
+                $token,
+                $firstLineOffset,
+                75 - $encodingWrapperLength,
+                $this->_charset
+            )
         );
 
         if (strtolower($this->_charset) !== 'iso-2022-jp') {

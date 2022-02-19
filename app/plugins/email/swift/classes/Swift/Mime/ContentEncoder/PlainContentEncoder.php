@@ -157,6 +157,6 @@ class Swift_Mime_ContentEncoder_PlainContentEncoder implements Swift_Mime_Conten
             array("\r\n", "\r", "\n"),
             array("\n", "\n", "\r\n"),
             $string
-            );
+        );
     }
 }

@@ -2,6 +2,6 @@
 
 interface KokenDatabaseConfiguration
 {
-	public function get();
-	public function write($configuration);
+    public function get();
+    public function write($configuration);
 }

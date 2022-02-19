@@ -22,10 +22,10 @@ class Swift_Signers_OpenDKIMSigner extends Swift_Signers_DKIMSigner
 
     private $dropFirstLF = true;
 
-    const CANON_RELAXED = 1;
-    const CANON_SIMPLE = 2;
-    const SIG_RSA_SHA1 = 3;
-    const SIG_RSA_SHA256 = 4;
+    public const CANON_RELAXED = 1;
+    public const CANON_SIMPLE = 2;
+    public const SIG_RSA_SHA1 = 3;
+    public const SIG_RSA_SHA256 = 4;
 
     public function __construct($privateKey, $domainName, $selector)
     {

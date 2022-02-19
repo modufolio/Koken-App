@@ -13,8 +13,8 @@ namespace PHPZip\Zip\Exception;
 
 use PHPZip\Zip\Core\AbstractException;
 
-class IncompatiblePhpVersion extends AbstractException {
-
+class IncompatiblePhpVersion extends AbstractException
+{
     private $_minVersion = null;
     private $_currentVersion = null;
 
@@ -26,7 +26,8 @@ class IncompatiblePhpVersion extends AbstractException {
      *
      * @param array $config Configuration array containing appName, appVersion and minVersion (PHP)
      */
-    public function __construct(array $config){
+    public function __construct(array $config)
+    {
         $this->_minVersion = (string)$config['minVersion'];
         $this->_currentVersion = (string)phpversion();
 
@@ -44,11 +45,13 @@ class IncompatiblePhpVersion extends AbstractException {
         parent::__construct($message);
     }
 
-    public function getMinVersion(){
+    public function getMinVersion()
+    {
         return $this->_minVersion;
     }
 
-    public function getCurrentVersion(){
+    public function getCurrentVersion()
+    {
         return $this->_currentVersion;
     }
 }

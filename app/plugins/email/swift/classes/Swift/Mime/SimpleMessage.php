@@ -464,10 +464,14 @@ class Swift_Mime_SimpleMessage extends Swift_Mime_MimePart implements Swift_Mime
         } elseif ($priority < min($pMapKeys)) {
             $priority = min($pMapKeys);
         }
-        if (!$this->_setHeaderFieldModel('X-Priority',
-            sprintf('%d (%s)', $priority, $priorityMap[$priority]))) {
-            $this->getHeaders()->addTextHeader('X-Priority',
-                sprintf('%d (%s)', $priority, $priorityMap[$priority]));
+        if (!$this->_setHeaderFieldModel(
+            'X-Priority',
+            sprintf('%d (%s)', $priority, $priorityMap[$priority])
+        )) {
+            $this->getHeaders()->addTextHeader(
+                'X-Priority',
+                sprintf('%d (%s)', $priority, $priorityMap[$priority])
+            );
         }
 
         return $this;
@@ -483,9 +487,10 @@ class Swift_Mime_SimpleMessage extends Swift_Mime_MimePart implements Swift_Mime
      */
     public function getPriority()
     {
-        list($priority) = sscanf($this->_getHeaderFieldModel('X-Priority'),
+        list($priority) = sscanf(
+            $this->_getHeaderFieldModel('X-Priority'),
             '%[1-5]'
-            );
+        );
 
         return isset($priority) ? $priority : 3;
     }
@@ -621,9 +626,13 @@ class Swift_Mime_SimpleMessage extends Swift_Mime_MimePart implements Swift_Mime
     /** Turn the body of this message into a child of itself if needed */
     protected function _becomeMimePart()
     {
-        $part = new parent($this->getHeaders()->newInstance(), $this->getEncoder(),
-            $this->_getCache(), $this->_getGrammar(), $this->_userCharset
-            );
+        $part = new parent(
+            $this->getHeaders()->newInstance(),
+            $this->getEncoder(),
+            $this->_getCache(),
+            $this->_getGrammar(),
+            $this->_userCharset
+        );
         $part->setContentType($this->_userContentType);
         $part->setBody($this->getBody());
         $part->setFormat($this->_userFormat);

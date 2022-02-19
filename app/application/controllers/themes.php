@@ -1,24 +1,24 @@
 <?php
 
-class Themes extends Koken_Controller {
-
-	function __construct()
+class Themes extends Koken_Controller
+{
+    public function __construct()
     {
-		$this->caching = false;
-		parent::__construct();
+        $this->caching = false;
+        parent::__construct();
     }
 
-	function index()
-	{
-		list($params, $id) = $this->parse_params(func_get_args());
+    public function index()
+    {
+        list($params, $id) = $this->parse_params(func_get_args());
 
-		$t = new Theme;
-		$final = $t->read();
+        $t = new Theme();
+        $final = $t->read();
 
-		$final = Shutter::filter('api.themes', array($final));
+        $final = Shutter::filter('api.themes', array($final));
 
-		$this->set_response_data($final);
-	}
+        $this->set_response_data($final);
+    }
 }
 
 /* End of file themes.php */

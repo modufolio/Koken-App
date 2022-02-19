@@ -2,6 +2,6 @@
 
 interface KokenEncryptionKey
 {
-	public function get();
-	public function write($key);
+    public function get();
+    public function write($key);
 }

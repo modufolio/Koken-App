@@ -1,22 +1,21 @@
 <?php
 
-	class TagPaginationPrevious extends Tag {
+    class TagPaginationPrevious extends Tag
+    {
+        protected $allows_close = true;
+        public $tokenize = true;
 
-		protected $allows_close = true;
-		public $tokenize = true;
+        public function generate()
+        {
+            $pag = '$value' . Koken::$tokens[1];
+            $token = '$value' . Koken::$tokens[0];
 
-		function generate()
-		{
-
-			$pag = '$value' . Koken::$tokens[1];
-			$token = '$value' . Koken::$tokens[0];
-
-			return <<<OUT
+            return <<<OUT
 <?php
 
 	if ({$pag}['page'] > 1):
 		$token =& {$pag}['previous_page'];
 ?>
 OUT;
-		}
-	}
+        }
+    }

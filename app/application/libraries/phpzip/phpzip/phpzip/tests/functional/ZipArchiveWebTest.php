@@ -9,33 +9,29 @@
 
 define('TEST_BASE_URL', 'http://workshop.dev/PHPZip/tests/index.php');
 
-class ZipArchiveWebTest extends \PHPUnit_Extensions_SeleniumTestCase {
+class ZipArchiveWebTest extends \PHPUnit_Extensions_SeleniumTestCase
+{
+    protected $captureScreenshotOnFailure = true;
+    protected $screenshotPath = 'D:/Websites/!workshop/PHPZip/tests/screenshots';
+    protected $screenshotUrl = 'http://workshop.dev/PHPZip/tests/screenshots';
 
-	protected $captureScreenshotOnFailure = true;
-	protected $screenshotPath = 'D:/Websites/!workshop/PHPZip/tests/screenshots';
-	protected $screenshotUrl = 'http://workshop.dev/PHPZip/tests/screenshots';
+    protected function setup()
+    {
+        $this->setBrowserUrl(TEST_BASE_URL);
+    }
 
-	protected function setup(){
+    public function testFileArchive()
+    {
+        $this->open();
+        $this->assertEquals(true, true);
 
-		$this->setBrowserUrl(TEST_BASE_URL);
+        $ela = new \PHPZip\Zip\File\Zip();
+    }
 
-	}
-
-	public function testFileArchive(){
-
-		$this->open();
-		$this->assertEquals(true, true);
-
-		$ela = new \PHPZip\Zip\File\Zip();
-
-
-	}
-
-//	public function testStreamArchive(){
+    //	public function testStreamArchive(){
 //
 //		$this->open();
 //		$this->assertEquals(true, true);
 //
 //	}
-
 }

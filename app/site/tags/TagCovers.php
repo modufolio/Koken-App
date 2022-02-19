@@ -1,34 +1,27 @@
 <?php
 
-	class TagCovers extends Tag {
+    class TagCovers extends Tag
+    {
+        protected $allows_close = true;
+        public $tokenize = true;
 
-		protected $allows_close = true;
-		public $tokenize = true;
+        public function generate()
+        {
+            $token = '$value' . Koken::$tokens[1];
+            $ref = '$value' . Koken::$tokens[0];
 
-		function generate()
-		{
+            if (isset($this->parameters['limit'])) {
+                $this->parameters['limit'] = '"' . $this->attr_parse($this->parameters['limit']) . '"';
+            } else {
+                $this->parameters['limit'] = 'false';
+            }
 
-			$token = '$value' . Koken::$tokens[1];
-			$ref = '$value' . Koken::$tokens[0];
-
-			if (isset($this->parameters['limit']))
-			{
-				$this->parameters['limit'] = '"' . $this->attr_parse($this->parameters['limit']) . '"';
-			}
-			else
-			{
-				$this->parameters['limit'] = 'false';
-			}
-
-			if (isset($this->parameters['minimum']))
-			{
-				$this->parameters['minimum'] = '"' . $this->attr_parse($this->parameters['minimum']) . '"';
-			}
-			else
-			{
-				$this->parameters['minimum'] = 'false';
-			}
-			return <<<OUT
+            if (isset($this->parameters['minimum'])) {
+                $this->parameters['minimum'] = '"' . $this->attr_parse($this->parameters['minimum']) . '"';
+            } else {
+                $this->parameters['minimum'] = 'false';
+            }
+            return <<<OUT
 <?php
 
 	\$__covers = Koken::covers({$token}, {$this->parameters['minimum']}, {$this->parameters['limit']});
@@ -44,5 +37,5 @@
 		{$ref}['__loop__'] =& \$__covers;
 ?>
 OUT;
-		}
-	}
+        }
+    }

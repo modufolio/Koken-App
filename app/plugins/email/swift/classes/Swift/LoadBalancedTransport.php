@@ -26,7 +26,7 @@ class Swift_LoadBalancedTransport extends Swift_Transport_LoadBalancedTransport
             array($this, 'Swift_Transport_LoadBalancedTransport::__construct'),
             Swift_DependencyContainer::getInstance()
                 ->createDependenciesFor('transport.loadbalanced')
-            );
+        );
 
         $this->setTransports($transports);
     }

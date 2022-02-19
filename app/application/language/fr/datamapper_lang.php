@@ -26,4 +26,4 @@ $lang['dm_save_rel_noobj']  = 'Impossible de sauvegarde la relation %s. L\'objet
 
 /* End of file datamapper_lang.php */
 
-/* Location: ./application/language/english/datamapper_lang.php */ 
+/* Location: ./application/language/english/datamapper_lang.php */

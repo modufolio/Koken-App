@@ -13,8 +13,8 @@ namespace ZipMerge\Zip\Exception;
 
 use ZipMerge\Zip\Core\AbstractException;
 
-class BufferNotEmpty extends AbstractException {
-
+class BufferNotEmpty extends AbstractException
+{
     private $_outputBuffer = null;
     private $_fileName = null;
 
@@ -26,7 +26,8 @@ class BufferNotEmpty extends AbstractException {
      *
      * @param array $config Configuration array containing outputBuffer and fileName
      */
-    public function __construct(array $config){
+    public function __construct(array $config)
+    {
         $this->_outputBuffer = $config['outputBuffer'];
         $this->_fileName = isset($config['fileName']) ? $config['fileName'] : null;
 
@@ -36,11 +37,13 @@ class BufferNotEmpty extends AbstractException {
         parent::__construct($message);
     }
 
-    public function getOutputBuffer(){
+    public function getOutputBuffer()
+    {
         return $this->_outputBuffer;
     }
 
-    public function getFileName(){
+    public function getFileName()
+    {
         return $this->_fileName;
     }
 }

@@ -1,17 +1,17 @@
 <?php
 
-	class TagAlbumDownload extends Tag {
+    class TagAlbumDownload extends Tag
+    {
+        protected $allows_close = true;
+        public $tokenize = true;
 
-		protected $allows_close = true;
-		public $tokenize = true;
+        public function generate()
+        {
+            $token = count(Koken::$tokens) > 2 ? '$value' . Koken::$tokens[2] : '$value' . Koken::$tokens[1];
+            $ref = '$value' . Koken::$tokens[0];
+            $cache_path = (Koken::$rewrite === true) ? '/storage/cache/albums/' : '/a.php?/';
 
-		function generate()
-		{
-			$token = count(Koken::$tokens) > 2 ? '$value' . Koken::$tokens[2] : '$value' . Koken::$tokens[1];
-			$ref = '$value' . Koken::$tokens[0];
-			$cache_path = (Koken::$rewrite === true) ? '/storage/cache/albums/' : '/a.php?/';
-
-			return <<<OUT
+            return <<<OUT
 <?php
 	\$__download = false;
   \$__visibility_values = array('public', 'unlisted', 'private');
@@ -49,5 +49,5 @@
 
 ?>
 OUT;
-		}
-	}
+        }
+    }

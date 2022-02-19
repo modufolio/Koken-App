@@ -1,18 +1,17 @@
 <?php
 
-	class TagProfileFacebook extends Tag {
+    class TagProfileFacebook extends Tag
+    {
+        protected $allows_close = true;
 
-		protected $allows_close = true;
-
-		function generate()
-		{
-
-			return <<<OUT
+        public function generate()
+        {
+            return <<<OUT
 <?php
 
 	if (!empty(Koken::\$profile['facebook'])):
 
 ?>
 OUT;
-		}
-	}
+        }
+    }

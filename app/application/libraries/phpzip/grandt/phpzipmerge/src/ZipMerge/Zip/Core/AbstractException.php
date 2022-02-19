@@ -11,4 +11,6 @@
 
 namespace ZipMerge\Zip\Core;
 
-abstract class AbstractException extends \Exception {}
+abstract class AbstractException extends \Exception
+{
+}

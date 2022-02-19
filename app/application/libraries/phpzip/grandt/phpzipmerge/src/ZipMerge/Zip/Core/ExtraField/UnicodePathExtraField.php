@@ -12,7 +12,7 @@ namespace ZipMerge\Zip\Core\ExtraField;
 use com\grandt\BinStringStatic;
 
 /**
- * 
+ *
  *            -Info-ZIP Unicode Path Extra Field:
  *            =================================
  *
@@ -73,27 +73,31 @@ use com\grandt\BinStringStatic;
  *               CRC checksum value.  A mismatch of the CRC check indicates that
  *               the standard name field was changed by some non-"up"-aware
  *               utility without synchronizing this UTF-8 name e.f. block.
- * 
+ *
  */
-class UnicodePathExtraField extends AbstractUnicodeExtraField {
-    public function __construct($handle = null) {
+class UnicodePathExtraField extends AbstractUnicodeExtraField
+{
+    public function __construct($handle = null)
+    {
         parent::__construct($handle);
         if ($handle == null) {
             $this->header = parent::HEADER_UNICODE_PATH;
         }
     }
-    
+
     /**
      * @return string The version of the field for the Local Header.
      */
-    public function getLocalField() {
+    public function getLocalField()
+    {
         return parent::HEADER_UNICODE_PATH . pack('vV', BinStringStatic::_strlen($this->utf8Data) + 5, $this->CRC32) .  $this->version . $this->utf8Data;
     }
 
     /**
      * @return string The version of the field for the Central Header.
      */
-    public function getCentralField() {
-        return $this->getLocalField();        
+    public function getCentralField()
+    {
+        return $this->getLocalField();
     }
 }

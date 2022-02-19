@@ -30,7 +30,7 @@ class Swift_MimePart extends Swift_Mime_MimePart
             array($this, 'Swift_Mime_MimePart::__construct'),
             Swift_DependencyContainer::getInstance()
                 ->createDependenciesFor('mime.part')
-            );
+        );
 
         if (!isset($charset)) {
             $charset = Swift_DependencyContainer::getInstance()

@@ -40,22 +40,22 @@ class SocketPost implements RequestMethod
      * reCAPTCHA service host.
      * @const string
      */
-    const RECAPTCHA_HOST = 'www.google.com';
+    public const RECAPTCHA_HOST = 'www.google.com';
 
     /**
      * @const string reCAPTCHA service path
      */
-    const SITE_VERIFY_PATH = '/recaptcha/api/siteverify';
+    public const SITE_VERIFY_PATH = '/recaptcha/api/siteverify';
 
     /**
      * @const string Bad request error
      */
-    const BAD_REQUEST = '{"success": false, "error-codes": ["invalid-request"]}';
+    public const BAD_REQUEST = '{"success": false, "error-codes": ["invalid-request"]}';
 
     /**
      * @const string Bad response error
      */
-    const BAD_RESPONSE = '{"success": false, "error-codes": ["invalid-response"]}';
+    public const BAD_RESPONSE = '{"success": false, "error-codes": ["invalid-response"]}';
 
     /**
      * Socket to the reCAPTCHA service

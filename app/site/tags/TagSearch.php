@@ -1,38 +1,34 @@
 <?php
 
-	class TagSearch extends Tag {
-    protected $allows_close = false;
+    class TagSearch extends Tag
+    {
+        protected $allows_close = false;
 
-		function generate()
-		{
-			if (!isset(Koken::$template_routes['tag']))
-      {
-        return;
-      }
+        public function generate()
+        {
+            if (!isset(Koken::$template_routes['tag'])) {
+                return;
+            }
 
-      $placeholder = Koken::$language['search_tags'];
-      $tag_route = Koken::$location['root'] . Koken::$template_routes['tag'];
-      $klass = 'k-search';
+            $placeholder = Koken::$language['search_tags'];
+            $tag_route = Koken::$location['root'] . Koken::$template_routes['tag'];
+            $klass = 'k-search';
 
-      if (isset($this->parameters['class']))
-      {
-        $this->parameters['class'] .= ' ' . $klass;
-      }
-      else
-      {
-        $this->parameters['class'] = $klass;
-      }
+            if (isset($this->parameters['class'])) {
+                $this->parameters['class'] .= ' ' . $klass;
+            } else {
+                $this->parameters['class'] = $klass;
+            }
 
-      $params = array();
+            $params = array();
 
-      foreach($this->parameters as $key => $val)
-      {
-        $params[] = "$key=\"$val\"";
-      }
+            foreach ($this->parameters as $key => $val) {
+                $params[] = "$key=\"$val\"";
+            }
 
-      $params = join(' ', $params);
+            $params = join(' ', $params);
 
-      return <<<OUT
+            return <<<OUT
 <form {$params}>
   <input type="search" id="k-search-tag" placeholder="{$placeholder}" list="k-search-tags">
   <datalist id="k-search-tags">
@@ -68,5 +64,5 @@ $('.k-search input[type="search"]').off('input').on('input', function(e) {
 });
 </script>
 OUT;
-		}
-	}
+        }
+    }

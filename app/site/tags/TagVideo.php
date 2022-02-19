@@ -1,41 +1,33 @@
 <?php
 
-	class TagVideo extends Tag {
-
-		function generate()
-		{
-
-			if (isset($this->parameters['data']))
-			{
-				$token = $this->field_to_keys($this->parameters['data']);
-				unset($this->parameters['data']);
-			}
-			else
-			{
-				$token = '$value' . Koken::$tokens[0];
-			}
+    class TagVideo extends Tag
+    {
+        public function generate()
+        {
+            if (isset($this->parameters['data'])) {
+                $token = $this->field_to_keys($this->parameters['data']);
+                unset($this->parameters['data']);
+            } else {
+                $token = '$value' . Koken::$tokens[0];
+            }
 
 
-			$params = array();
+            $params = array();
 
-			if (isset($this->parameters['class']))
-			{
-				$this->parameters['class'] = 'k-video ' . $this->parameters['class'];
-			}
-			else
-			{
-				$this->parameters['class'] = 'k-video';
-			}
+            if (isset($this->parameters['class'])) {
+                $this->parameters['class'] = 'k-video ' . $this->parameters['class'];
+            } else {
+                $this->parameters['class'] = 'k-video';
+            }
 
-			foreach($this->parameters as $key => $val)
-			{
-				$val = $this->attr_parse($val);
-				$params[] = "$key=\"$val\"";
-			}
+            foreach ($this->parameters as $key => $val) {
+                $val = $this->attr_parse($val);
+                $params[] = "$key=\"$val\"";
+            }
 
-			$params = join(' ', $params);
+            $params = join(' ', $params);
 
-			return <<<DOC
+            return <<<DOC
 <?php
 	if ({$token}['html'])
 	{
@@ -94,6 +86,5 @@
 
 <?php } ?>
 DOC;
-		}
-
-	}
+        }
+    }

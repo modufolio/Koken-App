@@ -1,20 +1,19 @@
 <?php
 
-	class TagEventContent extends Tag {
+    class TagEventContent extends Tag
+    {
+        protected $allows_close = true;
 
-		protected $allows_close = true;
+        public function generate()
+        {
+            $token = '$value' . Koken::$tokens[0];
 
-		function generate()
-		{
-			$token = '$value' . Koken::$tokens[0];
-
-			return <<<DOC
+            return <<<DOC
 <?php
 
 	if (isset({$token}['filename'])):
 		{$token}['content'] = Koken::\$current_token['content'] =& $token;
 ?>
 DOC;
-		}
-
-	}
+        }
+    }

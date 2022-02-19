@@ -10,14 +10,16 @@
 namespace ZipMerge\Zip\Core\ExtraField;
 
 /**
- * 
+ *
  */
-abstract class AbstractUnicodeExtraField extends AbstractExtraField {
+abstract class AbstractUnicodeExtraField extends AbstractExtraField
+{
     public $CRC32;
     public $version = "\x01";
     public $utf8Data;
-    
-    public function __construct($handle = null) {
+
+    public function __construct($handle = null)
+    {
         parent::__construct();
         if ($handle != null) {
             $this->header                    = fread($handle, 2);
