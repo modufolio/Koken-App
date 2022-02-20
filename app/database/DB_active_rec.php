@@ -1604,7 +1604,7 @@ class CI_DB_active_record extends CI_DB_driver
 
         // Write the "ORDER BY" portion of the query
 
-        if (count($this->ar_orderby) > 0) {
+        if (is_countable($this->ar_orderby) && count($this->ar_orderby) > 0) {
             $sql .= "\nORDER BY ";
             $sql .= implode(', ', $this->ar_orderby);
 
