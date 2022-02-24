@@ -4,7 +4,6 @@
 			<title><![CDATA[{{ site.title }}: {{ album.title }}]]></title>
 			<link><![CDATA[<koken:link echo="true" />]]></link>
 			<description><![CDATA[{{ site.title }}: {{ language.recent_uploads_from_the_title_album collate="album.title" }}]]></description>
-			<generator>http://koken.me</generator>
 			<lastBuildDate><koken:time rss="true" /></lastBuildDate>
 			<atom:link href="{{location.host}}{{location.root_folder}}{{ location.here }}" rel="self" type="application/rss+xml" />
 			<koken:not empty="album.covers">

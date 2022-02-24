@@ -3,7 +3,6 @@
 		<title><![CDATA[{{ site.title }}: {{ language.essays }}]]></title>
 		<link><![CDATA[<koken:link to="essays" echo="true" />]]></link>
 		<description><![CDATA[{{ language.essays_from_title collate="site.title" }}]]></description>
-		<generator>http://koken.me</generator>
 		<lastBuildDate><koken:time rss="true" /></lastBuildDate>
 		<atom:link href="{{location.host}}{{location.root_folder}}{{ location.here }}" rel="self" type="application/rss+xml" />
 		<koken:load limit="10">

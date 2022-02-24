@@ -1127,9 +1127,7 @@
                         $site = Koken::$site;
 
                         $stamp = '?' . KOKEN_VERSION;
-                        $generator = 'Koken ' . KOKEN_VERSION;
-                        $theme = Koken::$site['theme']['name'] . ' ' . Koken::$site['theme']['version'];
-
+                        
                         $koken_js = Koken::$location['root_folder'] . '/' . (Koken::$draft ? 'preview.php?/' : (Koken::$rewrite ? '' : 'index.php?/')) . 'koken.js' . (Koken::$preview ? '&preview=' . Koken::$preview : '');
                         if (strpos($koken_js, '.php?') === false) {
                             $koken_js .= '?' . Shutter::get_site_scripts_timestamp();
@@ -1142,8 +1140,7 @@
                         }
 
                         $js = <<<JS
-	<meta name="generator" content="$generator" />
-	<meta name="theme" content="$theme" />$me
+	$me
 
 	<script src="/assets/js/jquery.min.js" type="text/javascript"></script>
 	<script>window.jQuery || document.write('<script src="{$location['real_root_folder']}/app/site/themes/common/js/jquery.min.js"><\/script>')</script>
