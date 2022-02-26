@@ -75,7 +75,7 @@ class Events extends Koken_Controller
         $dates = array();
 
         if (!$params['limit_to'] || $params['limit_to'] === 'content') {
-            foreach ($c->get_iterated() as $content) {
+            foreach ($c->get() as $content) {
                 if ($params['scope'] === 'year') {
                     $key = "{$content->event_year}";
                 } elseif ($params['limit_to'] || $params['scope']) {
@@ -101,7 +101,7 @@ class Events extends Koken_Controller
         }
 
         if (!$params['limit_to'] || $params['limit_to'] === 'albums') {
-            foreach ($a->get_iterated() as $album) {
+            foreach ($a->get() as $album) {
                 if ($params['scope'] === 'year') {
                     $key = "{$album->event_year}";
                 } elseif ($params['limit_to'] || $params['scope']) {
@@ -131,7 +131,7 @@ class Events extends Koken_Controller
         }
 
         if (!$params['limit_to'] || $params['limit_to'] === 'essays') {
-            foreach ($t->get_iterated() as $essay) {
+            foreach ($t->get() as $essay) {
                 if ($params['scope'] === 'year') {
                     $key = "{$essay->event_year}";
                 } elseif ($params['limit_to'] || $params['scope']) {
