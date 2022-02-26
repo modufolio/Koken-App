@@ -98,7 +98,7 @@ class Shutter
         }
     }
 
-    public static function email($from, $from_name, $to = null, $subject, $message, $handler = null)
+    public static function email($from, $from_name, $to, $subject, $message, $handler = null)
     {
         if (is_null($to)) {
             $to = self::$email_delivery_address;

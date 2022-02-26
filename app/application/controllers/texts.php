@@ -120,7 +120,7 @@ class Texts extends Koken_Controller
                         foreach ($id as $text_id) {
                             $text = $t->get_by_id($text_id);
                             if ($text->exists()) {
-                                $tags = array_merge($tags, $text->tags);
+                                $tags = array_merge($tags, (array)$text->tags);
 
                                 $s = new Slug();
                                 $prefix = $text->page_type == 0 ? 'essay' : 'page';
