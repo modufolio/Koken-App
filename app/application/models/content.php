@@ -444,12 +444,7 @@ class Content extends Koken
     public function _readify()
     {
         $this->_set_paths();
-
-        $f = json_decode($this->focal_point);
-        if (!$f) {
-            $f = array('x' => 50, 'y' => 50);
-        }
-        $this->focal_point = $f;
+        $this->focal_point = is_string($this->focal_point) ? json_decode($this->focal_point) : ['x' => 50, 'y' => 50];
     }
 
     // Called by plugins

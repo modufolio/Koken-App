@@ -58,8 +58,8 @@ class Favorites extends Koken_Controller
                         } else {
                             $max_order = $max->max_favorite;
                         }
-                        foreach ($id as $id) {
-                            $c->where('id', $id)->update(array( 'favorite' => 1, 'favorite_order' => $max_order++, 'favorited_on' => strtotime(gmdate('Y-m-d H:i:s')) ));
+                        foreach ($id as $i) {
+                            $c->where('id', $i)->update(array( 'favorite' => 1, 'favorite_order' => $max_order++, 'favorited_on' => strtotime(gmdate('Y-m-d H:i:s')) ));
                         }
                     }
 

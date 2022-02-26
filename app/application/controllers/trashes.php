@@ -188,7 +188,7 @@ class Trashes extends Koken_Controller
 
         $final['trash'] = array();
         foreach ($data as $member) {
-            $content = unserialize(MB_ENABLED ? mb_convert_encoding($member->data, 'ISO-8859-1') : utf8_decode($member->data));
+            $content = @unserialize(MB_ENABLED ? mb_convert_encoding($member->data, 'ISO-8859-1') : utf8_decode($member->data));
             if (!$content) {
                 $content = unserialize($member->data);
             }
