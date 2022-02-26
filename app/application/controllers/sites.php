@@ -936,8 +936,8 @@ class Sites extends Koken_Controller
                     curl_setopt($curl, CURLOPT_HEADER, 0);
                     curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 10);
                     curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-                    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
-                    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+                    curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2);
+                    curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
                     $r = curl_exec($curl);
                     curl_close($curl);
                 }
