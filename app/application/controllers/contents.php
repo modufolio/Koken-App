@@ -477,15 +477,13 @@ class Contents extends Koken_Controller
                                 Multiple delete
                                  /content/n1/n2/n3
                             */
-                            // Keep track of tags to --
-                            $tags = array();
+
 
                             $c->where_in('id', $id);
                             $contents = $c->get_iterated();
                             $trash = new Trash();
                             foreach ($contents as $c) {
                                 if ($c->exists()) {
-                                    $tags = array_merge($tags, $c->tags);
                                     $this->db->query("DELETE from {$trash->table} WHERE id = 'content-{$c->id}'");
                                     $c->do_delete();
                                 }
