@@ -5595,7 +5595,7 @@ class DataMapper implements IteratorAggregate
      */
     protected function _process_query($query)
     {
-        if ($query->num_rows() > 0) {
+        if (!is_bool($query) && $query->num_rows() > 0) {
             // Populate all with records as objects
             $this->all = array();
 
