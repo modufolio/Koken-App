@@ -50,8 +50,8 @@ class DarkroomGD2 extends Darkroom
         $this->finalImage = imagecreatetruecolor($this->width, $this->height);
 
         if ($this->sourceType == IMAGETYPE_PNG) {
-            $transparency = imagecolorallocatealpha($final, 0, 0, 0, 127);
-            imagefill($final, 0, 0, $transparency);
+            $transparency = imagecolorallocatealpha($this->finalImage, 0, 0, 0, 127);
+            imagefill($this->finalImage, 0, 0, $transparency);
         }
 
         imagecopy($this->finalImage, $interstitial, 0, 0, $cropX, $cropY, $this->width, $this->height);
