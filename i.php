@@ -326,15 +326,15 @@
 
 			if (substr(php_sapi_name(), 0, 3) === 'cgi')
 			{
-				header('Status: 304 Not Modified', true);
+				header('Status: 304 Not Modified', true, 304);
 			}
 			elseif ($server_protocol === 'HTTP/1.1' OR $server_protocol === 'HTTP/1.0')
 			{
-				header($server_protocol . ' 304 Not Modified', true, $code);
+				header($server_protocol . ' 304 Not Modified', true, 304);
 			}
 			else
 			{
-				header('HTTP/1.1 304 Not Modified', true, $code);
+				header('HTTP/1.1 304 Not Modified', true, 304);
 			}
 			exit;
 		}
