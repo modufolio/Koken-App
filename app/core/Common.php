@@ -317,7 +317,7 @@ if (! function_exists('show_404')) {
 * @return	void
 */
 if (! function_exists('log_message')) {
-    function log_message($level = 'error', $message, $php_error = false)
+    function log_message($level, $message, $php_error = false)
     {
         static $_log;
 
