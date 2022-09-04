@@ -345,7 +345,9 @@
     $koken_key = Shutter::get_encryption_key();
     $video = Koken::api('/content/types:video/limit:1/visibility:any/token:' . $koken_key);
 
-    Koken::$has_video = count((array)$video['content']) > 0;
+    Koken::$has_video = isset($video['content']) && count((array)$video['content']) > 0;
+
+
 
     if (!is_array($site_api)) {
         die(file_get_contents(Koken::$fallback_path . $ds . 'error' . $ds . 'api.html'));
