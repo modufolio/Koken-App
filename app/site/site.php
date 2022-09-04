@@ -994,7 +994,7 @@
 
                         $file = 'lightbox-' . $file;
                     }
-                    $path = Koken::$location['root_folder'] . '/' . (isset(Koken::$draft)? 'preview.php?/' : (isset(Koken::$rewrite) ? '' : 'index.php?/')) . $file . (isset(Koken::$preview) ? '&preview=' . Koken::$preview : '');
+                    $path = Koken::$location['root_folder'] . '/' . (Koken::$draft ? 'preview.php?/' : (Koken::$rewrite ? '' : 'index.php?/')) . $file . (Koken::$preview ? '&preview=' . Koken::$preview : '');
                     $info = array( 'extension' => 'css' );
                     $id = ' id="koken_settings_css_link"';
                 } else {
