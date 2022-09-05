@@ -66,7 +66,7 @@
     if (!isset($draft)) {
         $draft = false;
     } elseif ($draft && isset($_GET['preview'])) {
-        $preview = $_GET['preview'];
+        $preview = filter_var($_GET['preview'], FILTER_SANITIZE_STRING);
     }
 
     if ($draft) {
