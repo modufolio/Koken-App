@@ -2412,7 +2412,7 @@ META;
         );
     }
 
-    public static function time($token, $options = array(), $attr)
+    public static function time($token, $options, $attr)
     {
         $options['relative'] = $options['relative'] === 'true' || $options['relative'] == '1';
         $has_class = $options['class'] !== 'false';
