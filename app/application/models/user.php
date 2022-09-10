@@ -72,7 +72,7 @@ class User extends DataMapper
 
     public function to_array($options = array())
     {
-        $this->externals = unserialize($this->externals);
+        $this->externals = !empty($this->externals) ? unserialize($this->externals) : null;
         if (!$this->externals) {
             $this->externals = null;
         }

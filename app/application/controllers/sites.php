@@ -814,7 +814,7 @@ class Sites extends Koken_Controller
                 'first' => $user->public_first_name,
                 'last' => $user->public_last_name,
                 'email' => $user->public_email,
-                'twitter' => str_replace('@', '', $user->twitter),
+                'twitter' => !empty($user->twitter) ? str_replace('@', '', $user->twitter) : '',
                 'facebook' => $user->facebook,
                 'google_plus' => $user->google
             );

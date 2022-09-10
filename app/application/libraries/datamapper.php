@@ -2145,7 +2145,9 @@ class DataMapper implements IteratorAggregate
             if (!empty($related_id)) {
                 $this->db->where('id', $related_id);
             }
-            $column = $this->add_table_name($column);
+            if (!empty($column)) {
+                $column  = $this->add_table_name($column);
+            }
         }
 
         // Manually overridden to allow for COUNT(DISTINCT COLUMN)
@@ -2422,10 +2424,10 @@ class DataMapper implements IteratorAggregate
      *
      * Adds the table name to a field if necessary
      *
-     * @param	string $field Field to add the table name to.
+     * @param string $field Field to add the table name to.
      * @return	string Possibly modified field name.
      */
-    public function add_table_name($field)
+    public function add_table_name(string $field): string
     {
         // only add table if the field doesn't contain a dot (.) or open parentheses
         if (preg_match('/[\.\(]/', $field) == 0) {
