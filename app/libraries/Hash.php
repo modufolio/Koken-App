@@ -221,8 +221,8 @@ class Hash
         $itoa64 = './ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
         $output = '$2a$';
-        $output .= chr(ord('0') + self::$iteration_count_log2 / 10);
-        $output .= chr(ord('0') + self::$iteration_count_log2 % 10);
+        $output .= chr(ord('0') + intval(self::$iteration_count_log2 / 10));
+        $output .= chr(ord('0') + intval(self::$iteration_count_log2 % 10));
         $output .= '$';
 
         $i = 0;
