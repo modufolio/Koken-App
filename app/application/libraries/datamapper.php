@@ -994,7 +994,7 @@ class DataMapper implements IteratorAggregate
      *
      * @return	Iterator An iterator for the all array
      */
-    public function getIterator()
+    public function getIterator(): Traversable
     {
         if (isset($this->_dm_dataset_iterator)) {
             return $this->_dm_dataset_iterator;
@@ -5953,12 +5953,12 @@ class DM_DatasetIterator implements Iterator, Countable
      * Gets the item at the current index $pos
      * @return DataMapper
      */
-    public function current()
+    public function current(): mixed
     {
         return $this->get($this->pos);
     }
 
-    public function key()
+    public function key(): mixed
     {
         return $this->pos;
     }
@@ -5977,17 +5977,17 @@ class DM_DatasetIterator implements Iterator, Countable
         return $this->object;
     }
 
-    public function next()
+    public function next(): void
     {
         $this->pos++;
     }
 
-    public function rewind()
+    public function rewind(): void
     {
         $this->pos = 0;
     }
 
-    public function valid()
+    public function valid(): bool
     {
         return ($this->pos < $this->count);
     }
@@ -5996,7 +5996,7 @@ class DM_DatasetIterator implements Iterator, Countable
      * Returns the number of results
      * @return int
      */
-    public function count()
+    public function count(): int
     {
         return $this->count;
     }
