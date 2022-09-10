@@ -119,8 +119,7 @@ class System extends Koken_Controller
             'mysql_version' => $this->db->call_function('get_server_info', $this->db->conn_id),
             'max_parallel_requests' => $parallel,
             'webhost' => $webhost->key,
-            'store' => KOKEN_STORE_URL,
-            'server_software' => isset($_SERVER['SERVER_SOFTWARE']) ? $_SERVER['SERVER_SOFTWARE'] : 'Unknown',
+            'server_software' => $_SERVER['SERVER_SOFTWARE'] ?? 'Unknown',
         );
 
         $this->set_response_data($data);
