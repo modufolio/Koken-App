@@ -517,7 +517,7 @@ class Shutter
             foreach ($to_call as $callback) {
                 if (self::plugin_is_active($callback)) {
                     if (is_array($args)) {
-                        $data = call_user_func_array($callback, array_merge(array($data), $args));
+                        $data = call_user_func_array($callback, array_values(array_merge(array($data), $args)));
                     } else {
                         $data = call_user_func($callback, $data);
                     }
