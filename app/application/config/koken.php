@@ -48,7 +48,7 @@ if (!defined('AUTO_UPDATE')) {
 }
 
 // Director constants
-define('KOKEN_VERSION', '1.1.4.1');
+define('KOKEN_VERSION', '1.1.4.2');
 
 /* End of file koken.php */
 /* Location: ./system/application/config/koken.php */
