@@ -1293,10 +1293,6 @@ class Content extends Koken
                 'label' => "Date Time Original",
                 'field' => 'EXIF.DateTimeOriginal'
             ),
-            'date_time_original' => array(
-                'label' => "Date Time Digitized",
-                'field' => 'EXIF.DateTimeDigitized'
-            ),
             'flash' => array(
                 'label' => 'Flash',
                 'field' => 'EXIF.Flash',

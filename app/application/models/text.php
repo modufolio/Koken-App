@@ -200,8 +200,7 @@ class Text extends Koken
             'month_not' => false,
             'day' => false,
             'day_not' => false,
-            'render' => true,
-            'tags' => false
+            'render' => true
         );
 
         $options = array_merge($options, $params);
