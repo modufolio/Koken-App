@@ -19,12 +19,12 @@ class Sites extends Koken_Controller
 
     public function _setup_option($key, $option, $data, $scope, $default_style_vars, $style_vars, $send_as = false)
     {
-        $_t = array();
+        $_t = [];
         $_t['key'] = $key;
 
         foreach ($option as $name => $val) {
             if ($name === 'settings' && is_string($val[0])) {
-                $_o = array();
+                $_o = [];
                 foreach ($val as $v) {
                     $_o[] = array('label' => $v, 'value' => $v);
                 }
@@ -69,7 +69,7 @@ class Sites extends Koken_Controller
 
     public function _prep_options($options, $data = array(), $style_vars = array(), $default_style_vars = array(), $scope = false)
     {
-        $_options = $flat = array();
+        $_options = $flat = [];
 
         if (isset($options)) {
             foreach ($options as $group => $opts) {
@@ -97,10 +97,10 @@ class Sites extends Koken_Controller
 
                 foreach ($loop as $key => $arr) {
                     if (isset($arr['value']) && (is_array($arr['value']) || isset($arr['scoped_values']))) {
-                        $groups = array();
+                        $groups = [];
 
                         if (is_array($arr['value'])) {
-                            $v = array();
+                            $v = [];
                             foreach ($arr['value'] as $_key => $val) {
                                 if (strpos($_key, ',') === false) {
                                     $v[$_key] = $val;
@@ -172,12 +172,12 @@ class Sites extends Koken_Controller
 
     public function index()
     {
-        list($params, $id) = $this->parse_params(func_get_args());
+       [$params, $id] = $this->parse_params(func_get_args());
         $site = new Setting();
         $site->like('name', 'site_%')->or_like('name', 'image_%')->get_iterated();
 
         $draft = new Draft();
-        $data = array();
+        $data = [];
         $ds = DIRECTORY_SEPARATOR;
         $template_path = FCPATH . 'storage' . $ds . 'themes' . $ds;
         $defaults = json_decode(file_get_contents(FCPATH . 'app' . $ds . 'site' . $ds . 'defaults.json'), true);
@@ -278,7 +278,7 @@ class Sites extends Koken_Controller
 
             $template_info['style'] = array_merge(array('key' => $key), $template_info['styles'][$key]);
 
-            $styles = array();
+            $styles = [];
 
             foreach ($template_info['styles'] as $key => $opts) {
                 $styles[] = array_merge(array('key' => $key), $opts);
@@ -286,7 +286,7 @@ class Sites extends Koken_Controller
 
             $template_info['styles'] = $styles;
         } else {
-            $template_info['styles'] = array();
+            $template_info['styles'] = [];
         }
 
         if ($this->method == 'get') {
@@ -323,7 +323,7 @@ class Sites extends Koken_Controller
                                 if (count($options)) {
                                     foreach ($options[1] as $option) {
                                         if (!isset($functions[$option])) {
-                                            $functions[$option] = array();
+                                            $functions[$option] = [];
                                         } elseif ($functions[$option] === 'reload') {
                                             continue;
                                         }
@@ -340,7 +340,7 @@ class Sites extends Koken_Controller
                     }
                 }
 
-                $functions = array();
+                $functions = [];
                 get_live_updates(FCPATH . $ds . 'storage' . $ds . 'themes' . $ds . $draft->path . $ds . 'css' . $ds . 'settings.css.lens', $draft, $functions);
                 get_live_updates(FCPATH . $ds . 'storage' . $ds . 'themes' . $ds . $draft->path . $ds . 'css' . $ds . 'lightbox-settings.css.lens', $draft, $functions);
                 $template_info['live_updates'] = $functions;
@@ -358,15 +358,15 @@ class Sites extends Koken_Controller
                     }
                 }
             } else {
-                $template_info['pulse_groups'] = array();
+                $template_info['pulse_groups'] = [];
             }
 
             if (!isset($template_info['templates'])) {
-                $template_info['templates'] = array();
+                $template_info['templates'] = [];
             }
 
             if (!isset($template_info['routes'])) {
-                $template_info['routes'] = array();
+                $template_info['routes'] = [];
             }
 
             if (isset($draft->data['routes'])) {
@@ -384,7 +384,7 @@ class Sites extends Koken_Controller
                 ->order_by('left_id ASC')
                 ->get_iterated();
 
-            $albums_indexed = array();
+            $albums_indexed = [];
             $ceiling = 1;
             foreach ($albums_flat as $a) {
                 $albums_indexed[$a->id] = array('level' => (int) $a->level);
@@ -397,7 +397,7 @@ class Sites extends Koken_Controller
             {
                 $l = 1;
 
-                $nested = array();
+                $nested = [];
 
                 while ($l <= $ceiling) {
                     foreach ($nav as $index => $item) {
@@ -686,7 +686,7 @@ class Sites extends Koken_Controller
 
             $template_info['navigation']['items_nested'] = nest($template_info['navigation']['items'], $template_info['routes'], $albums_indexed, $album_keys, $ceiling);
 
-            $template_routes = array();
+            $template_routes = [];
             foreach ($template_info['routes'] as $index => $route) {
                 if (isset($route['template']) && is_string($index)) {
                     $template_routes[$route['template']] = $index;
@@ -697,8 +697,8 @@ class Sites extends Koken_Controller
                 $group['items'] = build_autos($group['items'], $data, $user, $template_routes, $template_info['templates']);
                 $group['items_nested'] = nest($group['items'], $template_info['routes'], $albums_indexed, $album_keys, $ceiling);
             }
-            $pages = array();
-            $paths = array();
+            $pages = [];
+            $paths = [];
 
             foreach ($template_info['routes'] as $path => $arr) {
                 $pages[] = array_merge(array('path' => (string) $path), $arr);
@@ -708,7 +708,7 @@ class Sites extends Koken_Controller
             $template_info['routes'] = $pages;
 
             if (isset($template_info['settings'])) {
-                $default_style_vars = array();
+                $default_style_vars = [];
                 if (isset($template_info['styles']) && count($template_info['styles'])) {
                     $tmp = array_reverse($template_info['styles']);
                     foreach ($tmp as $style) {
@@ -729,7 +729,7 @@ class Sites extends Koken_Controller
                     $template_info['settings_flat']['__style'] = array('value' => $draft->data['settings']['__style']);
                 }
             } else {
-                $template_info['settings'] = $template_info['settings_flat'] = array();
+                $template_info['settings'] = $template_info['settings_flat'] = [];
             }
 
             if (isset($template_info['style']) && isset($template_info['style']['variables'])) {
@@ -744,8 +744,8 @@ class Sites extends Koken_Controller
                 }
             }
 
-            $types = array();
-            $names = array();
+            $types = [];
+            $names = [];
 
             $templates_indexed = $template_info['templates'];
 
@@ -764,7 +764,7 @@ class Sites extends Koken_Controller
 
             natcasesort($names);
 
-            $final = array();
+            $final = [];
 
             foreach ($names as $index => $name) {
                 $final[] = $types[$index];
@@ -851,7 +851,7 @@ class Sites extends Koken_Controller
                         }
 
                         if (isset($data['routes'])) {
-                            $pages = array();
+                            $pages = [];
                             foreach ($data['routes'] as $p) {
                                 if (isset($p['section'])) {
                                     continue;
@@ -889,7 +889,7 @@ class Sites extends Koken_Controller
 
                         if (isset($data['pulse_settings_send']) && !empty($data['pulse_settings_send'])) {
                             if (!isset($draft->data['pulse_groups'][$data['pulse_settings_group']])) {
-                                $draft->data['pulse_groups'][$data['pulse_settings_group']] = array();
+                                $draft->data['pulse_groups'][$data['pulse_settings_group']] = [];
                             }
 
                             foreach ($data['pulse_settings_send'] as $key => $val) {

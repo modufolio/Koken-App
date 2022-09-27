@@ -30,7 +30,7 @@
 class CI_DB_utility extends CI_DB_forge
 {
     public $db;
-    public $data_cache		= array();
+    public $data_cache		= [];
 
     /**
      * Constructor
@@ -63,7 +63,7 @@ class CI_DB_utility extends CI_DB_forge
         }
 
         $query = $this->db->query($this->_list_databases());
-        $dbs = array();
+        $dbs = [];
         if ($query->num_rows() > 0) {
             foreach ($query->result_array() as $row) {
                 $dbs[] = current($row);
@@ -131,7 +131,7 @@ class CI_DB_utility extends CI_DB_forge
      */
     public function optimize_database()
     {
-        $result = array();
+        $result = [];
         foreach ($this->db->list_tables() as $table_name) {
             $sql = $this->_optimize_table($table_name);
 

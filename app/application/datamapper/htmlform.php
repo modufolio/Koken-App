@@ -88,7 +88,7 @@ class DMZ_HTMLForm
                         $value = $sel->id;
                     } else {
                         // save what might be multiple values
-                        $value = array();
+                        $value = [];
                         foreach ($sel as $s) {
                             $value[] = $s->id;
                         }
@@ -118,7 +118,7 @@ class DMZ_HTMLForm
                     // process a passed-in DataMapper object
                     $total_items = $options['list'];
                 }
-                $list = array();
+                $list = [];
                 foreach ($total_items as $item) {
                     // use the __toString value of the item for the label
                     $list[$item->id] = (string)$item;
@@ -162,7 +162,7 @@ class DMZ_HTMLForm
             $default_type = ($field == 'id') ? 'hidden' : 'text';
 
             // determine default attributes
-            $a = array();
+            $a = [];
             // such as the size of the field.
             $max = $this->_get_validation_rule($object, $field, 'max_length');
             if ($max === false) {
@@ -177,7 +177,7 @@ class DMZ_HTMLForm
                 $a['list'] = $list;
             }
             $options = $options + $a;
-            $extra_class = array();
+            $extra_class = [];
 
             // Add any of the known rules as classes (for JS processing)
             foreach ($this->auto_rule_classes as $rule => $c) {
@@ -339,14 +339,14 @@ class DMZ_HTMLForm
         }
         if (is_null($options)) {
             // always have an array for options
-            $options = array();
+            $options = [];
         }
 
         $type = '';
         if (! is_array($options)) {
             // if options is a single string, assume it is the type.
             $type = $options;
-            $options = array();
+            $options = [];
         }
 
         if (isset($options['type'])) {
@@ -548,7 +548,7 @@ class DMZ_HTMLForm
             $ret = '';
             if (! is_array($value)) {
                 if (is_null($value) || $value === false || $value === '') {
-                    $value = array();
+                    $value = [];
                 } else {
                     $value = array($value);
                 }

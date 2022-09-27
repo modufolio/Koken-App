@@ -39,7 +39,7 @@ class ZipFileEntry extends AbstractZipHeader
     public $isDirectory = false;
     public $comment = '';
 
-    public $extraFieldsArray = array();
+    public $extraFieldsArray = [];
 
     public $discNumberStart = AbstractZipHeader::NULL_WORD;
     public $internalFileAttributes = AbstractZipHeader::NULL_WORD;

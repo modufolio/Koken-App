@@ -137,13 +137,13 @@ class Categories extends Koken_Controller
                 if ($prev->exists()) {
                     $context['previous'] = array( $prev->to_array($options) );
                 } else {
-                    $context['previous'] = array();
+                    $context['previous'] = [];
                 }
 
                 if ($next->exists()) {
                     $context['next'] = array( $next->to_array($options) );
                 } else {
-                    $context['next'] = array();
+                    $context['next'] = [];
                 }
 
                 $final = array_merge($category_arr, $final);
@@ -211,7 +211,7 @@ class Categories extends Koken_Controller
                 }
 
                 $members = $category->{$model . 's'}->select('id')->get_iterated();
-                $member_ids = array();
+                $member_ids = [];
                 foreach ($members as $member) {
                     $member_ids[] = $member->id;
                 }

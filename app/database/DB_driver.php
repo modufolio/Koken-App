@@ -54,9 +54,9 @@ class CI_DB_driver
     public $query_count	= 0;
     public $bind_marker	= '?';
     public $save_queries	= true;
-    public $queries		= array();
-    public $query_times	= array();
-    public $data_cache		= array();
+    public $queries		= [];
+    public $query_times	= [];
+    public $data_cache		= [];
     public $trans_enabled	= true;
     public $trans_strict	= true;
     public $_trans_depth	= 0;
@@ -711,7 +711,7 @@ class CI_DB_driver
             return false;
         }
 
-        $retval = array();
+        $retval = [];
         $query = $this->query($sql);
 
         if ($query->num_rows() > 0) {
@@ -772,7 +772,7 @@ class CI_DB_driver
 
         $query = $this->query($sql);
 
-        $retval = array();
+        $retval = [];
         foreach ($query->result_array() as $row) {
             if (isset($row['COLUMN_NAME'])) {
                 $retval[] = $row['COLUMN_NAME'];
@@ -834,8 +834,8 @@ class CI_DB_driver
      */
     public function insert_string($table, $data)
     {
-        $fields = array();
-        $values = array();
+        $fields = [];
+        $values = [];
 
         foreach ($data as $key => $val) {
             $fields[] = $this->_escape_identifiers($key);
@@ -862,7 +862,7 @@ class CI_DB_driver
             return false;
         }
 
-        $fields = array();
+        $fields = [];
         foreach ($data as $key => $val) {
             $fields[$this->_protect_identifiers($key)] = $this->escape($val);
         }
@@ -870,7 +870,7 @@ class CI_DB_driver
         if (! is_array($where)) {
             $dest = array($where);
         } else {
-            $dest = array();
+            $dest = [];
             foreach ($where as $key => $val) {
                 $prefix = (count($dest) == 0) ? '' : ' AND ';
 
@@ -1155,7 +1155,7 @@ class CI_DB_driver
         }
 
         if (is_array($item)) {
-            $escaped_array = array();
+            $escaped_array = [];
 
             foreach ($item as $k => $v) {
                 $escaped_array[$this->_protect_identifiers($k)] = $this->_protect_identifiers($v);

@@ -43,7 +43,7 @@
 |	$autoload['libraries'] = array('database', 'session', 'xmlrpc');
 */
 
-// $autoload['libraries'] = array();
+// $autoload['libraries'] = [];
 
 
 /*
@@ -67,7 +67,7 @@ $autoload['helper'] = array('koken', 'file', 'directory');
 |	$autoload['plugin'] = array('captcha', 'js_calendar');
 */
 
-$autoload['plugin'] = array();
+$autoload['plugin'] = [];
 
 
 /*
@@ -99,7 +99,7 @@ $autoload['config'] = array('koken');
 |
 */
 
-$autoload['language'] = array();
+$autoload['language'] = [];
 
 
 /*
@@ -112,7 +112,7 @@ $autoload['language'] = array();
 |
 */
 
-$autoload['model'] = array();
+$autoload['model'] = [];
 
 
 

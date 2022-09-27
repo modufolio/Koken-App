@@ -15,7 +15,7 @@
 	if (isset({$token}['max_download']) && {$token}['max_download']['raw'] !== 'none'):
 		\$__max = {$token}['max_download'];
 
-		\$__dls = array();
+		\$__dls = [];
 		\$__last_width = \$__last_height = 0;
 
 		foreach(array_slice({$token}['presets'], 2) as \$__name => \$__preset)

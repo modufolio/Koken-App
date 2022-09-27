@@ -88,7 +88,7 @@ class WebhostWhois
                 $this->results[$key] = false;
             }
         } else {
-            $ns = array();
+            $ns = [];
 
             if ($options['useDns'] && isset($options['server']['HTTP_HOST'])) {
                 $dnsInfo = dns_get_record($options['server']['HTTP_HOST'], DNS_NS);

@@ -39,7 +39,7 @@ class CI_URI
      * @var array
      * @access public
      */
-    public $keyval			= array();
+    public $keyval			= [];
     /**
      * Current uri string
      *
@@ -53,7 +53,7 @@ class CI_URI
      * @var array
      * @access public
      */
-    public $segments		= array();
+    public $segments		= [];
     /**
      * Re-indexed list of uri segments
      * Starts at 1 instead of 0
@@ -61,7 +61,7 @@ class CI_URI
      * @var array
      * @access public
      */
-    public $rsegments		= array();
+    public $rsegments		= [];
 
     /**
      * Constructor
@@ -196,7 +196,7 @@ class CI_URI
             parse_str($_SERVER['QUERY_STRING'], $_GET);
         } else {
             $_SERVER['QUERY_STRING'] = '';
-            $_GET = array();
+            $_GET = [];
         }
 
         if ($uri == '/' || empty($uri)) {
@@ -432,7 +432,7 @@ class CI_URI
                 return array();
             }
 
-            $retval = array();
+            $retval = [];
             foreach ($default as $val) {
                 $retval[$val] = false;
             }
@@ -443,7 +443,7 @@ class CI_URI
 
         $i = 0;
         $lastval = '';
-        $retval  = array();
+        $retval  = [];
         foreach ($segments as $seg) {
             if ($i % 2) {
                 $retval[$lastval] = $seg;
@@ -480,7 +480,7 @@ class CI_URI
      */
     public function assoc_to_uri($array)
     {
-        $temp = array();
+        $temp = [];
         foreach ((array)$array as $key => $val) {
             $temp[] = $key;
             $temp[] = $val;

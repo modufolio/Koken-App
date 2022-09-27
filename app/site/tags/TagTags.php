@@ -51,7 +51,7 @@
 
 	if (isset(\$__base['tags']) && !empty(\$__base['tags'])):
 
-		$ref = array();
+		$ref = [];
 
 		{$ref}['__loop__'] = \$__base['tags'];
 

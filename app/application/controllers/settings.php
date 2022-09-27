@@ -286,7 +286,7 @@ OUT;
                     $u->order_by('id DESC')->get();
                     $existing_data = unserialize($u->data);
 
-                    $transformed = array();
+                    $transformed = [];
 
                     foreach ($url_data as $key => $udata) {
                         $transformed[] = array(
@@ -304,7 +304,7 @@ OUT;
                     unset($_POST['url_data']);
                 }
 
-                $save = array();
+                $save = [];
                 foreach ($_POST as $key => $val) {
                     if (isset($data[$key])) {
                         if (is_bool($data[$key]) && is_string($val) && ($val === 'true' || $val === 'false')) {
@@ -358,7 +358,7 @@ OUT;
 
         $migrations = scandir($migrate_path);
 
-        $data['migrations'] = array();
+        $data['migrations'] = [];
 
         if (!isset($data['last_migration'])) {
             $migration_setting = new Setting();

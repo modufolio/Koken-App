@@ -56,7 +56,7 @@ class FFmpeg
         }
 
         $i = 1;
-        $cmd = array();
+        $cmd = [];
         while ($i < $duration) {
             $i_str = str_pad($i, 5, '0', STR_PAD_LEFT);
             $cmd[] = $this->ffmpeg . " -ss $i -i \"{$this->path}\" -vframes 1 -an -f mjpeg \"$i_str.jpg\"";

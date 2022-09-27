@@ -62,7 +62,7 @@ abstract class AbstractZipArchive extends AbstractZipWriter
     public const EXTRA_FIELD_NEW_UNIX_GUID_CD = "ux\x00\x00"; // \x75\x78 3rd gen Unis GUID CD record version must have length 0.
 
     protected $zipComment = null;
-    protected $cdRec = array(); // central directory
+    protected $cdRec = []; // central directory
     protected $offset = 0;
     protected $isFinalized = false;
     protected $addExtraField = true;
@@ -82,7 +82,7 @@ abstract class AbstractZipArchive extends AbstractZipWriter
      */
     public static $temp = null;
 
-    private $_listeners = array();
+    private $_listeners = [];
     private $_phpConfigurationWatch = array(
         // 'mbstring.func_overload' => '0' // throw an exception if setting in php.ini is not '0'
     );

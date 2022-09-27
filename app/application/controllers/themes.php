@@ -10,7 +10,7 @@ class Themes extends Koken_Controller
 
     public function index()
     {
-        list($params, $id) = $this->parse_params(func_get_args());
+       [$params, $id] = $this->parse_params(func_get_args());
 
         $t = new Theme();
         $final = $t->read();

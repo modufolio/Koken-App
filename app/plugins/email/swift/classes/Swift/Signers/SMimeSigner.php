@@ -123,7 +123,7 @@ class Swift_Signers_SMimeSigner implements Swift_Signers_BodySigner
     public function setEncryptCertificate($recipientCerts, $cipher = null)
     {
         if (is_array($recipientCerts)) {
-            $this->encryptCert = array();
+            $this->encryptCert = [];
 
             foreach ($recipientCerts as $cert) {
                 $this->encryptCert[] = 'file://'.str_replace('\\', '/', realpath($cert));
@@ -362,7 +362,7 @@ class Swift_Signers_SMimeSigner implements Swift_Signers_BodySigner
         $headerLines = explode("\r\n", $headerData);
         unset($headerData);
 
-        $headers = array();
+        $headers = [];
         $currentHeaderName = '';
 
         foreach ($headerLines as $headerLine) {

@@ -2,7 +2,7 @@
 
 class KokenPlugin
 {
-    protected $data = array();
+    protected $data = [];
     protected $require_setup = false;
     public $database_fields = false;
 

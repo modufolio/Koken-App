@@ -46,14 +46,14 @@ class CI_Router
      * @var array
      * @access public
      */
-    public $routes			= array();
+    public $routes			= [];
     /**
      * List of error routes
      *
      * @var array
      * @access public
      */
-    public $error_routes	= array();
+    public $error_routes	= [];
     /**
      * Current class name
      *
@@ -111,7 +111,7 @@ class CI_Router
         // Are query strings enabled in the config file?  Normally CI doesn't utilize query strings
         // since URI segments are more search-engine friendly, but they can optionally be used.
         // If this feature is enabled, we will gather the directory/class/method a little differently
-        $segments = array();
+        $segments = [];
         if ($this->config->item('enable_query_strings') === true and isset($_GET[$this->config->item('controller_trigger')])) {
             if (isset($_GET[$this->config->item('directory_trigger')])) {
                 $this->set_directory(trim($this->uri->_filter_uri($_GET[$this->config->item('directory_trigger')])));

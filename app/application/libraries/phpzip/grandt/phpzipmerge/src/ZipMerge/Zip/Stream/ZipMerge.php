@@ -36,11 +36,11 @@ class ZipMerge
     public const MODE_STREAM = 0;
     public const MODE_INLINE = 1;
 
-    private $_listeners = array();
+    private $_listeners = [];
 
     protected $isFinalized = false;
 
-    protected $FILES = array();
+    protected $FILES = [];
     protected $eocd = null;
     protected $LFHindex = 0;
     protected $CDRindex = 0;

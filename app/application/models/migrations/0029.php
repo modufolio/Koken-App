@@ -5,7 +5,7 @@
     $fields = $this->db->query("SHOW COLUMNS FROM {$c->table}");
     $result = $fields->result();
 
-    $columns = array();
+    $columns = [];
     foreach ($result as $field) {
         $columns[] = $field->Field;
     }

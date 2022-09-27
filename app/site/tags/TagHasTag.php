@@ -23,7 +23,7 @@
 
 	\$__tags = explode(',', '$tag');
 
-	\$__base_tags = array();
+	\$__base_tags = [];
 	foreach(\$__base['tags'] as \$__tag)
 	{
 		\$__base_tags[] = \$__tag['title'];

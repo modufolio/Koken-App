@@ -545,7 +545,7 @@ class Swift_Mime_SimpleMessage extends Swift_Mime_MimePart implements Swift_Mime
      */
     public function detach(Swift_Mime_MimeEntity $entity)
     {
-        $newChildren = array();
+        $newChildren = [];
         foreach ($this->getChildren() as $child) {
             if ($entity !== $child) {
                 $newChildren[] = $child;

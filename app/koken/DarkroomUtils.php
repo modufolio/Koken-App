@@ -76,7 +76,7 @@ class DarkroomUtils
 
     public static function libraries()
     {
-        $libraries = array();
+        $libraries = [];
 
         if (in_array('imagick', get_loaded_extensions()) && class_exists('Imagick')) {
             $im = new Imagick();
@@ -122,7 +122,7 @@ class DarkroomUtils
             }
 
 
-            $imagemagick = $graphicsmagick = array();
+            $imagemagick = $graphicsmagick = [];
 
             foreach ($commonPaths as $path) {
                 if (!preg_match('/convert$/', $path)) {

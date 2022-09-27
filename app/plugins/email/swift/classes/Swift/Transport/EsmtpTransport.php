@@ -20,14 +20,14 @@ class Swift_Transport_EsmtpTransport extends Swift_Transport_AbstractSmtpTranspo
      *
      * @var Swift_Transport_EsmtpHandler[]
      */
-    private $_handlers = array();
+    private $_handlers = [];
 
     /**
      * ESMTP capabilities.
      *
      * @var string[]
      */
-    private $_capabilities = array();
+    private $_capabilities = [];
 
     /**
      * Connection buffer parameters.
@@ -193,7 +193,7 @@ class Swift_Transport_EsmtpTransport extends Swift_Transport_AbstractSmtpTranspo
      */
     public function setExtensionHandlers(array $handlers)
     {
-        $assoc = array();
+        $assoc = [];
         foreach ($handlers as $handler) {
             $assoc[$handler->getHandledKeyword()] = $handler;
         }
@@ -319,7 +319,7 @@ class Swift_Transport_EsmtpTransport extends Swift_Transport_AbstractSmtpTranspo
     protected function _doMailFromCommand($address)
     {
         $handlers = $this->_getActiveHandlers();
-        $params = array();
+        $params = [];
         foreach ($handlers as $handler) {
             $params = array_merge($params, (array) $handler->getMailParams());
         }
@@ -334,7 +334,7 @@ class Swift_Transport_EsmtpTransport extends Swift_Transport_AbstractSmtpTranspo
     protected function _doRcptToCommand($address)
     {
         $handlers = $this->_getActiveHandlers();
-        $params = array();
+        $params = [];
         foreach ($handlers as $handler) {
             $params = array_merge($params, (array) $handler->getRcptParams());
         }
@@ -348,7 +348,7 @@ class Swift_Transport_EsmtpTransport extends Swift_Transport_AbstractSmtpTranspo
     /** Determine ESMTP capabilities by function group */
     private function _getCapabilities($ehloResponse)
     {
-        $capabilities = array();
+        $capabilities = [];
         $ehloResponse = trim($ehloResponse);
         $lines = explode("\r\n", $ehloResponse);
         array_shift($lines);
@@ -377,7 +377,7 @@ class Swift_Transport_EsmtpTransport extends Swift_Transport_AbstractSmtpTranspo
     /** Get ESMTP handlers which are currently ok to use */
     private function _getActiveHandlers()
     {
-        $handlers = array();
+        $handlers = [];
         foreach ($this->_handlers as $keyword => $handler) {
             if (array_key_exists($keyword, $this->_capabilities)) {
                 $handlers[] = $handler;

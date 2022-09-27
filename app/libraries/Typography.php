@@ -81,7 +81,7 @@ class CI_Typography
         }
 
         // HTML comment tags don't conform to patterns of normal tags, so pull them out separately, only if needed
-        $html_comments = array();
+        $html_comments = [];
         if (strpos($str, '<!--') !== false) {
             if (preg_match_all("#(<!\-\-.*?\-\->)#s", $str, $matches)) {
                 for ($i = 0, $total = count($matches[0]); $i < $total; $i++) {

@@ -562,7 +562,7 @@ if (! function_exists('form_close')) {
 if (! function_exists('form_prep')) {
     function form_prep($str = '', $field_name = '')
     {
-        static $prepped_fields = array();
+        static $prepped_fields = [];
 
         // if the field name is an array we do this recursively
         if (is_array($str)) {

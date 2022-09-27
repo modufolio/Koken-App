@@ -38,7 +38,7 @@ class Swift_Mime_SimpleMimeEntity implements Swift_Mime_MimeEntity
     );
 
     /** A set of filter rules to define what level an entity should be nested at */
-    private $_compoundLevelFilters = array();
+    private $_compoundLevelFilters = [];
 
     /** The nesting level of this entity */
     private $_nestingLevel = self::LEVEL_ALTERNATIVE;
@@ -47,10 +47,10 @@ class Swift_Mime_SimpleMimeEntity implements Swift_Mime_MimeEntity
     private $_cache;
 
     /** Direct descendants of this entity */
-    private $_immediateChildren = array();
+    private $_immediateChildren = [];
 
     /** All descendants of this entity */
-    private $_children = array();
+    private $_children = [];
 
     /** The maximum line length of the body of this entity */
     private $_maxLineLength = 78;
@@ -287,8 +287,8 @@ class Swift_Mime_SimpleMimeEntity implements Swift_Mime_MimeEntity
             : $this->_getCompoundLevel($children)
             ;
 
-        $immediateChildren = array();
-        $grandchildren = array();
+        $immediateChildren = [];
+        $grandchildren = [];
         $newContentType = $this->_userContentType;
 
         foreach ($children as $child) {
@@ -753,7 +753,7 @@ class Swift_Mime_SimpleMimeEntity implements Swift_Mime_MimeEntity
 
     private function _getNeededChildLevel($child, $compoundLevel)
     {
-        $filter = array();
+        $filter = [];
         foreach ($this->_compoundLevelFilters as $bitmask => $rules) {
             if (($compoundLevel & $bitmask) === $bitmask) {
                 $filter = $rules + $filter;
@@ -816,7 +816,7 @@ class Swift_Mime_SimpleMimeEntity implements Swift_Mime_MimeEntity
 
     private function _childSortAlgorithm($a, $b)
     {
-        $typePrefs = array();
+        $typePrefs = [];
         $types = array(
             strtolower($a->getContentType()),
             strtolower($b->getContentType()),
@@ -868,7 +868,7 @@ class Swift_Mime_SimpleMimeEntity implements Swift_Mime_MimeEntity
         $this->_headers = clone $this->_headers;
         $this->_encoder = clone $this->_encoder;
         $this->_cacheKey = uniqid();
-        $children = array();
+        $children = [];
         foreach ($this->_children as $pos => $child) {
             $children[$pos] = clone $child;
         }

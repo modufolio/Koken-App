@@ -96,7 +96,7 @@ class Tag extends Koken
             $final['total'] = $data->result_count();
         }
 
-        $final['tags'] = array();
+        $final['tags'] = [];
         foreach ($data as $tag) {
             $final['tags'][] = $tag->to_array($options);
         }

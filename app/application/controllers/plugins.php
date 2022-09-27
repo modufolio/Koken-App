@@ -16,7 +16,7 @@ class Plugins extends Koken_Controller
     public function call()
     {
         if ($this->auth) {
-            list($params, $id) = $this->parse_params(func_get_args());
+           [$params, $id] = $this->parse_params(func_get_args());
 
             $p = new Plugin();
             $p->where('path', $params['plugin'])->get();
@@ -97,7 +97,7 @@ class Plugins extends Koken_Controller
             return;
         }
 
-        list($params, $id) = $this->parse_params(func_get_args());
+       [$params, $id] = $this->parse_params(func_get_args());
         $plugins = $this->parse_plugins();
 
         $db_config = Shutter::get_db_configuration();

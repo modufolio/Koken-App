@@ -22,7 +22,7 @@ class Swift_Mime_Headers_IdentificationHeader extends Swift_Mime_Headers_Abstrac
      *
      * @var string[]
      */
-    private $_ids = array();
+    private $_ids = [];
 
     /**
      * Creates a new IdentificationHeader with the given $name and $id.
@@ -110,7 +110,7 @@ class Swift_Mime_Headers_IdentificationHeader extends Swift_Mime_Headers_Abstrac
      */
     public function setIds(array $ids)
     {
-        $actualIds = array();
+        $actualIds = [];
 
         foreach ($ids as $id) {
             $this->_assertValidId($id);
@@ -146,7 +146,7 @@ class Swift_Mime_Headers_IdentificationHeader extends Swift_Mime_Headers_Abstrac
     public function getFieldBody()
     {
         if (!$this->getCachedValue()) {
-            $angleAddrs = array();
+            $angleAddrs = [];
 
             foreach ($this->_ids as $id) {
                 $angleAddrs[] = '<'.$id.'>';

@@ -59,11 +59,11 @@ class DMZ_RowIndex
      */
     public function row_indices($object, $ids, $leave_select = array(), $distinct_on = false)
     {
-        $row_indices = array();
+        $row_indices = [];
         if (!is_array($ids)) {
             $ids = array($ids);
         }
-        $new_ids = array();
+        $new_ids = [];
         foreach ($ids as $id) {
             if (is_object($id)) {
                 $new_ids[] = $id->id;
@@ -72,13 +72,13 @@ class DMZ_RowIndex
             }
         }
         if (!is_array($leave_select)) {
-            $leave_select = array();
+            $leave_select = [];
         }
         // duplicate to ensure the query isn't wiped out
         $object = $object->get_clone(true);
         // remove the unecessary columns
         $sort_columns = $this->_orderlist($object->db->ar_orderby);
-        $ar_select = array();
+        $ar_select = [];
         if (empty($sort_columns) && empty($leave_select)) {
             // no sort columns, so just wipe it out.
             $object->db->ar_select = null;
@@ -135,7 +135,7 @@ class DMZ_RowIndex
      */
     private function _orderlist($order_by)
     {
-        $list = array();
+        $list = [];
         $impt_parts_regex = '/([\w]+)([^\(]|$)/';
         foreach ($order_by as $order_by_string) {
             $parts = explode(',', $order_by_string);
@@ -169,7 +169,7 @@ class DMZ_RowIndex
     {
         // splits a select into parameters, then stores them as
         // $select[<alias>] = $select_part
-        $list = array();
+        $list = [];
         $last_pos = 0;
         $pos = -1;
         while ($pos < strlen($select)) {

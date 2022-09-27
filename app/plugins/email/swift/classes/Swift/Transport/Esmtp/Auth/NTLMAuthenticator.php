@@ -158,7 +158,7 @@ class Swift_Transport_Esmtp_Auth_NTLMAuthenticator implements Swift_Transport_Es
 
         $length = strlen($block);
         $offset = 0;
-        $data = array();
+        $data = [];
         while ($offset < $length) {
             $blockLength = hexdec(substr(substr($block, $offset, 8), -4)) / 256;
             $offset += 8;

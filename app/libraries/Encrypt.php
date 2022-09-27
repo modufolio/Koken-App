@@ -40,7 +40,7 @@ class CI_Encrypt
     public $_mcrypt_mode;
 
     protected $_driver;
-    protected $_drivers = array();
+    protected $_drivers = [];
     protected $_cipher = 'aes-128';
     protected $_mode = 'cbc';
     protected $_handle;

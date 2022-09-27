@@ -25,13 +25,13 @@ class Swift_Transport_StreamBuffer extends Swift_ByteStream_AbstractFilterableIn
     private $_out;
 
     /** Buffer initialization parameters */
-    private $_params = array();
+    private $_params = [];
 
     /** The ReplacementFilterFactory */
     private $_replacementFactory;
 
     /** Translations performed on data being streamed into the buffer */
-    private $_translations = array();
+    private $_translations = [];
 
     /**
      * Create a new StreamBuffer using $replacementFactory for transformations.
@@ -257,7 +257,7 @@ class Swift_Transport_StreamBuffer extends Swift_ByteStream_AbstractFilterableIn
         if (!empty($this->_params['timeout'])) {
             $timeout = $this->_params['timeout'];
         }
-        $options = array();
+        $options = [];
         if (!empty($this->_params['sourceIp'])) {
             $options['socket']['bindto'] = $this->_params['sourceIp'].':0';
         }

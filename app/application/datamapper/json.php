@@ -35,13 +35,13 @@ class DMZ_Json
         if (empty($fields)) {
             $fields = $object->fields;
         }
-        $result = array();
+        $result = [];
         foreach ($fields as $f) {
             // handle related fields
             if (array_key_exists($f, $object->has_one) || array_key_exists($f, $object->has_many)) {
                 // each related item is stored as an array of ids
                 // Note: this method will NOT get() the related object.
-                $rels = array();
+                $rels = [];
                 foreach ($object->{$f} as $item) {
                     $rels[] = $item->id;
                 }
@@ -71,7 +71,7 @@ class DMZ_Json
      */
     public function all_to_json($object, $fields = '', $pretty_print = false)
     {
-        $result = array();
+        $result = [];
         foreach ($object as $o) {
             $result[] = $o->to_json($fields);
         }

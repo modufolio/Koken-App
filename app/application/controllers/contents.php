@@ -9,7 +9,7 @@ class Contents extends Koken_Controller
 
     public function cache()
     {
-        list($params, $id) = $this->parse_params(func_get_args());
+       [$params, $id] = $this->parse_params(func_get_args());
 
         if ($this->method === 'delete') {
             $c = new Content();
@@ -70,7 +70,7 @@ class Contents extends Koken_Controller
 
     public function albums()
     {
-        list($params, $id) = $this->parse_params(func_get_args());
+       [$params, $id] = $this->parse_params(func_get_args());
         $a = new Album();
 
         if (isset($params['context'])) {
@@ -86,7 +86,7 @@ class Contents extends Koken_Controller
 
     public function categories()
     {
-        list($params, $id) = $this->parse_params(func_get_args());
+       [$params, $id] = $this->parse_params(func_get_args());
         $c = new Category();
 
         $params['auth'] = $this->auth;
@@ -244,7 +244,7 @@ class Contents extends Koken_Controller
                             die(json_encode(array( 'filename' => $file_name )));
                         }
 
-                        $from = array();
+                        $from = [];
                         $from['filename'] = $file_name;
                         $from['internal_id'] = $internal_id;
                         $from['file_modified_on'] = time();
@@ -262,7 +262,7 @@ class Contents extends Koken_Controller
                             return;
                         }
                         copy($_REQUEST['localfile'], $path);
-                        $from = array();
+                        $from = [];
                         $from['filename'] = $filename;
                         $from['internal_id'] = $internal_id;
                         $from['file_modified_on'] = time();
@@ -276,7 +276,7 @@ class Contents extends Koken_Controller
                             return;
                         }
                         if ($this->_download(urldecode($_POST['from_url']), $path, true) && file_exists($path)) {
-                            $from = array();
+                            $from = [];
                             $from['filename'] = $filename;
                             $from['internal_id'] = $internal_id;
                             $from['file_modified_on'] = time();
@@ -459,7 +459,7 @@ class Contents extends Koken_Controller
                             $is_trash = $id === 'trash';
 
                             if ($id === 'trash') {
-                                $id = array();
+                                $id = [];
                                 $trash = new Trash();
                                 $trash
                                     ->like('id', 'content-')
@@ -771,8 +771,8 @@ class Contents extends Koken_Controller
                         $next_limit = $max;
                     }
 
-                    $final['context']['previous'] = array();
-                    $final['context']['next'] = array();
+                    $final['context']['previous'] = [];
+                    $final['context']['next'] = [];
 
                     if ($next_limit > 0) {
                         if ($options['context_order'] !== 'manual') {

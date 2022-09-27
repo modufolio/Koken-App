@@ -28,7 +28,7 @@
 if (! function_exists('load_class')) {
     function &load_class($class, $directory = 'libraries', $prefix = 'CI_')
     {
-        static $_classes = array();
+        static $_classes = [];
 
         // Does the class exist?  If so, we're done...
         if (isset($_classes[$class])) {

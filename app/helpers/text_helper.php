@@ -115,7 +115,7 @@ if (! function_exists('ascii_to_entities')) {
     {
         $count	= 1;
         $out	= '';
-        $temp	= array();
+        $temp	= [];
 
         for ($i = 0, $s = strlen($str); $i < $s; $i++) {
             $ordinal = ord($str[$i]);
@@ -143,7 +143,7 @@ if (! function_exists('ascii_to_entities')) {
 
                     $out .= '&#'.$number.';';
                     $count = 1;
-                    $temp = array();
+                    $temp = [];
                 }
             }
         }
@@ -379,7 +379,7 @@ if (! function_exists('word_wrap')) {
 
         // If the current word is surrounded by {unwrap} tags we'll
         // strip the entire chunk and replace it with a marker.
-        $unwrap = array();
+        $unwrap = [];
         if (preg_match_all("|(\{unwrap\}.+?\{/unwrap\})|s", $str, $matches)) {
             for ($i = 0; $i < count($matches['0']); $i++) {
                 $unwrap[] = $matches['1'][$i];

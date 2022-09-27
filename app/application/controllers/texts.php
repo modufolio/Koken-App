@@ -115,7 +115,7 @@ class Texts extends Koken_Controller
                             $id = explode(',', $id);
                         }
 
-                        $tags = array();
+                        $tags = [];
 
                         foreach ($id as $text_id) {
                             $text = $t->get_by_id($text_id);
@@ -293,8 +293,8 @@ class Texts extends Koken_Controller
                         $next_limit = $max;
                     }
 
-                    $final['context']['previous'] = array();
-                    $final['context']['next'] = array();
+                    $final['context']['previous'] = [];
+                    $final['context']['next'] = [];
 
                     if ($next_limit > 0) {
                         $next->order_by('published_on DESC, id DESC')
@@ -381,7 +381,7 @@ class Texts extends Koken_Controller
 
     public function categories()
     {
-        list($params, $id) = $this->parse_params(func_get_args());
+       [$params, $id] = $this->parse_params(func_get_args());
         $c = new Category();
 
         $params['auth'] = $this->auth;
@@ -392,7 +392,7 @@ class Texts extends Koken_Controller
 
     public function topics()
     {
-        list($params, $id) = $this->parse_params(func_get_args());
+       [$params, $id] = $this->parse_params(func_get_args());
 
         if ($this->method === 'get') {
             $a = new Album();

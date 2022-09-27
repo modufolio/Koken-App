@@ -48,7 +48,7 @@ class CI_Session
     public $flashdata_key				= 'flash';
     public $time_reference				= 'time';
     public $gc_probability				= 5;
-    public $userdata					= array();
+    public $userdata					= [];
     public $CI;
     public $now;
 
@@ -271,7 +271,7 @@ class CI_Session
 
         // set the custom userdata, the session data we will set in a second
         $custom_userdata = $this->userdata;
-        $cookie_userdata = array();
+        $cookie_userdata = [];
 
         // Before continuing, we need to determine if there is any custom data to deal with.
         // Let's determine this by removing the default indexes to see if there's anything left in the array
@@ -376,7 +376,7 @@ class CI_Session
         // Update the session ID and last_activity field in the DB if needed
         if ($this->sess_use_database === true) {
             // set cookie explicitly to only have our session data
-            $cookie_data = array();
+            $cookie_data = [];
             foreach (array('session_id','ip_address','user_agent','last_activity') as $val) {
                 $cookie_data[$val] = $this->userdata[$val];
             }
@@ -415,7 +415,7 @@ class CI_Session
         );
 
         // Kill session data
-        $this->userdata = array();
+        $this->userdata = [];
     }
 
     // --------------------------------------------------------------------

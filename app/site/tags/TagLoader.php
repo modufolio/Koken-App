@@ -55,7 +55,7 @@
 	}
 	else
 	{
-		$copy = array();
+		$copy = [];
 	}
 
 	\$__params = array($params);
@@ -68,7 +68,7 @@
 	{
 		if (isset({$copy}['$obj']['count']) && {$copy}['$obj']['count'] === 0)
 		{
-			{$copy}['$obj'] = array();
+			{$copy}['$obj'] = [];
 		}
 		else if (isset({$copy}['filename']) || isset({$copy}['album_type']) || isset({$copy}['page_type']) || (isset({$copy}['counts']) && isset({$copy}['counts']['$obj']) && {$copy}['counts']['$obj'] > 0))
 		{
@@ -89,7 +89,7 @@
 		}
 		else
 		{
-			{$copy}['$obj'] = array();
+			{$copy}['$obj'] = [];
 		}
 	}
 
@@ -120,7 +120,7 @@
 			{$tmp}['$obj'] = array_slice({$tmp}['$obj'], 0, $limit);
 		}
 
-		$ref = array();
+		$ref = [];
 		{$ref}['__loop__'] =& {$tmp}['$obj'];
 		{$ref}['$obj'] =& {$tmp}['$obj'];
 

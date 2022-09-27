@@ -14,7 +14,7 @@
                 $token = '$value' . (count(Koken::$tokens) ? Koken::$tokens[0] : '');
             }
 
-            $attr = array();
+            $attr = [];
             foreach ($options as $key => $val) {
                 $val = $this->attr_parse($val);
                 $comp = "'$key' => \"$val\"";

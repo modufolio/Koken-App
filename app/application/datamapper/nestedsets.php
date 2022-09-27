@@ -112,12 +112,12 @@ class DMZ_Nestedsets
     {
         // make sure the load-time options parameter is an array
         if (! is_array($options)) {
-            $options = array();
+            $options = [];
         }
 
         // make sure the model options parameter is an array
         if (! isset($object->nestedsets) or ! is_array($object->nestedsets)) {
-            $object->nestedsets = array();
+            $object->nestedsets = [];
         }
 
         // loop through all options
@@ -985,7 +985,7 @@ class DMZ_Nestedsets
         $tree = $this->dump_tree($object, null, 'array', $skip_root);
 
         // storage for the result
-        $result = array();
+        $result = [];
 
         if ($tree) {
             // loop trough the tree
@@ -1053,7 +1053,7 @@ class DMZ_Nestedsets
             if (! empty($this->_nodename)) {
                 $path = array( $object->{$this->_nodename} );
             } else {
-                $path = array();
+                $path = [];
             }
 
             // add level and path to the result

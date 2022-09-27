@@ -29,9 +29,9 @@ class Draft extends DataMapper
         $this->load->helper(array('url', 'text', 'inflector'));
         $url = new Url();
         $url_list = $url->order_by('id DESC')->get_iterated();
-        $urls = $data = $routes = array();
+        $urls = $data = $routes = [];
         $level = 0;
-        $top_segments = array();
+        $top_segments = [];
 
         foreach ($url_list as $config) {
             $config = unserialize($config->data);
@@ -54,7 +54,7 @@ class Draft extends DataMapper
 
             $level++;
 
-            $segments = $_data = array();
+            $segments = $_data = [];
             $content_regex = false;
 
             foreach ($config as $i => $u) {
@@ -123,8 +123,8 @@ class Draft extends DataMapper
                 $top_segments = $segments;
             }
 
-            $supported = array();
-            $supported_raw = array();
+            $supported = [];
+            $supported_raw = [];
             if (file_exists($template_path . 'archive.contents.lens')) {
                 $supported[] = $segments['content'];
                 $supported_raw[] = 'contents';
@@ -208,7 +208,7 @@ class Draft extends DataMapper
                         $album_content_route['path'] = $album_content_template;
                         $album_content_route['template'] = 'content';
                         $album_content_route['source'] = 'content';
-                        $album_content_route['filters'] = array();
+                        $album_content_route['filters'] = [];
 
                         $this->_push($album_content_route, $routes, $u['type'], $level);
                     } else {
@@ -496,7 +496,7 @@ class Draft extends DataMapper
         if ($refresh === 'nav') {
             $this->data = json_decode($this->data, true);
         } else {
-            $this->data = array();
+            $this->data = [];
         }
 
         $ds = DIRECTORY_SEPARATOR;
@@ -507,11 +507,11 @@ class Draft extends DataMapper
         list($urls, $data, $routes) = $this->setup_urls($theme_root);
 
         $this->data['navigation'] = array('items' => array());
-        $this->data['navigation']['groups'] = $groups = array();
+        $this->data['navigation']['groups'] = $groups = [];
 
         $defaults = array('timeline', 'albums', 'contents', 'essays');
 
-        $used_autos = array();
+        $used_autos = [];
 
         $user = new User();
         $user->get();
@@ -542,7 +542,7 @@ class Draft extends DataMapper
 
         if (isset($template_info['navigation_groups'])) {
             foreach ($template_info['navigation_groups'] as $key => $info) {
-                $items = array();
+                $items = [];
                 if (isset($info['defaults'])) {
                     foreach ($info['defaults'] as $def) {
                         if (is_array($def)) {

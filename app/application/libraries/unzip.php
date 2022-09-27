@@ -24,17 +24,17 @@ defined('BASEPATH') or exit('No direct script access allowed');
  */
 class Unzip
 {
-    private $compressed_list = array();
+    private $compressed_list = [];
 
     // List of files in the ZIP
-    private $central_dir_list = array();
+    private $central_dir_list = [];
 
     // Central dir list... It's a kind of 'extra attributes' for a set of files
-    private $end_of_central = array();
+    private $end_of_central = [];
 
     // End of central dir, contains ZIP Comments
-    private $info = array();
-    private $error = array();
+    private $info = [];
+    private $error = [];
     private $_zip_file = '';
     private $_target_dir = false;
     private $apply_chmod = 0777;
@@ -76,11 +76,11 @@ class Unzip
      */
     private function _reinit()
     {
-        $this->compressed_list = array();
-        $this->central_dir_list = array();
-        $this->end_of_central = array();
-        $this->info = array();
-        $this->error = array();
+        $this->compressed_list = [];
+        $this->central_dir_list = [];
+        $this->end_of_central = [];
+        $this->info = [];
+        $this->error = [];
     }
 
     /**
@@ -101,7 +101,7 @@ class Unzip
             return false;
         }
 
-        $file_locations = array();
+        $file_locations = [];
         foreach ($files as $file => $trash) {
             $dirname = pathinfo($file, PATHINFO_DIRNAME);
             $extension = pathinfo($file, PATHINFO_EXTENSION);
@@ -151,7 +151,7 @@ class Unzip
             $this->_extract_file($file, $file_location);
         }
 
-        $this->compressed_list = array();
+        $this->compressed_list = [];
 
         return $file_locations;
     }

@@ -55,7 +55,7 @@ class Swift_Signers_DomainKeySigner implements Swift_Signers_HeaderSigner
      *
      * @var array
      */
-    protected $_ignoredHeaders = array();
+    protected $_ignoredHeaders = [];
 
     /**
      * Signer identity
@@ -77,7 +77,7 @@ class Swift_Signers_DomainKeySigner implements Swift_Signers_HeaderSigner
      *
      * @var array
      */
-    private $_signedHeaders = array();
+    private $_signedHeaders = [];
 
     /**
      * Stores the signature header
@@ -107,7 +107,7 @@ class Swift_Signers_DomainKeySigner implements Swift_Signers_HeaderSigner
 
     private $_bodyCanonLine = '';
 
-    private $_bound = array();
+    private $_bound = [];
 
     /**
      * Constructor

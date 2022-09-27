@@ -189,7 +189,7 @@ if (! function_exists('anchor_popup')) {
         }
 
         if (! is_array($attributes)) {
-            $attributes = array();
+            $attributes = [];
         }
 
         foreach (array('width' => '800', 'height' => '600', 'scrollbars' => 'yes', 'status' => 'yes', 'resizable' => 'yes', 'screenx' => '0', 'screeny' => '0', ) as $key => $val) {
@@ -281,7 +281,7 @@ if (! function_exists('safe_mailto')) {
 
         $x[] = '>';
 
-        $temp = array();
+        $temp = [];
         for ($i = 0; $i < strlen($title); $i++) {
             $ordinal = ord($title[$i]);
 
@@ -297,7 +297,7 @@ if (! function_exists('safe_mailto')) {
                     $number = ($count == 3) ? (($temp['0'] % 16) * 4096) + (($temp['1'] % 64) * 64) + ($temp['2'] % 64) : (($temp['0'] % 32) * 64) + ($temp['1'] % 64);
                     $x[] = "|".$number;
                     $count = 1;
-                    $temp = array();
+                    $temp = [];
                 }
             }
         }

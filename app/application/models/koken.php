@@ -53,7 +53,7 @@ class Koken extends DataMapper
                 $t->where('name', $tag)->get();
 
                 if ($t->exists()) {
-                    $tag_content_ids = array();
+                    $tag_content_ids = [];
                     foreach ($t->{$model}->select('id')->get_iterated() as $content) {
                         $tag_content_ids[] = $content->id;
                     }
@@ -125,7 +125,7 @@ class Koken extends DataMapper
 
         $model = $this->model;
 
-        $existing = array();
+        $existing = [];
         foreach ($this->tags->select('id,name')->get_iterated() as $tag) {
             $existing[] = $tag->name;
         }
@@ -163,7 +163,7 @@ class Koken extends DataMapper
 
     public function _eager_load_tags($data)
     {
-        $ids = array();
+        $ids = [];
 
         foreach ($data as $content) {
             $ids[] = $content->id;
@@ -193,8 +193,8 @@ class Koken extends DataMapper
             ->order_by('name ASC')
             ->get_iterated();
 
-        $tag_map = array();
-        $tag_cache = array();
+        $tag_map = [];
+        $tag_cache = [];
         foreach ($tag as $t) {
             if (isset($tag_cache[$t->name])) {
                 $tag_as_array = $tag_cache[$t->name];
@@ -229,7 +229,7 @@ class Koken extends DataMapper
             $db_config = Shutter::get_db_configuration();
 
             $tags = $this->tags->order_by($db_config['prefix'] . 'tags.name ASC')->get_iterated();
-            $arr = array();
+            $arr = [];
 
             foreach ($tags as $tag) {
                 $arr[] = $tag->_tag_for_output($this->model);

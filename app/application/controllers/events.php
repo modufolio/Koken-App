@@ -72,7 +72,7 @@ class Events extends Koken_Controller
         $t->group_by($group)->order_by($order);
         $a->group_by($group)->order_by($order);
 
-        $dates = array();
+        $dates = [];
 
         if (!$params['limit_to'] || $params['limit_to'] === 'content') {
             foreach ($c->get() as $content) {
@@ -210,7 +210,7 @@ class Events extends Koken_Controller
             } elseif ($params['month']) {
                 $next = $previous = $current = false;
                 $marker = $i = $pos = 0;
-                $dates = array();
+                $dates = [];
 
                 foreach ($all as $event) {
                     $_marker = "{$event['year']}-{$event['month']}";
@@ -231,7 +231,7 @@ class Events extends Koken_Controller
             } else {
                 $next = $previous = $current = false;
                 $year = $i = $pos = 0;
-                $dates = array();
+                $dates = [];
                 foreach ($all as $event) {
                     if ($event['year'] !== $year) {
                         $year = $event['year'];
@@ -253,14 +253,14 @@ class Events extends Koken_Controller
                 $this->archive_urls($next, $urls, $url_base, $params);
                 $next = array($next);
             } else {
-                $next = array();
+                $next = [];
             }
 
             if ($previous) {
                 $this->archive_urls($previous, $urls, $url_base, $params);
                 $previous = array($previous);
             } else {
-                $previous = array();
+                $previous = [];
             }
 
             $context = array(
@@ -393,7 +393,7 @@ class Events extends Koken_Controller
 
     public function show()
     {
-        list($params, $id) = $this->parse_params(func_get_args());
+       [$params, $id] = $this->parse_params(func_get_args());
 
         if (isset($params['limit'])) {
             $params['limit'] = min($params['limit'], 50);
@@ -451,14 +451,14 @@ class Events extends Koken_Controller
                 $this->event_urls($next, $urls, $url_base);
                 $next = array($next);
             } else {
-                $next = array();
+                $next = [];
             }
 
             if ($previous) {
                 $this->event_urls($previous, $urls, $url_base);
                 $previous = array($previous);
             } else {
-                $previous = array();
+                $previous = [];
             }
 
             $context = array(

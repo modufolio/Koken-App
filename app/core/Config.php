@@ -38,13 +38,13 @@ class CI_Config
      *
      * @var array
      */
-    public $config = array();
+    public $config = [];
     /**
      * List of all loaded config files
      *
      * @var array
      */
-    public $is_loaded = array();
+    public $is_loaded = [];
     /**
      * List of paths to search when trying to load a config file
      *

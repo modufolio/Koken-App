@@ -37,7 +37,7 @@ class CI_Cart
 
     // Private variables.  Do not change!
     public $CI;
-    public $_cart_contents	= array();
+    public $_cart_contents	= [];
 
 
     /**
@@ -51,7 +51,7 @@ class CI_Cart
         $this->CI =& get_instance();
 
         // Are any config settings being passed manually?  If so, set them
-        $config = array();
+        $config = [];
         if (count($params) > 0) {
             foreach ($params as $key => $val) {
                 $config[$key] = $val;

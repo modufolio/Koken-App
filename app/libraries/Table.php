@@ -33,8 +33,8 @@
  */
 class CI_Table
 {
-    public $rows				= array();
-    public $heading			= array();
+    public $rows				= [];
+    public $heading			= [];
     public $auto_heading		= true;
     public $caption			= null;
     public $template			= null;
@@ -109,7 +109,7 @@ class CI_Table
             return $array;
         }
 
-        $new = array();
+        $new = [];
         while (count($array) > 0) {
             $temp = array_splice($array, 0, $col_limit);
 
@@ -350,8 +350,8 @@ class CI_Table
      */
     public function clear()
     {
-        $this->rows				= array();
-        $this->heading			= array();
+        $this->rows				= [];
+        $this->heading			= [];
         $this->auto_heading		= true;
     }
 

@@ -41,7 +41,7 @@ class Response
      * Error code strings.
      * @var array
      */
-    private $errorCodes = array();
+    private $errorCodes = [];
 
     /**
      * Build the response from the expected JSON returned by the service.

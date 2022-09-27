@@ -30,7 +30,7 @@ class Category extends Koken
     {
         $mixed = $this->distinct()->select('id')->where_in_related(strtolower($model), 'id', $ids)->get_iterated();
 
-        $mixed_ids = array();
+        $mixed_ids = [];
         foreach ($mixed as $cat) {
             $mixed_ids[] = $cat->id;
         }
@@ -39,11 +39,11 @@ class Category extends Koken
         $model->select('id')->where_in('id', $ids)->include_related('category')->get_iterated();
 
         $common_ids = $content_id = $cats = false;
-        $aggregate = array();
+        $aggregate = [];
 
         foreach ($model as $item) {
             if ($item->category_id === null) {
-                $aggregate = array();
+                $aggregate = [];
                 break;
             }
 
@@ -61,7 +61,7 @@ class Category extends Koken
         }
 
         if (!is_array($common_ids)) {
-            $common_ids = array();
+            $common_ids = [];
         }
 
         return array(
@@ -132,7 +132,7 @@ class Category extends Koken
         $koken_url_info = $this->config->item('koken_url_info');
         $base = $koken_url_info->base;
 
-        $final['categories'] = array();
+        $final['categories'] = [];
         foreach ($data as $category) {
             $cat = $category->to_array($options);
             $cat['items'] = $base . 'api.php?/categories/' . $category->id;

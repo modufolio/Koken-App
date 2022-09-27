@@ -39,9 +39,9 @@ if (! class_exists('CI_Xmlrpc')) {
  */
 class CI_Xmlrpcs extends CI_Xmlrpc
 {
-    public $methods		= array();	//array of methods mapped to function names and signatures
+    public $methods		= [];	//array of methods mapped to function names and signatures
     public $debug_msg		= '';		// Debug Message
-    public $system_methods = array();	// XML RPC Server methods
+    public $system_methods = [];	// XML RPC Server methods
     public $controller_obj;
 
     public $object			= false;
@@ -188,12 +188,12 @@ class CI_Xmlrpcs extends CI_Xmlrpc
         $parser = xml_parser_create($this->xmlrpc_defencoding);
         $parser_object = new XML_RPC_Message("filler");
 
-        $parser_object->xh[$parser]					= array();
+        $parser_object->xh[$parser]					= [];
         $parser_object->xh[$parser]['isf']			= 0;
         $parser_object->xh[$parser]['isf_reason']	= '';
-        $parser_object->xh[$parser]['params']		= array();
-        $parser_object->xh[$parser]['stack']		= array();
-        $parser_object->xh[$parser]['valuestack']	= array();
+        $parser_object->xh[$parser]['params']		= [];
+        $parser_object->xh[$parser]['stack']		= [];
+        $parser_object->xh[$parser]['valuestack']	= [];
         $parser_object->xh[$parser]['method']		= '';
 
         xml_set_object($parser, $parser_object);
@@ -365,7 +365,7 @@ class CI_Xmlrpcs extends CI_Xmlrpc
     public function listMethods($m)
     {
         $v = new XML_RPC_Values();
-        $output = array();
+        $output = [];
 
         foreach ($this->methods as $key => $value) {
             $output[] = new XML_RPC_Values($key, 'string');
@@ -395,11 +395,11 @@ class CI_Xmlrpcs extends CI_Xmlrpc
 
         if (isset($this->methods[$method_name])) {
             if ($this->methods[$method_name]['signature']) {
-                $sigs = array();
+                $sigs = [];
                 $signature = $this->methods[$method_name]['signature'];
 
                 for ($i=0; $i < count($signature); $i++) {
-                    $cursig = array();
+                    $cursig = [];
                     $inSig = $signature[$i];
                     for ($j=0; $j<count($inSig); $j++) {
                         $cursig[]= new XML_RPC_Values($inSig[$j], 'string');
@@ -456,7 +456,7 @@ class CI_Xmlrpcs extends CI_Xmlrpc
         $parameters = $m->output_parameters();
         $calls = $parameters[0];
 
-        $result = array();
+        $result = [];
 
         foreach ($calls as $value) {
             //$attempt = $this->_execute(new XML_RPC_Message($value[0], $value[1]));

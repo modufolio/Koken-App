@@ -22,7 +22,7 @@ class Koken_Controller extends CI_Controller
     public $format = 'json';
 
     // We can't use CI's set_output, as it causes type coersion, so we'll use our own var for that
-    public $response_data = array();
+    public $response_data = [];
 
     public function _clear_system_caches()
     {
@@ -370,7 +370,7 @@ class Koken_Controller extends CI_Controller
     {
         $activated = new Plugin();
         $activated->get_iterated();
-        $map = array();
+        $map = [];
 
         foreach ($activated as $active) {
             if (!is_dir(FCPATH . 'storage/plugins/' . $active->path)) {
@@ -396,7 +396,7 @@ class Koken_Controller extends CI_Controller
                 $_arr = array('path' => $plugin['path']);
 
                 if (isset($plugin['data'])) {
-                    $data = array();
+                    $data = [];
                     foreach ($plugin['data'] as $key => $arr) {
                         if (isset($arr['value'])) {
                             $data[$key] = $arr['value'];
@@ -510,7 +510,7 @@ class Koken_Controller extends CI_Controller
 
     public function parse_params($args)
     {
-        $params = $id = array();
+        $params = $id = [];
         $allowed_string_ids = array('trash');
 
         if (count($args)) {
@@ -572,7 +572,7 @@ class Koken_Controller extends CI_Controller
     {
         $options = array_merge(array('featured' => false), $options);
 
-        $shared_params = array();
+        $shared_params = [];
 
         if ($type === 'tag') {
             $shared_params['tags'] = $options['tag_slug'];
@@ -600,7 +600,7 @@ class Koken_Controller extends CI_Controller
             $album_params['before'] = $date_marker = strtotime("{$options['year']}-{$options['month']}-{$options['day']} 23:59:59") - $offset;
         }
 
-        $aggregate = $essay_ids = $album_ids = $content_ids = $updated_album_ids = $exclude_albums = $exclude_content = $sets = $range = array();
+        $aggregate = $essay_ids = $album_ids = $content_ids = $updated_album_ids = $exclude_albums = $exclude_content = $sets = $range = [];
 
         $t = new Text();
         $t->select('id, featured, featured_image_id, published_on')
@@ -779,7 +779,7 @@ class Koken_Controller extends CI_Controller
 
         $updated_album_ids_arr = $updated_album_ids;
 
-        $essay_ids = $album_ids = $content_ids = $updated_album_ids = $final = $index = array();
+        $essay_ids = $album_ids = $content_ids = $updated_album_ids = $final = $index = [];
         foreach ($load as $i => $item) {
             $index[$item['type'] . '-' . $item['id']] = $i;
             ${$item['type'] . '_ids'}[] = $item['id'];
@@ -821,7 +821,7 @@ class Koken_Controller extends CI_Controller
             foreach ($a as $album) {
                 $arr = $album->to_array();
                 $arr['event_type'] = 'album_update';
-                $arr['content'] = array();
+                $arr['content'] = [];
 
                 $info = $updated_album_ids_arr[$album->id];
                 $c = new Content();

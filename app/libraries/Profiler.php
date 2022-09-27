@@ -109,7 +109,7 @@ class CI_Profiler
      */
     protected function _compile_benchmarks()
     {
-        $profile = array();
+        $profile = [];
         foreach ($this->CI->benchmark->marker as $key => $val) {
             // We match the "end" marker so that the list ends
             // up in the order that it was defined
@@ -151,7 +151,7 @@ class CI_Profiler
      */
     protected function _compile_queries()
     {
-        $dbs = array();
+        $dbs = [];
 
         // Let's determine which databases are currently connected to
         foreach (get_object_vars($this->CI) as $CI_object) {

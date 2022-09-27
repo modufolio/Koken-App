@@ -91,14 +91,14 @@ class Swift_Encoder_QpEncoder implements Swift_Encoder
         255 => '=FF',
         );
 
-    protected static $_safeMapShare = array();
+    protected static $_safeMapShare = [];
 
     /**
      * A map of non-encoded ascii characters.
      *
      * @var string[]
      */
-    protected $_safeMap = array();
+    protected $_safeMap = [];
 
     /**
      * Creates a new QpEncoder for the given CharacterStream.
@@ -170,7 +170,7 @@ class Swift_Encoder_QpEncoder implements Swift_Encoder
 
         $thisLineLength = $maxLineLength - $firstLineOffset;
 
-        $lines = array();
+        $lines = [];
         $lNo = 0;
         $lines[$lNo] = '';
         $currentLine = & $lines[$lNo++];

@@ -65,7 +65,7 @@ class RelativePath
             $dirs = array_splice($dirs, 1);
         }
 
-        $newDirs = array();
+        $newDirs = [];
         foreach ($dirs as $dir) {
             if ($dir !== "..") {
                 $subOffset--;

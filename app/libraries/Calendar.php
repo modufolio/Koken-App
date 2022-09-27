@@ -297,7 +297,7 @@ class CI_Calendar
             $day_names = array('su', 'mo', 'tu', 'we', 'th', 'fr', 'sa');
         }
 
-        $days = array();
+        $days = [];
         foreach ($day_names as $val) {
             $days[] = ($this->CI->lang->line('cal_'.$val) === false) ? ucfirst($val) : $this->CI->lang->line('cal_'.$val);
         }
@@ -321,7 +321,7 @@ class CI_Calendar
      */
     public function adjust_date($month, $year)
     {
-        $date = array();
+        $date = [];
 
         $date['month']	= $month;
         $date['year']	= $year;

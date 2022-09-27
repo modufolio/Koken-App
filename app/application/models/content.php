@@ -43,7 +43,7 @@ class Content extends Koken
         )
     );
 
-    public $exif_cache = array();
+    public $exif_cache = [];
 
     public function _validate_focal_point()
     {
@@ -292,7 +292,7 @@ class Content extends Koken
             if (in_array(strtolower($pathinfo['extension']), array('jpg', 'jpeg')) && is_callable('exif_read_data')) {
                 @$this->exif_cache[$this->id] = exif_read_data($path, 0, true);
             } else {
-                $this->exif_cache[$this->id] = array();
+                $this->exif_cache[$this->id] = [];
             }
         }
 
@@ -345,7 +345,7 @@ class Content extends Koken
                 }
 
                 if (isset($iptc['2#025']) && is_array($iptc['2#025'])) {
-                    $words = array();
+                    $words = [];
 
                     if (count($iptc['2#025']) == 1) {
                         $words = array($iptc['2#025'][0]);
@@ -735,7 +735,7 @@ class Content extends Koken
             $url = $koken_url_info->base . $path;
 
             if (preg_match('/^https?:/', $this->filename)) {
-                $data['original'] = array();
+                $data['original'] = [];
             } elseif (!empty($this->storage_url)) {
                 $data['original'] = array(
                     'url' => $this->storage_url,
@@ -815,7 +815,7 @@ class Content extends Koken
                     'extension' => 'png'
                 );
 
-                $data['presets'] = array();
+                $data['presets'] = [];
                 foreach (DarkroomUtils::$presets as $name => $opts) {
                     $h = ($opts['width'] * 2) / 3;
                     $data['presets'][$name] = array(
@@ -850,7 +850,7 @@ class Content extends Koken
                 );
 
                 $data['cache_path']['extension'] = $data['file_modified_on']['timestamp'] . '.' . $info['extension'];
-                $data['presets'] = array();
+                $data['presets'] = [];
                 foreach (DarkroomUtils::$presets as $name => $opts) {
                     $dims = $this->compute_cache_size($opts['width'], $opts['height']);
                     if ($dims) {
@@ -881,7 +881,7 @@ class Content extends Koken
 
         if (array_key_exists('duration', $data)) {
             $r = $data['duration'];
-            $data['duration'] = array();
+            $data['duration'] = [];
             $data['duration']['raw'] = $r;
 
             $m = floor($r/60);
@@ -896,7 +896,7 @@ class Content extends Koken
             $data['duration']['clean'] = "$m:$s";
         }
 
-        $data['iptc'] = $data['iptc_fields'] = $data['exif'] = $data['exif_fields'] = array();
+        $data['iptc'] = $data['iptc_fields'] = $data['exif'] = $data['exif_fields'] = [];
 
         if ($this->has_iptc) {
             list($data['iptc'], $data['iptc_fields']) = $this->iptc_to_human();
@@ -1194,7 +1194,7 @@ class Content extends Koken
         if (!$iptc || empty($iptc)) {
             return array(array(), array());
         } else {
-            $final = $keys = array();
+            $final = $keys = [];
 
             foreach ($mappings as $name => $options) {
                 $index = "2#{$options['index']}";
@@ -1412,7 +1412,7 @@ class Content extends Koken
             if (strpos($include, ',')) {
                 $include = explode(',', $include);
             }
-            $final = $keys = array();
+            $final = $keys = [];
             $defaults = array(
                 'divide' => false,
                 'pre' => '',
@@ -1469,7 +1469,7 @@ class Content extends Koken
                             $bool = !$options['boolean']['result'];
                         }
                     }
-                    $arr = array();
+                    $arr = [];
                     $arr['key'] = $property;
                     $arr['label'] = $options['label'];
                     $arr['raw'] = $this->_force_utf($value);
@@ -1682,7 +1682,7 @@ class Content extends Koken
         } elseif ($options['category_not']) {
             $cat = new Content();
             $cat->select('id')->where_related('category', 'id', $options['category_not'])->get_iterated();
-            $cids = array();
+            $cids = [];
             foreach ($cat as $c) {
                 $cids[] = $c->id;
             }
@@ -1729,13 +1729,13 @@ class Content extends Koken
                     ->order_by('year')
                     ->get_iterated();
 
-        $dates = array();
+        $dates = [];
         foreach ($bounds as $b) {
             if (!is_numeric($b->year)) {
                 continue;
             }
             if (!isset($dates[$b->year])) {
-                $dates[$b->year] = array();
+                $dates[$b->year] = [];
             }
 
             $dates[$b->year][$b->month] = (int) $b->count;
@@ -1785,7 +1785,7 @@ class Content extends Koken
                     ->include_related('content', 'id')
                     ->get_iterated();
 
-                $ids = array();
+                $ids = [];
                 foreach ($a as $album) {
                     if ($album->content_id) {
                         $ids[] = $album->content_id;
@@ -1851,7 +1851,7 @@ class Content extends Koken
             'total' => $final['total']
         );
 
-        $final['content'] = array();
+        $final['content'] = [];
 
         $final['sort'] = $sort;
 

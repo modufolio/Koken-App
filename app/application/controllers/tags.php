@@ -47,7 +47,7 @@ class Tags extends Koken_Controller
             }
 
             if (!$t->exists()) {
-                $final = array();
+                $final = [];
             } else {
                 $tag_array = $t->to_array();
 
@@ -94,7 +94,7 @@ class Tags extends Koken_Controller
                 $max = $next->get_clone()->count();
                 $min = $prev->get_clone()->count();
 
-                $final['context'] = array();
+                $final['context'] = [];
                 $final['context']['total'] = $max + $min + 1;
                 $final['context']['position'] = $min + 1;
                 $final['context']['previous'] = $final['context']['next'] = false;

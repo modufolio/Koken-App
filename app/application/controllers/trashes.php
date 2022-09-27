@@ -10,7 +10,7 @@ class Trashes extends Koken_Controller
     public function index()
     {
         // TODO: Make sure user is admin over content they trash
-        list($params, $id) = $this->parse_params(func_get_args());
+       [$params, $id] = $this->parse_params(func_get_args());
 
         if ($this->method != 'get') {
             $c = new Content();
@@ -35,9 +35,9 @@ class Trashes extends Koken_Controller
 
             switch ($this->method) {
                 case 'post':
-                    $q = array();
-                    $content_ids = array();
-                    $album_ids = array();
+                    $q = [];
+                    $content_ids = [];
+                    $album_ids = [];
 
                     $now = time();
 
@@ -107,7 +107,7 @@ class Trashes extends Koken_Controller
                     $this->redirect('/trash');
                     break;
                 case 'delete':
-                    $ids = array();
+                    $ids = [];
                     foreach ($params['content'] as $id) {
                         $ids[] = "'content-{$id}'";
                     }
@@ -186,7 +186,7 @@ class Trashes extends Koken_Controller
         $final = $t->paginate($options);
         $data = $t->order_by('created_on DESC')->get_iterated();
 
-        $final['trash'] = array();
+        $final['trash'] = [];
         foreach ($data as $member) {
             $content = @unserialize(MB_ENABLED ? mb_convert_encoding($member->data, 'ISO-8859-1') : utf8_decode($member->data));
             if (!$content) {

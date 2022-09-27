@@ -606,7 +606,7 @@ class CI_DB_mysql_driver extends CI_DB
      */
     public function _update_batch($table, $values, $index, $where = null)
     {
-        $ids = array();
+        $ids = [];
         $where = ($where != '' and count($where) >=1) ? implode(" ", $where).' AND ' : '';
 
         foreach ($values as $key => $val) {

@@ -80,7 +80,7 @@ class ZipArchiveStreamTest /*extends \PHPUnit_Framework_TestCase*/
         $zip->addDirectoryContent("../../test", "recursiveDir/test");
         $zip->addDirectoryContent("../../test", "recursiveDir/testFlat", false);
         /*
-        $addedFiles = array();
+        $addedFiles = [];
         $zip->addDirectoryContent("../test", "recursiveDir/testPermisssions", TRUE, TRUE, $addedFiles,
                     TRUE, ZipStream::generateExtAttr(4, 4, 0, FALSE), ZipStream::generateExtAttr(4, 4, 0, TRUE));
         */

@@ -4,7 +4,7 @@
     {
         public function generate()
         {
-            $params = array();
+            $params = [];
             foreach ($this->parameters as $key => $val) {
                 $params[] = "'$key' => \"" . $this->attr_parse($val) . '"';
             }

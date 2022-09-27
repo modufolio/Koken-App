@@ -23,13 +23,13 @@
                 'group' => 'default',
                 'relative' => true,
             );
-            $disabled = array();
+            $disabled = [];
 
             $group_wrap = '<?php echo "default"; ?>';
 
             $style = 'clear:left;';
 
-            $params = array();
+            $params = [];
             foreach ($this->parameters as $key => $val) {
                 if ($key === 'source' || strpos($key, 'filter:') === 0) {
                     $params[] = "'$key' => \"" . $this->attr_parse($val) . '"';
@@ -52,7 +52,7 @@
                             unset($options[$bits[0]]);
                         } else {
                             if (!isset($options[$bits[0]])) {
-                                $options[$bits[0]] = array();
+                                $options[$bits[0]] = [];
                             }
                             $options[$bits[0]][$bits[1]] = $val;
                         }
@@ -84,7 +84,7 @@
 
             unset($options['source']);
 
-            $native = array();
+            $native = [];
 
             foreach ($options as $key => $val) {
                 if ($key === 'data') {

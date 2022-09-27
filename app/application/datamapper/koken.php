@@ -151,7 +151,7 @@ class DMZ_Koken
 
         $template .= $tail;
 
-        $data = array();
+        $data = [];
 
         if ((isset($object->visibility) && (int) $object->visibility === 1) || (isset($object->listed) && $object->listed < 1)) {
             $data['id'] = $data['slug'] = $object->internal_id;
@@ -201,7 +201,7 @@ class DMZ_Koken
         }
         $fields = array_diff($fields, $exclude);
         $public_fields = array_intersect($object->fields, $fields);
-        $data = array();
+        $data = [];
 
         foreach ($public_fields as $name) {
             $val = $object->{$name};
@@ -229,7 +229,7 @@ class DMZ_Koken
 
     public function paginate($object, $options)
     {
-        $final = array();
+        $final = [];
         if ($options['limit']) {
             $total = $object->get_clone()->count_distinct();
             if (isset($options['cap']) && $options['cap'] < $total) {

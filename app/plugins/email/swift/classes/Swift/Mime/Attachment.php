@@ -16,7 +16,7 @@
 class Swift_Mime_Attachment extends Swift_Mime_SimpleMimeEntity
 {
     /** Recognized MIME types */
-    private $_mimeTypes = array();
+    private $_mimeTypes = [];
 
     /**
      * Create a new Attachment with $headers, $encoder and $cache.

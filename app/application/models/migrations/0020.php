@@ -7,7 +7,7 @@
     $content_count = $c->where('page_type', 1)->count();
 
     if ($slug_count < $content_count) {
-        $slugs = array();
+        $slugs = [];
 
         $c = new Text();
         foreach ($c->where('page_type', 1)->select('slug')->get_iterated() as $content) {

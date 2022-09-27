@@ -75,7 +75,7 @@ class Users extends Koken_Controller
 
     public function index()
     {
-        list($params, $id) = $this->parse_params(func_get_args());
+       [$params, $id] = $this->parse_params(func_get_args());
         // Create or update
         if ($this->method === 'get') {
             if (!$this->auth) {
@@ -149,7 +149,7 @@ class Users extends Koken_Controller
                 $final['total'] = $data->result_count();
             }
 
-            $final['users'] = array();
+            $final['users'] = [];
             foreach ($data as $user) {
                 $final['users'][] = $user->to_array($params);
             }
@@ -169,7 +169,7 @@ class Users extends Koken_Controller
 
     public function content()
     {
-        list($params, $id) = $this->parse_params(func_get_args());
+       [$params, $id] = $this->parse_params(func_get_args());
         $c = new Content();
 
         if (is_null($id)) {
@@ -207,7 +207,7 @@ class Users extends Koken_Controller
             $final['per_page'] = $data->result_count();
             $final['total'] = $data->result_count();
         }
-        $final['content'] = array();
+        $final['content'] = [];
         foreach ($data as $content) {
             $final['content'][] = $content->to_array($params);
         }

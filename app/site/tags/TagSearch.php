@@ -20,7 +20,7 @@
                 $this->parameters['class'] = $klass;
             }
 
-            $params = array();
+            $params = [];
 
             foreach ($this->parameters as $key => $val) {
                 $params[] = "$key=\"$val\"";

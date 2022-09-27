@@ -289,7 +289,7 @@ Q;
         $aggregator = new Album();
         $aggregator->select('id')->where('left_id >=', $params['left_id'])->where('right_id <=', $params['right_id'])->get_iterated();
 
-        $ids = array();
+        $ids = [];
         foreach ($aggregator as $album) {
             $ids[] = $album->id;
         }
@@ -297,7 +297,7 @@ Q;
         $c = new Content();
         $c->select('id')->where_in_related('album', 'id', $ids)->get_iterated();
 
-        $cids = array();
+        $cids = [];
         foreach ($c as $content) {
             $cids[] = $content->id;
         }
@@ -447,7 +447,7 @@ Q;
         $next_operator = strtolower($params['context_order_direction']) === 'asc' ? '>' : '<';
         $prev_operator = $next_operator === '>' ? '<' : '>';
 
-        $arr = array();
+        $arr = [];
 
         $next = new Album();
         $prev = new Album();
@@ -573,8 +573,8 @@ Q;
             $next_limit = $max;
         }
 
-        $arr['previous'] = array();
-        $arr['next'] = array();
+        $arr['previous'] = [];
+        $arr['next'] = [];
 
         if ($next_limit > 0) {
             $next->limit($next_limit)->get_iterated();
@@ -758,7 +758,7 @@ Q;
             } elseif ($options['category_not']) {
                 $cat = new Album();
                 $cat->select('id')->where_related('category', 'id', $options['category_not'])->get_iterated();
-                $cids = array();
+                $cids = [];
                 foreach ($cat as $c) {
                     $cids[] = $c->id;
                 }
@@ -830,7 +830,7 @@ Q;
                     ->include_related('album', 'id')
                     ->get_iterated();
 
-                $ids = array();
+                $ids = [];
                 foreach ($e as $essay) {
                     if ($essay->album_id) {
                         $ids[] = $essay->album_id;
@@ -842,7 +842,7 @@ Q;
                 }
 
                 $tops = $this->get_clone()->where('album_type', 2)->get_iterated();
-                $lefts = array();
+                $lefts = [];
 
                 foreach ($tops as $set) {
                     if ($set->right_id - $set->left_id > 1) {
@@ -881,7 +881,7 @@ Q;
             'total' => $final['total']
         );
 
-        $final['albums'] = array();
+        $final['albums'] = [];
 
         $final['sort'] = $sort;
 
@@ -904,7 +904,7 @@ Q;
                 return;
             }
 
-            $existing_ids = array();
+            $existing_ids = [];
             foreach ($this->covers->get_iterated() as $f) {
                 $existing_ids[] = $f->id;
             }
@@ -955,13 +955,13 @@ Q;
         if ($this->album_type == 0) {
             $c = new Content();
             $members = $this->contents->select('id,lg_preview')->get_iterated();
-            $member_ids = array();
+            $member_ids = [];
             foreach ($members as $member) {
                 $member_ids[] = $member->id;
             }
             $contents = $c->where_in('id', $ids)->order_by('id ASC')->get_iterated();
 
-            $added_ids = array();
+            $added_ids = [];
 
             foreach ($contents as $content) {
                 if (!$content->exists()) {
@@ -1130,7 +1130,7 @@ Q;
             unset($data['featured_on']);
         }
 
-        $sort = array();
+        $sort = [];
         list($sort['by'], $sort['direction']) = explode(' ', $data['sort']);
 
         $data['sort'] = $sort;
@@ -1186,7 +1186,7 @@ Q;
         );
 
         if ($options['with_covers']) {
-            $data['covers'] = $existing = array();
+            $data['covers'] = $existing = [];
 
             $covers = $this->covers;
 
@@ -1219,7 +1219,7 @@ Q;
                             ->where('visibility', $this->visibility)
                             ->get_iterated();
 
-                $id_arr = array();
+                $id_arr = [];
 
                 foreach ($ids as $id) {
                     $id_arr[] = $id->id;
@@ -1233,7 +1233,7 @@ Q;
                     }
                     $covers = $c->query($q . "GROUP BY album_id LIMIT " . (3 - $covers_count_set));
 
-                    $f_ids = array();
+                    $f_ids = [];
                     foreach ($covers as $f) {
                         $f_ids[] = $f->cover_id;
                     }
@@ -1432,7 +1432,7 @@ Q;
             }
         }
         if (empty($options)) {
-            $final = array();
+            $final = [];
         } else {
             $final = $content->paginate($options);
         }

@@ -57,7 +57,7 @@
                 }
             }
 
-            $params = $cparams = array();
+            $params = $cparams = [];
 
             foreach ($this->parameters as $key => $val) {
                 if (!isset($defaults[$key])) {
@@ -96,7 +96,7 @@
                 return <<<DOC
 <?php
 
-	\$__presets = array();
+	\$__presets = [];
 	if (isset({$token}['presets']))
 	{
 		\$__item = $token;

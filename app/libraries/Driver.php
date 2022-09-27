@@ -34,7 +34,7 @@
  */
 class CI_Driver_Library
 {
-    protected $valid_drivers	= array();
+    protected $valid_drivers	= [];
     protected $lib_name;
 
     // The first time a child is used it won't exist, so we instantiate it
@@ -107,10 +107,10 @@ class CI_Driver
 {
     protected $parent;
 
-    private $methods = array();
-    private $properties = array();
+    private $methods = [];
+    private $properties = [];
 
-    private static $reflections = array();
+    private static $reflections = [];
 
     /**
      * Decorate

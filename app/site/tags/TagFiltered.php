@@ -18,7 +18,7 @@
 		{$token} = $parent;
 		{$token}['filter']['count'] = {$parent}['counts']['total'];
 
-		\$__arr = array();
+		\$__arr = [];
 		foreach(Koken::\$location['parameters']['__overrides_display'] as \$__override)
 		{
 			\$__f = $token;

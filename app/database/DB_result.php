@@ -35,9 +35,9 @@ class CI_DB_result
 {
     public $conn_id				= null;
     public $result_id				= null;
-    public $result_array			= array();
-    public $result_object			= array();
-    public $custom_result_object	= array();
+    public $result_array			= [];
+    public $result_object			= [];
+    public $custom_result_object	= [];
     public $current_row			= 0;
     public $num_rows				= 0;
     public $row_data				= null;
@@ -81,7 +81,7 @@ class CI_DB_result
 
         // add the data to the object
         $this->_data_seek(0);
-        $result_object = array();
+        $result_object = [];
 
         while ($row = $this->_fetch_object()) {
             $object = new $class_name();

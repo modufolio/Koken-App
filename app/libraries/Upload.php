@@ -50,8 +50,8 @@ class CI_Upload
     public $image_height			= '';
     public $image_type				= '';
     public $image_size_str			= '';
-    public $error_msg				= array();
-    public $mimes					= array();
+    public $error_msg				= [];
+    public $mimes					= [];
     public $remove_spaces			= true;
     public $xss_clean				= false;
     public $temp_prefix				= "temp_file_";

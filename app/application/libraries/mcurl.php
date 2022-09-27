@@ -39,7 +39,7 @@ THE SOFTWARE.
 class Mcurl
 {
     private $_ci;				// CodeIgniter instance
-    private $calls = array();	// multidimensional array that holds individual calls and data
+    private $calls = [];	// multidimensional array that holds individual calls and data
     private $curl_parent;		// the curl multi handle resource
 
     public function __construct()
@@ -71,7 +71,7 @@ class Mcurl
         // init the multi handle again
         $resource_type = get_resource_type($this->curl_parent);
         if (!$resource_type || $resource_type == 'Unknown') {
-            $this->calls = array();
+            $this->calls = [];
             $this->curl_parent = curl_multi_init();
         }
 

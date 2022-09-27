@@ -47,10 +47,10 @@ class CI_Xmlrpc
     public $xmlrpcArray	= 'array';
     public $xmlrpcStruct	= 'struct';
 
-    public $xmlrpcTypes	= array();
-    public $valid_parents	= array();
-    public $xmlrpcerr		= array();	// Response numbers
-    public $xmlrpcstr		= array();  // Response strings
+    public $xmlrpcTypes	= [];
+    public $valid_parents	= [];
+    public $xmlrpcerr		= [];	// Response numbers
+    public $xmlrpcstr		= [];  // Response strings
 
     public $xmlrpc_defencoding = 'UTF-8';
     public $xmlrpcName			= 'XML-RPC for CodeIgniter';
@@ -65,7 +65,7 @@ class CI_Xmlrpc
     public $message			= '';
     public $error				= '';		// Error string for request
     public $result;
-    public $response			= array();  // Response from remote server
+    public $response			= [];  // Response from remote server
 
     public $xss_clean			= true;
 
@@ -202,7 +202,7 @@ class CI_Xmlrpc
             // Send Error
         }
 
-        $this->data = array();
+        $this->data = [];
 
         foreach ($incoming as $key => $value) {
             $this->data[$key] = $this->values_parsing($value);
@@ -408,7 +408,7 @@ class XML_RPC_Response
     public $val = 0;
     public $errno = 0;
     public $errstr = '';
-    public $headers = array();
+    public $headers = [];
     public $xss_clean = true;
 
     public function __construct($val, $code = 0, $fstr = '')
@@ -512,7 +512,7 @@ class XML_RPC_Response
             list($a, $b) = each($xmlrpc_val->me);
             $size = count($b);
 
-            $arr = array();
+            $arr = [];
 
             for ($i = 0; $i < $size; $i++) {
                 $arr[] = $this->xmlrpc_decoder($xmlrpc_val->me['array'][$i]);
@@ -520,7 +520,7 @@ class XML_RPC_Response
             return $arr;
         } elseif ($kind == 'struct') {
             reset($xmlrpc_val->me['struct']);
-            $arr = array();
+            $arr = [];
 
             while (list($key, $value) = each($xmlrpc_val->me['struct'])) {
                 $arr[$key] = $this->xmlrpc_decoder($value);
@@ -559,8 +559,8 @@ class XML_RPC_Message extends CI_Xmlrpc
 {
     public $payload;
     public $method_name;
-    public $params			= array();
-    public $xh				= array();
+    public $params			= [];
+    public $xh				= [];
 
     public function __construct($method, $pars=0)
     {
@@ -643,12 +643,12 @@ class XML_RPC_Message extends CI_Xmlrpc
 
         $parser = xml_parser_create($this->xmlrpc_defencoding);
 
-        $this->xh[$parser]					= array();
+        $this->xh[$parser]					= [];
         $this->xh[$parser]['isf']			= 0;
         $this->xh[$parser]['ac']			= '';
-        $this->xh[$parser]['headers']		= array();
-        $this->xh[$parser]['stack']			= array();
-        $this->xh[$parser]['valuestack']	= array();
+        $this->xh[$parser]['headers']		= [];
+        $this->xh[$parser]['stack']			= [];
+        $this->xh[$parser]['valuestack']	= [];
         $this->xh[$parser]['isf_reason']	= 0;
 
         xml_set_object($parser, $this);
@@ -1033,7 +1033,7 @@ class XML_RPC_Message extends CI_Xmlrpc
 
             $parameters = $array;
         } else {
-            $parameters = array();
+            $parameters = [];
 
             for ($i = 0; $i < count($this->params); $i++) {
                 $a_param = $this->decode_message($this->params[$i]);
@@ -1060,7 +1060,7 @@ class XML_RPC_Message extends CI_Xmlrpc
             reset($param->me);
             list($a, $b) = each($param->me);
 
-            $arr = array();
+            $arr = [];
 
             for ($i = 0; $i < count($b); $i++) {
                 $arr[] = $this->decode_message($param->me['array'][$i]);
@@ -1070,7 +1070,7 @@ class XML_RPC_Message extends CI_Xmlrpc
         } elseif ($kind == 'struct') {
             reset($param->me['struct']);
 
-            $arr = array();
+            $arr = [];
 
             while (list($key, $value) = each($param->me['struct'])) {
                 $arr[$key] = $this->decode_message($value);
@@ -1092,7 +1092,7 @@ class XML_RPC_Message extends CI_Xmlrpc
  */
 class XML_RPC_Values extends CI_Xmlrpc
 {
-    public $me		= array();
+    public $me		= [];
     public $mytype	= 0;
 
     public function __construct($val=-1, $type='')

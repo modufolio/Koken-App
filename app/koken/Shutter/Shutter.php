@@ -2,17 +2,17 @@
 
 class Shutter
 {
-    public static $active_pulse_plugins = array();
-    public static $custom_sources = array();
+    public static $active_pulse_plugins = [];
+    public static $custom_sources = [];
 
-    private static $filters = array();
-    private static $hooks = array();
-    private static $shortcodes = array();
-    private static $plugin_info = array();
-    private static $scripts = array();
-    private static $active_plugins = array();
-    private static $loaded_plugins = array();
-    private static $class_map = array();
+    private static $filters = [];
+    private static $hooks = [];
+    private static $shortcodes = [];
+    private static $plugin_info = [];
+    private static $scripts = [];
+    private static $active_plugins = [];
+    private static $loaded_plugins = [];
+    private static $class_map = [];
     private static $cache_providers = array(
         'api' => false,
         'core' => false,
@@ -25,15 +25,15 @@ class Shutter
     );
 
     private static $email_provider = false;
-    private static $email_providers = array();
+    private static $email_providers = [];
     private static $email_delivery_address = false;
 
     private static $db_config_provider = false;
     private static $encryption_key_provider = false;
     private static $original_storage_handler = false;
-    private static $template_folders = array();
-    private static $messages = array();
-    private static $body_classes = array();
+    private static $template_folders = [];
+    private static $messages = [];
+    private static $body_classes = [];
 
     private static function plugin_is_active($callback)
     {
@@ -189,7 +189,7 @@ class Shutter
         $parts = parse_url($url);
         parse_str($parts['query'], $query);
 
-        $qs = array();
+        $qs = [];
 
         foreach ($query as $arg => $val) {
             $qs[] = $arg . '=' . urlencode($val);
@@ -388,7 +388,7 @@ class Shutter
     {
         self::scan("storage/plugins");
 
-        $final = array();
+        $final = [];
 
         foreach (self::$plugin_info as $plugin) {
             if (isset($map[$plugin['path']]) || $plugin['internal']) {
@@ -452,7 +452,7 @@ class Shutter
 
     public static function shortcodes($content, $args)
     {
-        $scripts = array();
+        $scripts = [];
 
         preg_match_all('/\[([a-z_]+)(\s(.*?))?\]/', $content, $matches);
 
@@ -476,7 +476,7 @@ class Shutter
                 if (is_array($filtered)) {
                     $replacement = $filtered[0];
                     if (empty($filtered[1])) {
-                        $filtered[1] = array();
+                        $filtered[1] = [];
                     } elseif (!is_array($filtered[1])) {
                         $filtered[1] = array($filtered[1]);
                     }
@@ -531,7 +531,7 @@ class Shutter
     public static function register_hook($name, $arr)
     {
         if (!isset(self::$hooks[$name])) {
-            self::$hooks[$name] = array();
+            self::$hooks[$name] = [];
         }
 
         if (in_array($arr, self::$hooks[$name])) {
@@ -544,7 +544,7 @@ class Shutter
     public static function register_filter($name, $arr)
     {
         if (!isset(self::$filters[$name])) {
-            self::$filters[$name] = array();
+            self::$filters[$name] = [];
         }
 
         if (in_array($arr, self::$filters[$name])) {
@@ -683,7 +683,7 @@ class Shutter
 
     private static function get_active_site_script_paths()
     {
-        $scripts = array();
+        $scripts = [];
 
         foreach (self::$scripts as $arr) {
             if (self::plugin_is_active(array($arr['plugin'])) && file_exists($arr['path'])) {
@@ -698,7 +698,7 @@ class Shutter
     {
         $scripts = self::get_active_site_script_paths();
 
-        $output = array();
+        $output = [];
         foreach ($scripts as $path) {
             $output[] = file_get_contents($path);
         }

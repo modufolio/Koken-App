@@ -47,28 +47,28 @@ class CI_Loader
      * @var array
      * @access protected
      */
-    protected $_ci_view_paths		= array();
+    protected $_ci_view_paths		= [];
     /**
      * List of paths to load libraries from
      *
      * @var array
      * @access protected
      */
-    protected $_ci_library_paths	= array();
+    protected $_ci_library_paths	= [];
     /**
      * List of paths to load models from
      *
      * @var array
      * @access protected
      */
-    protected $_ci_model_paths		= array();
+    protected $_ci_model_paths		= [];
     /**
      * List of paths to load helpers from
      *
      * @var array
      * @access protected
      */
-    protected $_ci_helper_paths		= array();
+    protected $_ci_helper_paths		= [];
     /**
      * List of loaded base classes
      * Set by the controller class
@@ -76,42 +76,42 @@ class CI_Loader
      * @var array
      * @access protected
      */
-    protected $_base_classes		= array(); // Set by the controller class
+    protected $_base_classes		= []; // Set by the controller class
     /**
      * List of cached variables
      *
      * @var array
      * @access protected
      */
-    protected $_ci_cached_vars		= array();
+    protected $_ci_cached_vars		= [];
     /**
      * List of loaded classes
      *
      * @var array
      * @access protected
      */
-    protected $_ci_classes			= array();
+    protected $_ci_classes			= [];
     /**
      * List of loaded files
      *
      * @var array
      * @access protected
      */
-    protected $_ci_loaded_files		= array();
+    protected $_ci_loaded_files		= [];
     /**
      * List of loaded models
      *
      * @var array
      * @access protected
      */
-    protected $_ci_models			= array();
+    protected $_ci_models			= [];
     /**
      * List of loaded helpers
      *
      * @var array
      * @access protected
      */
-    protected $_ci_helpers			= array();
+    protected $_ci_helpers			= [];
     /**
      * List of class name mappings
      *
@@ -149,9 +149,9 @@ class CI_Loader
      */
     public function initialize()
     {
-        $this->_ci_classes = array();
-        $this->_ci_loaded_files = array();
-        $this->_ci_models = array();
+        $this->_ci_classes = [];
+        $this->_ci_loaded_files = [];
+        $this->_ci_models = [];
         $this->_base_classes =& is_loaded();
 
         $this->_ci_autoloader();

@@ -9,7 +9,7 @@ class Drafts extends Koken_Controller
 
     public function index()
     {
-        list($params, $id) = $this->parse_params(func_get_args());
+       [$params, $id] = $this->parse_params(func_get_args());
 
         $theme = new Theme();
         $themes = $theme->read(true);
@@ -42,7 +42,7 @@ class Drafts extends Koken_Controller
             exit;
         }
 
-        $final = array();
+        $final = [];
         $d = new Draft();
         $drafts = $d->get_iterated();
 

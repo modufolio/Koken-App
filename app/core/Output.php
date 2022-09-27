@@ -53,14 +53,14 @@ class CI_Output
      * @var array
      * @access 	protected
      */
-    protected $headers			= array();
+    protected $headers			= [];
     /**
      * List of mime types
      *
      * @var array
      * @access 	protected
      */
-    protected $mime_types		= array();
+    protected $mime_types		= [];
     /**
      * Determines wether profiler is enabled
      *
@@ -81,7 +81,7 @@ class CI_Output
      * @var array
      * @access 	protected
      */
-    protected $_profiler_sections = array();
+    protected $_profiler_sections = [];
     /**
      * Whether or not to parse variables like {elapsed_time} and {memory_usage}
      *

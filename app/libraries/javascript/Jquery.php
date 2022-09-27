@@ -32,8 +32,8 @@
 class CI_Jquery extends CI_Javascript
 {
     public $_javascript_folder = 'js';
-    public $jquery_code_for_load = array();
-    public $jquery_code_for_compile = array();
+    public $jquery_code_for_load = [];
+    public $jquery_code_for_compile = [];
     public $jquery_corner_active = false;
     public $jquery_table_sorter_active = false;
     public $jquery_table_sorter_pager_active = false;
@@ -850,7 +850,7 @@ class CI_Jquery extends CI_Javascript
     public function sortable($element, $options = array())
     {
         if (count($options) > 0) {
-            $sort_options = array();
+            $sort_options = [];
             foreach ($options as $k=>$v) {
                 $sort_options[] = "\n\t\t".$k.': '.$v."";
             }
@@ -947,7 +947,7 @@ class CI_Jquery extends CI_Javascript
      */
     public function _clear_compile()
     {
-        $this->jquery_code_for_compile = array();
+        $this->jquery_code_for_compile = [];
     }
 
     // --------------------------------------------------------------------

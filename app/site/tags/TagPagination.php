@@ -60,7 +60,7 @@
 			'number' => {$page}['page'] + 1,
 			'link' => rtrim(Koken::\$location['here'], '/') . '/page/' . ({$page}['page'] + 1) . '/'
 		);
-		\$value{$token}['__loop__'] = array();
+		\$value{$token}['__loop__'] = [];
 		foreach(range(\$__start, \$__end) as \$num):
 			\$value{$token}['__loop__'][] = array(
 				'number' => \$num,

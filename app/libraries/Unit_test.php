@@ -34,11 +34,11 @@
 class CI_Unit_test
 {
     public $active					= true;
-    public $results				= array();
+    public $results				= [];
     public $strict					= false;
     public $_template				= null;
     public $_template_rows			= null;
-    public $_test_items_visible	= array();
+    public $_test_items_visible	= [];
 
     public function __construct()
     {
@@ -221,9 +221,9 @@ class CI_Unit_test
             $results = $this->results;
         }
 
-        $retval = array();
+        $retval = [];
         foreach ($results as $result) {
-            $temp = array();
+            $temp = [];
             foreach ($result as $key => $val) {
                 if (! in_array($key, $this->_test_items_visible)) {
                     continue;

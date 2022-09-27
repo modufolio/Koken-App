@@ -18,7 +18,7 @@
             return <<<OUT
 <?php
 	if (isset({$token}['context']) || (isset({$token}['album']['context']))):
-		$ref = array();
+		$ref = [];
 		$ref = isset({$token}['album']) ? {$token}['album']['context'] : {$token}['context'];
 		\$__limit = \$__nlimit = \$__plimit = ( (int) "$limit" )/2;
 

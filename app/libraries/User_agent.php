@@ -39,13 +39,13 @@ class CI_User_agent
     public $is_robot	= false;
     public $is_mobile	= false;
 
-    public $languages	= array();
-    public $charsets	= array();
+    public $languages	= [];
+    public $charsets	= [];
 
-    public $platforms	= array();
-    public $browsers	= array();
-    public $mobiles	= array();
-    public $robots		= array();
+    public $platforms	= [];
+    public $browsers	= [];
+    public $mobiles	= [];
+    public $robots		= [];
 
     public $platform	= '';
     public $browser	= '';

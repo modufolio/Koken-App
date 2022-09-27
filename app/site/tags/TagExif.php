@@ -19,7 +19,7 @@
 
 		foreach({$token}['exif'] as \$__arr)
 		{
-			{$ref}['exif'][\$__arr['key']] = array();
+			{$ref}['exif'][\$__arr['key']] = [];
 			if (isset(\$__arr['clean']))
 			{
 				{$ref}['exif'][\$__arr['key']]['clean'] = \$__arr['clean'];

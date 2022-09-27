@@ -34,7 +34,7 @@ class Swift_Mime_Headers_ParameterizedHeader extends Swift_Mime_Headers_Unstruct
      *
      * @var string[]
      */
-    private $_params = array();
+    private $_params = [];
 
     /**
      * Creates a new ParameterizedHeader with $name.
@@ -221,7 +221,7 @@ class Swift_Mime_Headers_ParameterizedHeader extends Swift_Mime_Headers_Unstruct
 
         // Need to add indices
         if (count($valueLines) > 1) {
-            $paramLines = array();
+            $paramLines = [];
             foreach ($valueLines as $i => $line) {
                 $paramLines[] = $name.'*'.$i.
                     $this->_getEndOfParameterValue($line, true, $i == 0);

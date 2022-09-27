@@ -48,7 +48,7 @@ class Text extends Koken
         )
     );
 
-    private $ids_for_array_index = array();
+    private $ids_for_array_index = [];
 
     private function _array_index_callback($matches)
     {
@@ -262,7 +262,7 @@ class Text extends Koken
         } elseif ($options['category_not']) {
             $cat = new Text();
             $cat->select('id')->where_related('category', 'id', $options['category_not'])->get_iterated();
-            $cids = array();
+            $cids = [];
             foreach ($cat as $c) {
                 $cids[] = $c->id;
             }
@@ -293,10 +293,10 @@ class Text extends Koken
                     ->order_by('year')
                     ->get_iterated();
 
-        $dates = array();
+        $dates = [];
         foreach ($bounds as $b) {
             if (!isset($dates[$b->year])) {
-                $dates[$b->year] = array();
+                $dates[$b->year] = [];
             }
 
             $dates[$b->year][$b->month] = (int) $b->count;
@@ -364,7 +364,7 @@ class Text extends Koken
 
         $final['counts'] = array( 'total' => $final['total'] );
 
-        $final['text'] = array();
+        $final['text'] = [];
 
         $final['sort'] = $sort;
 

@@ -161,7 +161,7 @@ class Update extends Koken_Controller
             foreach ($koken_tables as $table_name => $info) {
                 $table = $db_config['prefix'] . "$table_name";
                 if ($this->db->table_exists($table)) {
-                    $existing_fields = array();
+                    $existing_fields = [];
                     foreach ($this->db->field_data($table) as $field) {
                         $existing_fields[$field->name] = $field;
                     }
@@ -517,7 +517,7 @@ class Update extends Koken_Controller
 
                 $migrations_before = scandir($this->migrate_path);
 
-                $moved = array();
+                $moved = [];
 
                 // updateFileList comes from manifest.php
                 foreach ($updateFileList as $path) {

@@ -38,7 +38,7 @@ class CI_Trackback
     public $data			= array('url' => '', 'title' => '', 'excerpt' => '', 'blog_name' => '', 'charset' => '');
     public $convert_ascii	= true;
     public $response		= '';
-    public $error_msg		= array();
+    public $error_msg		= [];
 
     /**
      * Constructor
@@ -443,7 +443,7 @@ class CI_Trackback
     {
         $count	= 1;
         $out	= '';
-        $temp	= array();
+        $temp	= [];
 
         for ($i = 0, $s = strlen($str); $i < $s; $i++) {
             $ordinal = ord($str[$i]);
@@ -462,7 +462,7 @@ class CI_Trackback
 
                     $out .= '&#'.$number.';';
                     $count = 1;
-                    $temp = array();
+                    $temp = [];
                 }
             }
         }

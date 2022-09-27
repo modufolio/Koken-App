@@ -4,7 +4,7 @@
     {
         public $tokenize 		= false;
         public $untokenize_on_else = false;
-        protected $parameters	= array();
+        protected $parameters	= [];
         protected $allows_close	= false;
         protected $attr_parse_level = 0;
 
@@ -25,7 +25,7 @@
 
         public function params_to_array_str()
         {
-            $params = array();
+            $params = [];
             foreach ($this->parameters as $key => $val) {
                 if ($key === 'data') {
                     $params[] = "'data' => " . $this->field_to_keys($val);
@@ -64,7 +64,7 @@
 
             $bits = explode('|', $param);
 
-            $options = array();
+            $options = [];
 
             foreach ($bits as $param) {
                 $param = trim($param);
@@ -123,7 +123,7 @@
                     $prefix = $pre . "\$$variable" . Koken::$tokens[$token_index];
                 }
 
-                $final = array();
+                $final = [];
                 foreach ($f as $v) {
                     $bits = explode('[', $v);
                     $str = "['" . array_shift($bits) . "']";

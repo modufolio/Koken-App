@@ -18,17 +18,17 @@ class Swift_Message extends Swift_Mime_SimpleMessage
     /**
      * @var Swift_Signers_HeaderSigner[]
      */
-    private $headerSigners = array();
+    private $headerSigners = [];
 
     /**
      * @var Swift_Signers_BodySigner[]
      */
-    private $bodySigners = array();
+    private $bodySigners = [];
 
     /**
      * @var array
      */
-    private $savedMessage = array();
+    private $savedMessage = [];
 
     /**
      * Create a new Message.
@@ -268,7 +268,7 @@ class Swift_Message extends Swift_Mime_SimpleMessage
         $this->setChildren($this->savedMessage['children']);
 
         $this->restoreHeaders();
-        $this->savedMessage = array();
+        $this->savedMessage = [];
     }
 
     /**

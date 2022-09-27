@@ -69,14 +69,14 @@ class CI_Email
     public $_IP			= false;
     public $_smtp_auth		= false;
     public $_replyto_flag	= false;
-    public $_debug_msg		= array();
-    public $_recipients	= array();
-    public $_cc_array		= array();
-    public $_bcc_array		= array();
-    public $_headers		= array();
-    public $_attach_name	= array();
-    public $_attach_type	= array();
-    public $_attach_disp	= array();
+    public $_debug_msg		= [];
+    public $_recipients	= [];
+    public $_cc_array		= [];
+    public $_bcc_array		= [];
+    public $_headers		= [];
+    public $_attach_name	= [];
+    public $_attach_type	= [];
+    public $_attach_disp	= [];
     public $_protocols		= array('mail', 'sendmail', 'smtp');
     public $_base_charsets	= array('us-ascii', 'iso-2022-');	// 7-bit charsets (excluding language suffix)
     public $_bit_depths	= array('7bit', '8bit');
@@ -145,19 +145,19 @@ class CI_Email
         $this->_finalbody	= "";
         $this->_header_str	= "";
         $this->_replyto_flag = false;
-        $this->_recipients	= array();
-        $this->_cc_array	= array();
-        $this->_bcc_array	= array();
-        $this->_headers		= array();
-        $this->_debug_msg	= array();
+        $this->_recipients	= [];
+        $this->_cc_array	= [];
+        $this->_bcc_array	= [];
+        $this->_headers		= [];
+        $this->_debug_msg	= [];
 
         $this->_set_header('User-Agent', $this->useragent);
         $this->_set_header('Date', $this->_set_date());
 
         if ($clear_attachments !== false) {
-            $this->_attach_name = array();
-            $this->_attach_type = array();
-            $this->_attach_disp = array();
+            $this->_attach_name = [];
+            $this->_attach_type = [];
+            $this->_attach_disp = [];
         }
 
         return $this;
@@ -737,7 +737,7 @@ class CI_Email
             }
         }
 
-        $clean_email = array();
+        $clean_email = [];
 
         foreach ($email as $addy) {
             if (preg_match('/\<(.*)\>/', $addy, $match)) {
@@ -819,7 +819,7 @@ class CI_Email
 
         // If the current word is surrounded by {unwrap} tags we'll
         // strip the entire chunk and replace it with a marker.
-        $unwrap = array();
+        $unwrap = [];
         if (preg_match_all("|(\{unwrap\}.+?\{/unwrap\})|s", $str, $matches)) {
             for ($i = 0; $i < count($matches['0']); $i++) {
                 $unwrap[] = $matches['1'][$i];
@@ -1040,7 +1040,7 @@ class CI_Email
             break;
         }
 
-        $attachment = array();
+        $attachment = [];
 
         $z = 0;
 
@@ -1289,7 +1289,7 @@ class CI_Email
 
         $set = "";
 
-        $chunk = array();
+        $chunk = [];
 
         for ($i = 0; $i < count($this->_bcc_array); $i++) {
             if (isset($this->_bcc_array[$i])) {

@@ -25,7 +25,7 @@ class ZipMergeToFile extends AbstractZipWriter
     private $_zipFileName = null;
     private $_zipFile = null;
 
-    protected $cdRec = array(); // central directory
+    protected $cdRec = []; // central directory
     protected $offset = 0;
     protected $isFinalized = false;
     protected $eocd = null;

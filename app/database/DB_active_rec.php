@@ -33,39 +33,39 @@
  */
 class CI_DB_active_record extends CI_DB_driver
 {
-    public $ar_select				= array();
+    public $ar_select				= [];
     public $ar_distinct			= false;
-    public $ar_from				= array();
-    public $ar_join				= array();
-    public $ar_where				= array();
-    public $ar_like				= array();
-    public $ar_groupby				= array();
-    public $ar_having				= array();
-    public $ar_keys				= array();
+    public $ar_from				= [];
+    public $ar_join				= [];
+    public $ar_where				= [];
+    public $ar_like				= [];
+    public $ar_groupby				= [];
+    public $ar_having				= [];
+    public $ar_keys				= [];
     public $ar_limit				= false;
     public $ar_offset				= false;
     public $ar_order				= false;
-    public $ar_orderby				= array();
-    public $ar_set					= array();
-    public $ar_wherein				= array();
-    public $ar_aliased_tables		= array();
-    public $ar_store_array			= array();
+    public $ar_orderby				= [];
+    public $ar_set					= [];
+    public $ar_wherein				= [];
+    public $ar_aliased_tables		= [];
+    public $ar_store_array			= [];
 
     // Active Record Caching variables
     public $ar_caching				= false;
-    public $ar_cache_exists		= array();
-    public $ar_cache_select		= array();
-    public $ar_cache_from			= array();
-    public $ar_cache_join			= array();
-    public $ar_cache_where			= array();
-    public $ar_cache_like			= array();
-    public $ar_cache_groupby		= array();
-    public $ar_cache_having		= array();
-    public $ar_cache_orderby		= array();
-    public $ar_cache_set			= array();
+    public $ar_cache_exists		= [];
+    public $ar_cache_select		= [];
+    public $ar_cache_from			= [];
+    public $ar_cache_join			= [];
+    public $ar_cache_where			= [];
+    public $ar_cache_like			= [];
+    public $ar_cache_groupby		= [];
+    public $ar_cache_having		= [];
+    public $ar_cache_orderby		= [];
+    public $ar_cache_set			= [];
 
-    public $ar_no_escape 			= array();
-    public $ar_cache_no_escape     = array();
+    public $ar_no_escape 			= [];
+    public $ar_cache_no_escape     = [];
 
     // --------------------------------------------------------------------
 
@@ -530,7 +530,7 @@ class CI_DB_active_record extends CI_DB_driver
         }
 
         // reset the array for multiple calls
-        $this->ar_wherein = array();
+        $this->ar_wherein = [];
         return $this;
     }
 
@@ -774,7 +774,7 @@ class CI_DB_active_record extends CI_DB_driver
 
 
         if (strpos($orderby, ',') !== false) {
-            $temp = array();
+            $temp = [];
             foreach (explode(',', $orderby) as $part) {
                 $part = trim($part);
                 if (! in_array($part, $this->ar_aliased_tables)) {
@@ -1031,7 +1031,7 @@ class CI_DB_active_record extends CI_DB_driver
         foreach ($key as $row) {
             if (count(array_diff($keys, array_keys($row))) > 0 or count(array_diff(array_keys($row), $keys)) > 0) {
                 // batch function above returns an error on an empty array
-                $this->ar_set[] = array();
+                $this->ar_set[] = [];
                 return;
             }
 
@@ -1040,7 +1040,7 @@ class CI_DB_active_record extends CI_DB_driver
             if ($escape === false) {
                 $this->ar_set[] =  '('.implode(',', $row).')';
             } else {
-                $clean = array();
+                $clean = [];
 
                 foreach ($row as $value) {
                     $clean[] = $this->escape($value);
@@ -1271,7 +1271,7 @@ class CI_DB_active_record extends CI_DB_driver
 
         foreach ($key as $k => $v) {
             $index_set = false;
-            $clean = array();
+            $clean = [];
 
             foreach ($v as $k2 => $v2) {
                 if ($k2 == $index) {
@@ -1641,7 +1641,7 @@ class CI_DB_active_record extends CI_DB_driver
             return $object;
         }
 
-        $array = array();
+        $array = [];
         foreach (get_object_vars($object) as $key => $val) {
             // There are some built in keys we need to ignore for this conversion
             if (! is_object($val) && ! is_array($val) && $key != '_parent_name') {
@@ -1668,7 +1668,7 @@ class CI_DB_active_record extends CI_DB_driver
             return $object;
         }
 
-        $array = array();
+        $array = [];
         $out = get_object_vars($object);
         $fields = array_keys($out);
 

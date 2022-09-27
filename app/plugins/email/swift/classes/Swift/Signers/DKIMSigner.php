@@ -62,7 +62,7 @@ class Swift_Signers_DKIMSigner implements Swift_Signers_HeaderSigner
      *
      * @var array
      */
-    protected $_ignoredHeaders = array();
+    protected $_ignoredHeaders = [];
 
     /**
      * Signer identity
@@ -120,7 +120,7 @@ class Swift_Signers_DKIMSigner implements Swift_Signers_HeaderSigner
      *
      * @var array
      */
-    protected $_signedHeaders = array();
+    protected $_signedHeaders = [];
 
     /**
      * If debugHeaders is set store debugDatas here
@@ -166,7 +166,7 @@ class Swift_Signers_DKIMSigner implements Swift_Signers_HeaderSigner
 
     private $_bodyCanonLine = '';
 
-    private $_bound = array();
+    private $_bound = [];
 
     /**
      * Constructor
@@ -203,7 +203,7 @@ class Swift_Signers_DKIMSigner implements Swift_Signers_HeaderSigner
     public function reset()
     {
         $this->_headerHash = null;
-        $this->_signedHeaders = array();
+        $this->_signedHeaders = [];
         $this->_headerHashHandler = null;
         $this->_bodyHash = null;
         $this->_bodyHashHandler = null;

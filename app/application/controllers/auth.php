@@ -28,7 +28,7 @@ class Auth extends Koken_Controller
         }
 
         if ($this->method === 'delete') {
-            list($params, $id) = $this->parse_params(func_get_args());
+           [$params, $id] = $this->parse_params(func_get_args());
             $a = new Application();
             $a->where('id', $id)->get();
 
@@ -41,7 +41,7 @@ class Auth extends Koken_Controller
         $a = new Application();
         $a->where('role !=', 'god')->get_iterated();
 
-        $apps = array();
+        $apps = [];
         foreach ($a as $app) {
             $apps[] = $app->to_array();
         }

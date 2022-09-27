@@ -32,10 +32,10 @@
 class CI_Form_validation
 {
     protected $CI;
-    protected $_field_data			= array();
-    protected $_config_rules		= array();
-    protected $_error_array			= array();
-    protected $_error_messages		= array();
+    protected $_field_data			= [];
+    protected $_config_rules		= [];
+    protected $_error_array			= [];
+    protected $_error_messages		= [];
     protected $_error_prefix		= '<p>';
     protected $_error_suffix		= '</p>';
     protected $error_string			= '';
@@ -125,7 +125,7 @@ class CI_Form_validation
 
             $is_array = true;
         } else {
-            $indexes	= array();
+            $indexes	= [];
             $is_array	= false;
         }
 
@@ -391,7 +391,7 @@ class CI_Form_validation
                     }
 
                     if (is_array($row['postdata'])) {
-                        $array = array();
+                        $array = [];
                         foreach ($row['postdata'] as $k => $v) {
                             $array[$k] = $this->prep_for_form($v);
                         }

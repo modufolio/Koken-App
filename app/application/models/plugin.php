@@ -37,7 +37,7 @@ class Plugin extends DataMapper
         $plugin = $this->_get_plugin($plugins);
 
         if ($plugin && isset($plugin['data'])) {
-            $save_data = array();
+            $save_data = [];
 
             global $raw_input_data;
 

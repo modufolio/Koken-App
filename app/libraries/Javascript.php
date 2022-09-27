@@ -761,7 +761,7 @@ class CI_Javascript
             return 'null';
         }
 
-        $json = array();
+        $json = [];
         $_is_assoc = true;
 
         if (! is_array($json_result) and empty($json_result)) {

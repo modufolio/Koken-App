@@ -67,7 +67,7 @@ class CI_DB_sqlsrv_result extends CI_DB_result
      */
     public function list_fields()
     {
-        $field_names = array();
+        $field_names = [];
         foreach (sqlsrv_field_metadata($this->result_id) as $offset => $field) {
             $field_names[] = $field['Name'];
         }
@@ -87,7 +87,7 @@ class CI_DB_sqlsrv_result extends CI_DB_result
      */
     public function field_data()
     {
-        $retval = array();
+        $retval = [];
         foreach (sqlsrv_field_metadata($this->result_id) as $offset => $field) {
             $F 				= new stdClass();
             $F->name 		= $field['Name'];

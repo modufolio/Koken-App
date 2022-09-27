@@ -20,14 +20,14 @@ class Swift_CharacterReaderFactory_SimpleCharacterReaderFactory implements Swift
      *
      * @var array
      */
-    private static $_map = array();
+    private static $_map = [];
 
     /**
      * Factories which have already been loaded.
      *
      * @var Swift_CharacterReaderFactory[]
      */
-    private static $_loaded = array();
+    private static $_loaded = [];
 
     /**
      * Creates a new CharacterReaderFactory.

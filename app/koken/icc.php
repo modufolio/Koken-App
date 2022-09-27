@@ -71,7 +71,7 @@ class JPEG_ICC
         $len = strlen($f);
         $pos = 0;
         $counter = 0;
-        $profile_chunks = array(); // tu su ulozene jednotlive casti profilu
+        $profile_chunks = []; // tu su ulozene jednotlive casti profilu
 
         while ($pos < $len && $counter < 1000) {
             $pos = strpos($f, "\xff", $pos);

@@ -77,7 +77,7 @@ class CI_Image_lib
     public $full_dst_path		= '';
     public $create_fnc			= 'imagecreatetruecolor';
     public $copy_fnc			= 'imagecopyresampled';
-    public $error_msg			= array();
+    public $error_msg			= [];
     public $wm_use_drop_shadow	= false;
     public $wm_use_truetype	= false;
 

@@ -2,10 +2,10 @@
 
 class DarkroomImageMagick extends Darkroom
 {
-    private $sourceArgs = array();
-    private $destinationArgs = array();
+    private $sourceArgs = [];
+    private $destinationArgs = [];
     private $pathToConvert;
-    private $limits = array();
+    private $limits = [];
     private $isGmagick = false;
 
     public function __construct($path = 'convert', $limits = array())
@@ -76,7 +76,7 @@ class DarkroomImageMagick extends Darkroom
 
     private function setupLimitArgs()
     {
-        $array = array();
+        $array = [];
 
         if ($this->limits['thread']) {
             $array[] = '-limit thread ' . $this->limits['thread'];

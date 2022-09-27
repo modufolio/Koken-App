@@ -94,7 +94,7 @@ class CI_DB_pdo_result extends CI_DB_result
      */
     public function field_data()
     {
-        $data = array();
+        $data = [];
 
         try {
             for ($i = 0; $i < $this->num_fields(); $i++) {

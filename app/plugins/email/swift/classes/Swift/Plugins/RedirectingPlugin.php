@@ -27,7 +27,7 @@ class Swift_Plugins_RedirectingPlugin implements Swift_Events_SendListener
      *
      * @var array
      */
-    private $_whitelist = array();
+    private $_whitelist = [];
 
     /**
      * Create a new RedirectingPlugin.
@@ -113,7 +113,7 @@ class Swift_Plugins_RedirectingPlugin implements Swift_Events_SendListener
         // Add each hard coded recipient
         $to = $message->getTo();
         if (null === $to) {
-            $to = array();
+            $to = [];
         }
 
         foreach ((array) $this->_recipient as $recipient) {
@@ -144,7 +144,7 @@ class Swift_Plugins_RedirectingPlugin implements Swift_Events_SendListener
      */
     private function _filterNameAddresses(array $recipients)
     {
-        $filtered = array();
+        $filtered = [];
 
         foreach ($recipients as $address => $name) {
             if ($this->_isWhitelisted($address)) {

@@ -3,7 +3,7 @@
 class DarkroomImagick extends Darkroom
 {
     private $image;
-    private $limits = array();
+    private $limits = [];
     private $rotate = false;
 
     public function __construct($limits = array())

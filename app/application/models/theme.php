@@ -13,7 +13,7 @@ class Theme
         $dir = get_dir_file_info(FCPATH . 'storage' . DIRECTORY_SEPARATOR . 'themes');
         $base_host = '//' . $_SERVER['HTTP_HOST'] . preg_replace('/api\.php(.*)?$/', '', $_SERVER['SCRIPT_NAME']);
         $base =  $base_host . 'storage/themes/';
-        $final = array();
+        $final = [];
 
         foreach ($dir as $key => $val) {
             $p = $val['server_path'];

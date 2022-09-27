@@ -20,7 +20,7 @@ class Swift_Transport_Esmtp_AuthHandler implements Swift_Transport_EsmtpHandler
      *
      * @var Swift_Transport_Esmtp_Authenticator[]
      */
-    private $_authenticators = array();
+    private $_authenticators = [];
 
     /**
      * The username for authentication.
@@ -48,7 +48,7 @@ class Swift_Transport_Esmtp_AuthHandler implements Swift_Transport_EsmtpHandler
      *
      * @var string[]
      */
-    private $_esmtpParams = array();
+    private $_esmtpParams = [];
 
     /**
      * Create a new AuthHandler with $authenticators for support.

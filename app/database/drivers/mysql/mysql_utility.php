@@ -138,7 +138,7 @@ class CI_DB_mysql_utility extends CI_DB_utility
 
             $i = 0;
             $field_str = '';
-            $is_int = array();
+            $is_int = [];
             while ($field = mysql_fetch_field($query->result_id)) {
                 // Most versions of MySQL store timestamp as a string
                 $is_int[$i] = (

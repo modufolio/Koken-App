@@ -67,7 +67,7 @@ class CI_DB_sqlite_result extends CI_DB_result
      */
     public function list_fields()
     {
-        $field_names = array();
+        $field_names = [];
         for ($i = 0; $i < $this->num_fields(); $i++) {
             $field_names[] = sqlite_field_name($this->result_id, $i);
         }
@@ -87,7 +87,7 @@ class CI_DB_sqlite_result extends CI_DB_result
      */
     public function field_data()
     {
-        $retval = array();
+        $retval = [];
         for ($i = 0; $i < $this->num_fields(); $i++) {
             $F				= new stdClass();
             $F->name		= sqlite_field_name($this->result_id, $i);

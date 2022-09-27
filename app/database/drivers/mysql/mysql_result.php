@@ -67,7 +67,7 @@ class CI_DB_mysql_result extends CI_DB_result
      */
     public function list_fields()
     {
-        $field_names = array();
+        $field_names = [];
         while ($field = mysql_fetch_field($this->result_id)) {
             $field_names[] = $field->name;
         }
@@ -87,7 +87,7 @@ class CI_DB_mysql_result extends CI_DB_result
      */
     public function field_data()
     {
-        $retval = array();
+        $retval = [];
         while ($field = mysql_fetch_object($this->result_id)) {
             preg_match('/([a-zA-Z]+)(\(\d+\))?/', $field->Type, $matches);
 

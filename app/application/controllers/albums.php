@@ -85,11 +85,11 @@ class Albums extends Koken_Controller
 
         $a->get_iterated();
 
-        $data = $levels = array();
+        $data = $levels = [];
 
         foreach ($a as $album) {
             if (!isset($levels['_' . $album->level])) {
-                $levels['_' . $album->level] = array();
+                $levels['_' . $album->level] = [];
             }
 
             switch ($album->album_type) {
@@ -132,7 +132,7 @@ class Albums extends Koken_Controller
                     while ($left--) {
                         if (isset($levels[$next][$left])) {
                             if (!isset($levels[$next][$left]['children'])) {
-                                $levels[$next][$left]['children'] = array();
+                                $levels[$next][$left]['children'] = [];
                             }
                             $levels[$next][$left]['children'][] = $arr;
                             break;
@@ -167,7 +167,7 @@ class Albums extends Koken_Controller
 
     public function categories()
     {
-        list($params, $id) = $this->parse_params(func_get_args());
+       [$params, $id] = $this->parse_params(func_get_args());
         $c = new Category();
 
         $params['auth'] = $this->auth;
@@ -184,7 +184,7 @@ class Albums extends Koken_Controller
 
     public function topics()
     {
-        list($params, $id) = $this->parse_params(func_get_args());
+       [$params, $id] = $this->parse_params(func_get_args());
         $t = new Text();
 
         $params['auth'] = $this->auth;
@@ -196,7 +196,7 @@ class Albums extends Koken_Controller
     public function _order($order, $album = false)
     {
         $ids = explode(',', $order);
-        $new_order_map = array();
+        $new_order_map = [];
 
         foreach ($ids as $key => $val) {
             $pos = $key + 1;
@@ -273,7 +273,7 @@ class Albums extends Koken_Controller
                             $_POST['tags'] = '';
                             $this->load->helper('directory', 1);
                             $files = directory_map($_POST['from_directory']);
-                            $content_ids = array();
+                            $content_ids = [];
                             foreach ($files as $file) {
                                 $c = new Content();
                                 $file = $_POST['from_directory'] . DIRECTORY_SEPARATOR . $file;
@@ -287,7 +287,7 @@ class Albums extends Koken_Controller
                                         return;
                                     }
                                     copy($file, $path);
-                                    $from = array();
+                                    $from = [];
                                     $from['filename'] = $filename;
                                     $from['internal_id'] = $internal_id;
                                     $from['file_modified_on'] = time();
@@ -372,7 +372,7 @@ class Albums extends Koken_Controller
                         $prefix = preg_replace('/albums$/', '', $a->table);
 
                         if ($id === 'trash') {
-                            $id = array();
+                            $id = [];
                             $trash = new Trash();
                             $trash
                                 ->like('id', 'album-')
@@ -388,7 +388,7 @@ class Albums extends Koken_Controller
                             $id = explode(',', $id);
                         }
 
-                        $tags = array();
+                        $tags = [];
 
                         // Need to loop individually here, otherwise tree can break down
                         foreach ($id as $album_id) {
@@ -509,7 +509,7 @@ class Albums extends Koken_Controller
 
     public function covers()
     {
-        list($params, $id) = $this->parse_params(func_get_args());
+       [$params, $id] = $this->parse_params(func_get_args());
         $params['auth'] = $this->auth;
 
         // Standard add/delete cover
@@ -542,7 +542,7 @@ class Albums extends Koken_Controller
                 ->where('visibility', $a->visibility)
                 ->get_iterated();
 
-            $id_arr = array();
+            $id_arr = [];
 
             foreach ($subs as $sub) {
                 $id_arr[] = $sub->id;
@@ -552,7 +552,7 @@ class Albums extends Koken_Controller
                 $subc = new Content();
                 $covers = $subc->query("SELECT DISTINCT cover_id FROM {$a->db_join_prefix}albums_covers WHERE album_id IN (" . join(',', $id_arr) . ") GROUP BY album_id LIMIT " . (3 - $cover_count));
 
-                $f_ids = array();
+                $f_ids = [];
                 foreach ($covers as $f) {
                     $f_ids[] = $f->cover_id;
                 }
@@ -657,7 +657,7 @@ class Albums extends Koken_Controller
                     $this->_order($params['order'], $album);
                 } else {
                     $ids = explode(',', $params['order']);
-                    $new_order_map = array();
+                    $new_order_map = [];
 
                     foreach ($ids as $key => $val) {
                         $pos = $key + 1;
@@ -788,7 +788,7 @@ class Albums extends Koken_Controller
             } else {
                 $c->where('deleted', 0);
                 if (!is_null($params['covers'])) {
-                    $cids = array();
+                    $cids = [];
                     foreach ($album->covers->get_iterated() as $cover) {
                         $cids[] = $cover->id;
                     }
@@ -823,7 +823,7 @@ class Albums extends Koken_Controller
         }
 
         if (isset($final['album']['covers']) && !empty($final['album']['covers']) && isset($final['content'])) {
-            $covers = array();
+            $covers = [];
             foreach ($final['album']['covers'] as $cover) {
                 $covers[] = $cover['id'];
             }

@@ -115,7 +115,7 @@ if (! function_exists('is_really_writable')) {
 if (! function_exists('load_class')) {
     function &load_class($class, $directory = 'libraries', $prefix = 'CI_')
     {
-        static $_classes = array();
+        static $_classes = [];
 
         // Does the class exist?  If so, we're done...
         if (isset($_classes[$class])) {
@@ -174,7 +174,7 @@ if (! function_exists('load_class')) {
 if (! function_exists('is_loaded')) {
     function &is_loaded($class = '')
     {
-        static $_is_loaded = array();
+        static $_is_loaded = [];
 
         if ($class != '') {
             $_is_loaded[strtolower($class)] = $class;
@@ -246,7 +246,7 @@ if (! function_exists('get_config')) {
 if (! function_exists('config_item')) {
     function config_item($item)
     {
-        static $_config_item = array();
+        static $_config_item = [];
 
         if (! isset($_config_item[$item])) {
             $config =& get_config();
@@ -466,7 +466,7 @@ if (! function_exists('_exception_handler')) {
 if (! function_exists('remove_invisible_characters')) {
     function remove_invisible_characters($str, $url_encoded = true)
     {
-        $non_displayables = array();
+        $non_displayables = [];
 
         // every control character except newline (dec 10)
         // carriage return (dec 13), and horizontal tab (dec 09)

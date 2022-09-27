@@ -9,7 +9,7 @@ function keep_vars($vars = array())
 
     global $raw_input_data;
 
-    $raw_input_data = array();
+    $raw_input_data = [];
 
     foreach ($vars as $var) {
         $raw_input_data = array_merge($raw_input_data, $var);

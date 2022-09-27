@@ -10,7 +10,7 @@ class Favorites extends Koken_Controller
     public function index()
     {
         // TODO: Make sure user is admin over content they fave
-        list($params, $id) = $this->parse_params(func_get_args());
+       [$params, $id] = $this->parse_params(func_get_args());
 
         if ($this->method != 'get') {
             $c = new Content();
@@ -25,7 +25,7 @@ class Favorites extends Koken_Controller
                 case 'put':
                     if (isset($params['order'])) {
                         $ids = explode(',', $params['order']);
-                        $new_order_map = array();
+                        $new_order_map = [];
 
                         foreach ($ids as $key => $val) {
                             $pos = $key + 1;

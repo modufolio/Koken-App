@@ -15,7 +15,7 @@
  */
 class Swift_MemorySpool implements Swift_Spool
 {
-    protected $messages = array();
+    protected $messages = [];
 
     /**
      * Tests if this Transport mechanism has started.

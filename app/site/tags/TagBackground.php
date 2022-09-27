@@ -45,7 +45,7 @@
 
             unset($this->parameters['tag']);
 
-            $params = array();
+            $params = [];
 
             foreach ($this->parameters as $key => $val) {
                 if ($key === 'position' || !isset($defaults[$key])) {
@@ -61,7 +61,7 @@
 
             return <<<DOC
 <?php
-		\$__presets = array();
+		\$__presets = [];
 		if (isset({$token}['presets']))
 		{
 			\$__item = $token;

@@ -41,14 +41,14 @@ class DMZ_Array
             $fields = (array) $fields;
         }
 
-        $result = array();
+        $result = [];
 
         foreach ($fields as $f) {
             // handle related fields
             if (array_key_exists($f, $object->has_one) || array_key_exists($f, $object->has_many)) {
                 // each related item is stored as an array of ids
                 // Note: this method will NOT get() the related object.
-                $rels = array();
+                $rels = [];
                 foreach ($object->{$f} as $item) {
                     $rels[] = $item->id;
                 }
@@ -75,7 +75,7 @@ class DMZ_Array
     {
         // loop through each object in the $all array, convert them to
         // an array, and add them to a new array.
-        $result = array();
+        $result = [];
         foreach ($object as $o) {
             $result[] = $o->to_array($fields);
         }
@@ -96,7 +96,7 @@ class DMZ_Array
     public function from_array($object, $data, $fields = '', $save = false)
     {
         // keep track of newly related objects
-        $new_related_objects = array();
+        $new_related_objects = [];
 
         // Assume all database columns.
         // In this case, simply store $fields that are in the $data array.

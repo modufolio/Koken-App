@@ -8,7 +8,7 @@
 
         public function generate()
         {
-            $params = array();
+            $params = [];
             foreach ($this->parameters as $key => $val) {
                 if ($key === 'tree') {
                     continue;

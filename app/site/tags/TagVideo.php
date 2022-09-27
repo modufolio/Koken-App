@@ -12,7 +12,7 @@
             }
 
 
-            $params = array();
+            $params = [];
 
             if (isset($this->parameters['class'])) {
                 $this->parameters['class'] = 'k-video ' . $this->parameters['class'];

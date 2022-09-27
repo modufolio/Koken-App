@@ -51,7 +51,7 @@ class CI_DB_pdo_driver extends CI_DB
     public $_count_string = "SELECT COUNT(*) AS ";
     public $_random_keyword;
 
-    public $options = array();
+    public $options = [];
 
     public function __construct($params)
     {
@@ -625,7 +625,7 @@ class CI_DB_pdo_driver extends CI_DB
      */
     public function _update_batch($table, $values, $index, $where = null)
     {
-        $ids = array();
+        $ids = [];
         $where = ($where != '' and count($where) >=1) ? implode(" ", $where).' AND ' : '';
 
         foreach ($values as $key => $val) {

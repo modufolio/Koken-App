@@ -87,8 +87,8 @@ class BD_Shortcodes extends KokenPlugin
 		<input type="hidden" name="koken_contact_form" value="1" />
 HTML;
 
-        $required = array();
-        $labels = array();
+        $required = [];
+        $labels = [];
 
         $fromEmail = false;
 

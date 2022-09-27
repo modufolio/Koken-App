@@ -7,7 +7,7 @@
     $content_count = $c->count();
 
     if ($slug_count < $content_count) {
-        $slugs = array();
+        $slugs = [];
 
         $c = new Album();
         foreach ($c->select('slug')->get_iterated() as $content) {

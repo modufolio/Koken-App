@@ -532,7 +532,7 @@ class CI_Security
                     }
                 }
 
-                $replace = array();
+                $replace = [];
                 $matches = array_unique(array_map('strtolower', $matches[0]));
                 foreach ($matches as &$match) {
                     if (($char = array_search($match.';', $_entities, true)) !== false) {
@@ -648,7 +648,7 @@ class CI_Security
         // For other tags, see if their attributes are "evil" and strip those
         elseif (isset($matches['attributes'])) {
             // We'll store the already fitlered attributes here
-            $attributes = array();
+            $attributes = [];
 
             // Attribute-catching pattern
             $attributes_pattern = '#'

@@ -61,7 +61,7 @@ class DMZ_CSV
         if ($success) {
             foreach ($object as $o) {
                 // convert each object into an array
-                $result = array();
+                $result = [];
                 foreach ($fields as $f) {
                     $result[] = $o->{$f};
                 }
@@ -116,7 +116,7 @@ class DMZ_CSV
         }
 
         if (empty($callback)) {
-            $result = array();
+            $result = [];
         } else {
             $result = 0;
         }

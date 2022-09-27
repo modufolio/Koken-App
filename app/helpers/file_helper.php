@@ -163,12 +163,12 @@ if (! function_exists('delete_files')) {
 if (! function_exists('get_filenames')) {
     function get_filenames($source_dir, $include_path = false, $_recursion = false)
     {
-        static $_filedata = array();
+        static $_filedata = [];
 
         if ($fp = @opendir($source_dir)) {
             // reset the array and make sure $source_dir has a trailing slash on the initial call
             if ($_recursion === false) {
-                $_filedata = array();
+                $_filedata = [];
                 $source_dir = rtrim(realpath($source_dir), DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
             }
 
@@ -205,13 +205,13 @@ if (! function_exists('get_filenames')) {
 if (! function_exists('get_dir_file_info')) {
     function get_dir_file_info($source_dir, $top_level_only = true, $_recursion = false)
     {
-        static $_filedata = array();
+        static $_filedata = [];
         $relative_path = $source_dir;
 
         if ($fp = @opendir($source_dir)) {
             // reset the array and make sure $source_dir has a trailing slash on the initial call
             if ($_recursion === false) {
-                $_filedata = array();
+                $_filedata = [];
                 $source_dir = rtrim(realpath($source_dir), DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
             }
 

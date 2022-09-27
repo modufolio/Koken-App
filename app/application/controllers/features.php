@@ -9,7 +9,7 @@ class Features extends Koken_Controller
 
     public function index()
     {
-        list($params, $id) = $this->parse_params(func_get_args());
+       [$params, $id] = $this->parse_params(func_get_args());
 
         $model = trim($params['model'], 's');
         $c = new $model();
@@ -26,7 +26,7 @@ class Features extends Koken_Controller
                 case 'put':
                     if (isset($params['order'])) {
                         $ids = explode(',', $params['order']);
-                        $new_order_map = array();
+                        $new_order_map = [];
 
                         foreach ($ids as $key => $val) {
                             $pos = $key + 1;

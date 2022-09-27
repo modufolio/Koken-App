@@ -76,7 +76,7 @@ class CI_Input
      *
      * @var array
      */
-    protected $headers			= array();
+    protected $headers			= [];
 
     /**
      * Constructor
@@ -147,7 +147,7 @@ class CI_Input
     {
         // Check if a field has been provided
         if ($index === null and ! empty($_GET)) {
-            $get = array();
+            $get = [];
 
             // loop through the full _GET array
             foreach (array_keys($_GET) as $key) {
@@ -173,7 +173,7 @@ class CI_Input
     {
         // Check if a field has been provided
         if ($index === null and ! empty($_POST)) {
-            $post = array();
+            $post = [];
 
             // Loop through the full _POST array and return it
             foreach (array_keys($_POST) as $key) {
@@ -513,7 +513,7 @@ class CI_Input
 
         // Is $_GET data allowed? If not we'll set the $_GET to an empty array
         if ($this->_allow_get_array == false) {
-            $_GET = array();
+            $_GET = [];
         } else {
             if (is_array($_GET) and count($_GET) > 0) {
                 foreach ($_GET as $key => $val) {
@@ -586,7 +586,7 @@ class CI_Input
     public function _clean_input_data($str)
     {
         if (is_array($str)) {
-            $new_array = array();
+            $new_array = [];
             foreach ($str as $key => $val) {
                 $new_array[$this->_clean_input_keys($key)] = $this->_clean_input_data($val);
             }

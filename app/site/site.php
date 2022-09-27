@@ -40,7 +40,7 @@
         'page' => 1
     );
 
-    $to_replace = array();
+    $to_replace = [];
     if (preg_match('~(page/(\d+)/)(&.*)?$~', $raw_url, $page_match)) {
         $url_vars['page'] = $page_match[2];
     }
@@ -49,7 +49,7 @@
         date_default_timezone_set('UTC');
         $full_match = array_shift($override_matches);
         $to_replace = array_merge($to_replace, $full_match);
-        $date = array();
+        $date = [];
 
         foreach ($override_matches[0] as $i => $val) {
             $url_vars['__overrides'][$val] = $override_matches[1][$i];
@@ -113,7 +113,7 @@
         if ($rewrite) {
             $canon = "{$base_folder}$url/";
 
-            $gets = array();
+            $gets = [];
             foreach ($_GET as $key => $val) {
                 if (!empty($val) && $key !== 'url') {
                     $gets[] = $key . '=' . $val;
@@ -288,7 +288,7 @@
 
     define('MAX_PARALLEL_REQUESTS_SITE', MAX_PARALLEL_REQUESTS - 1);
 
-    $date = array();
+    $date = [];
 
     foreach (Koken::$location['parameters']['__overrides'] as $key => $val) {
         if (in_array($key, array('year', 'month', 'day'))) {
@@ -385,7 +385,7 @@
     // Setup path to current theme
     Koken::$template_path = $root_path . $ds .'storage' . $ds . 'themes' . $ds . Koken::$site['theme']['path'];
 
-    $nav = array();
+    $nav = [];
 
     if (isset(Koken::$site['navigation'])) {
         foreach (Koken::$site['navigation']['items'] as &$n) {
@@ -395,7 +395,7 @@
         }
 
         if (isset(Koken::$site['navigation']['groups'])) {
-            $groups = array();
+            $groups = [];
             foreach (Koken::$site['navigation']['groups'] as $g) {
                 $key = $g['key'];
                 $groups[$key] = array(
@@ -407,10 +407,10 @@
         }
     }
 
-    $temp = array();
+    $temp = [];
 
     if (isset(Koken::$site['pulse_flat'])) {
-        Koken::$site['pulse'] = array();
+        Koken::$site['pulse'] = [];
 
         foreach (Koken::$site['pulse_flat'] as $key => $obj) {
             if ($obj['type'] === 'boolean') {
@@ -424,7 +424,7 @@
         }
     }
 
-    $page_types = array();
+    $page_types = [];
 
     foreach (Koken::$site['templates'] as $arr) {
         $page_types[$arr['path']] = $arr['info'];
@@ -436,12 +436,12 @@
         $routes = array('/error/:code/' => array( 'template' => 'error' ));
         $http_error = false;
     } else {
-        $routes = array();
+        $routes = [];
         $http_error = true;
     }
 
     $lightbox = false;
-    $redirects = array();
+    $redirects = [];
 
     // Create routes array
     foreach (Koken::$site['routes'] as $arr) {
@@ -477,7 +477,7 @@
 
     Koken::$location['urls'] = Koken::$site['urls'];
 
-    $routed_variables = array();
+    $routed_variables = [];
 
     if ($url === '/') {
         if (Koken::$navigation_home_path) {
@@ -492,8 +492,8 @@
     if (preg_match('/\.css\.lens$/', $url)) {
         $final_path = 'css' . preg_replace('/\.lens$/', '', $url);
         $stylesheet = true;
-        $variables_to_pass[] = array();
-        $variables_to_pass[] = array();
+        $variables_to_pass[] = [];
+        $variables_to_pass[] = [];
     } elseif ($url === '/koken.js') {
         $contents = file_get_contents(Koken::get_path('common/js/koken-dependencies.js'));
         $contents .= file_get_contents(Koken::get_path('common/js/koken.js'));
@@ -505,7 +505,7 @@
 
         $contents .= '$K.location = ' . json_encode($tmp) . ';$K.lazy.max = ' . (is_numeric(MAX_PARALLEL_REQUESTS) ? MAX_PARALLEL_REQUESTS : 4) . ';';
 
-        $image_defaults = array();
+        $image_defaults = [];
         foreach (array('tiny', 'small', 'medium', 'medium_large', 'large', 'xlarge', 'huge') as $preset) {
             $image_defaults[$preset] = array(
                 'quality' => Koken::$site["image_{$preset}_quality"],
@@ -527,8 +527,8 @@
 
         $contents .= file_get_contents(Koken::get_path('common/js/pulse.js'));
 
-        $pulse_obj = array();
-        $pulse_srcs = array();
+        $pulse_obj = [];
+        $pulse_srcs = [];
         foreach (Shutter::$active_pulse_plugins as $arr) {
             $pulse_obj[] = "'{$arr['key']}': '{$arr['path']}'";
             $pulse_srcs[] = $arr['path'];
@@ -560,7 +560,7 @@
             preg_match_all('/(\:[a-z_-]+)/', $route, $variables);
 
             // We need to save the matched variables so we can reassign them after the match
-            $match_variables = array();
+            $match_variables = [];
             if (!empty($variables[0])) {
                 foreach ($variables[1] as $str) {
                     // Save variable name for later
@@ -716,7 +716,7 @@
                         $final_path = 'content';
                     }
                     $page['source'] = 'content';
-                    $page['filters'] = array();
+                    $page['filters'] = [];
                 } else {
                     if ($final_path === 'lightbox' && isset($info['source']) && $info['source'] === 'album') {
                         $id = isset($routed_variables['id']) ? $routed_variables['id'] : 'slug:' . $routed_variables['slug'];
@@ -851,7 +851,7 @@
         $final_path .= '.lens';
 
         if ($final_path === 'error.lens') {
-            $httpErrorCodes = array();
+            $httpErrorCodes = [];
             $httpErrorCodes['400'] = 'Bad Request';
             $httpErrorCodes['401'] = 'Unauthorized';
             $httpErrorCodes['403'] = 'Forbidden';
@@ -981,7 +981,7 @@
             function parse_asset($matches)
             {
                 $id = '';
-                $passthrough = array();
+                $passthrough = [];
                 $if = false;
 
                 if ($matches[1] === 'settings') {
@@ -1112,7 +1112,7 @@
 
                     // die($raw);
                     Koken::$location['page_class'] = Koken::$page_class;
-                    $dynamic_array = array();
+                    $dynamic_array = [];
                     foreach (Koken::$dynamic_location_parts as $key) {
                         $dynamic_array[$key] = Koken::$location[$key];
                     }

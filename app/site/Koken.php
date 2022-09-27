@@ -7,12 +7,12 @@ require_once('lib/autolink.php');
 class Koken
 {
     public static $site;
-    public static $settings = array();
-    public static $language = array();
+    public static $settings = [];
+    public static $language = [];
     public static $profile;
-    public static $location = array();
-    public static $template_routes = array();
-    public static $rss_feeds = array();
+    public static $location = [];
+    public static $template_routes = [];
+    public static $rss_feeds = [];
     public static $current_token;
     public static $rss;
     public static $categories;
@@ -29,18 +29,18 @@ class Koken
     public static $rewrite;
     public static $pjax;
     public static $source;
-    public static $template_variable_keys = array();
-    public static $template_variables = array();
+    public static $template_variable_keys = [];
+    public static $template_variables = [];
     public static $root_path;
     public static $protocol;
     public static $main_load_token = false;
     public static $custom_page_title = false;
-    public static $tokens = array();
+    public static $tokens = [];
     public static $max_neighbors = array(2);
     public static $the_title_separator = false;
     public static $page_title_set = false;
-    public static $load_history = array();
-    public static $timers = array();
+    public static $load_history = [];
+    public static $timers = [];
     public static $curl_handle = false;
     public static $dynamic_location_parts = array('here', 'parameters', 'page_class');
     public static $has_video = false;
@@ -206,7 +206,7 @@ META;
         $base = Koken::$location['root'];
         $link_tail = Koken::$preview ? '&amp;preview=' . Koken::$preview : '';
 
-        $crumbs = array();
+        $crumbs = [];
 
         if ($options['show_home']) {
             $crumbs[] =	array('link' => '/', 'label' => self::$site['url_data']['home']);
@@ -361,7 +361,7 @@ META;
         if (!$options['show_if_single'] && count($crumbs) < 2) {
             return '';
         } else {
-            $crumb_links = array();
+            $crumb_links = [];
             foreach ($crumbs as $index => $c) {
                 $path = $c['link'] === '/' ? '/' : '/' . trim($c['link'], '/') . '/';
                 if ($path === $front_path) {
@@ -447,8 +447,8 @@ META;
 
         if (isset($matches[4])) {
             preg_match_all('/([:a-z_\-]+)="([^"]+?)?"/', $matches[4], $param_matches);
-            $parameters = array();
-            $parameters['api'] = array();
+            $parameters = [];
+            $parameters['api'] = [];
 
             foreach ($param_matches[1] as $index => $key) {
                 if (strpos($key, 'api:') === 0) {
@@ -463,7 +463,7 @@ META;
                 unset($parameters['api']);
             }
         } else {
-            $parameters = array();
+            $parameters = [];
         }
 
         if (isset($matches[5])) {
@@ -685,12 +685,12 @@ META;
                     array('curl_multi_init', 'curl_multi_add_handle', 'curl_multi_getcontent', 'curl_multi_remove_handle', 'curl_multi_close', 'curl_multi_exec')
                 )
             ) {
-                $return = array();
-                $curls = array();
+                $return = [];
+                $curls = [];
 
                 foreach ($url as $index => $u) {
                     if (is_array($u) && empty($u)) {
-                        $return[$index] = array();
+                        $return[$index] = [];
                     } else {
                         $data = self::prep_api($u);
 
@@ -727,7 +727,7 @@ META;
                             curl_multi_select($mh);
                         } while ($active > 0);
 
-                        $timer_urls = array();
+                        $timer_urls = [];
 
                         foreach ($curls as $c) {
                             $timer_urls[] = $c['url'];
@@ -955,7 +955,7 @@ META;
                             $parameters['case'] = 'title';
                         }
                         $plural = $singular = false;
-                        $keys = array();
+                        $keys = [];
                     } elseif ((!is_array($return) || !isset($return[$index])) && $index === 'clean' && !isset($return['raw'])) {
                         $parameters['clean'] = true;
                     } elseif (!isset($return[$index]) && $index === 'title' && isset($return['year'])) {
@@ -1141,10 +1141,10 @@ META;
                     }
 
                     if (isset($return[0])) {
-                        $fresh = array();
+                        $fresh = [];
                         foreach ($return as $r) {
                             if ($fields) {
-                                $slim = array();
+                                $slim = [];
                                 foreach ($fields as $f) {
                                     if (isset($r[$f])) {
                                         $slim[$f] = $r[$f];
@@ -1157,7 +1157,7 @@ META;
                         }
                         $return = $fresh;
                     } elseif ($fields) {
-                        $slim = array();
+                        $slim = [];
                         foreach ($fields as $f) {
                             if (isset($return[$f])) {
                                 $slim[$f] = $return[$f];
@@ -1182,7 +1182,7 @@ META;
                                 return $arr[$parameters['field']];
                             }, $return);
                         } else {
-                            $return = array();
+                            $return = [];
                         }
                     }
 
@@ -1310,7 +1310,7 @@ META;
 
         if ($options['share']) {
             $attributes['data-koken-share'] = $options['share'];
-            $share_parameters = array();
+            $share_parameters = [];
 
             $label = ucwords($options['share']);
 
@@ -1416,7 +1416,7 @@ META;
             }
 
             if (isset($base_url)) {
-                $share_param = array();
+                $share_param = [];
                 foreach ($share_parameters as $key => $val) {
                     $share_param[] = $key . '=' . $val;
                 }
@@ -1536,7 +1536,7 @@ META;
             $url = $protocol . '://' . $_SERVER['HTTP_HOST'] . $url;
             echo $url;
         } else {
-            $att = array();
+            $att = [];
             foreach ($attributes as $key => $val) {
                 if ($val === true) {
                     $att[] = $key;
@@ -1768,7 +1768,7 @@ META;
             if (isset($value['target'])) {
                 $o .= ' target="' . $value['target'] . '"';
             }
-            $classes = array();
+            $classes = [];
             if ($current) {
                 $classes[] = 'k-nav-current';
             }
@@ -1956,7 +1956,7 @@ META;
     }
     private static function params_to_str($params)
     {
-        $arr = array();
+        $arr = [];
         foreach ($params as $key => $val) {
             $arr[] = "$key=\"$val\"";
         }
@@ -2012,7 +2012,7 @@ META;
 
         if ($min && count($covers) < $min) {
             if (isset($data['albums'])) {
-                $pool = array();
+                $pool = [];
                 foreach ($data['albums'] as $album) {
                     if (isset($album['covers']) && count($album['covers'])) {
                         $pool = array_merge($pool, $album['covers']);
@@ -2029,11 +2029,11 @@ META;
                 );
                 $pool = $content['content'];
             } else {
-                $pool = array();
+                $pool = [];
             }
 
             if (count($pool) && $min - count($covers) > 0) {
-                $ids = array();
+                $ids = [];
                 foreach ($covers as $c) {
                     $ids[] = $c['id'];
                 }
@@ -2092,7 +2092,7 @@ META;
 
         $featured = false;
 
-        $params['filters'] = array();
+        $params['filters'] = [];
 
         foreach ($params as $key => $val) {
             if (strpos($key, 'filter:') === 0) {
@@ -2163,7 +2163,7 @@ META;
         }
 
         if (is_array($defaults['filters'])) {
-            $customs = array();
+            $customs = [];
 
             $defaults['filters'] = array_filter($defaults['filters'], function ($filter) use (&$customs) {
                 if (isset(Shutter::$custom_sources[$filter])) {
@@ -2515,7 +2515,7 @@ META;
                 $text = date($f, $timestamp);
             }
 
-            $attr_clean = array();
+            $attr_clean = [];
 
             foreach ($attr as $key => $val) {
                 $attr_clean[] = "$key=\"$val\"";
@@ -2568,7 +2568,7 @@ OUT;
         if (error_reporting() !== 0 && !self::$rss) {
             arsort(self::$timers);
 
-            $t = array();
+            $t = [];
             $total = 0;
 
             $total = array_sum(self::$timers);

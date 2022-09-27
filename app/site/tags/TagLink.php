@@ -6,7 +6,7 @@
 
         public function generate()
         {
-            $attr = array();
+            $attr = [];
             $get = false;
 
             $params = $this->params_to_array_str();

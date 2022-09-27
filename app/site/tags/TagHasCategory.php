@@ -26,7 +26,7 @@
 	if (isset(\$__base['categories']) && \$__base['categories']['count'] > 0)
 	{
 		\$__categories = Koken::api(\$__base['categories']['url']);
-		\$__cats = array();
+		\$__cats = [];
 		foreach(\$__categories['categories'] as \$__c)
 		{
 			\$__cats[] = \$__c['title'];

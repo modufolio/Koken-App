@@ -29,9 +29,9 @@
  */
 class CI_DB_forge
 {
-    public $fields			= array();
-    public $keys			= array();
-    public $primary_keys	= array();
+    public $fields			= [];
+    public $keys			= [];
+    public $primary_keys	= [];
     public $db_char_set	=	'';
 
     /**
@@ -345,9 +345,9 @@ class CI_DB_forge
      */
     public function _reset()
     {
-        $this->fields		= array();
-        $this->keys			= array();
-        $this->primary_keys	= array();
+        $this->fields		= [];
+        $this->keys			= [];
+        $this->primary_keys	= [];
     }
 }
 

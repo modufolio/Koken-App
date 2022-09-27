@@ -43,7 +43,7 @@ $active_record = true;
 
 $db_config = Shutter::get_db_configuration();
 
-$db = array();
+$db = [];
 
 // TODO
 $db['default']['hostname'] = $db_config['hostname'];

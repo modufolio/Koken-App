@@ -24,7 +24,7 @@
 
 	if (isset(\$__base['events']) && !empty(\$__base['events'])):
 
-		$ref = array();
+		$ref = [];
 		{$ref}['__loop__'] =& \$__base['events'];
 ?>
 OUT;

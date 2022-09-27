@@ -16,13 +16,13 @@
 class Swift_Events_SimpleEventDispatcher implements Swift_Events_EventDispatcher
 {
     /** A map of event types to their associated listener types */
-    private $_eventMap = array();
+    private $_eventMap = [];
 
     /** Event listeners bound to this dispatcher */
-    private $_listeners = array();
+    private $_listeners = [];
 
     /** Listeners queued to have an Event bubbled up the stack to them */
-    private $_bubbleQueue = array();
+    private $_bubbleQueue = [];
 
     /**
      * Create a new EventDispatcher.
@@ -135,7 +135,7 @@ class Swift_Events_SimpleEventDispatcher implements Swift_Events_EventDispatcher
     /** Queue listeners on a stack ready for $evt to be bubbled up it */
     private function _prepareBubbleQueue(Swift_Events_EventObject $evt)
     {
-        $this->_bubbleQueue = array();
+        $this->_bubbleQueue = [];
         $evtClass = get_class($evt);
         foreach ($this->_listeners as $listener) {
             if (array_key_exists($evtClass, $this->_eventMap)

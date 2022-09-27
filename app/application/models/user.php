@@ -77,7 +77,7 @@ class User extends DataMapper
             $this->externals = null;
         }
         $exclude = array('password', 'news', 'help', 'focal_point', 'theme');
-        $bools = array();
+        $bools = [];
         list($data, $public_fields) = $this->prepare_for_output($options, $exclude, $bools);
         return $data;
     }

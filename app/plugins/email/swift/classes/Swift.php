@@ -20,7 +20,7 @@ abstract class Swift
     public const VERSION = '@SWIFT_VERSION_NUMBER@';
 
     public static $initialized = false;
-    public static $inits = array();
+    public static $inits = [];
 
     /**
      * Registers an initializer callable that will be called the first time

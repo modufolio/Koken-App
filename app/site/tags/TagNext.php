@@ -56,13 +56,13 @@
 	}
 	else
 	{
-		\$__next = array();
+		\$__next = [];
 	}
 
 	if (count(\$__next)):
 		if (\$__limit > 1 || \$__force_loop)
 		{
-			$ref = array();
+			$ref = [];
 			if (isset({$token}['context']['album']))
 			{
 				{$ref}['album'] = {$token}['context']['album'];
