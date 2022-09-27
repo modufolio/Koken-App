@@ -47,7 +47,7 @@ class DataMapper implements IteratorAggregate
      * Stores the shared configuration
      * @var array
      */
-    public static $config = array();
+    public static $config = [];
     /**
      * Stores settings that are common across a specific Model
      * @var array
@@ -57,7 +57,7 @@ class DataMapper implements IteratorAggregate
      * Stores global extensions
      * @var array
      */
-    public static $global_extensions = array();
+    public static $global_extensions = [];
     /**
      * Used to override unset default properties.
      * @var array
@@ -129,32 +129,32 @@ class DataMapper implements IteratorAggregate
      * ** Automatically configured **
      * @var array
      */
-    public $fields = array();
+    public $fields = [];
     /**
      * Contains the result of the last query.
      * @var array
      */
-    public $all = array();
+    public $all = [];
     /**
      * Semi-private field used to track the parent model/id if there is one.
      * @var array
      */
-    public $parent = array();
+    public $parent = [];
     /**
      * Contains the validation rules, label, and get_rules for each field.
      * @var array
      */
-    public $validation = array();
+    public $validation = [];
     /**
      * Contains any related objects of which this model is related one or more times.
      * @var array
      */
-    public $has_many = array();
+    public $has_many = [];
     /**
      * Contains any related objects of which this model is singularly related.
      * @var array
      */
-    public $has_one = array();
+    public $has_one = [];
     /**
      * Used to enable or disable the production cache.
      * This should really only be set in the global configuration.
@@ -183,7 +183,7 @@ class DataMapper implements IteratorAggregate
     // Tracks get_rules, matches, and intval rules, to spped up _to_object
     protected $_field_tracking = null;
     // used to track related queries in deep relationships.
-    protected $_query_related = array();
+    protected $_query_related = [];
     // If true before a related get(), any extra fields on the join table will be added.
     protected $_include_join_fields = false;
     // If true before a save, this will force the next save to be new.
@@ -194,7 +194,7 @@ class DataMapper implements IteratorAggregate
     protected $_group_count = 0;
 
     // storage for additional model paths for the autoloader
-    protected static $model_paths = array();
+    protected static $model_paths = [];
 
     /**
      * Constructors (both PHP4 and PHP5 style, to stay compatible)
@@ -321,7 +321,7 @@ class DataMapper implements IteratorAggregate
                 );
 
                 // Convert validation into associative array by field name
-                $associative_validation = array();
+                $associative_validation = [];
 
                 foreach ($this->validation as $name => $validation) {
                     if (is_string($name)) {
@@ -332,7 +332,7 @@ class DataMapper implements IteratorAggregate
 
                     // clean up possibly missing fields
                     if (! isset($validation['rules'])) {
-                        $validation['rules'] = array();
+                        $validation['rules'] = [];
                     }
 
                     // Populate associative validation array
@@ -497,7 +497,7 @@ class DataMapper implements IteratorAggregate
         $class = strtolower($class);
 
         // Prepare path
-        $paths = array();
+        $paths = [];
         if (method_exists($CI->load, 'get_package_paths')) {
             // use CI 2.0 loader's model paths
             $paths = $CI->load->get_package_paths(false);
@@ -623,7 +623,7 @@ class DataMapper implements IteratorAggregate
             }
 
             if (! isset($extensions['_methods'])) {
-                $extensions['_methods'] = array();
+                $extensions['_methods'] = [];
             }
 
             // determine the file name and class name
@@ -664,10 +664,10 @@ class DataMapper implements IteratorAggregate
                 show_error("DataMapper Error: Unable to find a class for extension $name.");
             }
             // create class
-            if (is_null($options)) {
-                $o = new $ext(null, isset($this) ? $this : null);
-            } else {
-                $o = new $ext($options, isset($this) ? $this : null);
+            if ($options === null) {
+                 $o = new $ext(null, $self ?? null);
+                } else {
+                $o = new $ext($options, $self ?? null);
             }
             $extensions[$name] = $o;
 
@@ -696,7 +696,7 @@ class DataMapper implements IteratorAggregate
     {
         if (!empty($this->extensions)) {
             $extensions = $this->extensions;
-            $this->extensions = array();
+            $this->extensions = [];
             DataMapper::_load_extensions($this->extensions, $extensions);
         } else {
             // ensure an empty array
@@ -1155,7 +1155,7 @@ class DataMapper implements IteratorAggregate
         // need to clear query from the clone
         $object->db->dm_call_method('_reset_select');
         // Clear the query related list from the clone
-        $object->_query_related = array();
+        $object->_query_related = [];
 
         // Build iterator
         $this->_dm_dataset_iterator = new DM_DatasetIterator($object, $this->get_raw($limit, $offset, true));
@@ -1278,7 +1278,7 @@ class DataMapper implements IteratorAggregate
     public function save($object = '', $related_field = '')
     {
         // Temporarily store the success/failure
-        $result = array();
+        $result = [];
 
         // Validate this objects properties
         $this->validate($object, $related_field);
@@ -1289,7 +1289,7 @@ class DataMapper implements IteratorAggregate
             // Begin auto transaction
             $this->_auto_trans_begin();
 
-            $trans_complete_label = array();
+            $trans_complete_label = [];
 
             // Get current timestamp
             $timestamp = $this->_get_generated_timestamp();
@@ -1575,7 +1575,7 @@ class DataMapper implements IteratorAggregate
      */
     public function update_all($field, $value = null, $escape_values = true)
     {
-        $ids = array();
+        $ids = [];
         foreach ($this->all as $object) {
             $ids[] = $object->id;
         }
@@ -1676,7 +1676,7 @@ class DataMapper implements IteratorAggregate
             $this->_auto_trans_begin();
 
             // Temporarily store the success/failure
-            $result = array();
+            $result = [];
 
             foreach ($object as $rel_field => $obj) {
                 if (is_int($rel_field)) {
@@ -1831,7 +1831,7 @@ class DataMapper implements IteratorAggregate
     public function refresh_all()
     {
         if (! empty($this->all)) {
-            $all = array();
+            $all = [];
 
             foreach ($this->all as $item) {
                 if (! empty($item->id)) {
@@ -2022,7 +2022,7 @@ class DataMapper implements IteratorAggregate
     public function clear()
     {
         // Clear the all list
-        $this->all = array();
+        $this->all = [];
 
         // Clear errors
         $this->error = new DM_Error_Object();
@@ -2043,7 +2043,7 @@ class DataMapper implements IteratorAggregate
         }
 
         // Clear the query related list
-        $this->_query_related = array();
+        $this->_query_related = [];
 
         // Clear and refresh stored values
         $this->stored = new stdClass();
@@ -2071,7 +2071,7 @@ class DataMapper implements IteratorAggregate
         $this->_instantiations = null;
 
         // Clear the query related list (Thanks to TheJim)
-        $this->_query_related = array();
+        $this->_query_related = [];
 
         // Clear the saved iterator
         unset($this->_dm_dataset_iterator);
@@ -2235,9 +2235,12 @@ class DataMapper implements IteratorAggregate
     public function query($sql, $binds = false)
     {
         // Get by objects properties
+        $this->db->query("SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));", $binds);
         $query = $this->db->query($sql, $binds);
 
-        $this->_process_query($query);
+        if (is_object($query)) {
+           $this->_process_query($query);
+        }
 
         // For method chaining
         return $this;
@@ -2762,7 +2765,7 @@ class DataMapper implements IteratorAggregate
             if (!is_array($select)) {
                 $select = $this->add_table_name($select);
             } else {
-                $updated = array();
+                $updated = [];
                 foreach ($select as $sel) {
                     $updated = $this->add_table_name($sel);
                 }
@@ -3230,7 +3233,7 @@ class DataMapper implements IteratorAggregate
         $type = $this->_get_prepend_type($type);
 
         if ($values instanceof DataMapper) {
-            $arr = array();
+            $arr = [];
             foreach ($values as $value) {
                 $arr[] = $value->id;
             }
@@ -4308,7 +4311,7 @@ class DataMapper implements IteratorAggregate
 
         // now add fields
         $selection = '';
-        $property_map = array();
+        $property_map = [];
         foreach ($fields as $field) {
             $new_field = $append . $field;
             // prevent collisions
@@ -4331,7 +4334,7 @@ class DataMapper implements IteratorAggregate
         } else {
             if ($instantiate) {
                 if (is_null($this->_instantiations)) {
-                    $this->_instantiations = array();
+                    $this->_instantiations = [];
                 }
                 $this->_instantiations[$related_field] = $property_map;
             }
@@ -4730,7 +4733,7 @@ class DataMapper implements IteratorAggregate
         $rel_properties = $this->_get_related_properties($related_field, true);
         $class = $rel_properties['class'];
 
-        $ids = array();
+        $ids = [];
 
         if (! empty($object)) {
             $count = $this->_count_related_objects($related_field, $object, '', $ids);
@@ -4829,7 +4832,7 @@ class DataMapper implements IteratorAggregate
      */
     public function set_join_field($related_field, $field, $value = null, $object = null)
     {
-        $related_ids = array();
+        $related_ids = [];
 
         if (is_array($related_field)) {
             // recursively call this on the array passed in.
@@ -5571,7 +5574,7 @@ class DataMapper implements IteratorAggregate
      */
     protected function _to_array($validate = false)
     {
-        $data = array();
+        $data = [];
 
         foreach ($this->fields as $field) {
             if ($validate && ! isset($this->{$field})) {
@@ -5599,7 +5602,7 @@ class DataMapper implements IteratorAggregate
     {
         if (!is_bool($query) && $query->num_rows() > 0) {
             // Populate all with records as objects
-            $this->all = array();
+            $this->all = [];
 
             $this->_to_object($this, $query->row());
 
@@ -5700,7 +5703,7 @@ class DataMapper implements IteratorAggregate
                 $c->_to_object($c, $row);
 
                 // also set up the ->all array
-                $c->all = array();
+                $c->all = [];
                 $c->all[0] = $c->get_clone();
             }
         }
@@ -5878,7 +5881,7 @@ class DM_Error_Object
      * Array of all error messages.
      * @var array
      */
-    public $all = array();
+    public $all = [];
 
     /**
      * String containing entire error message.
