@@ -535,7 +535,7 @@
         }
         $pulse_str = '';
         if (!empty($pulse_obj)) {
-            $pulse_obj = join(', ', $pulse_obj);
+            $pulse_obj = implode(', ', $pulse_obj);
             $contents .= "\n\$K.pulse.plugins = { $pulse_obj };\n";
 
             foreach ($pulse_srcs as $src) {
@@ -548,7 +548,7 @@
             $contents .= file_get_contents(Koken::get_path("common/js/timeago/locales/jquery.timeago.{$lang}.js"));
         }
 
-        $contents .= join("\n", Shutter::get_site_scripts());
+        $contents .= implode("\n", Shutter::get_site_scripts());
 
         Koken::cache($contents);
         header('Content-type: text/javascript');

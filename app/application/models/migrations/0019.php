@@ -14,7 +14,7 @@
             $slugs[] = "('album." . $content->slug . "')";
         }
 
-        $slugs = join(', ', $slugs);
+        $slugs = implode(', ', $slugs);
         $this->db->query("INSERT INTO {$s->table}(id) VALUES $slugs ON DUPLICATE KEY UPDATE id=id;");
     }
 

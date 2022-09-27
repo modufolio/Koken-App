@@ -498,7 +498,7 @@ class Shutter
             foreach ($scripts as &$script) {
                 $script = '<script src="' . $base . $script . '"></script>';
             }
-            $content = join('', $scripts) . $content;
+            $content = implode('', $scripts) . $content;
         }
         return $content;
     }
@@ -712,9 +712,10 @@ class Shutter
 
         if (empty($scripts)) {
             return KOKEN_VERSION;
-        } else {
-            return md5(join('', $scripts));
         }
+
+        return md5(implode('', $scripts));
+
     }
 
     public static function hook_exists($name)

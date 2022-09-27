@@ -67,7 +67,7 @@ class BD_Shortcodes extends KokenPlugin
                 $msg[] = "$label\n$separator\n$value";
             }
 
-            $msg = join("\n\n\n", $msg);
+            $msg = implode("\n\n\n", $msg);
 
             $from = $_POST[$_POST['from_field']];
 

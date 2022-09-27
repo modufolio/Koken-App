@@ -69,7 +69,7 @@ class FFmpeg
                 exec($c);
             }
         } else {
-            $cmd = join(' && ', $cmd);
+            $cmd = implode(' && ', $cmd);
             exec($cmd);
         }
 

@@ -812,7 +812,7 @@ META;
         $url = self::$location['root'] . $url;
 
         if (!empty($parameters)) {
-            $parameters = join('&', array_map(function ($key, $val) {
+            $parameters = implode('&', array_map(function ($key, $val) {
                 return "$key=" . urlencode($val);
             }, array_keys($parameters), $parameters));
 
@@ -1186,7 +1186,7 @@ META;
                         }
                     }
 
-                    $return = join($parameters['separator'], $return);
+                    $return = implode($parameters['separator'], $return);
                 } else {
                     $return = '';
                 }
@@ -1544,7 +1544,7 @@ META;
                     $att[] = "$key=\"" . trim($val) . '"';
                 }
             }
-            $att = join(' ', $att);
+            $att = implode(' ', $att);
             echo "<a href=\"$url\" $att>";
         }
     }
@@ -2213,7 +2213,7 @@ META;
         if ($source['type'] === 'tags' && isset($__id)) {
             $defaults['id'] = $__id;
         } elseif ($source['type'] === 'event' && isset(Koken::$routed_variables['year'])) {
-            $__id = join('-', array(Koken::$routed_variables['year'], Koken::$routed_variables['month'], Koken::$routed_variables['day']));
+            $__id = implode('-', array(Koken::$routed_variables['year'], Koken::$routed_variables['month'], Koken::$routed_variables['day']));
         } elseif ($source['type'] === 'tag' && isset($defaults['api']['tag'])) {
             $__id = $defaults['api']['tag'];
             unset($defaults['api']['tag']);
@@ -2520,7 +2520,7 @@ META;
             foreach ($attr as $key => $val) {
                 $attr_clean[] = "$key=\"$val\"";
             }
-            $attr = join(' ', $attr_clean);
+            $attr = implode(' ', $attr_clean);
             echo <<<OUT
 <time{$klass} datetime="$dt" $attr>
 	$text

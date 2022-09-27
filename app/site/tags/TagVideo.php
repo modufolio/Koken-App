@@ -25,7 +25,7 @@
                 $params[] = "$key=\"$val\"";
             }
 
-            $params = join(' ', $params);
+            $params = implode(' ', $params);
 
             return <<<DOC
 <?php

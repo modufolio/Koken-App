@@ -119,7 +119,7 @@ class DarkroomImageMagick extends Darkroom
             $path = str_replace('https://', 'http://', $path);
         }
         $path = '"' . $path . '"';
-        $limits = join(' ', $this->setupLimitArgs());
+        $limits = implode(' ', $this->setupLimitArgs());
         $cmd = "{$this->pathToConvert} $path -rotate $degrees $limits $path";
         shell_exec($cmd);
 
@@ -175,7 +175,7 @@ class DarkroomImageMagick extends Darkroom
             $this->destinationArgs[] = '-deconstruct';
         }
 
-        $cmd = join(' ', array_merge(
+        $cmd = implode(' ', array_merge(
             $this->sourceArgs,
             $this->destinationArgs
         ));

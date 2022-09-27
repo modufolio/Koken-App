@@ -60,7 +60,7 @@
 
                 case isset($this->parameters['equals']):
                     $value = preg_split('/\s?\|\|\s?/', str_replace("'", '', $this->parameters['equals']));
-                    $value_joined = join("', '", $value);
+                    $value_joined = implode("', '", $value);
                     $value = "array('" . $value_joined . "')";
                     $js_value = "['" . $value_joined . "']";
                     $this->condition_template = "in_array(__TOKEN__, $value)";

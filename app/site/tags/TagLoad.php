@@ -16,7 +16,7 @@
                 $params[] = "'$key' => \"" . $this->attr_parse($val) . '"';
             }
 
-            $params = join(',', $params);
+            $params = implode(',', $params);
 
             if (!Koken::$main_load_token && !isset($this->parameters['source']) && isset($this->parameters['infinite'])) {
                 $infinite = $this->attr_parse($this->parameters['infinite']);

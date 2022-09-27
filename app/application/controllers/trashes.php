@@ -73,7 +73,7 @@ class Trashes extends Koken_Controller
                     }
 
                     if (!empty($q)) {
-                        $q = join(',', $q);
+                        $q = implode(',', $q);
                         $this->db->query("INSERT INTO {$t->table} VALUES $q ON DUPLICATE KEY UPDATE data = VALUES(data)");
                     }
 
@@ -117,7 +117,7 @@ class Trashes extends Koken_Controller
                     }
 
                     if (!empty($ids)) {
-                        $ids = join(',', $ids);
+                        $ids = implode(',', $ids);
                         $this->db->query("DELETE FROM {$t->table} WHERE id IN ($ids)");
                     }
 

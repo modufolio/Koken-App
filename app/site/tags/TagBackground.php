@@ -57,7 +57,7 @@
                 }
             }
 
-            $params = join(' ', $params);
+            $params = implode(' ', $params);
 
             return <<<DOC
 <?php
@@ -92,7 +92,7 @@
 			}
 		}
 
-		\$__presets = join(' ', \$__presets);
+		\$__presets = implode(' ', \$__presets);
 
 		if (\$__item):
 ?>

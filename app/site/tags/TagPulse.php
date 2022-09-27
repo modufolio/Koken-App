@@ -62,7 +62,7 @@
                 }
             }
 
-            $params = join(',', $params);
+            $params = implode(',', $params);
 
             if (isset($options['jsvar'])) {
                 $js = 'var ' . $this->attr_parse($options['jsvar'], true) . ' = ';
@@ -97,7 +97,7 @@
             if (isset(Koken::$site['urls']['album'])) {
                 $native[] = "'albumUrl' => '" . Koken::$site['urls']['album'] . "'";
             }
-            $native = join(', ', $native);
+            $native = implode(', ', $native);
 
             return <<<OUT
 <?php

@@ -24,8 +24,8 @@
                 $params[] = $comp;
             }
 
-            $params = join(',', $params);
-            $attr = join(',', $attr);
+            $params = implode(',', $params);
+            $attr = implode(',', $attr);
 
             return "<?php Koken::time(isset($token) ? $token : false, array($params), array($attr)); ?>";
         }

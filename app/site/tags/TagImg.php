@@ -70,7 +70,7 @@
 
             if ($options['width'] === 0 && $options['height'] === 0 && !$options['preset']) {
                 if (count($params) > 0) {
-                    $params = join(' ', $params);
+                    $params = implode(' ', $params);
                 } else {
                     $params = '';
                 }
@@ -126,7 +126,7 @@
 				\$__presets[] = "\$name{$name_ext},{{$obj}['width']},{{$obj}['height']}";
 			}
 
-			\$__presets = join(' ', \$__presets);
+			\$__presets = implode(' ', \$__presets);
 ?>
 <noscript>
 	<img width="100%" $params src="<?php echo \$__item['presets']['large']['url']; ?>" />
@@ -142,7 +142,7 @@ DOC;
                     $pre = 'echo';
                 }
 
-                $cparams = join(',', $cparams);
+                $cparams = implode(',', $cparams);
 
                 $t = Koken::$tokens[0];
 

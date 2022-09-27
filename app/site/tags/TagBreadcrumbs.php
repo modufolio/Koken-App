@@ -9,7 +9,7 @@
                 $params[] = "'$key' => \"" . $this->attr_parse($val) . '"';
             }
 
-            $params = join(',', $params);
+            $params = implode(',', $params);
             return "<?php echo Koken::breadcrumbs(array($params)); ?>";
         }
     }
