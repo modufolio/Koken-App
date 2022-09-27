@@ -171,6 +171,7 @@ class CI_DB_mysqli_driver extends CI_DB
      */
     public function _execute($sql)
     {
+        @mysqli_query($this->conn_id,"SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));");
         $sql = $this->_prep_query($sql);
         $result = @mysqli_query($this->conn_id, $sql);
         return $result;
