@@ -1,161 +1,161 @@
 <?php
 
-    $koken_tables = array(
+return  [
 
         // ================
         // = APPLICATIONS =
         // ================
-        'applications' => array(
-            'fields' => array(
-                'user_id' => array(
+        'applications' => [
+            'fields' => [
+                'user_id' => [
                     'type' => 'INT',
                     'null' => true
-                ),
-                'nonce' => array(
+                ],
+                'nonce' => [
                     'type' => 'VARCHAR',
                     'constraint' => 32
-                ),
-                'token' => array(
+                ],
+                'token' => [
                     'type' => 'VARCHAR',
                     'constraint' => 32
-                ),
-                'role' => array(
+                ],
+                'role' => [
                     'type' => 'VARCHAR',
                     'constraint' => 10,
                     'default' => 'read'
-                ),
-                'name' => array(
+                ],
+                'name' => [
                     'type' => 'VARCHAR',
                     'constraint' => 255
-                ),
-                'created_on' => array(
+                ],
+                'created_on' => [
                     'type' => 'INT',
                     'constraint' => 11
-                ),
-                'single_use' => array(
+                ],
+                'single_use' => [
                     'type' => 'TINYINT',
                     'constraint' => 1,
                     'default' => 0
-                )
-            ),
-            'keys' => array('user_id', 'nonce', 'token')
-        ),
+                ]
+            ],
+            'keys' => ['user_id', 'nonce', 'token']
+        ],
 
         // ===========
         // = PLUGINS =
         // ===========
-        'plugins' => array(
-            'fields' => array(
-                'path' => array(
+        'plugins' => [
+            'fields' => [
+                'path' => [
                     'type' => 'VARCHAR',
                     'constraint' => 255
-                ),
-                'setup' => array(
+                ],
+                'setup' => [
                     'type' => 'TINYINT',
                     'constraint' => 1,
                     'default' => 1
-                ),
-                'data' => array(
+                ],
+                'data' => [
                     'type' => 'LONGTEXT'
-                )
-            ),
-            'keys' => array('path')
-        ),
+                ]
+            ],
+            'keys' => ['path']
+        ],
 
         // ==========
         // = ALBUMS =
         // ==========
-        'albums' => array(
-            'fields' => array(
-                'title' => array(
+        'albums' => [
+            'fields' => [
+                'title' => [
                     'type' => 'VARCHAR',
                     'constraint' => 255
-                ),
-                'slug' => array(
+                ],
+                'slug' => [
                     'type' => 'VARCHAR',
                     'constraint' => 255
-                ),
-                'old_slug' => array(
+                ],
+                'old_slug' => [
                     'type' => 'TEXT'
-                ),
-                'summary' => array(
+                ],
+                'summary' => [
                     'type' => 'VARCHAR',
                     'constraint' => 255
-                ),
-                'description' => array(
+                ],
+                'description' => [
                     'type' => 'TEXT'
-                ),
-                'sort' => array(
+                ],
+                'sort' => [
                     'type' => 'VARCHAR',
                     'constraint' => 255,
                     'default' => 'manual ASC'
-                ),
-                'visibility' => array(
+                ],
+                'visibility' => [
                     'type' => 'TINYINT',
                     'constraint' => 1,
                     'default' => 0
-                ),
-                'level' => array(
+                ],
+                'level' => [
                     'type' => 'INT',
                     'default' => 1
-                ),
-                'left_id' => array(
+                ],
+                'left_id' => [
                     'type' => 'INT'
-                ),
-                'right_id' => array(
+                ],
+                'right_id' => [
                     'type' => 'INT'
-                ),
-                'deleted' => array(
+                ],
+                'deleted' => [
                     'type' => 'TINYINT',
                     'constraint' => 1,
                     'default' => 0
-                ),
-                'featured' => array(
+                ],
+                'featured' => [
                     'type' => 'TINYINT',
                     'constraint' => 1,
                     'default' => 0
-                ),
-                'featured_on' => array(
+                ],
+                'featured_on' => [
                     'type' => 'INT',
                     'constraint' => 10,
                     'null' => true
-                ),
-                'featured_order' => array(
+                ],
+                'featured_order' => [
                     'type' => 'INT',
                     'null' => true
-                ),
-                'total_count' => array(
+                ],
+                'total_count' => [
                     'type' => 'INT',
                     'default' => 0
-                ),
-                'video_count' => array(
+                ],
+                'video_count' => [
                     'type' => 'INT',
                     'default' => 0
-                ),
-                'published_on' => array(
+                ],
+                'published_on' => [
                     'type' => 'INT',
                     'constraint' => 10,
                     'null' => true
-                ),
-                'created_on' => array(
+                ],
+                'created_on' => [
                     'type' => 'INT',
                     'constraint' => 10
-                ),
-                'modified_on' => array(
+                ],
+                'modified_on' => [
                     'type' => 'INT',
                     'constraint' => 10
-                ),
-                'album_type' => array(
+                ],
+                'album_type' => [
                     'type' => 'TINYINT',
                     'constraint' => 1,
                     'default' => 0
-                ),
-                'internal_id' => array(
+                ],
+                'internal_id' => [
                     'type' => 'CHAR',
                     'constraint' => 32
-                )
-            ),
-            'keys' => array(
+                ]
+            ],
+            'keys' => [
                 'deleted',
                 'level',
                 'left_id',
@@ -167,187 +167,187 @@
                 'modified_on',
                 'album_type',
                 'internal_id',
-                array('featured', 'featured_order'),
+                ['featured', 'featured_order'],
                 'slug'
-            )
-        ),
+            ]
+        ],
 
         // ==============================
-        // = ALBUMS > TEXT (TOPICS) JOIN TABLE =
+        // = ALBUMS > TEXT (TOPICS] JOIN TABLE =
         // ==============================
-        'join_albums_text' => array(
-            'fields' => array(
-                'album_id' => array(
+        'join_albums_text' => [
+            'fields' => [
+                'album_id' => [
                     'type' => 'INT'
-                ),
-                'text_id' => array(
+                ],
+                'text_id' => [
                     'type' => 'INT'
-                )
-            ),
-            'keys' => array(
+                ]
+            ],
+            'keys' => [
                 'album_id', 'text_id'
-            )
-        ),
+            ]
+        ],
 
         // ===========
         // = CONTENT =
         // ===========
-        'content' => array(
-            'fields' => array(
-                'title' => array(
+        'content' => [
+            'fields' => [
+                'title' => [
                     'type' => 'VARCHAR',
                     'constraint' => 255
-                ),
-                'slug' => array(
+                ],
+                'slug' => [
                     'type' => 'VARCHAR',
                     'constraint' => 255
-                ),
-                'old_slug' => array(
+                ],
+                'old_slug' => [
                     'type' => 'TEXT'
-                ),
-                'filename' => array(
+                ],
+                'filename' => [
                     'type' => 'VARCHAR',
                     'constraint' => 255
-                ),
-                'caption' => array(
+                ],
+                'caption' => [
                     'type' => 'TEXT'
-                ),
-                'visibility' => array(
+                ],
+                'visibility' => [
                     'type' => 'TINYINT',
                     'constraint' => 1,
                     'default' => 0
-                ),
-                'max_download' => array(
+                ],
+                'max_download' => [
                     'type' => 'TINYINT',
                     'constraint' => 1,
                     'default' => 0
-                ),
-                'license' => array(
+                ],
+                'license' => [
                     'type' => 'CHAR',
                     'constraint' => 3,
                     'default' => 'all'
-                ),
-                'deleted' => array(
+                ],
+                'deleted' => [
                     'type' => 'TINYINT',
                     'constraint' => 1,
                     'default' => 0
-                ),
-                'featured' => array(
+                ],
+                'featured' => [
                     'type' => 'TINYINT',
                     'constraint' => 1,
                     'default' => 0
-                ),
-                'featured_order' => array(
+                ],
+                'featured_order' => [
                     'type' => 'INT',
                     'null' => true
-                ),
-                'favorite_order' => array(
+                ],
+                'favorite_order' => [
                     'type' => 'INT',
                     'null' => true
-                ),
-                'favorite' => array(
+                ],
+                'favorite' => [
                     'type' => 'TINYINT',
                     'constraint' => 1,
                     'default' => 0
-                ),
-                'favorited_on' => array(
+                ],
+                'favorited_on' => [
                     'type' => 'INT',
                     'constraint' => 10,
                     'null' => true
-                ),
-                'featured_on' => array(
+                ],
+                'featured_on' => [
                     'type' => 'INT',
                     'constraint' => 10,
                     'null' => true
-                ),
-                'uploaded_on' => array(
+                ],
+                'uploaded_on' => [
                     'type' => 'INT',
                     'constraint' => 10
-                ),
-                'captured_on' => array(
+                ],
+                'captured_on' => [
                     'type' => 'INT',
                     'constraint' => 10
-                ),
-                'published_on' => array(
+                ],
+                'published_on' => [
                     'type' => 'INT',
                     'constraint' => 10,
                     'null' => true
-                ),
-                'modified_on' => array(
+                ],
+                'modified_on' => [
                     'type' => 'INT',
                     'constraint' => 10
-                ),
-                'file_modified_on' => array(
+                ],
+                'file_modified_on' => [
                     'type' => 'INT',
                     'constraint' => 10
-                ),
-                'focal_point' => array(
+                ],
+                'focal_point' => [
                     'type' => 'VARCHAR',
                     'constraint' => 255
-                ),
-                'filesize' => array(
+                ],
+                'filesize' => [
                     'type' => 'INT'
-                ),
-                'width' => array(
+                ],
+                'width' => [
                     'type' => 'INT',
                     'null' => true
-                ),
-                'height' => array(
+                ],
+                'height' => [
                     'type' => 'INT',
                     'null' => true
-                ),
-                'aspect_ratio' => array(
-                    'type' => 'DECIMAL(5,3)',
+                ],
+                'aspect_ratio' => [
+                    'type' => 'DECIMAL(5,3]',
                     'null' => true
-                ),
-                'duration' => array(
+                ],
+                'duration' => [
                     'type' => 'INT',
                     'null' => true
-                ),
-                'file_type' => array(
+                ],
+                'file_type' => [
                     'type' => 'TINYINT',
                     'constraint' => 1,
                     'default' => 0
-                ),
-                'lg_preview' => array(
+                ],
+                'lg_preview' => [
                     'type' => 'VARCHAR',
                     'constraint' => 255
-                ),
-                'internal_id' => array(
+                ],
+                'internal_id' => [
                     'type' => 'CHAR',
                     'constraint' => 32
-                ),
-                'has_exif' => array(
+                ],
+                'has_exif' => [
                     'type' => 'TINYINT',
                     'constraint' => 1,
                     'default' => 0
-                ),
-                'has_iptc' => array(
+                ],
+                'has_iptc' => [
                     'type' => 'TINYINT',
                     'constraint' => 1,
                     'default' => 0
-                ),
-                'source' => array(
+                ],
+                'source' => [
                     'type' => 'VARCHAR',
                     'constraint' => 255
-                ),
-                'source_url' => array(
+                ],
+                'source_url' => [
                     'type' => 'VARCHAR',
                     'constraint' => 255
-                ),
-                'html' => array(
+                ],
+                'html' => [
                     'type' => 'TEXT'
-                ),
-                'storage_url' => array(
+                ],
+                'storage_url' => [
                     'type' => 'VARCHAR',
                     'constraint' => 255
-                ),
-                'storage_url_midsize' => array(
+                ],
+                'storage_url_midsize' => [
                     'type' => 'VARCHAR',
                     'constraint' => 255
-                )
-            ),
-            'keys' => array(
+                ]
+            ],
+            'keys' => [
                 'filename',
                 'title',
                 'deleted',
@@ -362,451 +362,451 @@
                 'width',
                 'height',
                 'aspect_ratio',
-                array('featured', 'featured_order'),
-                array('favorite', 'favorite_order'),
+                ['featured', 'featured_order'],
+                ['favorite', 'favorite_order'],
                 'slug',
                 // TODO: How to key the caption field
-            )
-        ),
+            ]
+        ],
 
         // ==============================
         // = CONTENT > ALBUMS JOIN TABLE =
         // ==============================
-        'join_albums_content' => array(
-            'fields' => array(
-                'album_id' => array(
+        'join_albums_content' => [
+            'fields' => [
+                'album_id' => [
                     'type' => 'INT'
-                ),
-                'content_id' => array(
+                ],
+                'content_id' => [
                     'type' => 'INT'
-                ),
-                'order' => array(
+                ],
+                'order' => [
                     'type' => 'INT',
                     'null' => true
-                )
-            ),
-            'keys' => array(
+                ]
+            ],
+            'keys' => [
                 'album_id', 'content_id', 'order'
-            )
-        ),
+            ]
+        ],
 
         // ==============================
         // = COVERS > ALBUMS JOIN TABLE =
         // ==============================
-        'join_albums_covers' => array(
-            'fields' => array(
-                'album_id' => array(
+        'join_albums_covers' => [
+            'fields' => [
+                'album_id' => [
                     'type' => 'INT'
-                ),
-                'cover_id' => array(
+                ],
+                'cover_id' => [
                     'type' => 'INT'
-                )
-            ),
-            'keys' => array(
+                ]
+            ],
+            'keys' => [
                 'album_id', 'cover_id'
-            )
-        ),
+            ]
+        ],
 
         // =========
         // = USERS =
         // =========
-        'users' => array(
-            'fields' => array(
-                'password' => array(
+        'users' => [
+            'fields' => [
+                'password' => [
                     'type' => 'varchar',
                     'constraint' => 60
-                ),
-                'email' => array(
+                ],
+                'email' => [
                     'type' => 'varchar',
                     'constraint' => 255
-                ),
-                'created_on' => array(
+                ],
+                'created_on' => [
                     'type' => 'INT',
                     'constraint' => 10
-                ),
-                'modified_on' => array(
+                ],
+                'modified_on' => [
                     'type' => 'INT',
                     'constraint' => 10
-                ),
-                'first_name' => array(
+                ],
+                'first_name' => [
                     'type' => 'varchar',
                     'constraint' => 255
-                ),
-                'last_name' => array(
+                ],
+                'last_name' => [
                     'type' => 'varchar',
                     'constraint' => 255
-                ),
-                'public_first_name' => array(
+                ],
+                'public_first_name' => [
                     'type' => 'varchar',
                     'constraint' => 255
-                ),
-                'public_last_name' => array(
+                ],
+                'public_last_name' => [
                     'type' => 'varchar',
                     'constraint' => 255
-                ),
-                'public_display' => array(
+                ],
+                'public_display' => [
                     'type' => 'varchar',
                     'constraint' => 255,
                     'default' => 'both'
-                ),
-                'public_email' => array(
+                ],
+                'public_email' => [
                     'type' => 'varchar',
                     'constraint' => 255
-                ),
-                'twitter' => array(
+                ],
+                'twitter' => [
                     'type' => 'varchar',
                     'constraint' => 255
-                ),
-                'facebook' => array(
+                ],
+                'facebook' => [
                     'type' => 'varchar',
                     'constraint' => 255
-                ),
-                'google' => array(
+                ],
+                'google' => [
                     'type' => 'varchar',
                     'constraint' => 255
-                ),
-                'internal_id' => array(
+                ],
+                'internal_id' => [
                     'type' => 'CHAR',
                     'constraint' => 32
-                ),
-                'remember_me' => array(
+                ],
+                'remember_me' => [
                     'type' => 'CHAR',
                     'constraint' => 32,
                     'null' => true
-                )
-            ),
-            'keys' => array(
+                ]
+            ],
+            'keys' => [
                 'password',
                 'email',
                 'internal_id'
-            )
-        ),
+            ]
+        ],
 
         // ===========
         // = HISTORY =
         // ===========
-        'history' => array(
-            'fields' => array(
-                'user_id' => array(
+        'history' => [
+            'fields' => [
+                'user_id' => [
                     'type' => 'INT'
-                ),
-                'message' => array(
+                ],
+                'message' => [
                     'type' => 'TEXT'
-                ),
-                'created_on' => array(
+                ],
+                'created_on' => [
                     'type' => 'INT',
                     'constraint' => 10
-                ),
-            ),
-            'keys' => array(
+                ],
+            ],
+            'keys' => [
                 'user_id', 'created_on'
-            )
-        ),
+            ]
+        ],
 
         // =========
         // = TRASH =
         // =========
-        'trash' => array(
-            'fields' => array(
-                'id' => array(
+        'trash' => [
+            'fields' => [
+                'id' => [
                     'type' => 'VARCHAR',
                     'constraint' => 255
-                ),
-                'data' => array(
+                ],
+                'data' => [
                     'type' => 'TEXT'
-                ),
-                'created_on' => array(
+                ],
+                'created_on' => [
                     'type' => 'INT',
                     'constraint' => 10
-                )
-            ),
-            'keys' => array(
+                ]
+            ],
+            'keys' => [
                 'id', 'created_on'
-            ),
+            ],
             'no_id' => true
-        ),
+        ],
 
         // ===========
         // TAG CACHE =
         // ===========
-        'tags' => array(
-            'fields' => array(
-                'name' => array(
+        'tags' => [
+            'fields' => [
+                'name' => [
                     'type' => 'VARCHAR',
                     'constraint' => 255
-                ),
-                'created_on' => array(
+                ],
+                'created_on' => [
                     'type' => 'INT',
                     'constraint' => 10
-                ),
-                'modified_on' => array(
+                ],
+                'modified_on' => [
                     'type' => 'INT',
                     'constraint' => 10
-                ),
-                'last_used' => array(
+                ],
+                'last_used' => [
                     'type' => 'INT',
                     'constraint' => 10,
                     'null' => true
-                ),
-                'album_count' => array(
+                ],
+                'album_count' => [
                     'type' => 'INT',
                     'constraint' => 11,
                     'default' => 0
-                ),
-                'text_count' => array(
+                ],
+                'text_count' => [
                     'type' => 'INT',
                     'constraint' => 11,
                     'default' => 0
-                ),
-                'content_count' => array(
+                ],
+                'content_count' => [
                     'type' => 'INT',
                     'constraint' => 11,
                     'default' => 0
-                )
-            ),
-            'keys' => array(
+                ]
+            ],
+            'keys' => [
                 'name'
-            )
-        ),
+            ]
+        ],
 
         // ============
         // CATEGORIES =
         // ============
-        'categories' => array(
-            'fields' => array(
-                'title' => array(
+        'categories' => [
+            'fields' => [
+                'title' => [
                     'type' => 'VARCHAR',
                     'constraint' => 255
-                ),
-                'slug' => array(
+                ],
+                'slug' => [
                     'type' => 'VARCHAR',
                     'constraint' => 255
-                ),
-                'album_count' => array(
+                ],
+                'album_count' => [
                     'type' => 'INT',
                     'constraint' => 11,
                     'default' => 0
-                ),
-                'text_count' => array(
+                ],
+                'text_count' => [
                     'type' => 'INT',
                     'constraint' => 11,
                     'default' => 0
-                ),
-                'content_count' => array(
+                ],
+                'content_count' => [
                     'type' => 'INT',
                     'constraint' => 11,
                     'default' => 0
-                )
-            ),
-            'keys' => array(
+                ]
+            ],
+            'keys' => [
                 'album_count',
                 'content_count',
                 'text_count',
                 'slug'
-            )
-        ),
+            ]
+        ],
 
         // ==================================
         // = CATEGORIES > ALBUMS JOIN TABLE =
         // ==================================
-        'join_albums_categories' => array(
-            'fields' => array(
-                'album_id' => array(
+        'join_albums_categories' => [
+            'fields' => [
+                'album_id' => [
                     'type' => 'INT'
-                ),
-                'category_id' => array(
+                ],
+                'category_id' => [
                     'type' => 'INT'
-                )
-            ),
-            'keys' => array(
+                ]
+            ],
+            'keys' => [
                 'album_id', 'category_id'
-            )
-        ),
+            ]
+        ],
 
         // ===================================
         // = CATEGORIES > CONTENT JOIN TABLE =
         // ===================================
-        'join_categories_content' => array(
-            'fields' => array(
-                'content_id' => array(
+        'join_categories_content' => [
+            'fields' => [
+                'content_id' => [
                     'type' => 'INT'
-                ),
-                'category_id' => array(
+                ],
+                'category_id' => [
                     'type' => 'INT'
-                )
-            ),
-            'keys' => array(
+                ]
+            ],
+            'keys' => [
                 'content_id', 'category_id'
-            )
-        ),
+            ]
+        ],
 
         // ============
         // SITE =
         // ============
-        'settings' => array(
-            'fields' => array(
-                'name' => array(
+        'settings' => [
+            'fields' => [
+                'name' => [
                     'type' => 'VARCHAR',
                     'constraint' => 255
-                ),
-                'value' => array(
+                ],
+                'value' => [
                     'type' => 'TEXT'
-                )
-            ),
-            'keys' => array( 'name' )
-        ),
+                ]
+            ],
+            'keys' => [ 'name' ]
+        ],
 
         // ============
         // URLS =
         // ============
-        'urls' => array(
-            'fields' => array(
-                'data' => array(
+        'urls' => [
+            'fields' => [
+                'data' => [
                     'type' => 'TEXT'
-                ),
-                'created_on' => array(
+                ],
+                'created_on' => [
                     'type' => 'INT',
                     'constraint' => 10
-                )
-            )
-        ),
+                ]
+            ]
+        ],
 
         // ============
         // SLUGS =
         // ============
-        'slugs' => array(
-            'fields' => array(
-                'id' => array(
+        'slugs' => [
+            'fields' => [
+                'id' => [
                     'type' => 'VARCHAR',
                     'constraint' => 255
-                )
-            ),
-            'keys' => array(
+                ]
+            ],
+            'keys' => [
                 'id'
-            ),
+            ],
             'no_id' => true
-        ),
+        ],
 
         // ============
         // DRAFTS =
         // ============
-        'drafts' => array(
-            'fields' => array(
-                'path' => array(
+        'drafts' => [
+            'fields' => [
+                'path' => [
                     'type' => 'VARCHAR',
                     'constraint' => 255
-                ),
-                'live_data' => array(
+                ],
+                'live_data' => [
                     'type' => 'MEDIUMTEXT',
                     'null' => true
-                ),
-                'data' => array(
+                ],
+                'data' => [
                     'type' => 'MEDIUMTEXT'
-                ),
-                'current' => array(
+                ],
+                'current' => [
                     'type' => 'TINYINT',
                     'constraint' => 1,
                     'default' => 0
-                ),
-                'draft' => array(
+                ],
+                'draft' => [
                     'type' => 'TINYINT',
                     'constraint' => 1,
                     'default' => 0
-                ),
-                'created_on' => array(
+                ],
+                'created_on' => [
                     'type' => 'INT',
                     'constraint' => 10
-                ),
-                'modified_on' => array(
+                ],
+                'modified_on' => [
                     'type' => 'INT',
                     'constraint' => 10
-                )
-            ),
-            'keys' => array(
+                ]
+            ],
+            'keys' => [
                 'path', 'current', 'draft', 'created_on', 'modified_on'
-            )
-        ),
+            ]
+        ],
 
         // ============
         // PAGES =
         // ============
-        'text' => array(
-            'fields' => array(
-                'title' => array(
+        'text' => [
+            'fields' => [
+                'title' => [
                     'type' => 'TEXT'
-                ),
-                'draft_title' => array(
+                ],
+                'draft_title' => [
                     'type' => 'TEXT'
-                ),
-                'slug' => array(
+                ],
+                'slug' => [
                     'type' => 'VARCHAR',
                     'constraint' => 255
-                ),
-                'old_slug' => array(
+                ],
+                'old_slug' => [
                     'type' => 'TEXT'
-                ),
-                'featured_image_id' => array(
+                ],
+                'featured_image_id' => [
                     'type' => 'INT',
                     'constraint' => 10,
                     'null' => true
-                ),
-                'featured' => array(
+                ],
+                'featured' => [
                     'type' => 'TINYINT',
                     'constraint' => 1,
                     'default' => 0
-                ),
-                'featured_on' => array(
+                ],
+                'featured_on' => [
                     'type' => 'INT',
                     'constraint' => 10,
                     'null' => true
-                ),
-                'featured_order' => array(
+                ],
+                'featured_order' => [
                     'type' => 'INT',
                     'null' => true
-                ),
-                'custom_featured_image' => array(
+                ],
+                'custom_featured_image' => [
                     'type' => 'VARCHAR',
                     'constraint' => 255
-                ),
-                'content' => array(
+                ],
+                'content' => [
                     'type' => 'LONGTEXT'
-                ),
-                'draft' => array(
+                ],
+                'draft' => [
                     'type' => 'LONGTEXT'
-                ),
-                'excerpt' => array(
+                ],
+                'excerpt' => [
                     'type' => 'VARCHAR',
                     'constraint' => 255
-                ),
-                'published' => array(
+                ],
+                'published' => [
                     'type' => 'TINYINT',
                     'constraint' => 1,
                     'default' => 0
-                ),
-                'page_type' => array(
+                ],
+                'page_type' => [
                     'type' => 'INT',
                     'constraint' => 1,
                     'default' => 0
-                ),
-                'published_on' => array(
+                ],
+                'published_on' => [
                     'type' => 'INT',
                     'constraint' => 10,
                     'null' => true
-                ),
-                'created_on' => array(
+                ],
+                'created_on' => [
                     'type' => 'INT',
                     'constraint' => 10
-                ),
-                'modified_on' => array(
+                ],
+                'modified_on' => [
                     'type' => 'INT',
                     'constraint' => 10
-                ),
-                'internal_id' => array(
+                ],
+                'internal_id' => [
                     'type' => 'CHAR',
                     'constraint' => 32
-                )
-            ),
-            'keys' => array(
+                ]
+            ],
+            'keys' => [
                 'published',
                 'created_on',
                 'modified_on',
@@ -815,75 +815,75 @@
                 'internal_id',
                 'featured_image_id',
                 'slug',
-                array('featured', 'featured_order')
-            )
-        ),
+                ['featured', 'featured_order']
+            ]
+        ],
 
         // ===================================
         // = CATEGORIES > PAGES JOIN TABLE =
         // ===================================
-        'join_categories_text' => array(
-            'fields' => array(
-                'text_id' => array(
+        'join_categories_text' => [
+            'fields' => [
+                'text_id' => [
                     'type' => 'INT'
-                ),
-                'category_id' => array(
+                ],
+                'category_id' => [
                     'type' => 'INT'
-                )
-            ),
-            'keys' => array(
+                ]
+            ],
+            'keys' => [
                 'text_id', 'category_id'
-            )
-        ),
+            ]
+        ],
 
         // ===================================
         // = CATEGORIES > PAGES JOIN TABLE =
         // ===================================
-        'join_tags_text' => array(
-            'fields' => array(
-                'tag_id' => array(
+        'join_tags_text' => [
+            'fields' => [
+                'tag_id' => [
                     'type' => 'INT'
-                ),
-                'text_id' => array(
+                ],
+                'text_id' => [
                     'type' => 'INT'
-                )
-            ),
-            'keys' => array(
+                ]
+            ],
+            'keys' => [
                 'text_id', 'tag_id'
-            )
-        ),
+            ]
+        ],
 
         // ===================================
         // = CATEGORIES > PAGES JOIN TABLE =
         // ===================================
-        'join_albums_tags' => array(
-            'fields' => array(
-                'tag_id' => array(
+        'join_albums_tags' => [
+            'fields' => [
+                'tag_id' => [
                     'type' => 'INT'
-                ),
-                'album_id' => array(
+                ],
+                'album_id' => [
                     'type' => 'INT'
-                )
-            ),
-            'keys' => array(
+                ]
+            ],
+            'keys' => [
                 'tag_id', 'album_id'
-            )
-        ),
+            ]
+        ],
 
         // ===================================
         // = CATEGORIES > PAGES JOIN TABLE =
         // ===================================
-        'join_content_tags' => array(
-            'fields' => array(
-                'tag_id' => array(
+        'join_content_tags' => [
+            'fields' => [
+                'tag_id' => [
                     'type' => 'INT'
-                ),
-                'content_id' => array(
+                ],
+                'content_id' => [
                     'type' => 'INT'
-                )
-            ),
-            'keys' => array(
+                ]
+            ],
+            'keys' => [
                 'tag_id', 'content_id'
-            )
-        )
-    );
+            ]
+        ]
+    ];
