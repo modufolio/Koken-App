@@ -154,9 +154,7 @@ class Update extends Koken_Controller
         $this->load->dbforge();
 
         if ($n === 'schema') {
-            require(FCPATH . 'app' .
-                DIRECTORY_SEPARATOR . 'koken' .
-                DIRECTORY_SEPARATOR . 'schema.php');
+            $koken_tables = require(FCPATH . 'app/koken/schema.php');
 
             foreach ($koken_tables as $table_name => $info) {
                 $table = $db_config['prefix'] . "$table_name";
