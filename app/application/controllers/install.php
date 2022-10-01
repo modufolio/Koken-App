@@ -11,6 +11,28 @@ class Install extends CI_Controller {
 	{
 		set_time_limit(0);
 
+        $old_db_config = FCPATH . 'storage/configuration/database.php';
+
+        if (isset($_POST['database']))
+        {
+            $database_config = array_merge(array(
+                'driver' => 'mysqli',
+                'hostname' => 'localhost',
+                'database' => 'koken',
+                'username' => '',
+                'password' => '',
+                'prefix' => '',
+                'socket' => ''
+            ), $_POST['database']);
+        }
+        else if (file_exists($old_db_config))
+        {
+            include $old_db_config;
+            $database_config = $KOKEN_DATABASE;
+        }
+
+        Shutter::write_db_configuration($database_config);
+
 		$this->load->database();
 		$this->load->dbforge();
 
@@ -66,7 +88,7 @@ class Install extends CI_Controller {
 
 
 		$settings = array(
-			'site_timezone' => null,
+			'site_timezone' => $_POST['timezone'],
 			'console_show_notifications' => 'yes',
 			'console_enable_keyboard_shortcuts' => 'yes',
 			'uploading_default_license' => 'all',
@@ -107,7 +129,7 @@ class Install extends CI_Controller {
 			'last_migration' => '42',
 			'has_toured' => false,
 			'email_handler' => 'DDI_Email',
-			'email_delivery_address' => '',
+			'email_delivery_address' => $_POST['email'] ?? '',
             'image_processing_library' => 'gd'
 		);
 
