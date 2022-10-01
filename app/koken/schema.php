@@ -297,7 +297,7 @@ return  [
                     'null' => true
                 ],
                 'aspect_ratio' => [
-                    'type' => 'DECIMAL(5,3]',
+                    'type' => 'DECIMAL(5,3)',
                     'null' => true
                 ],
                 'duration' => [
