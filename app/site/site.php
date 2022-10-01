@@ -10,7 +10,7 @@
         mb_internal_encoding('UTF-8');
     }
 
-    $root_path = dirname(dirname(dirname(__FILE__)));
+    $root_path = dirname(__FILE__, 3);
     @include $root_path . '/storage/configuration/user_setup.php';
     require $root_path . '/app/koken/Shutter/Shutter.php';
 
