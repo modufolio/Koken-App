@@ -228,13 +228,13 @@ class Install extends CI_Controller {
 		$u->data = serialize($urls);
 		$u->save();
 
-		$u = new User();
-		$u->password = '123456';
-		$u->email = 'admin@admin.com';
-		$u->first_name = 'Admin';
-		$u->last_name = 'Dev';
-		$u->permissions = 4;
-		$u->save();
+        $u = new User();
+        $u->password = $_POST['password'];
+        $u->email = $_POST['email'];
+        $u->first_name = $_POST['first_name'];
+        $u->last_name = $_POST['last_name'];
+        $u->permissions = 4;
+        $u->save();
 
 		$theme = new Draft;
 		$theme->path = 'elementary';
