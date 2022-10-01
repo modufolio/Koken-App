@@ -401,22 +401,6 @@ class Contents extends Koken_Controller
                     $content = $c->to_array(array('auth' => true));
 
                     if (($hook === 'content.create' || $hook === 'content.update_with_upload')) {
-                        if (ENVIRONMENT === 'production') {
-                            $this->load->library('mcurl');
-                            if ($this->mcurl->is_enabled()) {
-                                $options = array(
-                                    CURLOPT_HTTPHEADER => array(
-                                        'Connection: Close',
-                                        'Keep-Alive: 0'
-                                    )
-                                );
-
-                                $this->mcurl->add_call('normal', 'get', $content['presets']['medium_large']['url'], array(), $options);
-                                $this->mcurl->add_call('cropped', 'get', $content['presets']['medium_large']['cropped']['url'], array(), $options);
-                                $this->mcurl->execute();
-                            }
-                        }
-
                         $external_storage_url = Shutter::store_original($c->path_to_original(), str_replace('/storage/originals/', '', $content['original']['relative_url']));
 
                         if ($external_storage_url) {
