@@ -227,14 +227,6 @@
 					} else {
 						next();
 
-						if ($(this).data('step') === 5) {
-							$('#subscribe').val( $('#email').val().trim() );
-						}
-
-						if ($(this).data('step') === 6 && $(this).data('subscribe') === true) {
-							payload.subscribe = $('#subscribe').val();
-						}
-
 						if ($(this).data('step') === 7) {
 							hold = true;
 
@@ -440,24 +432,6 @@
 
 			</div> <!-- close #setup-db -->
 
-			<div id="setup-dl">
-
-				<header>
-
-					<h1>Download and install</h1>
-					<p>Ready to download and setup Koken. Click the button below to begin.<br>This should only take a few minutes.</p>
-
-				</header>
-
-				<!-- initial state -->
-				<button data-step="7" title="Install it">Install now</button>
-
-				<!-- download progress -->
-				<div class="col-half" style="display:none;">
-					<h2>Downloading...</h2>
-				</div>
-
-			</div> <!-- close #setup-dl -->
 
 			<div id="setup-opt">
 
@@ -488,31 +462,6 @@
 
 			</div> <!-- close #setup-opt -->
 
-			<div id="setup-signup">
-
-				<header>
-
-					<h1>Keep in touch</h1>
-
-					<p>
-						Our email newsletter contains the latest news, announcements and special offers.<br>Keep in touch by adding your email address below.
-					</p>
-
-				</header>
-
-				<div class="row">
-
-					<input id="subscribe" type="email" class="half" />
-
-				</div>
-
-				<div class="row button">
-
-					<button data-step="6" class="sec" title="No thanks" data-subscribe="false">No thanks</button>&nbsp;&nbsp;<button data-step="6" title="Sign up" data-subscribe="true">Yes, sign me up</button>
-
-				</div>
-
-			</div> <!-- close #setup-signup -->
 
 			<div id="setup-wait">
 
@@ -540,7 +489,7 @@
 				<div class="col-full">
 
 					<div class="row button">
-						<button data-step="done" title="Start using Koken">Start</button>
+						<button data-step="7" title="Start using Koken">Start</button>
 					</div>
 
 				</div>
