@@ -54,7 +54,7 @@
 			$('#tz').val(tz);
 
 			var current = false,
-				steps = [ 'admin', 'db', 'key', 'opt', 'signup', 'dl', 'wait', 'final' ];
+				steps = [ 'admin', 'db', 'key', 'opt', 'dl', 'wait', 'final' ];
 
 			function next() {
 
@@ -216,28 +216,14 @@
 
 				if (valid) {
 					if ($(this).data('step') === 3) {
-						$.post('index.php', {
-							database_check: true,
-							host: $('#database_hostname').val().trim(),
-							user: $('#database_username').val().trim(),
-							password: $('#database_password').val().trim(),
-							name: $('#database_name').val().trim(),
-							prefix: $('#database_prefix').val().trim()
-						}, function(data) {
-							if (data.error || !data.driver) {
-								$('#setup-db header').after(
-									$('<div/>').addClass('database-error-msg').append( $('<span/>').addClass('form-error-msg').css('display', 'inline').text('Database connection error: ' + data.error) )
-								)
-							} else {
-								database.driver = data.driver;
-								database.host = data.host;
-								database.user = $('#database_username').val().trim();
-								database.password = $('#database_password').val().trim();
-								database.name = $('#database_name').val().trim();
-								database.prefix = $('#database_prefix').val().trim();
-								next();
-							}
-						});
+						database.driver = data.driver;
+						database.host = data.host;
+						database.user = $('#database_username').val().trim();
+						database.password = $('#database_password').val().trim();
+						database.name = $('#database_name').val().trim();
+						database.prefix = $('#database_prefix').val().trim();
+						next();
+
 					} else {
 						next();
 
