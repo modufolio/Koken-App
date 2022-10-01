@@ -66,7 +66,7 @@ class Install extends CI_Controller {
 
 
 		$settings = array(
-			'site_timezone' => null,
+			'site_timezone' => 'Europe/Berlin',
 			'console_show_notifications' => 'yes',
 			'console_enable_keyboard_shortcuts' => 'yes',
 			'uploading_default_license' => 'all',
