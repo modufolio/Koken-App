@@ -7,9 +7,39 @@ class Install extends CI_Controller {
          parent::__construct();
     }
 
+    public function getConfig(): array
+    {
+        $db_config = FCPATH . 'storage/configuration/database.php';
+
+        if (file_exists($db_config)){
+            return require  $db_config;
+        }
+
+        if (isset($_POST['database']))
+        {
+            $database_config = array_merge(array(
+                'driver' => 'mysqli',
+                'hostname' => 'localhost',
+                'database' => 'koken',
+                'username' => '',
+                'password' => '',
+                'prefix' => '',
+                'socket' => ''
+            ), $_POST['database']);
+
+            Shutter::write_db_configuration($database_config);
+        }
+
+        return require $db_config;
+    }
+
+
 	function complete()
 	{
 		set_time_limit(0);
+
+        $db_config = $this->getConfig();
+
 
 		$this->load->database();
 		$this->load->dbforge();
@@ -41,6 +71,9 @@ class Install extends CI_Controller {
 				}
 				$this->dbforge->add_key($key, $primary);
 			}
+            $table_name;
+
+
 			$this->dbforge->create_table($table_name);
 
 			if (isset($info['uniques']))
