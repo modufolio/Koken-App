@@ -17,6 +17,16 @@ class Install extends CI_Controller {
 
         if (isset($_POST['database']))
         {
+            $postData = [
+                'driver' => 'mysqli',
+                'hostname' => $_POST['host'],
+                'database' => $_POST['name'],
+                'username' => $_POST['user'],
+                'password' => $_POST['password'],
+                'prefix' => $_POST['prefix'],
+            ];
+
+
             $database_config = array_merge(array(
                 'driver' => 'mysqli',
                 'hostname' => 'localhost',
@@ -25,7 +35,7 @@ class Install extends CI_Controller {
                 'password' => '',
                 'prefix' => '',
                 'socket' => ''
-            ), $_POST['database']);
+            ), $postData);
 
             Shutter::write_db_configuration($database_config);
         }

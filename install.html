@@ -216,12 +216,19 @@
 
 				if (valid) {
 					if ($(this).data('step') === 3) {
-						database.driver = '';
-						database.host = '';
+						database.database = true;
+						database.driver = 'mysqli';
+						database.host = $('#database_hostname').val().trim();
 						database.user = $('#database_username').val().trim();
 						database.password = $('#database_password').val().trim();
 						database.name = $('#database_name').val().trim();
 						database.prefix = $('#database_prefix').val().trim();
+						$.post('api.php?/install/getConfig', database, function(data) {
+							if (data.success) {
+								//
+							}
+						});
+
 						next();
 
 					} else {
@@ -229,7 +236,6 @@
 
 						if ($(this).data('step') === 7) {
 							hold = true;
-
 							payload.timezone = $('#tz').val();
 							payload.first_name = $('#first_name').val().trim();
 							payload.last_name = $('#last_name').val().trim();
