@@ -235,18 +235,13 @@
 							payload.last_name = $('#last_name').val().trim();
 							payload.email = $('#email').val().trim();
 							payload.password = $('#password').val().trim();
-							$.post('index.php', database, function(data) {
-								if (data.success) {
-									$.post('api.php?/install/complete', payload, function(data) {
-										if (data.success) {
-											next();
-											hold = false;
-										}
-									});
-								} else {
 
+							$.post('api.php?/install/complete', payload, function(data) {
+								if (data.success) {
+									location.href = "/admin/";
 								}
 							});
+
 						}
 
 					}
