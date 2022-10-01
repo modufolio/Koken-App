@@ -84,7 +84,7 @@ class Install extends CI_Controller {
             $table_name;
 
 
-			$this->dbforge->create_table($table_name);
+			$this->dbforge->create_table($db_config['prefix'] . $table_name);
 
 			if (isset($info['uniques']))
 			{
