@@ -54,7 +54,7 @@
 			$('#tz').val(tz);
 
 			var current = false,
-				steps = [ 'admin', 'db', 'key', 'opt', 'dl', 'wait', 'final' ];
+				steps = [ 'admin', 'db', 'key', 'opt', 'final' ];
 
 			function next() {
 
@@ -216,8 +216,8 @@
 
 				if (valid) {
 					if ($(this).data('step') === 3) {
-						database.driver = data.driver;
-						database.host = data.host;
+						database.driver = '';
+						database.host = '';
 						database.user = $('#database_username').val().trim();
 						database.password = $('#database_password').val().trim();
 						database.name = $('#database_name').val().trim();
