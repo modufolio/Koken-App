@@ -7,17 +7,16 @@ Sadly, it appears that the Koken project has been abandoned by its owner.
 Read more about it on: https://www.koken.me/ by the Co-Founder of Koken - Todd Dominey
 
 
+### Setup instructions
+Created a new installer because it wasn't working in php8.0
 
-## Release notes
+1. download the zip with the tag 1.1.5 / unpack
 
-### 1.00
+2. Go to the url wwww.yourdomain.com/install.html
 
-- Bug fixes to run koken on php 7.4
+3. Fill the correct data to connect with the database (there are currently no system or database checks for this early version of the installer)
 
-  ##### Upgrade instructions:
+4 Follow the steps, enjoy.
 
-  Replace all the files in the root except the storage folder.
-
-  
-
+Let me know if you encounter some bugs with installing.
  
