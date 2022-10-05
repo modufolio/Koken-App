@@ -501,7 +501,7 @@ class Sites extends Koken_Controller
                                     $item['path'] = $user->{$item['id']};
                                     if (empty($item['path'])) {
                                         unset($items[$index]);
-                                        continue;
+                                        break;
                                     }
                                     break;
                             }
