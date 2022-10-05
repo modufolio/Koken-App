@@ -233,7 +233,7 @@ class Categories extends Koken_Controller
                 $category->update_counts($c->model);
             }
 
-            if (count($categories) > 1 || $this->method == 'delete') {
+            if (is_array($categories) && count($categories) > 1 || $this->method == 'delete') {
                 exit;
             } else {
                 $this->redirect("/categories/{$first_category_id}/$url_bit");
