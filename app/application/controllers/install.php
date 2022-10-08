@@ -72,17 +72,17 @@ class Install extends CI_Controller {
 			}
 
 			$this->dbforge->add_field($info['fields']);
-			foreach($info['keys'] as $key)
-			{
-				$primary = false;
-				if ($key == 'id')
-				{
-					$primary = true;
-				}
-				$this->dbforge->add_key($key, $primary);
-			}
-            $table_name;
-
+            if(isset($info['keys']) && is_array($info['keys'])) {
+                foreach($info['keys'] as $key)
+                {
+                    $primary = false;
+                    if ($key == 'id')
+                    {
+                        $primary = true;
+                    }
+                    $this->dbforge->add_key($key, $primary);
+                }
+            }
 
 			$this->dbforge->create_table($db_config['prefix'] . $table_name);
 
