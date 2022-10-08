@@ -227,7 +227,7 @@ class DMZ_Koken
         return array($data, $fields);
     }
 
-    public function paginate($object, $options)
+    public function paginate($object, $options): array
     {
         $final = [];
         if ($options['limit']) {
@@ -254,7 +254,7 @@ class DMZ_Koken
         return $final;
     }
 
-    public function has_db_permission($object, $perm)
+    public function has_db_permission($object, $perm): bool
     {
         $r = $object->db->query('SHOW GRANTS');
 
