@@ -585,7 +585,7 @@ class Draft extends DataMapper
             $p = new Draft();
             $p->where('current', 1)->get();
             $pub_data = json_decode($p->live_data, true);
-
+            if(isset($pub_data['navigation']['items']) && is_array(pub_data['navigation']['items']))
             foreach ($pub_data['navigation']['items'] as $item) {
                 if (
                         (!isset($item['front']) || !$item['front'])
