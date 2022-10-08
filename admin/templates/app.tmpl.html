@@ -188,7 +188,9 @@
 	<div class="modal-outer" style="width:290px;text-align:center;">
 		<div class="wrap">
 			<p style="margin-bottom:20px;"><img src="images/koken_logo.svg" width="71" height="71" /></p>
-			&copy; Koken
+			<p style="margin-bottom:20px;"><a href="http://help.koken.me/customer/portal/articles/848339-release-notes" title="Release notes" onclick="return !window.open(this.href);">Version <span data-bind="text: system.version"></span></a></p>
+			<p style="margin-bottom:10px;font-size:11px;"><a href="http://koken.me/eula.html" title="End user license agreement" onclick="return !window.open(this.href);" >License agreement</a> / <a href="http://koken.me/privacy.html" title="Privacy policy" onclick="return !window.open(this.href);">Privacy policy</a></p>
+			&copy; 2013-<span data-bind="text: (new Date()).getFullYear().toString().substring(3)"></span> Koken
 		</div>
 	</div>
 </script>
@@ -265,6 +267,20 @@
 								</p>
 								<p>
 									Need more control? Custom themes are <a href="http://help.koken.me/customer/portal/topics/483366-tutorials---theme-design/articles" onclick="return !window.open(this.href);" title="Theme development help documentation">easy to build</a> using our Lens markup language. Lens tags look and feel like regular HTML and offers web designers powerful tools to build spectacular web sites.
+								</p>
+							</div>
+						</div>
+						<div id="tour-store">
+							<div class="img">
+								<img src="images/tour-store.jpg" />
+							</div>
+							<div class="copy">
+								<h2>Store</h2>
+								<p>
+									Install additional themes and plugins through the integrated Koken Store. A variety of free and premium themes are available as well as plugins to import videos from Vimeo, images from Instagram, watermarks, Google Analytics, Disqus and more.
+								</p>
+								<p>
+									All items download and install automatically and are easily updatable anytime new releases are made available.
 								</p>
 							</div>
 						</div>
