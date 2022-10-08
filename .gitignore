@@ -15,5 +15,8 @@ package-lock.json
 # Storage files
 # ---------------
 /storage/cache/*
+
 /storage/configuration/*
+!/storage/configuration/user_setup.php
+
 /storage/originals/*
