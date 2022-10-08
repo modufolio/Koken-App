@@ -2,10 +2,10 @@
 
 class Content extends Koken
 {
-    public $table = 'content';
-    public $created_field = 'uploaded_on';
+    public string $table = 'content';
+    public string $created_field = 'uploaded_on';
 
-    public $validation = array(
+    public array $validation = array(
         'internal_id' => array(
             'label' => 'Internal id',
             'rules' => array('required')

@@ -2,13 +2,13 @@
 
 class Category extends Koken
 {
-    public $has_many = array(
+    public array $has_many = array(
         'content',
         'album',
         'text'
     );
 
-    public $validation = array(
+    public array $validation = array(
         'title' => array(
             'label' => 'Title',
             'rules' => array('required')

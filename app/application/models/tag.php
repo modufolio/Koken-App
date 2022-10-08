@@ -2,7 +2,7 @@
 
 class Tag extends Koken
 {
-    public $has_many = array(
+    public array $has_many = array(
         'content',
         'album',
         'text'

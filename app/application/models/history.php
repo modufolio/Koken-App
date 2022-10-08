@@ -2,9 +2,9 @@
 
 class History extends DataMapper
 {
-    public $table = 'history';
+    public string $table = 'history';
 
-    public $has_one = array(
+    public array $has_one = array(
         'user'
     );
 

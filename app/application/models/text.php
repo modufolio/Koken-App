@@ -2,21 +2,21 @@
 
 class Text extends Koken
 {
-    public $table = 'text';
+    public string $table = 'text';
 
-    public $has_one = array(
+    public array $has_one = array(
         'featured_image' => array(
             'class' => 'content',
         ),
     );
 
-    public $has_many = array(
+    public array $has_many = array(
         'category',
         'album',
         'tag'
     );
 
-    public $validation = array(
+    public array $validation = array(
         'internal_id' => array(
             'label' => 'Internal id',
             'rules' => array('internalize', 'required')

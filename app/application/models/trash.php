@@ -2,7 +2,7 @@
 
 class Trash extends DataMapper
 {
-    public $table = 'trash';
+    public string $table = 'trash';
 }
 
 /* End of file trash.php */

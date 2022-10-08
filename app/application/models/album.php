@@ -2,7 +2,7 @@
 
 class Album extends Koken
 {
-    public $validation = array(
+    public array $validation = array(
         'internal_id' => array(
             'label' => 'Internal id',
             'rules' => array('internalize', 'required')

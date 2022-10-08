@@ -11,7 +11,7 @@ class User extends DataMapper
         $this->load->library('hash');
     }
 
-    public $has_many = array(
+    public array $has_many = array(
         'content' => array(
             'class' => 'content',
             'other_field' => 'created_by'
@@ -20,7 +20,7 @@ class User extends DataMapper
         'history'
     );
 
-    public $validation = array(
+    public array $validation = array(
         'internal_id' => array(
             'label' => 'Internal id',
             'rules' => array('internalize', 'required')
