@@ -11,6 +11,7 @@ class DDI_AfterInstall extends KokenPlugin
     {
         if (defined('ENVIRONMENT') && ENVIRONMENT === 'production') {
             unlink(FCPATH . 'app/application/controllers/install.php');
+            unlink(FCPATH . 'install.html');
         }
     }
 }
