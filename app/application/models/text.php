@@ -394,11 +394,11 @@ class Text extends Koken
         }
         list($data, $public_fields) = $this->prepare_for_output($options, $exclude, $bools, $dates, $strings);
 
-        if (strlen(trim($data['draft'])) === 0) {
+        if (empty($data['draft'])) {
             $data['draft'] = $data['content'];
         }
 
-        if (strlen(trim($data['draft_title'])) === 0) {
+        if (empty($data['draft_title'])) {
             $data['draft_title'] = $data['title'];
         }
 
