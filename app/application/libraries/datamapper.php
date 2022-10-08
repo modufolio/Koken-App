@@ -100,7 +100,7 @@ class DataMapper implements IteratorAggregate
      * from the classname).
      * @var string
      */
-    public $table = '';
+    public string $table = '';
     /**
      * The singular name for this model (may be automatically generated from
      * the classname).
@@ -144,17 +144,17 @@ class DataMapper implements IteratorAggregate
      * Contains the validation rules, label, and get_rules for each field.
      * @var array
      */
-    public $validation = [];
+    public array $validation = [];
     /**
      * Contains any related objects of which this model is related one or more times.
      * @var array
      */
-    public $has_many = [];
+    public array $has_many = [];
     /**
      * Contains any related objects of which this model is singularly related.
      * @var array
      */
-    public $has_one = [];
+    public array $has_one = [];
     /**
      * Used to enable or disable the production cache.
      * This should really only be set in the global configuration.
