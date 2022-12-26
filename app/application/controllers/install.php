@@ -2,9 +2,10 @@
 
 class Install extends CI_Controller {
 
-	function __construct()
+	public function __construct()
     {
-         parent::__construct();
+        parent::__construct();
+
     }
 
     public function getConfig(): array
@@ -43,35 +44,166 @@ class Install extends CI_Controller {
         return require $db_config;
     }
 
+    private function urls(): array
+    {
+        return [
+            [
+                'type' => 'content',
+                'data' => [
+                    'singular' => 'Content',
+                    'plural' => 'Content',
+                    'order' => 'published_on DESC',
+                    'url' => 'slug',
+                ]
+            ],
+            [
+                'type' => 'favorite',
+                'data' => [
+                    'singular' => 'Favorite',
+                    'plural' => 'Favorites',
+                    'order' => 'manual ASC'
+                ]
+            ],
+            [
+                'type' => 'feature',
+                'data' => [
+                    'singular' => 'Feature',
+                    'plural' => 'Features',
+                    'order' => 'manual ASC'
+                ]
+            ],
+            [
+                'type' => 'album',
+                'data' => [
+                    'singular' => 'Album',
+                    'plural' => 'Albums',
+                    'order' => 'manual ASC',
+                    'url' => 'slug'
+                ]
+            ],
+            [
+                'type' => 'set',
+                'data' => [
+                    'singular' => 'Set',
+                    'plural' => 'Sets',
+                    'order' => 'title ASC'
+                ]
+            ],
+            [
+                'type' => 'essay',
+                'data' => [
+                    'singular' => 'Essay',
+                    'plural' => 'Essays',
+                    'order' => 'published_on DESC',
+                    'url' => 'date+slug'
+                ]
+            ],
+            [
+                'type' => 'page',
+                'data' => [
+                    'singular' => 'Page',
+                    'plural' => 'Pages',
+                    'url' => 'slug'
+                ]
+            ],
+            [
+                'type' => 'tag',
+                'data' => [
+                    'singular' => 'Tag',
+                    'plural' => 'Tags'
+                ]
+            ],
+            [
+                'type' => 'category',
+                'data' => [
+                    'singular' => 'Category',
+                    'plural' => 'Categories'
+                ]
+            ],
+            [
+                'type' => 'timeline',
+                'data' => [
+                    'singular' => 'Timeline',
+                    'plural' => 'Timeline'
+                ]
+            ]
+        ];
+    }
 
-	function complete()
-	{
-		set_time_limit(0);
+    private function defaultSettings(): array
+    {
+        return [
+            'site_timezone' => 'Europe/Berlin',
+            'console_show_notifications' => 'yes',
+            'console_enable_keyboard_shortcuts' => 'yes',
+            'uploading_default_license' => 'all',
+            'uploading_default_visibility' => 'public',
+            'uploading_default_album_visibility' => 'public',
+            'uploading_default_max_download_size' => 'none',
+            'uploading_publish_on_captured_date' => 'false',
+            'site_title' => 'Koken Site',
+            'site_page_title' => 'Koken Site',
+            'site_tagline' => 'Your site tagline',
+            'site_copyright' => '© ',
+            'site_description' => '',
+            'site_keywords' => 'photography',
+            'site_date_format' => 'F j, Y',
+            'site_time_format' => 'g:i a',
+            'site_privacy' => 'public',
+            'site_hidpi' => 'true',
+            'site_url' => 'default',
+            'use_default_labels_links' => 'true',
+            'uuid' => md5($_SERVER['HTTP_HOST'] . uniqid('', true)),
+            'retain_image_metadata' => 'false',
+            'image_use_defaults' => 'true',
+            'image_tiny_quality' => '80',
+            'image_small_quality' => '80',
+            'image_medium_quality' => '85',
+            'image_medium_large_quality' => '85',
+            'image_large_quality' => '85',
+            'image_xlarge_quality' => '90',
+            'image_huge_quality' => '90',
+            'image_tiny_sharpening' => '0.7',
+            'image_small_sharpening' => '0.6',
+            'image_medium_sharpening' => '0.6',
+            'image_medium_large_sharpening' => '0.6',
+            'image_large_sharpening' => '0.6',
+            'image_xlarge_sharpening' => '0.3',
+            'image_huge_sharpening' => '0',
+            'last_upload' => 'false',
+            'last_migration' => '42',
+            'has_toured' => false,
+            'email_handler' => 'DDI_Email',
+            'email_delivery_address' => '',
+            'image_processing_library' => 'gd'
+        ];
+    }
+
+    private function createSchema()
+    {
+        $this->load->database();
+        $this->load->dbforge();
 
         $db_config = $this->getConfig();
 
-
-		$this->load->database();
-		$this->load->dbforge();
-
         $koken_tables = require(FCPATH . 'app/koken/schema.php');
 
-		foreach($koken_tables as $table_name => $info)
-		{
-			if (!isset($info['no_id']))
-			{
-				$this->dbforge->add_field('id');
-			}
+        foreach($koken_tables as $table_name => $info)
+        {
+            if (!isset($info['no_id']))
+            {
+                $this->dbforge->add_field('id');
+            }
 
-			foreach($info['fields'] as $name => &$attr)
-			{
-				if (in_array(strtolower($attr['type']), array('text', 'varchar', 'longtext')) && $name !== 'id')
-				{
-					$attr['null'] = true;
-				}
-			}
+            foreach($info['fields'] as $name => &$attr)
+            {
+                if (in_array(strtolower($attr['type']), array('text', 'varchar', 'longtext')) && $name !== 'id')
+                {
+                    $attr['null'] = true;
+                }
+            }
 
-			$this->dbforge->add_field($info['fields']);
+            $this->dbforge->add_field($info['fields']);
             if(isset($info['keys']) && is_array($info['keys'])) {
                 foreach($info['keys'] as $key)
                 {
@@ -84,77 +216,41 @@ class Install extends CI_Controller {
                 }
             }
 
-			$this->dbforge->create_table($db_config['prefix'] . $table_name);
+            $this->dbforge->create_table($db_config['prefix'] . $table_name);
 
-			if (isset($info['uniques']))
-			{
-				$table = $table_name;
-				foreach($info['uniques'] as $key)
-				{
-					if (is_array($key))
-					{
-						$name = join('_', $key);
-						$key = join(',', $key);
-					}
-					else
-					{
-						$name = $key;
-					}
-					$this->db->query("CREATE UNIQUE INDEX $name ON $table ($key)");
-				}
-			}
-		}
+            if (isset($info['uniques']))
+            {
+                $table = $table_name;
+                foreach($info['uniques'] as $key)
+                {
+                    if (is_array($key))
+                    {
+                        $name = join('_', $key);
+                        $key = join(',', $key);
+                    }
+                    else
+                    {
+                        $name = $key;
+                    }
+                    $this->db->query("CREATE UNIQUE INDEX $name ON $table ($key)");
+                }
+            }
+        }
+    }
+
+
+	public function complete()
+	{
+		set_time_limit(0);
+
+        $this->load->database();
+
+        $this->createSchema();
 
 		$this->load->library('datamapper');
 
 
-		$settings = array(
-			'site_timezone' => 'Europe/Berlin',
-			'console_show_notifications' => 'yes',
-			'console_enable_keyboard_shortcuts' => 'yes',
-			'uploading_default_license' => 'all',
-			'uploading_default_visibility' => 'public',
-			'uploading_default_album_visibility' => 'public',
-			'uploading_default_max_download_size' => 'none',
-			'uploading_publish_on_captured_date' => 'false',
-			'site_title' => 'Koken Site',
-			'site_page_title' => 'Koken Site',
-			'site_tagline' => 'Your site tagline',
-			'site_copyright' => '© ',
-			'site_description' => '',
-			'site_keywords' => 'photography',
-			'site_date_format' => 'F j, Y',
-			'site_time_format' => 'g:i a',
-			'site_privacy' => 'public',
-			'site_hidpi' => 'true',
-			'site_url' => 'default',
-			'use_default_labels_links' => 'true',
-			'uuid' => md5($_SERVER['HTTP_HOST'] . uniqid('', true)),
-			'retain_image_metadata' => 'false',
-			'image_use_defaults' => 'true',
-			'image_tiny_quality' => '80',
-			'image_small_quality' => '80',
-			'image_medium_quality' => '85',
-			'image_medium_large_quality' => '85',
-			'image_large_quality' => '85',
-			'image_xlarge_quality' => '90',
-			'image_huge_quality' => '90',
-			'image_tiny_sharpening' => '0.7',
-			'image_small_sharpening' => '0.6',
-			'image_medium_sharpening' => '0.6',
-			'image_medium_large_sharpening' => '0.6',
-			'image_large_sharpening' => '0.6',
-			'image_xlarge_sharpening' => '0.3',
-			'image_huge_sharpening' => '0',
-			'last_upload' => 'false',
-			'last_migration' => '42',
-			'has_toured' => false,
-			'email_handler' => 'DDI_Email',
-			'email_delivery_address' => '',
-            'image_processing_library' => 'gd'
-		);
-
-		foreach($settings as $name => $value)
+		foreach($this->defaultSettings() as $name => $value)
 		{
 			$u = new Setting;
 			$u->name = $name;
@@ -162,91 +258,10 @@ class Install extends CI_Controller {
 			$u->save();
 		}
 
-		$urls = array(
-			array(
-				'type' => 'content',
-				'data' => array(
-					'singular' => 'Content',
-					'plural' => 'Content',
-					'order' => 'published_on DESC',
-					'url' => 'slug',
-				)
-			),
-			array(
-				'type' => 'favorite',
-				'data' => array(
-					'singular' => 'Favorite',
-					'plural' => 'Favorites',
-					'order' => 'manual ASC'
-				)
-			),
-			array(
-				'type' => 'feature',
-				'data' => array(
-					'singular' => 'Feature',
-					'plural' => 'Features',
-					'order' => 'manual ASC'
-				)
-			),
-			array(
-				'type' => 'album',
-				'data' => array(
-					'singular' => 'Album',
-					'plural' => 'Albums',
-					'order' => 'manual ASC',
-					'url' => 'slug'
-				)
-			),
-			array(
-				'type' => 'set',
-				'data' => array(
-					'singular' => 'Set',
-					'plural' => 'Sets',
-					'order' => 'title ASC'
-				)
-			),
-			array(
-				'type' => 'essay',
-				'data' => array(
-					'singular' => 'Essay',
-					'plural' => 'Essays',
-					'order' => 'published_on DESC',
-					'url' => 'date+slug'
-				)
-			),
-			array(
-				'type' => 'page',
-				'data' => array(
-					'singular' => 'Page',
-					'plural' => 'Pages',
-					'url' => 'slug'
-				)
-			),
-			array(
-				'type' => 'tag',
-				'data' => array(
-					'singular' => 'Tag',
-					'plural' => 'Tags'
-				)
-			),
-			array(
-				'type' => 'category',
-				'data' => array(
-					'singular' => 'Category',
-					'plural' => 'Categories'
-				)
-			),
-			array(
-				'type' => 'timeline',
-				'data' => array(
-					'singular' => 'Timeline',
-					'plural' => 'Timeline'
-				)
-			)
-		);
+
 
 		$u = new Url;
-		$u->data = serialize($urls);
+		$u->data = serialize($this->urls());
 		$u->save();
 
         $u = new User();
