@@ -1,0 +1,117 @@
+<koken:if false="pjax">
+	<koken:include file="inc/head.html" />
+</koken:not>
+
+<koken:load infinite="true">
+
+	<koken:head>
+		<meta property="og:site_name" content="{{ site.title }}" />
+		<meta property="og:title" content="{{ album.title strip_html="true" }}" />
+		<meta property="og:description" content="{{ album.summary | album.description strip_html="true" }}" />
+		<meta property="og:type" content="website" />
+		<meta property="og:url" content="{{ album.url }}" />
+		<koken:covers><koken:shift>
+		<meta property="og:image" content="{{ content.presets.medium_large.url }}" />
+		<meta property="og:image:width" content="{{ content.presets.medium_large.width }}" />
+		<meta property="og:image:height" content="{{ content.presets.medium_large.height }}" />
+		</koken:shift></koken:covers>
+		<koken:not empty="profile.twitter">
+			<meta name="twitter:card" content="gallery" />
+			<meta name="twitter:site" content="@{{ profile.twitter }}" />
+			<meta name="twitter:creator" content="@{{ profile.twitter }}" />
+			<koken:covers minimum="4" limit="4">
+				<koken:loop>
+					<meta name="twitter:image{{ index }}" content="{{ content.presets.medium_large.cropped.url }}">
+				</koken:loop>
+			</koken:covers>
+		</koken:not>
+	</koken:head>
+
+	<koken:if false="pjax">
+		<koken:include file="inc/header-album.html" />
+		<div id="lane">
+	</koken:not>
+
+	<koken:if true="settings.album_show_intro">
+
+		<div id="album-intro" class="cell">
+
+			<div class="wrap">
+
+				<h1>
+					{{ album.title }}
+				</h1>
+
+				{{ album.description paragraphs="true" }}
+
+			</div>
+
+		</div>
+
+	</koken:if>
+
+	<koken:loop>
+
+		<div class="cell {{ content.file_type }}" data-aspect="{{ content.aspect_ratio }}">
+
+			<div class="content">
+
+				<koken:content_image>
+
+					<koken:if true="settings.show_share">
+
+						<koken:if true="content.public">
+
+							<koken:include file="inc/share-links.html" />
+
+						</koken:if>
+
+					</koken:if>
+
+					<koken:img lazy="true" respond_to="height" data-lazy-hold="true" />
+
+				</koken:content_image>
+
+				<koken:content_video>
+
+					<koken:video />
+
+				</koken:content_video>
+
+				<koken:if true="settings.show_image_caption">
+
+					<span class="caption">
+						{{ content.title }}
+					</span>
+
+				</koken:if>
+
+			</div>
+
+		</div>
+
+	</koken:loop>
+
+	<koken:if false="pjax">
+		</div>
+	</koken:not>
+
+<koken:else>
+
+	<koken:if false="pjax">
+		<koken:include file="inc/header-index.html" />
+	</koken:not>
+
+	<div id="lane">
+		<koken:note>
+			<p class="null">
+				This album is empty. Please add content to it in the Library.
+			</p>
+		</koken:note>
+	</div>
+
+</koken:load>
+
+<koken:if false="pjax">
+	<koken:include file="inc/footer.html" />
+</koken:not>

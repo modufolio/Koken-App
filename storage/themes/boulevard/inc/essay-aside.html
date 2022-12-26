@@ -1,0 +1,55 @@
+<aside>
+
+	<h2>Recent {{ labels.essay.plural }}</h2>
+
+	<ul>
+
+	<koken:load source="essays" limit="5">
+
+		<koken:loop>
+
+			<li>
+				<koken:link title="View {{ essay.title }}">
+					{{ essay.title }}
+				</koken:link>
+			</li>
+
+		</koken:loop>
+
+	</koken:load>
+
+	</ul>
+
+</aside>
+
+<aside>
+
+	<koken:load source="featured_essays">
+
+		<h2>Featured {{ labels.essay.plural }}</h2>
+
+		<ul>
+
+		<koken:loop>
+
+			<li>
+				<koken:link title="View {{ essay.title }}">
+					{{ essay.title }}
+				</koken:link>
+			</li>
+
+		</koken:loop>
+
+		</ul>
+
+	</koken:load>
+
+</aside>
+
+<aside>
+
+	<h2>Elsewhere</h2>
+
+	<koken:navigation group="essay_aside" fallbacktext="Add links here through the Essay Aside navigation group in the Site editor" />
+
+</aside>

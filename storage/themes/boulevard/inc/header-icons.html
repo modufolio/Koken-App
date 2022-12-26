@@ -1,0 +1,8 @@
+<koken:if true="settings.icon_links_show">
+	<div id="icons">
+		<koken:not empty="profile.email"><a href="mailto:{{ profile.email }}" title="Email" class="email"><i class="kicon-email"></i></a></koken:not>
+		<koken:not empty="profile.twitter"><a href="http://twitter.com/{{ profile.twitter }}" title="Twitter"><i class="kicon-twitter"></i></a></koken:not>
+		<koken:not empty="profile.facebook"><a href="{{ profile.facebook }}" title="Facebook"><i class="kicon-facebook"></i></a></koken:not>
+		<koken:not empty="profile.google_plus"><a href="{{ profile.google_plus }}" title="Google+" rel="publisher"><i class="kicon-gplus"></i></a></koken:not>
+	</div>
+</koken:if>

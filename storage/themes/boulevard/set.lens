@@ -1,0 +1,96 @@
+<koken:include file="inc/head.html" />
+
+	<koken:load>
+
+		<koken:include file="inc/header-set.html" />
+
+		<koken:head>
+			<meta property="og:site_name" content="{{ site.title }}" />
+			<meta property="og:title" content="{{ album.title strip_html="true" }}" />
+			<meta property="og:description" content="{{ album.summary | album.description strip_html="true" }}" />
+			<meta property="og:type" content="website" />
+			<meta property="og:url" content="{{ album.url }}" />
+			<koken:covers><koken:shift>
+			<meta property="og:image" content="{{ content.presets.medium_large.url }}" />
+			<meta property="og:image:width" content="{{ content.presets.medium_large.width }}" />
+			<meta property="og:image:height" content="{{ content.presets.medium_large.height }}" />
+			</koken:shift></koken:covers>
+			<koken:not empty="profile.twitter">
+				<meta name="twitter:card" content="gallery" />
+				<meta name="twitter:site" content="@{{ profile.twitter }}" />
+				<meta name="twitter:creator" content="@{{ profile.twitter }}" />
+				<koken:covers minimum="4" limit="4">
+					<koken:loop>
+						<meta name="twitter:image{{ index }}" content="{{ content.presets.medium_large.cropped.url }}">
+					</koken:loop>
+				</koken:covers>
+			</koken:not>
+		</koken:head>
+
+		<div id="albums">
+
+			<koken:loop>
+
+				<div class="item">
+
+					<koken:link title="View {{ album.title }}">
+
+						<koken:if data="settings.thumb_type" equals="show_all">
+
+							<koken:pulse size="{{ settings.thumb_ratio }}" jsvar="pulse_{{ album.id }}" data="album.covers" crop="fill" autostart="false" link_to="album" speed="1" group="albums" />
+
+						</koken:if>
+
+						<script>
+							pulse_{{ album.id }}.on( 'contentmouseover', function(e) {
+								pulse_{{ album.id }}.play();
+							});
+
+							pulse_{{ album.id }}.on( 'contentmouseout', function(e) {
+						    	pulse_{{ album.id }}.pause();
+							});
+						</script>
+
+						<koken:if data="settings.thumb_type" equals="show_pri">
+
+							<koken:img size="{{ settings.thumb_ratio }}" lazy="true" />
+
+						</koken:if>
+
+					</koken:link>
+
+					<div class="text">
+
+						<koken:if true="settings.albums_show_title">
+							<h2>
+								<koken:link title="View {{ album.title }}">
+									{{ album.title }}
+								</koken:link>
+							</h2>
+						</koken:if>
+
+						<koken:if true="settings.albums_show_summary">
+							<p>
+								{{ album.summary }}
+							</p>
+						</koken:if>
+
+					</div>
+
+				</div>
+
+			</koken:loop>
+
+		</div>
+
+	</koken:load>
+
+<koken:asset file="js/jquery.eqheight.js" />
+
+<script type="text/javascript">
+$(document).ready(function() {
+    $("#albums").eqHeight(".item");
+});
+</script>
+
+<koken:include file="inc/footer.html" />

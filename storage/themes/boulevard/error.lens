@@ -1,0 +1,11 @@
+<koken:include file="inc/head.html" />
+
+<koken:include file="inc/header-index.html" />
+
+<div id="lane">
+
+	Whoops: {{ routed_variables.code }}. <a href="/" title="Head back home">Head back home</a>.
+
+</div>
+
+<koken:include file="inc/footer.html" />

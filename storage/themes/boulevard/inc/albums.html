@@ -1,0 +1,55 @@
+<div id="albums">
+
+	<koken:loop>
+
+		<div class="item">
+
+			<koken:link title="View {{ album.title }}">
+
+				<koken:if data="settings.thumb_type" equals="show_all">
+
+					<koken:pulse size="{{ settings.thumb_ratio }}" jsvar="pulse_{{ album.id }}" data="album.covers" crop="fill" autostart="false" link_to="album" speed="1" group="albums" />
+
+				</koken:if>
+
+				<script>
+					pulse_{{ album.id }}.on( 'contentmouseover', function(e) {
+						pulse_{{ album.id }}.play();
+					});
+
+					pulse_{{ album.id }}.on( 'contentmouseout', function(e) {
+				    	pulse_{{ album.id }}.pause();
+					});
+				</script>
+
+				<koken:if data="settings.thumb_type" equals="show_pri">
+
+					<koken:img size="{{ settings.thumb_ratio }}" lazy="true" />
+
+				</koken:if>
+
+			</koken:link>
+
+			<div class="text">
+
+				<koken:if true="settings.albums_show_title">
+					<h2>
+						<koken:link title="View {{ album.title }}">
+							{{ album.title }}
+						</koken:link>
+					</h2>
+				</koken:if>
+
+				<koken:if true="settings.albums_show_summary">
+					<p>
+						{{ album.summary }}
+					</p>
+				</koken:if>
+
+			</div>
+
+		</div>
+
+	</koken:loop>
+
+</div>

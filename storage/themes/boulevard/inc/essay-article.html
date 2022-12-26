@@ -1,0 +1,78 @@
+<h1>
+	<koken:link title="View {{ essay.title }}">{{ essay.title }}</koken:link>
+</h1>
+
+{{ essay.content }}
+
+<koken:more>
+  <p>
+    <koken:link title="{{ essay.title }}" class="read_more rarr">{{ essay.read_more_label }}</koken:link>
+  </p>
+</koken:more>
+
+<footer>
+
+     <koken:time />&nbsp;&nbsp;/&nbsp;&nbsp;<koken:link title="Permalink url link">Permalink</koken:link><koken:if true="list"><koken:discussion_count>&nbsp;&nbsp;/&nbsp;&nbsp;{{ discussion_count }}</koken:discussion_count></koken:if><koken:if true="settings.show_share_link">&nbsp;&nbsp;/&nbsp;&nbsp;<div class="share_content"><span class="share_button">Share</span>
+          <div class="kshare">
+               <input type="text" class="kshare-input" value="{{ essay.url }}" />
+               <ul class="kshare-items">
+                    <li>
+                    <koken:if empty="profile.twitter"><a href="https://twitter.com/intent/tweet?text={{ essay.title url_encode="true" }}&url={{ essay.url url_encode="true" }}" class="share-twitter" title="Share {{ essay.title url_encode="true" }} on Twitter"><koken:else><a href="https://twitter.com/intent/tweet?text={{ essay.title url_encode="true" }}&url={{ essay.url url_encode="true" }}&via={{ profile.twitter }}" class="share-twitter" title="Share {{ essay.title url_encode="true" }} on Twitter"></koken:if><i class="kicon-twitter"></i></a>
+               </li>
+               <li>
+                    <a target="_blank" href="https://www.facebook.com/sharer.php?u={{ essay.url url_encode="true" }}" class="share-facebook" title="Share {{ essay.title url_encode="true" }} on Facebook"><i class="kicon-facebook"></i></a>
+                    </li>
+                <li>
+                    <a target="_blank" href="http://pinterest.com/pin/create/button/?url={{ essay.url url_encode="true" }}" class="share-pinterest" title="Share {{ essay.title url_encode="true" }} on Pinterest"><i class="kicon-pinterest"></i></a>
+               </li>
+               <li>
+                  <a href="https://www.tumblr.com/widgets/share/tool?posttype=link&canonicalUrl={{ essay.url url_encode="true" }}&content={{ essay.url url_encode="true" }}&caption=%3Cp%3E%3Cstrong%3E%3Ca href=&quot;{{ essay.url url_encode="true" }}&quot; title=&quot;{{ essay.title url_encode="true" }}&quot;%3E{{ essay.title url_encode="true" }}%3C/a%3E%3C%2Fstrong%3E%3C%2Fp%3E%3Cp%3E{{ essay.excerpt url_encode="true" }}%3C%2Fp%3E" class="share-tumblr" title="Share {{ essay.title url_encode="true" }} on Tumblr"><i class="kicon-tumblr"></i></a>
+              </li>
+               <li>
+                    <a target="_blank" href="https://plus.google.com/share?url={{ essay.url url_encode="true" }}" class="share-google" title="Share {{ essay.title url_encode="true" }} on Google+"><i class="kicon-gplus"></i></a>
+               </li>
+              </ul>
+         </div>
+      </div></koken:if>
+
+      <br><br>
+
+     <koken:if true="settings.essay_show_meta">
+
+       	<koken:topics>
+          <div id="essay_topics">
+            Topics:
+            <koken:loop separator=", ">
+              <koken:link title="View {{ album.title }}">
+                {{ album.title }}
+              </koken:link>
+            </koken:loop>
+            &nbsp;&nbsp;/&nbsp;&nbsp;
+          </div>
+       	</koken:topics>
+
+       	<koken:categories>
+          <div id="essay_categories">
+            Categories:
+            <koken:loop separator=", ">
+              <koken:link title="View all {{ labels.essay.plural case='lower' }} in {{ category.title }}">
+                {{ category.title }}
+              </koken:link>
+            </koken:loop>
+            &nbsp;&nbsp;/&nbsp;&nbsp;
+          </div>
+       	</koken:categories>
+
+       	<koken:tags>
+          <div id="essay_tags">
+            <koken:loop separator="&nbsp;">
+              <koken:link title="View all {{ labels.essay.plural case='lower' }} in {{ tag.title }}">
+                #{{ tag.title }}
+              </koken:link>
+            </koken:loop>
+          </div>
+       	</koken:tags>
+
+     </koken:if>
+
+</footer>

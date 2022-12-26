@@ -1,0 +1,38 @@
+<header>
+
+	<div class="in">
+
+		<koken:include file="inc/header-icons.html" />
+
+		<nav>
+
+			<koken:navigation />
+
+			<ol id="lane-nav">
+				<li>
+					<a href="#" id="prev" title="Previous"><span class="arrow">&larr;</span>&nbsp;Previous</a>
+				</li>
+				<li>
+					<a href="#" id="next" title="Next">Next&nbsp;<span class="arrow">&rarr;</span></a>
+				</li>
+			</ol>
+
+		</nav>
+
+		<div id="site-title">
+
+			<koken:if data="settings.site_title_type" equals="text">
+				<h1 class="site">
+					<koken:link to="front" title="{{ labels.home.singular }}">{{ site.title }}</koken:link>
+				</h1>
+			<koken:else>
+				<koken:link to="front" title="{{ labels.home.singular }}"><img src="{{ settings.site_title_img_url }}" alt="{{ site.title }}" class="custom_logo"></koken:link>
+			</koken:if>
+
+			<h2 class="tag"></h2>
+
+		</div>
+
+	</div>
+
+</header>

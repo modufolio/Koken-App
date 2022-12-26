@@ -1,0 +1,55 @@
+<koken:include file="inc/head.html" />
+
+	<koken:include file="inc/header-essays.html" />
+
+	<koken:load limit="{{ settings.essays_index_limit }}">
+
+		<koken:head>
+			<meta property="og:site_name" content="{{ site.title }}" />
+			<meta property="og:description" content="{{ site.description strip_html='true' }}" />
+			<meta property="og:title" content="{{ labels.essay.plural }}" />
+			<meta property="og:type" content="blog" />
+			<meta property="og:url" content="{{ location.site_url }}{{ location.here }}" />
+		</koken:head>
+
+		<div id="text">
+
+			<div class="lcol">
+
+				<koken:loop>
+
+					<article>
+
+						<koken:include file="inc/essay-article.html" />
+
+					</article>
+
+				</koken:loop>
+
+				<koken:include file="inc/pagination.html" />
+
+			</div>
+
+			<div class="rcol">
+
+				<koken:if true="settings.essay_show_aside">
+
+					<koken:include file="inc/essay-aside.html" />
+
+				</koken:if>
+
+			</div>
+
+		</div>
+
+		<koken:else>
+
+			<koken:note>
+				<p class="null">
+					No essays found. Create some in Text.
+				</p>
+			</koken:note>
+
+	</koken:load>
+
+<koken:include file="inc/footer.html" />

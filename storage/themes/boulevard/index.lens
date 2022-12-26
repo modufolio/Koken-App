@@ -1,0 +1,70 @@
+<koken:if false="pjax">
+	<koken:include file="inc/head.html" />
+	<koken:include file="inc/header-index.html" />
+	<div id="lane">
+</koken:if>
+
+<koken:load limit="4">
+	<koken:head>
+		<meta property="og:site_name" content="{{ site.title }}" />
+		<meta property="og:title" content="{{ site.title }}" />
+		<meta property="og:description" content="{{ site.description strip_html='true' }}" />
+		<meta property="og:type" content="website" />
+		<koken:first>
+			<koken:covers>
+				<koken:first>
+					<meta property="og:image" content="{{ content.presets.medium_large.url }}" />
+					<meta property="og:image:width" content="{{ content.presets.medium_large.width }}" />
+					<meta property="og:image:height" content="{{ content.presets.medium_large.height }}" />
+				</koken:first>
+			</koken:covers>
+		</koken:first>
+		<meta property="og:url" content="{{ location.site_url }}{{ location.here }}" />
+		<koken:not empty="profile.twitter">
+			<meta name="twitter:card" content="gallery" />
+			<meta name="twitter:site" content="@{{ profile.twitter }}" />
+			<meta name="twitter:creator" content="@{{ profile.twitter }}" />
+			<koken:loop>
+				<koken:covers>
+					<koken:shift>
+						<meta name="twitter:image{{ index }}" content="{{ content.presets.medium_large.cropped.url }}">
+					</koken:shift>
+				</koken:covers>
+			</koken:loop>
+		</koken:not>
+	</koken:head>
+</koken:load>
+
+<koken:load infinite="true">
+
+	<koken:loop>
+		<div class="cell">
+			<koken:link title="View {{ album.title }}">
+				<koken:img respond_to="height" lazy="true" data-lazy-hold="true" />
+			</koken:link>
+			<koken:if true="settings.show_strip_title">
+				<span class="caption">
+					<koken:link title="View {{ album.title }}">
+						{{ album.title }}
+					</koken:link>
+				</span>
+			</koken:if>
+		</div>
+	</koken:loop>
+
+<koken:else>
+
+<koken:note>
+
+	<p class="null">
+		This page displays featured albums. Assign some in the Library.
+	</p>
+
+</koken:note>
+
+</koken:load>
+
+<koken:if false="pjax">
+	</div>
+	<koken:include file="inc/footer.html" />
+</koken:not>

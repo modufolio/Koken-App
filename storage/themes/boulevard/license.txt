@@ -1,0 +1,38 @@
+LICENSE AGREEMENT
+
+This license is a legal agreement between you and NetObjects Inc. for the use of the Boulevard theme (all versions) Software (the "Software"). By purchasing and downloading any version of the Software you agree to be bound by the terms of this license. NetObjects Inc. reserves the right to alter this agreement at any time, for any reason, without notice.
+
+PERMITTED USE
+
+You may use the Software to publish a web site using Koken.
+
+RESTRICTIONS
+
+You may not:
+
+- Reproduce, distribute, transfer or sub-license the Software or portions thereof to any third party.
+- Sell, rent, lease, assign or sublet the Software or portions thereof.
+- Use the Software in violation of any United States or international law or regulation.
+- Copy the Software source files to a separate, non-licensed installation of Koken.
+- Reverse engineer or adapt the Software source code for use with other software.
+
+IDEMNITY
+
+You agree to idemnify and hold harmless NetObjects Inc. for any third-party claims, actions or suits, as well as any related expenses, liabilities, damages, settlements or fees arising from your use or misues of the Software, or a violation of any terms of this license.
+
+DISCLAIMER OF WARRANTY
+
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, WARRANTIES OF QUALITY, PERFORMANCE, NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE. FURTHER, NETOBJECTS INC. DOES NOT WARRANT THAT THE SOFTWARE OR ANY RELATED SERVICE WILL ALWAYS BE AVAILABLE.
+
+LIMITATIONS OF LIABILITY
+
+YOU ASSUME ALL RISK ASSOCIATED WITH THE INSTALLATION AND USE OF THE SOFTWARE. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS OF THE SOFTWARE BE LIABLE FOR CLAIMS, DAMAGES OR OTHER LIABILITY ARISING FROM, OUT OF, OR IN CONNECTION WITH THE SOFTWARE. LICENSE HOLDERS ARE SOLELY RESPONSIBLE FOR DETERMINING THE APPROPRIATENESS OF USE AND ASSUME ALL RISKS ASSOCIATED WITH ITS USE, INCLUDING BUT NOT LIMITED TO THE RISKS OF PROGRAM ERRORS, DAMAGE TO EQUIPMENT, LOSS OF DATA OR SOFTWARE PROGRAMS, OR UNAVAILABILITY OR INTERRUPTION OF OPERATIONS.
+
+QUESTIONS
+
+Questions concerning this policy may be submitted to support@koken.me.
+
+COPYRIGHTS
+
+(c) Copyright 2017 NetObjects Inc. All Rights Reserved.
+
