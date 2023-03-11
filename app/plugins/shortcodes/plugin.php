@@ -302,7 +302,7 @@ HTML;
         }
 
         return <<<HTML
-<figure class="k-content-embed" ${fig_style}>
+<figure class="k-content-embed" {$fig_style}>
 	<koken:load source="content" filter:id="{$attr['id']}"$context_param>
 		<div class="k-content">
 			$link_pre
