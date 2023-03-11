@@ -11,7 +11,7 @@ Let me know if you encounter some bugs with installing or updating koken.
 ### Setup instructions
 Created a new installer because it wasn't working in php8.0
 
-1. download the zip with the tag 1.1.6 / unpack
+1. download the zip with the tag 1.1.7 / unpack
 
 2. Go to the url wwww.yourdomain.com/install.html
 
