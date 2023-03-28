@@ -1,7 +1,7 @@
 <?php
 
     error_reporting(0);
-    define('KOKEN_VERSION', '1.1.8');
+    define('KOKEN_VERSION', '1.1.9');
     define('BASEPATH', true);
 
     ini_set('default_charset', 'UTF-8');
