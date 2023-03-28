@@ -19,13 +19,8 @@ class System extends Koken_Controller
 
     public function index()
     {
-        // TODO: require auth for this controller
-        // director-core will need some reworking
-        // if (!$this->auth)
-        // {
-        // 	$this->error('401', 'The action requires an authentication token.');
-        // return;
-        // }
+
+
 
         list($params, ) = $this->parse_params(func_get_args());
 
@@ -102,9 +97,15 @@ class System extends Koken_Controller
             $parallel = MAX_PARALLEL_REQUESTS;
         }
 
-        // TODO: Some of this info should be limited to authenticated sessions
+        $auth = $this->authenticate();
+
+
         $data = array(
             'version' => KOKEN_VERSION,
+            'max_parallel_requests' => $parallel,
+        );
+
+        $authData = [
             'operating_system' => PHP_OS,
             'memory_limit' => ini_get('memory_limit'),
             'auto_updates' => AUTO_UPDATE,
@@ -117,10 +118,14 @@ class System extends Koken_Controller
             'timestamp' => (int) max($c->modified_on, $a->modified_on, $t->modified_on),
             'rewrite_enabled' => $this->check_for_rewrite(),
             'mysql_version' => $this->db->call_function('get_server_info', $this->db->conn_id),
-            'max_parallel_requests' => $parallel,
             'webhost' => $webhost->key,
             'server_software' => $_SERVER['SERVER_SOFTWARE'] ?? 'Unknown',
-        );
+        ];
+
+        if ($auth !== false) {
+            $data = array_merge($data, $authData);
+        }
+
 
         $this->set_response_data($data);
     }
