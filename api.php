@@ -1,6 +1,6 @@
 <?php
 
-
+require 'bootstrap.php';
 
 $__uri = $_SERVER['REQUEST_URI'];
 

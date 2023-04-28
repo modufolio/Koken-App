@@ -1,5 +1,8 @@
 <?php
 
+use Koken\Toolkit\Dir;
+use Koken\Toolkit\F;
+
 class Theme
 {
     public function __get($key)
@@ -8,68 +11,43 @@ class Theme
         return $CI->$key;
     }
 
+    public function defaultInfo(array $info, string $theme, string $preview): array
+    {
+        return [
+            'name' => $info['name'] ?? '',
+            'version' => $info['version'] ?? '',
+            'description' => $info['description'] ?? '',
+            'demo' => $info['description'] ?? false,
+            'documentation' => $info['documentation'] ?? false,
+            'path' => $theme,
+            'preview' => $preview,
+            'preview_aspect' => 1.558,
+            'author' => $info['author'] ?? false,
+        ];
+    }
+
     public function read($keys = false)
     {
-        $dir = get_dir_file_info(FCPATH . 'storage' . DIRECTORY_SEPARATOR . 'themes');
-        $base_host = '//' . $_SERVER['HTTP_HOST'] . preg_replace('/api\.php(.*)?$/', '', $_SERVER['SCRIPT_NAME']);
-        $base =  $base_host . 'storage/themes/';
-        $final = [];
+        $themesDir = BASE_DIR . '/storage/themes';
+        $dir = Dir::dirs($themesDir);
 
-        foreach ($dir as $key => $val) {
-            $p = $val['server_path'];
-            $path = basename($p);
-            if (strpos($path, ' ') !== false) {
+        $data = [];
+        foreach ($dir as $theme) {
+
+
+            $info = F::read($themesDir . '/' . $theme . '/info.json');
+            if (!isset($info)) {
                 continue;
             }
-            $info = $p . DIRECTORY_SEPARATOR . 'info.json';
-            $guid = $p . DIRECTORY_SEPARATOR . 'koken.guid';
-            $guid_old = $p . DIRECTORY_SEPARATOR . '.guid';
-            if (is_dir($p) && file_exists($info)) {
-                $info_array = json_decode(file_get_contents($info));
-                if ($info_array) {
-                    $preview = $p . DIRECTORY_SEPARATOR . 'preview.jpg';
-                    if (file_exists($preview)) {
-                        $preview = $base . $key . '/preview.jpg';
-                    } else {
-                        $preview = str_replace('storage/themes', 'app/site/themes', $base) . '/preview.jpg';
-                    }
-                    list($w, $h) = getimagesize(FCPATH . str_replace($base_host, '', $preview));
-                    $a = array(
-                        'name' => $info_array->name,
-                        'version' => $info_array->version,
-                        'description' => $info_array->description,
-                        'demo' => isset($info_array->demo) ? $info_array->demo : false,
-                        'documentation' => isset($info_array->documentation) ? $info_array->documentation : false,
-                        'path' => $key,
-                        'preview' => $preview,
-                        'preview_aspect' => $w/$h,
-                        'author' => $info_array->author
-                    );
 
-                    if (file_exists($guid)) {
-                        $a['koken_store_guid'] = file_get_contents($guid);
-                    } elseif (file_exists($guid_old)) {
-                        $a['koken_store_guid'] = file_get_contents($guid_old);
-                    }
+            $info = json_decode($info, true);
+            $preview = '/storage/themes/' . $theme . '/preview.jpg';
 
-                    if ($keys) {
-                        $final[$key] = $a;
-                    } else {
-                        $final[] = $a;
-                    }
-                }
-            }
+            $data[] = $this->defaultInfo($info, $theme, $preview);
+
         }
 
-        if (!$keys) {
-            function sortByName($a, $b)
-            {
-                return intval($a['name'] > $b['name']);
-            }
-
-            usort($final, 'sortByName');
-        }
-
-        return $final;
+        return $data;
     }
+
 }
