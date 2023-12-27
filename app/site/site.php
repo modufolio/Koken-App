@@ -2,7 +2,7 @@
 
     error_reporting(0);
 
-    define('KOKEN_VERSION', '1.1.9');
+    define('KOKEN_VERSION', '1.2.0');
     define('BASEPATH', true);
 
     ini_set('default_charset', 'UTF-8');
