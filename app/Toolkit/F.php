@@ -2,6 +2,7 @@
 
 namespace Koken\Toolkit;
 
+use Koken\Toolkit\Str;
 use Exception;
 use Throwable;
 use ZipArchive;
