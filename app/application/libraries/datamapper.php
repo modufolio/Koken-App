@@ -41,7 +41,7 @@ define('DMZ_VERSION', '1.8.2');
  *
  *
  */
-class DataMapper implements IteratorAggregate
+class DataMapper extends stdClass implements IteratorAggregate
 {
     /**
      * Stores the shared configuration

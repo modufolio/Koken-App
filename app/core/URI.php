@@ -31,7 +31,7 @@
  * @author		EllisLab Dev Team
  * @link		http://codeigniter.com/user_guide/libraries/uri.html
  */
-class CI_URI
+class CI_URI extends stdClass
 {
     /**
      * List of cached uri segments

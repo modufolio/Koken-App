@@ -31,7 +31,7 @@
  * @author		EllisLab Dev Team
  * @link		http://codeigniter.com/user_guide/libraries/input.html
  */
-class CI_Input
+class CI_Input extends stdClass
 {
     /**
      * IP address of the current user

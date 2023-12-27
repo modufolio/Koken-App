@@ -31,7 +31,7 @@
  * @category	Libraries
  * @link		http://codeigniter.com/user_guide/general/routing.html
  */
-class CI_Router
+class CI_Router extends stdClass
 {
     /**
      * Config class

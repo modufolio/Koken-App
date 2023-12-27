@@ -44,6 +44,8 @@ class CI_DB_mysqli_driver extends CI_DB
     public $_like_escape_str = '';
     public $_like_escape_chr = '';
 
+    public $_has_shutdown_hook = false;
+
     /**
      * The syntax to count rows is slightly different across different
      * database engines, so this string appears in each driver and is

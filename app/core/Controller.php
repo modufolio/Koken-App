@@ -32,7 +32,7 @@
  * @author		EllisLab Dev Team
  * @link		http://codeigniter.com/user_guide/general/controllers.html
  */
-class CI_Controller
+class CI_Controller extends stdClass
 {
     private static $instance;
 

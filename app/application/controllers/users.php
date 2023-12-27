@@ -20,7 +20,7 @@ class Users extends Koken_Controller
             if ($u->exists()) {
                 $subject = 'Koken: Password reset requested';
                 $message = "Hi there -\n\nSomeone (hopefully you!) just requested that the password to your Koken installation at $koken_url_info->base be reset. If you did not request a password reset, ignore this email and your password will stay the same. If you do need your password reset, click the link below.\n\n{$koken_url_info->base}api.php?/users/reset_password/$u->internal_id\n\n- Koken";
-                Shutter::email($u->email, 'Koken', $u->email, $subject, $message);
+                // Shutter::email($u->email, 'Koken', $u->email, $subject, $message);
                 $this->set_response_data(array('success' => true));
             } else {
                 $this->error('404', 'User not found.');
@@ -36,7 +36,7 @@ class Users extends Koken_Controller
 
                 $subject = 'Koken: Your password has been reset';
                 $message = "Your Koken password has been successfully reset.\n\nYour new password: $new\n\n- Koken";
-                Shutter::email($u->email, 'Koken', $u->email, $subject, $message);
+                // Shutter::email($u->email, 'Koken', $u->email, $subject, $message);
 
                 echo $message;
                 exit;
