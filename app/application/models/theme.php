@@ -41,6 +41,7 @@ class Theme
             }
 
             $info = json_decode($info, true);
+            $info = is_array($info) ? $info : [];
             $preview = '/storage/themes/' . $theme . '/preview.jpg';
 
             $data[] = $this->defaultInfo($info, $theme, $preview);
