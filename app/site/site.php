@@ -1,6 +1,7 @@
 <?php
 
     error_reporting(0);
+
     define('KOKEN_VERSION', '1.1.9');
     define('BASEPATH', true);
 
@@ -66,7 +67,7 @@
     if (!isset($draft)) {
         $draft = false;
     } elseif ($draft && isset($_GET['preview'])) {
-        $preview = filter_var($_GET['preview'], FILTER_SANITIZE_STRING);
+        $preview = filter_var($_GET['preview'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     }
 
     if ($draft) {
