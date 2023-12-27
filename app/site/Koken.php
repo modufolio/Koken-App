@@ -580,13 +580,15 @@ META;
             $url = $bits[1];
         }
 
-        if (self::$draft && !is_null(self::$site['draft_id'])) {
+        if (self::$draft && isset(self::$site['draft_id'])) {
             $url .= '/draft_context:' . self::$site['draft_id'];
         } elseif (self::$preview) {
             $url .= '/draft_context:' . self::$preview;
         }
 
         $url = Shutter::filter('site.api_url', $url);
+
+
 
         if ($cache) {
             $cache = Shutter::get_cache('api' . $url);
