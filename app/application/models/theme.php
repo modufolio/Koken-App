@@ -44,7 +44,7 @@ class Theme
             $info = is_array($info) ? $info : [];
             $preview = '/storage/themes/' . $theme . '/preview.jpg';
 
-            $data[] = $this->defaultInfo($info, $theme, $preview);
+            $keys === true ? $data[$theme] = $this->defaultInfo($info, $theme, $preview) : $data[] = $this->defaultInfo($info, $theme, $preview);
 
         }
 
