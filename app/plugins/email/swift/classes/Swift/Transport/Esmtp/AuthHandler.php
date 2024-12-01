@@ -145,6 +145,7 @@ class Swift_Transport_Esmtp_AuthHandler implements Swift_Transport_EsmtpHandler
      *
      * @return bool
      */
+    #[\Override]
     public function getHandledKeyword()
     {
         return 'AUTH';
@@ -155,6 +156,7 @@ class Swift_Transport_Esmtp_AuthHandler implements Swift_Transport_EsmtpHandler
      *
      * @param string[] $parameters
      */
+    #[\Override]
     public function setKeywordParams(array $parameters)
     {
         $this->_esmtpParams = $parameters;
@@ -165,13 +167,14 @@ class Swift_Transport_Esmtp_AuthHandler implements Swift_Transport_EsmtpHandler
      *
      * @param Swift_Transport_SmtpAgent $agent to read/write
      */
+    #[\Override]
     public function afterEhlo(Swift_Transport_SmtpAgent $agent)
     {
         if ($this->_username) {
             $count = 0;
             foreach ($this->_getAuthenticatorsForAgent() as $authenticator) {
                 if (in_array(
-                    strtolower($authenticator->getAuthKeyword()),
+                    strtolower((string) $authenticator->getAuthKeyword()),
                     array_map('strtolower', $this->_esmtpParams)
                 )) {
                     $count++;
@@ -190,23 +193,26 @@ class Swift_Transport_Esmtp_AuthHandler implements Swift_Transport_EsmtpHandler
     /**
      * Not used.
      */
+    #[\Override]
     public function getMailParams()
     {
-        return array();
+        return [];
     }
 
     /**
      * Not used.
      */
+    #[\Override]
     public function getRcptParams()
     {
-        return array();
+        return [];
     }
 
     /**
      * Not used.
      */
-    public function onCommand(Swift_Transport_SmtpAgent $agent, $command, $codes = array(), &$failedRecipients = null, &$stop = false)
+    #[\Override]
+    public function onCommand(Swift_Transport_SmtpAgent $agent, $command, $codes = [], &$failedRecipients = null, &$stop = false)
     {
     }
 
@@ -219,6 +225,7 @@ class Swift_Transport_Esmtp_AuthHandler implements Swift_Transport_EsmtpHandler
      *
      * @return int
      */
+    #[\Override]
     public function getPriorityOver($esmtpKeyword)
     {
         return 0;
@@ -229,14 +236,16 @@ class Swift_Transport_Esmtp_AuthHandler implements Swift_Transport_EsmtpHandler
      *
      * @return string[]
      */
+    #[\Override]
     public function exposeMixinMethods()
     {
-        return array('setUsername', 'getUsername', 'setPassword', 'getPassword', 'setAuthMode', 'getAuthMode');
+        return ['setUsername', 'getUsername', 'setPassword', 'getPassword', 'setAuthMode', 'getAuthMode'];
     }
 
     /**
      * Not used.
      */
+    #[\Override]
     public function resetState()
     {
     }
@@ -256,7 +265,7 @@ class Swift_Transport_Esmtp_AuthHandler implements Swift_Transport_EsmtpHandler
 
         foreach ($this->_authenticators as $authenticator) {
             if (strtolower($authenticator->getAuthKeyword()) == $mode) {
-                return array($authenticator);
+                return [$authenticator];
             }
         }
 

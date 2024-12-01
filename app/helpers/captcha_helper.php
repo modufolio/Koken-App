@@ -45,15 +45,15 @@
 if (! function_exists('create_captcha')) {
     function create_captcha($data = '', $img_path = '', $img_url = '', $font_path = '')
     {
-        $defaults = array('word' => '', 'img_path' => '', 'img_url' => '', 'img_width' => '150', 'img_height' => '30', 'font_path' => '', 'expiration' => 7200);
+        $defaults = ['word' => '', 'img_path' => '', 'img_url' => '', 'img_width' => '150', 'img_height' => '30', 'font_path' => '', 'expiration' => 7200];
 
         foreach ($defaults as $key => $val) {
             if (! is_array($data)) {
-                if (! isset($$key) or $$key == '') {
-                    $$key = $val;
+                if (! isset(${$key}) or ${$key} == '') {
+                    ${$key} = $val;
                 }
             } else {
-                $$key = (! isset($data[$key])) ? $val : $data[$key];
+                ${$key} = (! isset($data[$key])) ? $val : $data[$key];
             }
         }
 
@@ -77,7 +77,7 @@ if (! function_exists('create_captcha')) {
         // Remove old images
         // -----------------------------------
 
-        list($usec, $sec) = explode(" ", microtime());
+        [$usec, $sec] = explode(" ", microtime());
         $now = ((float)$usec + (float)$sec);
 
         $current_dir = @opendir($img_path);
@@ -114,7 +114,7 @@ if (! function_exists('create_captcha')) {
                     for ($i = 0; $i < $word_length; $i++) {
                         $word .= $pool[random_int(0, $rand_max)];
                     }
-                } catch (Exception $e) {
+                } catch (Exception) {
                     // This means fallback to the next possible
                     // alternative to random_int()
                     $word = '';
@@ -128,7 +128,7 @@ if (! function_exists('create_captcha')) {
             if (($bytes = _ci_captcha_get_random_bytes($pool_length)) !== false) {
                 $byte_index = $word_index = 0;
                 while ($word_index < $word_length) {
-                    if (($rand_index = unpack('C', $bytes[$byte_index++])) > $rand_max) {
+                    if (($rand_index = unpack('C', (string) $bytes[$byte_index++])) > $rand_max) {
                         // Was this the last byte we have?
                         // If so, try to fetch more.
                         if ($byte_index === $pool_length) {
@@ -173,9 +173,9 @@ if (! function_exists('create_captcha')) {
         // -----------------------------------
 
         $length	= strlen($word);
-        $angle	= ($length >= 6) ? rand(-($length-6), ($length-6)) : 0;
-        $x_axis	= rand(6, (360/$length)-16);
-        $y_axis = ($angle >= 0) ? rand($img_height, $img_width) : rand(6, $img_height);
+        $angle	= ($length >= 6) ? random_int(-($length-6), ($length-6)) : 0;
+        $x_axis	= random_int(6, (360/$length)-16);
+        $y_axis = ($angle >= 0) ? random_int($img_height, $img_width) : random_int(6, $img_height);
 
         // -----------------------------------
         // Create image
@@ -235,21 +235,21 @@ if (! function_exists('create_captcha')) {
 
         if ($use_font == false) {
             $font_size = 5;
-            $x = rand(0, $img_width/($length/3));
+            $x = random_int(0, $img_width/($length/3));
             $y = 0;
         } else {
             $font_size	= 16;
-            $x = rand(0, $img_width/($length/1.5));
+            $x = random_int(0, $img_width/($length/1.5));
             $y = $font_size+2;
         }
 
         for ($i = 0; $i < strlen($word); $i++) {
             if ($use_font == false) {
-                $y = rand(0, $img_height/2);
+                $y = random_int(0, $img_height/2);
                 imagestring($im, $font_size, $x, $y, substr($word, $i, 1), $text_color);
                 $x += ($font_size*2);
             } else {
-                $y = rand($img_height/2, $img_height-3);
+                $y = random_int($img_height/2, $img_height-3);
                 imagettftext($im, $font_size, $angle, $x, $y, $text_color, $font_path, substr($word, $i, 1));
                 $x += $font_size;
             }
@@ -274,7 +274,7 @@ if (! function_exists('create_captcha')) {
 
         ImageDestroy($im);
 
-        return array('word' => $word, 'time' => $now, 'image' => $img);
+        return ['word' => $word, 'time' => $now, 'image' => $img];
     }
 
     function _ci_captcha_get_random_bytes($length)

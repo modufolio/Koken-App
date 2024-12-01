@@ -17,20 +17,17 @@
 class Swift_CharacterReader_GenericFixedWidthReader implements Swift_CharacterReader
 {
     /**
-     * The number of bytes in a single character.
-     *
-     * @var int
-     */
-    private $_width;
-
-    /**
      * Creates a new GenericFixedWidthReader using $width bytes per character.
      *
-     * @param int     $width
+     * @param int $_width
      */
-    public function __construct($width)
+    public function __construct(
+        /**
+         * The number of bytes in a single character.
+         */
+        private $_width
+    )
     {
-        $this->_width = $width;
     }
 
     /**
@@ -43,6 +40,7 @@ class Swift_CharacterReader_GenericFixedWidthReader implements Swift_CharacterRe
      *
      * @return int
      */
+    #[\Override]
     public function getCharPositions($string, $startOffset, &$currentMap, &$ignoredChars)
     {
         $strlen = strlen($string);
@@ -59,6 +57,7 @@ class Swift_CharacterReader_GenericFixedWidthReader implements Swift_CharacterRe
      *
      * @return int
      */
+    #[\Override]
     public function getMapType()
     {
         return self::MAP_TYPE_FIXED_LEN;
@@ -78,6 +77,7 @@ class Swift_CharacterReader_GenericFixedWidthReader implements Swift_CharacterRe
      *
      * @return int
      */
+    #[\Override]
     public function validateByteSequence($bytes, $size)
     {
         $needed = $this->_width - $size;
@@ -90,6 +90,7 @@ class Swift_CharacterReader_GenericFixedWidthReader implements Swift_CharacterRe
      *
      * @return int
      */
+    #[\Override]
     public function getInitialByteSize()
     {
         return $this->_width;

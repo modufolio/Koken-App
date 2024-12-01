@@ -11,7 +11,7 @@ namespace ZipMerge\Zip\Core\Header;
 
 use com\grandt\BinStringStatic;
 
-class EndOfCentralDirectory extends AbstractZipHeader
+class EndOfCentralDirectory extends AbstractZipHeader implements \Stringable
 {
     public $offset;
 
@@ -46,6 +46,7 @@ class EndOfCentralDirectory extends AbstractZipHeader
         }
     }
 
+    #[\Override]
     public function parseHeader($handle)
     {
         if ($handle != null) {
@@ -66,7 +67,8 @@ class EndOfCentralDirectory extends AbstractZipHeader
         }
     }
 
-    public function __toString()
+    #[\Override]
+    public function __toString(): string
     {
         $this->zipCommentLength = BinStringStatic::_strlen($this->zipComment);
         $eocd = AbstractZipHeader::ZIP_END_OF_CENTRAL_DIRECTORY;

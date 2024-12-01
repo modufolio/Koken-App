@@ -32,7 +32,7 @@
 if (! function_exists('singular')) {
     function singular($str)
     {
-        $str = strtolower(trim($str));
+        $str = strtolower(trim((string) $str));
         $end5 = substr($str, -5);
         $end4 = substr($str, -4);
         $end3 = substr($str, -3);
@@ -51,11 +51,11 @@ if (! function_exists('singular')) {
             $str = substr($str, 0, -3).'y';
         } elseif ($end3 == 'men') {
             $str = substr($str, 0, -2).'an';
-        } elseif ($end3 == 'xes' && strlen($str) > 4 or in_array($end3, array('ses', 'hes', 'oes'))) {
+        } elseif ($end3 == 'xes' && strlen($str) > 4 or in_array($end3, ['ses', 'hes', 'oes'])) {
             $str = substr($str, 0, -2);
-        } elseif (in_array($end2, array('da', 'ia', 'la'))) {
+        } elseif (in_array($end2, ['da', 'ia', 'la'])) {
             $str = substr($str, 0, -1).'um';
-        } elseif (in_array($end2, array('bi', 'ei', 'gi', 'li', 'mi', 'pi'))) {
+        } elseif (in_array($end2, ['bi', 'ei', 'gi', 'li', 'mi', 'pi'])) {
             $str = substr($str, 0, -1).'us';
         } else {
             if ($end1 == 's' && $end2 != 'us' && $end2 != 'ss') {
@@ -82,7 +82,7 @@ if (! function_exists('singular')) {
 if (! function_exists('plural')) {
     function plural($str, $force = false)
     {
-        $str = strtolower(trim($str));
+        $str = strtolower(trim((string) $str));
         $end3 = substr($str, -3);
         $end2 = substr($str, -2);
         $end1 = substr($str, -1);
@@ -91,9 +91,9 @@ if (! function_exists('plural')) {
             $str .= 'x';
         } elseif ($end3 == 'man') {
             $str = substr($str, 0, -2).'en';
-        } elseif (in_array($end3, array('dum', 'ium', 'lum'))) {
+        } elseif (in_array($end3, ['dum', 'ium', 'lum'])) {
             $str = substr($str, 0, -2).'a';
-        } elseif (strlen($str) > 4 && in_array($end3, array('bus', 'eus', 'gus', 'lus', 'mus', 'pus'))) {
+        } elseif (strlen($str) > 4 && in_array($end3, ['bus', 'eus', 'gus', 'lus', 'mus', 'pus'])) {
             $str = substr($str, 0, -2).'i';
         } elseif ($end3 == 'ife') {
             $str = substr($str, 0, -2).'ves';
@@ -113,7 +113,7 @@ if (! function_exists('plural')) {
             } else {
                 $str .= 'es';
             }
-        } elseif ($end1 == 'x' || in_array($end2, array('ss', 'ch', 'sh'))) {
+        } elseif ($end1 == 'x' || in_array($end2, ['ss', 'ch', 'sh'])) {
             $str .= 'es';
         } elseif ($end1 == 's') {
             if ($force == true) {
@@ -141,8 +141,8 @@ if (! function_exists('plural')) {
 if (! function_exists('camelize')) {
     function camelize($str)
     {
-        $str = 'x'.strtolower(trim($str));
-        $str = ucwords(preg_replace('/[\s_]+/', ' ', $str));
+        $str = 'x'.strtolower(trim((string) $str));
+        $str = ucwords((string) preg_replace('/[\s_]+/', ' ', $str));
         return substr(str_replace(' ', '', $str), 1);
     }
 }
@@ -161,7 +161,7 @@ if (! function_exists('camelize')) {
 if (! function_exists('underscore')) {
     function underscore($str)
     {
-        return preg_replace('/[\s]+/', '_', strtolower(trim($str)));
+        return preg_replace('/[\s]+/', '_', strtolower(trim((string) $str)));
     }
 }
 
@@ -179,7 +179,7 @@ if (! function_exists('underscore')) {
 if (! function_exists('humanize')) {
     function humanize($str)
     {
-        return ucwords(preg_replace('/[_]+/', ' ', strtolower(trim($str))));
+        return ucwords((string) preg_replace('/[_]+/', ' ', strtolower(trim((string) $str))));
     }
 }
 

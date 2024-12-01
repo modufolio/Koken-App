@@ -66,7 +66,7 @@ if (! function_exists('heading')) {
 if (! function_exists('ul')) {
     function ul($list, $attributes = '')
     {
-        return _list('ul', $list, $attributes);
+        return _list($list, 'ul', $attributes);
     }
 }
 
@@ -85,7 +85,7 @@ if (! function_exists('ul')) {
 if (! function_exists('ol')) {
     function ol($list, $attributes = '')
     {
-        return _list('ol', $list, $attributes);
+        return _list($list, 'ol', $attributes);
     }
 }
 
@@ -104,7 +104,7 @@ if (! function_exists('ol')) {
  * @return	string
  */
 if (! function_exists('_list')) {
-    function _list($type = 'ul', $list, $attributes = '', $depth = 0)
+    function _list($list, $type = 'ul', $attributes = '', $depth = 0)
     {
         // If an array wasn't submitted there's nothing to do...
         if (! is_array($list)) {
@@ -142,7 +142,7 @@ if (! function_exists('_list')) {
                 $out .= $val;
             } else {
                 $out .= $_last_list_item."\n";
-                $out .= _list($type, $val, '', $depth + 4);
+                $out .= _list($val, $type, '', $depth + 4);
                 $out .= str_repeat(" ", $depth + 2);
             }
 
@@ -190,7 +190,7 @@ if (! function_exists('img')) {
     function img($src = '', $index_page = false)
     {
         if (! is_array($src)) {
-            $src = array('src' => $src);
+            $src = ['src' => $src];
         }
 
         // If there is no alt attribute defined, set it to an empty string
@@ -201,7 +201,7 @@ if (! function_exists('img')) {
         $img = '<img';
 
         foreach ($src as $k=>$v) {
-            if ($k == 'src' and strpos($v, '://') === false) {
+            if ($k == 'src' and !str_contains((string) $v, '://')) {
                 $CI =& get_instance();
 
                 if ($index_page === true) {
@@ -285,7 +285,7 @@ if (! function_exists('link_tag')) {
 
         if (is_array($href)) {
             foreach ($href as $k=>$v) {
-                if ($k == 'href' and strpos($v, '://') === false) {
+                if ($k == 'href' and !str_contains((string) $v, '://')) {
                     if ($index_page === true) {
                         $link .= 'href="'.$CI->config->site_url($v).'" ';
                     } else {
@@ -298,7 +298,7 @@ if (! function_exists('link_tag')) {
 
             $link .= "/>";
         } else {
-            if (strpos($href, '://') !== false) {
+            if (str_contains((string) $href, '://')) {
                 $link .= 'href="'.$href.'" ';
             } elseif ($index_page === true) {
                 $link .= 'href="'.$CI->config->site_url($href).'" ';
@@ -339,11 +339,11 @@ if (! function_exists('meta')) {
         // Since we allow the data to be passes as a string, a simple array
         // or a multidimensional one, we need to do a little prepping.
         if (! is_array($name)) {
-            $name = array(array('name' => $name, 'content' => $content, 'type' => $type, 'newline' => $newline));
+            $name = [['name' => $name, 'content' => $content, 'type' => $type, 'newline' => $newline]];
         } else {
             // Turn single array into multidimensional
             if (isset($name['name'])) {
-                $name = array($name);
+                $name = [$name];
             }
         }
 

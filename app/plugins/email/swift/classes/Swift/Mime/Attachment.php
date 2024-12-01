@@ -15,9 +15,6 @@
  */
 class Swift_Mime_Attachment extends Swift_Mime_SimpleMimeEntity
 {
-    /** Recognized MIME types */
-    private $_mimeTypes = [];
-
     /**
      * Create a new Attachment with $headers, $encoder and $cache.
      *
@@ -25,14 +22,13 @@ class Swift_Mime_Attachment extends Swift_Mime_SimpleMimeEntity
      * @param Swift_Mime_ContentEncoder $encoder
      * @param Swift_KeyCache            $cache
      * @param Swift_Mime_Grammar        $grammar
-     * @param array                     $mimeTypes optional
+     * @param array $_mimeTypes optional
      */
-    public function __construct(Swift_Mime_HeaderSet $headers, Swift_Mime_ContentEncoder $encoder, Swift_KeyCache $cache, Swift_Mime_Grammar $grammar, $mimeTypes = array())
+    public function __construct(Swift_Mime_HeaderSet $headers, Swift_Mime_ContentEncoder $encoder, Swift_KeyCache $cache, Swift_Mime_Grammar $grammar, private $_mimeTypes = [])
     {
         parent::__construct($headers, $encoder, $cache, $grammar);
         $this->setDisposition('attachment');
         $this->setContentType('application/octet-stream');
-        $this->_mimeTypes = $mimeTypes;
     }
 
     /**
@@ -42,6 +38,7 @@ class Swift_Mime_Attachment extends Swift_Mime_SimpleMimeEntity
      *
      * @return int
      */
+    #[\Override]
     public function getNestingLevel()
     {
         return self::LEVEL_MIXED;

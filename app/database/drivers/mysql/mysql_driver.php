@@ -193,8 +193,8 @@ class CI_DB_mysql_driver extends CI_DB
         // "DELETE FROM TABLE" returns 0 affected rows This hack modifies
         // the query so that it returns the number of affected rows
         if ($this->delete_hack === true) {
-            if (preg_match('/^\s*DELETE\s+FROM\s+(\S+)\s*$/i', $sql)) {
-                $sql = preg_replace("/^\s*DELETE\s+FROM\s+(\S+)\s*$/", "DELETE FROM \\1 WHERE 1=1", $sql);
+            if (preg_match('/^\s*DELETE\s+FROM\s+(\S+)\s*$/i', (string) $sql)) {
+                $sql = preg_replace("/^\s*DELETE\s+FROM\s+(\S+)\s*$/", "DELETE FROM \\1 WHERE 1=1", (string) $sql);
             }
         }
 
@@ -302,7 +302,7 @@ class CI_DB_mysql_driver extends CI_DB
 
         // escape LIKE condition wildcards
         if ($like === true) {
-            $str = str_replace(array('%', '_'), array('\\%', '\\_'), $str);
+            $str = str_replace(['%', '_'], ['\\%', '\\_'], $str);
         }
 
         return $str;
@@ -461,22 +461,22 @@ class CI_DB_mysql_driver extends CI_DB
         }
 
         foreach ($this->_reserved_identifiers as $id) {
-            if (strpos($item, '.'.$id) !== false) {
+            if (str_contains((string) $item, '.'.$id)) {
                 $str = $this->_escape_char. str_replace('.', $this->_escape_char.'.', $item);
 
                 // remove duplicates if the user already included the escape
-                return preg_replace('/['.$this->_escape_char.']+/', $this->_escape_char, $str);
+                return preg_replace('/['.$this->_escape_char.']+/', (string) $this->_escape_char, $str);
             }
         }
 
-        if (strpos($item, '.') !== false) {
+        if (str_contains((string) $item, '.')) {
             $str = $this->_escape_char.str_replace('.', $this->_escape_char.'.'.$this->_escape_char, $item).$this->_escape_char;
         } else {
             $str = $this->_escape_char.$item.$this->_escape_char;
         }
 
         // remove duplicates if the user already included the escape
-        return preg_replace('/['.$this->_escape_char.']+/', $this->_escape_char, $str);
+        return preg_replace('/['.$this->_escape_char.']+/', (string) $this->_escape_char, $str);
     }
 
     // --------------------------------------------------------------------
@@ -494,7 +494,7 @@ class CI_DB_mysql_driver extends CI_DB
     public function _from_tables($tables)
     {
         if (! is_array($tables)) {
-            $tables = array($tables);
+            $tables = [$tables];
         }
 
         return '('.implode(', ', $tables).')';
@@ -571,7 +571,7 @@ class CI_DB_mysql_driver extends CI_DB
      * @param	array	the limit clause
      * @return	string
      */
-    public function _update($table, $values, $where, $orderby = array(), $limit = false)
+    public function _update($table, $values, $where, $orderby = [], $limit = false)
     {
         foreach ($values as $key => $val) {
             $valstr[] = $key . ' = ' . $val;
@@ -670,7 +670,7 @@ class CI_DB_mysql_driver extends CI_DB
      * @param	string	the limit clause
      * @return	string
      */
-    public function _delete($table, $where = array(), $like = array(), $limit = false)
+    public function _delete($table, $where = [], $like = [], $limit = false)
     {
         $conditions = '';
 

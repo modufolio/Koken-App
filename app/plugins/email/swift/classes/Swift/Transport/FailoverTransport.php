@@ -41,6 +41,7 @@ class Swift_Transport_FailoverTransport extends Swift_Transport_LoadBalancedTran
      *
      * @return int
      */
+    #[\Override]
     public function send(Swift_Mime_Message $message, &$failedRecipients = null)
     {
         $maxTransports = count($this->_transports);
@@ -54,7 +55,7 @@ class Swift_Transport_FailoverTransport extends Swift_Transport_LoadBalancedTran
                 }
 
                 return $transport->send($message, $failedRecipients);
-            } catch (Swift_TransportException $e) {
+            } catch (Swift_TransportException) {
                 $this->_killCurrentTransport();
             }
         }
@@ -68,6 +69,7 @@ class Swift_Transport_FailoverTransport extends Swift_Transport_LoadBalancedTran
         return $sent;
     }
 
+    #[\Override]
     protected function _getNextTransport()
     {
         if (!isset($this->_currentTransport)) {
@@ -77,6 +79,7 @@ class Swift_Transport_FailoverTransport extends Swift_Transport_LoadBalancedTran
         return $this->_currentTransport;
     }
 
+    #[\Override]
     protected function _killCurrentTransport()
     {
         $this->_currentTransport = null;

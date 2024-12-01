@@ -13,11 +13,8 @@
  *
  * @author     Chris Corbyn
  */
-class Swift_Mime_SimpleHeaderSet implements Swift_Mime_HeaderSet
+class Swift_Mime_SimpleHeaderSet implements Swift_Mime_HeaderSet, \Stringable
 {
-    /** HeaderFactory */
-    private $_factory;
-
     /** Collection of set Headers */
     private $_headers = [];
 
@@ -33,12 +30,11 @@ class Swift_Mime_SimpleHeaderSet implements Swift_Mime_HeaderSet
     /**
      * Create a new SimpleHeaderSet with the given $factory.
      *
-     * @param Swift_Mime_HeaderFactory $factory
+     * @param Swift_Mime_HeaderFactory $_factory
      * @param string                   $charset
      */
-    public function __construct(Swift_Mime_HeaderFactory $factory, $charset = null)
+    public function __construct(private Swift_Mime_HeaderFactory $_factory, $charset = null)
     {
-        $this->_factory = $factory;
         if (isset($charset)) {
             $this->setCharset($charset);
         }
@@ -62,6 +58,7 @@ class Swift_Mime_SimpleHeaderSet implements Swift_Mime_HeaderSet
      * @param string       $name
      * @param array|string $addresses
      */
+    #[\Override]
     public function addMailboxHeader($name, $addresses = null)
     {
         $this->_storeHeader(
@@ -76,6 +73,7 @@ class Swift_Mime_SimpleHeaderSet implements Swift_Mime_HeaderSet
      * @param string  $name
      * @param int     $timestamp
      */
+    #[\Override]
     public function addDateHeader($name, $timestamp = null)
     {
         $this->_storeHeader(
@@ -90,6 +88,7 @@ class Swift_Mime_SimpleHeaderSet implements Swift_Mime_HeaderSet
      * @param string $name
      * @param string $value
      */
+    #[\Override]
     public function addTextHeader($name, $value = null)
     {
         $this->_storeHeader(
@@ -105,7 +104,8 @@ class Swift_Mime_SimpleHeaderSet implements Swift_Mime_HeaderSet
      * @param string $value
      * @param array  $params
      */
-    public function addParameterizedHeader($name, $value = null, $params = array())
+    #[\Override]
+    public function addParameterizedHeader($name, $value = null, $params = [])
     {
         $this->_storeHeader($name, $this->_factory->createParameterizedHeader($name, $value, $params));
     }
@@ -116,6 +116,7 @@ class Swift_Mime_SimpleHeaderSet implements Swift_Mime_HeaderSet
      * @param string       $name
      * @param string|array $ids
      */
+    #[\Override]
     public function addIdHeader($name, $ids = null)
     {
         $this->_storeHeader($name, $this->_factory->createIdHeader($name, $ids));
@@ -127,6 +128,7 @@ class Swift_Mime_SimpleHeaderSet implements Swift_Mime_HeaderSet
      * @param string $name
      * @param string $path
      */
+    #[\Override]
     public function addPathHeader($name, $path = null)
     {
         $this->_storeHeader($name, $this->_factory->createPathHeader($name, $path));
@@ -142,6 +144,7 @@ class Swift_Mime_SimpleHeaderSet implements Swift_Mime_HeaderSet
      *
      * @return bool
      */
+    #[\Override]
     public function has($name, $index = 0)
     {
         $lowerName = strtolower($name);
@@ -161,6 +164,7 @@ class Swift_Mime_SimpleHeaderSet implements Swift_Mime_HeaderSet
      * @param Swift_Mime_Header $header
      * @param int               $index
      */
+    #[\Override]
     public function set(Swift_Mime_Header $header, $index = 0)
     {
         $this->_storeHeader($header->getFieldName(), $header, $index);
@@ -177,6 +181,7 @@ class Swift_Mime_SimpleHeaderSet implements Swift_Mime_HeaderSet
      *
      * @return Swift_Mime_Header
      */
+    #[\Override]
     public function get($name, $index = 0)
     {
         if ($this->has($name, $index)) {
@@ -193,6 +198,7 @@ class Swift_Mime_SimpleHeaderSet implements Swift_Mime_HeaderSet
      *
      * @return array
      */
+    #[\Override]
     public function getAll($name = null)
     {
         if (!isset($name)) {
@@ -206,7 +212,7 @@ class Swift_Mime_SimpleHeaderSet implements Swift_Mime_HeaderSet
 
         $lowerName = strtolower($name);
         if (!array_key_exists($lowerName, $this->_headers)) {
-            return array();
+            return [];
         }
 
         return $this->_headers[$lowerName];
@@ -217,11 +223,12 @@ class Swift_Mime_SimpleHeaderSet implements Swift_Mime_HeaderSet
      *
      * @return array
      */
+    #[\Override]
     public function listAll()
     {
         $headers = $this->_headers;
         if ($this->_canSort()) {
-            uksort($headers, array($this, '_sortHeaders'));
+            uksort($headers, [$this, '_sortHeaders']);
         }
 
         return array_keys($headers);
@@ -235,6 +242,7 @@ class Swift_Mime_SimpleHeaderSet implements Swift_Mime_HeaderSet
        * @param string  $name
        * @param int     $index
        */
+    #[\Override]
     public function remove($name, $index = 0)
     {
         $lowerName = strtolower($name);
@@ -246,6 +254,7 @@ class Swift_Mime_SimpleHeaderSet implements Swift_Mime_HeaderSet
      *
      * @param string $name
      */
+    #[\Override]
     public function removeAll($name)
     {
         $lowerName = strtolower($name);
@@ -257,6 +266,7 @@ class Swift_Mime_SimpleHeaderSet implements Swift_Mime_HeaderSet
      *
      * @return Swift_Mime_HeaderSet
      */
+    #[\Override]
     public function newInstance()
     {
         return new self($this->_factory);
@@ -269,6 +279,7 @@ class Swift_Mime_SimpleHeaderSet implements Swift_Mime_HeaderSet
      *
      * @param array $sequence
      */
+    #[\Override]
     public function defineOrdering(array $sequence)
     {
         $this->_order = array_flip(array_map('strtolower', $sequence));
@@ -281,6 +292,7 @@ class Swift_Mime_SimpleHeaderSet implements Swift_Mime_HeaderSet
      *
      * @param array $names
      */
+    #[\Override]
     public function setAlwaysDisplayed(array $names)
     {
         $this->_required = array_flip(array_map('strtolower', $names));
@@ -291,6 +303,7 @@ class Swift_Mime_SimpleHeaderSet implements Swift_Mime_HeaderSet
      *
      * @param string $charset
      */
+    #[\Override]
     public function charsetChanged($charset)
     {
         $this->setCharset($charset);
@@ -301,12 +314,13 @@ class Swift_Mime_SimpleHeaderSet implements Swift_Mime_HeaderSet
      *
      * @return string
      */
+    #[\Override]
     public function toString()
     {
         $string = '';
         $headers = $this->_headers;
         if ($this->_canSort()) {
-            uksort($headers, array($this, '_sortHeaders'));
+            uksort($headers, [$this, '_sortHeaders']);
         }
         foreach ($headers as $collection) {
             foreach ($collection as $header) {
@@ -326,7 +340,8 @@ class Swift_Mime_SimpleHeaderSet implements Swift_Mime_HeaderSet
      *
      * @see toString()
      */
-    public function __toString()
+    #[\Override]
+    public function __toString(): string
     {
         return $this->toString();
     }
@@ -334,13 +349,13 @@ class Swift_Mime_SimpleHeaderSet implements Swift_Mime_HeaderSet
     /** Save a Header to the internal collection */
     private function _storeHeader($name, Swift_Mime_Header $header, $offset = null)
     {
-        if (!isset($this->_headers[strtolower($name)])) {
-            $this->_headers[strtolower($name)] = [];
+        if (!isset($this->_headers[strtolower((string) $name)])) {
+            $this->_headers[strtolower((string) $name)] = [];
         }
         if (!isset($offset)) {
-            $this->_headers[strtolower($name)][] = $header;
+            $this->_headers[strtolower((string) $name)][] = $header;
         } else {
-            $this->_headers[strtolower($name)][$offset] = $header;
+            $this->_headers[strtolower((string) $name)][$offset] = $header;
         }
     }
 
@@ -353,8 +368,8 @@ class Swift_Mime_SimpleHeaderSet implements Swift_Mime_HeaderSet
     /** uksort() algorithm for Header ordering */
     private function _sortHeaders($a, $b)
     {
-        $lowerA = strtolower($a);
-        $lowerB = strtolower($b);
+        $lowerA = strtolower((string) $a);
+        $lowerB = strtolower((string) $b);
         $aPos = array_key_exists($lowerA, $this->_order)
             ? $this->_order[$lowerA]
             : -1;

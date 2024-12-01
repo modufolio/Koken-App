@@ -24,12 +24,7 @@ class Swift_Transport_SendmailTransport extends Swift_Transport_AbstractSmtpTran
      *
      * @var array
      */
-    private $_params = array(
-        'timeout' => 30,
-        'blocking' => 1,
-        'command' => '/usr/sbin/sendmail -bs',
-        'type' => Swift_Transport_IoBuffer::TYPE_PROCESS,
-        );
+    private $_params = ['timeout' => 30, 'blocking' => 1, 'command' => '/usr/sbin/sendmail -bs', 'type' => Swift_Transport_IoBuffer::TYPE_PROCESS];
 
     /**
      * Create a new SendmailTransport with $buf for I/O.
@@ -45,9 +40,10 @@ class Swift_Transport_SendmailTransport extends Swift_Transport_AbstractSmtpTran
     /**
      * Start the standalone SMTP session if running in -bs mode.
      */
+    #[\Override]
     public function start()
     {
-        if (false !== strpos($this->getCommand(), ' -bs')) {
+        if (str_contains($this->getCommand(), ' -bs')) {
             parent::start();
         }
     }
@@ -97,13 +93,14 @@ class Swift_Transport_SendmailTransport extends Swift_Transport_AbstractSmtpTran
      *
      * @return int
      */
+    #[\Override]
     public function send(Swift_Mime_Message $message, &$failedRecipients = null)
     {
         $failedRecipients = (array) $failedRecipients;
         $command = $this->getCommand();
         $buffer = $this->getBuffer();
 
-        if (false !== strpos($command, ' -t')) {
+        if (str_contains($command, ' -t')) {
             if ($evt = $this->_eventDispatcher->createSendEvent($this, $message)) {
                 $this->_eventDispatcher->dispatchEvent($evt, 'beforeSendPerformed');
                 if ($evt->bubbleCancelled()) {
@@ -111,16 +108,16 @@ class Swift_Transport_SendmailTransport extends Swift_Transport_AbstractSmtpTran
                 }
             }
 
-            if (false === strpos($command, ' -f')) {
-                $command .= ' -f'.escapeshellarg($this->_getReversePath($message));
+            if (!str_contains($command, ' -f')) {
+                $command .= ' -f'.escapeshellarg((string) $this->_getReversePath($message));
             }
 
-            $buffer->initialize(array_merge($this->_params, array('command' => $command)));
+            $buffer->initialize(array_merge($this->_params, ['command' => $command]));
 
-            if (false === strpos($command, ' -i') && false === strpos($command, ' -oi')) {
-                $buffer->setWriteTranslations(array("\r\n" => "\n", "\n." => "\n.."));
+            if (!str_contains($command, ' -i') && !str_contains($command, ' -oi')) {
+                $buffer->setWriteTranslations(["\r\n" => "\n", "\n." => "\n.."]);
             } else {
-                $buffer->setWriteTranslations(array("\r\n" => "\n"));
+                $buffer->setWriteTranslations(["\r\n" => "\n"]);
             }
 
             $count = count((array) $message->getTo())
@@ -129,7 +126,7 @@ class Swift_Transport_SendmailTransport extends Swift_Transport_AbstractSmtpTran
                 ;
             $message->toByteStream($buffer);
             $buffer->flushBuffers();
-            $buffer->setWriteTranslations(array());
+            $buffer->setWriteTranslations([]);
             $buffer->terminate();
 
             if ($evt) {
@@ -139,7 +136,7 @@ class Swift_Transport_SendmailTransport extends Swift_Transport_AbstractSmtpTran
             }
 
             $message->generateId();
-        } elseif (false !== strpos($command, ' -bs')) {
+        } elseif (str_contains($command, ' -bs')) {
             $count = parent::send($message, $failedRecipients);
         } else {
             $this->_throwException(new Swift_TransportException(
@@ -152,6 +149,7 @@ class Swift_Transport_SendmailTransport extends Swift_Transport_AbstractSmtpTran
     }
 
     /** Get the params to initialize the buffer */
+    #[\Override]
     protected function _getBufferParams()
     {
         return $this->_params;

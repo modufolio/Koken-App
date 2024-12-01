@@ -1,6 +1,6 @@
 <?php
 
-    error_reporting(0);
+    error_reporting(E_ALL ^ E_NOTICE ^ E_WARNING);ini_set('display_errors', 1);
 
     define('KOKEN_VERSION', '1.2.0');
     define('BASEPATH', true);
@@ -28,25 +28,21 @@
         $rewrite = true;
         $raw_url = $_GET['url'];
     } else {
-        if (isset($_SERVER['QUERY_STRING']) && (strpos($_SERVER['QUERY_STRING'], '/') === 0 || strpos($_SERVER['QUERY_STRING'], '%2F') === 0)) {
+        if (isset($_SERVER['QUERY_STRING']) && (str_starts_with((string) $_SERVER['QUERY_STRING'], '/') || str_starts_with((string) $_SERVER['QUERY_STRING'], '%2F'))) {
             $raw_url = $_SERVER['QUERY_STRING'];
         } else {
             $raw_url = '/';
         }
     }
 
-    $url_vars = array(
-        '__overrides' => array(),
-        '__overrides_display' => array(),
-        'page' => 1
-    );
+    $url_vars = ['__overrides' => [], '__overrides_display' => [], 'page' => 1];
 
     $to_replace = [];
-    if (preg_match('~(page/(\d+)/)(&.*)?$~', $raw_url, $page_match)) {
+    if (preg_match('~(page/(\d+)/)(&.*)?$~', (string) $raw_url, $page_match)) {
         $url_vars['page'] = $page_match[2];
     }
 
-    if (preg_match_all('~([a-z_]+):([^/]+)~', $raw_url, $override_matches)) {
+    if (preg_match_all('~([a-z_]+):([^/]+)~', (string) $raw_url, $override_matches)) {
         date_default_timezone_set('UTC');
         $full_match = array_shift($override_matches);
         $to_replace = array_merge($to_replace, $full_match);
@@ -60,7 +56,7 @@
 
     $preview = $pjax = false;
 
-    if (isset($_SERVER['HTTP_X_PJAX']) || strpos($_SERVER['QUERY_STRING'], '_pjax=') !== false) {
+    if (isset($_SERVER['HTTP_X_PJAX']) || str_contains((string) $_SERVER['QUERY_STRING'], '_pjax=')) {
         $pjax = true;
     }
 
@@ -77,15 +73,15 @@
     }
 
     if ($rewrite) {
-        $real_base_folder = preg_replace('~/app/site/site\.php(.*)?$~', '', $_SERVER['SCRIPT_NAME']);
-        $base_path = isset($_GET['base_folder']) ? $_GET['base_folder'] : $real_base_folder;
+        $real_base_folder = preg_replace('~/app/site/site\.php(.*)?$~', '', (string) $_SERVER['SCRIPT_NAME']);
+        $base_path = $_GET['base_folder'] ?? $real_base_folder;
         if ($base_path === '/') {
             $base_path = '';
         }
         $base_folder = $base_path;
     } else {
         $basename_regex = str_replace('.', '\\.', $basename);
-        $base_folder = preg_replace("~/$basename_regex(.*)?$~", '', $_SERVER['SCRIPT_NAME']);
+        $base_folder = preg_replace("~/$basename_regex(.*)?$~", '', (string) $_SERVER['SCRIPT_NAME']);
         $base_path = $base_folder . "/$basename?";
 
         if (!isset($real_base_folder)) {
@@ -101,14 +97,14 @@
     if ($rewrite) {
         $url = $raw_url;
     } else {
-        $url = preg_replace('/([\?&].*$)/', '', urldecode($raw_url));
+        $url = preg_replace('/([\?&].*$)/', '', urldecode((string) $raw_url));
     }
 
     if (empty($url)) {
         $url = $raw_url = '/';
     }
 
-    if ($url[strlen($url)-1] !== '/' && strpos($url, '.') === false) {
+    if ($url[strlen((string) $url)-1] !== '/' && !str_contains((string) $url, '.')) {
         header("HTTP/1.1 301 Moved Permanently");
         // Rewrite non-trailing slash URLs to trailing slash for SEO purposes.
         if ($rewrite) {
@@ -137,7 +133,7 @@
         exit;
     }
 
-    if ($rewrite && preg_match('~/__rewrite_test/?$~', $url)) {
+    if ($rewrite && preg_match('~/__rewrite_test/?$~', (string) $url)) {
         die('koken:rewrite');
     }
 
@@ -150,17 +146,17 @@
     }
 
     if (isset($_SERVER['QUERY_STRING']) && !empty($_SERVER['QUERY_STRING'])) {
-        $parts = explode('&', $_SERVER['QUERY_STRING']);
+        $parts = explode('&', (string) $_SERVER['QUERY_STRING']);
 
         foreach ($parts as $p) {
-            if (strpos($p, '/') === 0) {
+            if (str_starts_with($p, '/')) {
                 continue;
             }
 
-            if (strpos($p, '=') === false) {
+            if (!str_contains($p, '=')) {
                 $url_vars[$p] = true;
             } else {
-                list($key, $val) = explode('=', $p);
+                [$key, $val] = explode('=', $p);
                 $url_vars[$key] = urldecode($val);
             }
         }
@@ -180,7 +176,7 @@
     require 'Koken.php';
 
     $protocol = Koken::find_protocol();
-    $original_url = $protocol . '://' . $_SERVER['HTTP_HOST'] . preg_replace('/\?.*$/', '', $_SERVER['SCRIPT_NAME']) . '?' . $url;
+    $original_url = $protocol . '://' . $_SERVER['HTTP_HOST'] . preg_replace('/\?.*$/', '', (string) $_SERVER['SCRIPT_NAME']) . '?' . $url;
 
     Koken::start();
     Koken::$protocol = $protocol;
@@ -191,31 +187,15 @@
     Koken::$rewrite = $rewrite;
     Koken::$pjax = $pjax;
 
-    Koken::$location = array(
-        'root' => $base_path,
-        'root_folder' => $base_folder,
-        'real_root_folder' => $real_base_folder,
-        'here' => $here,
-        'rewrite' => $rewrite,
-        'parameters' => $url_vars,
-        'host' => $protocol . '://' . $_SERVER['HTTP_HOST'],
-        'hostname' => $_SERVER['HTTP_HOST'],
-        'site_url' => $protocol . '://' . $_SERVER['HTTP_HOST'] . $base_folder,
-        'preview' => $preview,
-        'draft' => $draft
-    );
+    Koken::$location = ['root' => $base_path, 'root_folder' => $base_folder, 'real_root_folder' => $real_base_folder, 'here' => $here, 'rewrite' => $rewrite, 'parameters' => $url_vars, 'host' => $protocol . '://' . $_SERVER['HTTP_HOST'], 'hostname' => $_SERVER['HTTP_HOST'], 'site_url' => $protocol . '://' . $_SERVER['HTTP_HOST'] . $base_folder, 'preview' => $preview, 'draft' => $draft];
 
-    Koken::$rss_feeds = array(
-        'contents' => "$base_path/feed/content/recent.rss",
-        'essays' => "$base_path/feed/essays/recent.rss",
-        'timeline' => "$base_path/feed/timeline/recent.rss",
-    );
+    Koken::$rss_feeds = ['contents' => "$base_path/feed/content/recent.rss", 'essays' => "$base_path/feed/essays/recent.rss", 'timeline' => "$base_path/feed/timeline/recent.rss"];
 
-    Shutter::hook('site.url', array($url));
+    Shutter::hook('site.url', [$url]);
 
     // Enable caching in case .htaccess missed it or isn't available
     if ($_SERVER['REQUEST_METHOD'] === 'GET' && (!$draft || $preview) && !isset($_GET['default_link']) && !isset($_COOKIE['share_to_tumblr'])) {
-        $cache_url = rtrim($cache_url, '/');
+        $cache_url = rtrim((string) $cache_url, '/');
 
         $css = $js = false;
 
@@ -226,7 +206,7 @@
             $js = true;
             $cache_url = $base_path . $cache_url;
         } elseif (!preg_match('/\.rss$/', $cache_url)) {
-            $cache_url = $base_path . preg_replace('/\?|&|=/', '_', preg_replace('/\?|&_pjax=[^&$]+/', '', urldecode(rtrim($cache_url, '/')))) . '/cache';
+            $cache_url = $base_path . preg_replace('/\?|&|=/', '_', (string) preg_replace('/\?|&_pjax=[^&$]+/', '', urldecode(rtrim($cache_url, '/')))) . '/cache';
         }
 
         if ($preview) {
@@ -269,16 +249,9 @@
 
     if (!defined('MAX_PARALLEL_REQUESTS')) {
         // Hosts we know do not limit parallel requests
-        $power_hosts = array(
-            'dreamhost',
-            'media-temple-gs',
-            'go-daddy',
-            'in-motion',
-            'rackspace-cloud',
-            'site5',
-        );
+        $power_hosts = ['dreamhost', 'media-temple-gs', 'go-daddy', 'in-motion', 'rackspace-cloud', 'site5'];
 
-        $webhost = new WebhostWhois(array('useDns' => false));
+        $webhost = new WebhostWhois(['useDns' => false]);
 
         if (in_array($webhost->key, $power_hosts)) {
             define('MAX_PARALLEL_REQUESTS', 8);
@@ -292,17 +265,14 @@
     $date = [];
 
     foreach (Koken::$location['parameters']['__overrides'] as $key => $val) {
-        if (in_array($key, array('year', 'month', 'day'))) {
+        if (in_array($key, ['year', 'month', 'day'])) {
             $date[$key] = $val;
         } elseif ($key !== 'order_by') {
             if ($key === 'category' && is_numeric($val)) {
                 $category = Koken::api('/categories/' . $val);
                 $val = $category['title'];
             }
-            Koken::$location['parameters']['__overrides_display'][] = array(
-                'title' => ucfirst(str_replace('_', ' ', $key)),
-                'value' => $val
-            );
+            Koken::$location['parameters']['__overrides_display'][] = ['title' => ucfirst(str_replace('_', ' ', $key)), 'value' => $val];
         }
     }
 
@@ -322,10 +292,7 @@
             $str .= '01-01';
         }
 
-        Koken::$location['parameters']['__overrides_display'][] = array(
-            'title' => 'Date',
-            'value' => date($format, strtotime($str))
-        );
+        Koken::$location['parameters']['__overrides_display'][] = ['title' => 'Date', 'value' => date($format, strtotime($str))];
     }
 
     // Fallback path with default themes
@@ -335,11 +302,8 @@
         Koken::$cache_path = $cache_path;
     }
 
-    list($site_api, $categories) = Koken::api(
-        array(
-            '/site' . ($draft ? ($preview ? '/preview:' . $preview : '/draft:true') : ''),
-            '/categories',
-        )
+    [$site_api, $categories] = Koken::api(
+        ['/site' . ($draft ? ($preview ? '/preview:' . $preview : '/draft:true') : ''), '/categories']
     );
 
     # Do this separately to be sure KOKEN_ENCRYPTION_KEY has been created by the above API call
@@ -369,7 +333,7 @@
     }
 
     foreach ($categories['categories'] as $c) {
-        Koken::$categories[strtolower($c['title'])] = $c['id'];
+        Koken::$categories[strtolower((string) $c['title'])] = $c['id'];
     }
 
     if (isset($_GET['default_link'])) {
@@ -381,7 +345,7 @@
         header("Location: {$base_folder}$location");
     }
 
-    date_default_timezone_set(Koken::$site['timezone']);
+    date_default_timezone_set(Koken::$site['timezone'] ?? 'UTC');
 
     // Setup path to current theme
     Koken::$template_path = $root_path . $ds .'storage' . $ds . 'themes' . $ds . Koken::$site['theme']['path'];
@@ -391,7 +355,7 @@
     if (isset(Koken::$site['navigation'])) {
         foreach (Koken::$site['navigation']['items'] as &$n) {
             if (isset($n['front']) && $n['front']) {
-                Koken::$navigation_home_path = rtrim($n['path'], '/') . '/';
+                Koken::$navigation_home_path = rtrim((string) $n['path'], '/') . '/';
             }
         }
 
@@ -399,10 +363,7 @@
             $groups = [];
             foreach (Koken::$site['navigation']['groups'] as $g) {
                 $key = $g['key'];
-                $groups[$key] = array(
-                    'items' => $g['items'],
-                    'items_nested' => $g['items_nested']
-                );
+                $groups[$key] = ['items' => $g['items'], 'items_nested' => $g['items_nested']];
             }
             Koken::$site['navigation']['groups'] = $groups;
         }
@@ -431,10 +392,10 @@
         $page_types[$arr['path']] = $arr['info'];
     }
 
-    $page_types['lightbox'] = array( 'source' => 'content' );
+    $page_types['lightbox'] = ['source' => 'content'];
 
     if (file_exists(Koken::$template_path . $ds . 'error.lens')) {
-        $routes = array('/error/:code/' => array( 'template' => 'error' ));
+        $routes = ['/error/:code/' => ['template' => 'error']];
         $http_error = false;
     } else {
         $routes = [];
@@ -446,19 +407,13 @@
 
     // Create routes array
     foreach (Koken::$site['routes'] as $arr) {
-        if (strpos($arr['path'], '.') === false) {
-            $arr['path'] = rtrim($arr['path'], '/') . '/';
+        if (!str_contains((string) $arr['path'], '.')) {
+            $arr['path'] = rtrim((string) $arr['path'], '/') . '/';
         }
 
-        $r = array(
-            'template' => $arr['template'],
-            'source' => isset($arr['source']) ? $arr['source'] : false,
-            'filters' => isset($arr['filters']) ? $arr['filters'] : false,
-            'vars' => isset($arr['variables']) ? $arr['variables'] : false,
-            'label' => isset($arr['label']) ? $arr['label'] : false,
-        );
+        $r = ['template' => $arr['template'], 'source' => $arr['source'] ?? false, 'filters' => $arr['filters'] ?? false, 'vars' => $arr['variables'] ?? false, 'label' => $arr['label'] ?? false];
 
-        if (strpos($arr['template'], 'redirect:') === 0) {
+        if (str_starts_with((string) $arr['template'], 'redirect:')) {
             $redirects[$arr['path']] = $r;
         } else {
             $routes[$arr['path']] = $r;
@@ -466,12 +421,7 @@
     }
 
     if (!isset($routes['/'])) {
-        $routes['/'] = array(
-            'template' => 'index',
-            'source' => false,
-            'filters' => false,
-            'vars' => false
-        );
+        $routes['/'] = ['template' => 'index', 'source' => false, 'filters' => false, 'vars' => false];
     }
 
     $routes += $redirects;
@@ -490,8 +440,8 @@
 
     $stylesheet = $source = false;
 
-    if (preg_match('/\.css\.lens$/', $url)) {
-        $final_path = 'css' . preg_replace('/\.lens$/', '', $url);
+    if (preg_match('/\.css\.lens$/', (string) $url)) {
+        $final_path = 'css' . preg_replace('/\.lens$/', '', (string) $url);
         $stylesheet = true;
         $variables_to_pass[] = [];
         $variables_to_pass[] = [];
@@ -507,11 +457,8 @@
         $contents .= '$K.location = ' . json_encode($tmp) . ';$K.lazy.max = ' . (is_numeric(MAX_PARALLEL_REQUESTS) ? MAX_PARALLEL_REQUESTS : 4) . ';';
 
         $image_defaults = [];
-        foreach (array('tiny', 'small', 'medium', 'medium_large', 'large', 'xlarge', 'huge') as $preset) {
-            $image_defaults[$preset] = array(
-                'quality' => Koken::$site["image_{$preset}_quality"],
-                'sharpening' => Koken::$site["image_{$preset}_sharpening"]
-            );
+        foreach (['tiny', 'small', 'medium', 'medium_large', 'large', 'xlarge', 'huge'] as $preset) {
+            $image_defaults[$preset] = ['quality' => Koken::$site["image_{$preset}_quality"], 'sharpening' => Koken::$site["image_{$preset}_sharpening"]];
         }
         $image_defaults = json_encode($image_defaults);
 
@@ -544,7 +491,7 @@
             }
         }
 
-        $lang = isset(Koken::$site['settings_flat']['language']['value']) ? Koken::$site['settings_flat']['language']['value'] : false;
+        $lang = Koken::$site['settings_flat']['language']['value'] ?? false;
         if ($lang && $lang !== 'en') {
             $contents .= file_get_contents(Koken::get_path("common/js/timeago/locales/jquery.timeago.{$lang}.js"));
         }
@@ -587,8 +534,8 @@
                 }
             }
 
-            if (preg_match('~^' . $route . '$~u', $url, $matches)) {
-                if (strpos($page['template'], 'redirect:') === 0) {
+            if (preg_match('~^' . $route . '$~u', (string) $url, $matches)) {
+                if (str_starts_with((string) $page['template'], 'redirect:')) {
                     $redirect = str_replace('redirect:', '', $page['template']);
                 } else {
                     $redirect = false;
@@ -600,7 +547,7 @@
                     $final_path = $page['template'];
                 }
 
-                $info = isset($page_types[$page['template']]) ? $page_types[$page['template']] : array();
+                $info = $page_types[$page['template']] ?? [];
 
                 if (!empty($matches[1])) {
                     foreach ($match_variables as $index => $name) {
@@ -610,9 +557,7 @@
                         }
                     }
 
-                    $identifiers = array(
-                        'id', 'slug', 'content_id', 'content_slug', 'album_id', 'album_slug'
-                    );
+                    $identifiers = ['id', 'slug', 'content_id', 'content_slug', 'album_id', 'album_slug'];
 
                     foreach ($identifiers as $identifier) {
                         if (isset($routed_variables[$identifier]) && preg_match('/[a-z0-9]{32}/', $routed_variables[$identifier])) {
@@ -623,14 +568,14 @@
                 }
 
                 if ($redirect) {
-                    if (strpos($redirect, 'soft:') !== false) {
+                    if (str_contains($redirect, 'soft:')) {
                         $redirect_type = '302 Moved Temporarily';
                         $redirect = str_replace('soft:', '', $redirect);
                     } else {
                         $redirect_type = '301 Moved Permanently';
                     }
 
-                    if (strpos($redirect, '/') === 0) {
+                    if (str_starts_with($redirect, '/')) {
                         $redirect_to = $redirect;
                     } else {
                         $redirect_to = Koken::$site['urls'][$redirect];
@@ -644,27 +589,18 @@
                     $redirect_to = str_replace(')?', '', $redirect_to);
                     $redirect_to = str_replace('/:month', '', $redirect_to);
 
-                    if (strpos($redirect_to, ':') !== false) {
+                    if (str_contains($redirect_to, ':')) {
                         if (isset($routed_variables['id'])) {
                             $id = $routed_variables['id'];
                         } else {
                             $id = 'slug:' . $routed_variables['slug'];
                         }
 
-                        switch ($redirect) {
-                            case 'album':
-                                $url = '/albums';
-                                break;
-
-                            case 'essay':
-                            case 'page':
-                                $url = '/text';
-                                break;
-
-                            default:
-                                $url = '/content';
-                                break;
-                        }
+                        $url = match ($redirect) {
+                            'album' => '/albums',
+                            'essay', 'page' => '/text',
+                            default => '/content',
+                        };
                         $url .= "/$id";
                         $data = Koken::api($url);
                         $redirect_to = $data['__koken_url'];
@@ -681,7 +617,7 @@
                     }
 
                     if (isset($routed_variables['album_id']) || isset($routed_variables['album_slug'])) {
-                        $data = Koken::api('/content/' . (isset($routed_variables['id']) ? $routed_variables['id'] : 'slug:' . $routed_variables['slug']) . '/context:' . (isset($routed_variables['album_slug']) ? $routed_variables['album_slug'] : $routed_variables['album_id']));
+                        $data = Koken::api('/content/' . ($routed_variables['id'] ?? 'slug:' . $routed_variables['slug']) . '/context:' . ($routed_variables['album_slug'] ?? $routed_variables['album_id']));
                         $redirect_to = $data['__koken_url'];
                     }
 
@@ -720,7 +656,7 @@
                     $page['filters'] = [];
                 } else {
                     if ($final_path === 'lightbox' && isset($info['source']) && $info['source'] === 'album') {
-                        $id = isset($routed_variables['id']) ? $routed_variables['id'] : 'slug:' . $routed_variables['slug'];
+                        $id = $routed_variables['id'] ?? 'slug:' . $routed_variables['slug'];
                         $album = Koken::api('/albums/' . $id . '/content');
                         $url = $album['content'][0]['url'] . '/lightbox';
                         header("Location: $url");
@@ -730,37 +666,35 @@
 
                 if (isset($matches['template'])) {
                     foreach (Koken::$site['url_data'] as $key => $data) {
-                        if (isset($data['plural']) && $matches['template'] === strtolower($data['plural'])) {
+                        if (isset($data['plural']) && $matches['template'] === strtolower((string) $data['plural'])) {
                             $type = $key . 's';
                             $final_path .= '.' . $type;
-                            $page['filters'] = array( "members=$type" );
+                            $page['filters'] = ["members=$type"];
                             break;
                         }
                     }
                 }
 
-                $load = $source = isset($page['source']) && $page['source'] ? $page['source'] : (isset($info['source']) ? $info['source'] : false);
-                $filters = isset($page['filters']) && is_array($page['filters']) ? $page['filters'] : (isset($info['filters']) ? $info['filters'] : false);
+                $load = $source = isset($page['source']) && $page['source'] ? $page['source'] : ($info['source'] ?? false);
+                $filters = isset($page['filters']) && is_array($page['filters']) ? $page['filters'] : ($info['filters'] ?? false);
 
                 if ($load) {
                     if ($filters) {
                         foreach ($filters as &$f) {
-                            if (strpos($f, ':') !== false) {
+                            if (str_contains((string) $f, ':')) {
                                 $f = preg_replace_callback(
                                     "/:([a-z_]+)/",
-                                    function ($matches) {
-                                            return Koken::$routed_variables[$matches[1]];
-                                        },
-                                    $f
+                                    fn($matches) => Koken::$routed_variables[$matches[1]],
+                                    (string) $f
                                 );
                             }
                         }
                     }
-                    Koken::$source = array( 'type' => $load, 'filters' => $filters );
+                    Koken::$source = ['type' => $load, 'filters' => $filters];
                 }
 
                 Koken::$page_class = $page['template'] === 'index' ? 'k-source-index' : (Koken::$source ? 'k-source-' . Koken::$source['type'] : '');
-                if (in_array(Koken::$page_class, array('k-source-tag', 'k-source-category', 'k-source-archive')) && Koken::$source['filters'] && count(Koken::$source['filters'])) {
+                if (in_array(Koken::$page_class, ['k-source-tag', 'k-source-category', 'k-source-archive']) && Koken::$source['filters'] && count(Koken::$source['filters'])) {
                     Koken::$page_class = 'k-source-archive-' . str_replace('members=', '', Koken::$source['filters'][0]);
                 } elseif (Koken::$page_class === 'k-source-event') {
                     Koken::$page_class = 'k-source-day-timeline';
@@ -800,16 +734,16 @@
     }
 
     if (isset($_COOKIE['share_to_tumblr']) && Koken::$source['type'] === 'content') {
-        setcookie('share_to_tumblr', "", time() - 3600, '/');
+        setcookie('share_to_tumblr', "", ['expires' => time() - 3600, 'path' => '/']);
         $final_path = 'content_tumblr_share';
     }
 
     if (!isset($final_path)) {
-        $default_path = trim($url, '/');
+        $default_path = trim((string) $url, '/');
         $test = Koken::get_path("$default_path.lens");
         if ($test) {
             $final_path = $default_path;
-            Koken::$custom_page_title = str_replace(array('-', '_'), ' ', $final_path);
+            Koken::$custom_page_title = str_replace(['-', '_'], ' ', $final_path);
             Koken::$custom_page_title = function_exists('mb_convert_case') ? mb_convert_case(Koken::$custom_page_title, MB_CASE_TITLE) : ucwords(Koken::$custom_page_title);
             Koken::$location['template'] = str_replace('.', '-', $default_path);
 
@@ -818,7 +752,7 @@
                     Koken::$page_class = 'k-lens-' . Koken::$location['template'];
 
                     if (isset($template['info']['source'])) {
-                        Koken::$source = array( 'type' => $template['info']['source'], 'filters' => false );
+                        Koken::$source = ['type' => $template['info']['source'], 'filters' => false];
                         Koken::$page_class .= ' k-source-' . $template['info']['source'];
                     }
                     break;
@@ -838,16 +772,16 @@
                 $val = isset($obj['type']) && $obj['type'] === 'boolean' && is_bool($obj['value']) ? (bool) $obj['value'] : $obj['value'];
 
                 if (!$stylesheet && isset($obj['scope']) && !in_array($final_path, $obj['scope'])) {
-                    $val = isset($obj['out_of_scope_value']) ? $obj['out_of_scope_value'] : false;
+                    $val = $obj['out_of_scope_value'] ?? false;
                 }
                 Koken::$settings[$key] = $val;
             }
         }
 
-        Koken::$settings['language'] = isset(Koken::$settings['language']) ? Koken::$settings['language'] : 'en';
+        Koken::$settings['language'] ??= 'en';
         Koken::$language = Koken::$site['language'][Koken::$settings['language']];
 
-        Koken::$rss = preg_match('/\.rss$/', $final_path);
+        Koken::$rss = preg_match('/\.rss$/', (string) $final_path);
 
         $final_path .= '.lens';
 
@@ -900,17 +834,17 @@
                         $wrap = '';
                     }
 
-                    if (strpos($path, 'http') === 0 || strpos($path, 'data:') === 0) {
+                    if (str_starts_with((string) $path, 'http') || str_starts_with((string) $path, 'data:')) {
                         $path = $path;
                     } else {
-                        $path = preg_replace('~^../~', '', $path);
+                        $path = preg_replace('~^../~', '', (string) $path);
                         $path = Koken::$location['real_root_folder'] . '/storage/themes/' . Koken::$site['theme']['path'] . "/$path";
                     }
 
                     return 'url(' . $wrap . $path . $wrap . ')';
                 }
 
-                $raw = preg_replace('/\[?\$([a-z\-_0-9\.]+)\]?/', '<?php echo Koken::get_setting(\'${1}\'); ?>', $tmpl);
+                $raw = preg_replace('/\[?\$([a-z\-_0-9\.]+)\]?/', '<?php echo Koken::get_setting(\'${1}\'); ?>', (string) $tmpl);
 
                 // die($raw);
                 $contents = Koken::render($raw);
@@ -920,15 +854,11 @@
                 {
                     $color = $matches[1];
 
-                    if (strlen($color) === 3) {
+                    if (strlen((string) $color) === 3) {
                         $color = $color[0] . $color[0] . $color[1] . $color[1] . $color[2] . $color[2];
                     }
 
-                    list($r, $g, $b) = array(
-                                            hexdec($color[0].$color[1]),
-                                            hexdec($color[2].$color[3]),
-                                            hexdec($color[4].$color[5])
-                                        );
+                    [$r, $g, $b] = [hexdec($color[0].$color[1]), hexdec($color[2].$color[3]), hexdec($color[4].$color[5])];
 
                     return "$r, $g, $b";
                 }
@@ -937,7 +867,7 @@
 
                 global $final_path;
 
-                if (strpos($final_path, 'lightbox-settings.css.lens') === false) {
+                if (!str_contains((string) $final_path, 'lightbox-settings.css.lens')) {
                     $koken_css = file_get_contents(Koken::get_path('common/css/koken.css'));
                     $contents = $contents . "\n\n" . $koken_css;
                 }
@@ -971,7 +901,7 @@
 
             function parse_include($matches)
             {
-                $path = preg_replace_callback('/\{\{\s*(site\.)?settings\.([^\}\s]+)\s*\}\}/', 'parse_replacements', $matches[1]);
+                $path = preg_replace_callback('/\{\{\s*(site\.)?settings\.([^\}\s]+)\s*\}\}/', 'parse_replacements', (string) $matches[1]);
                 $path = Koken::get_path($path);
                 if ($path) {
                     return file_get_contents($path);
@@ -996,10 +926,10 @@
                         $file = 'lightbox-' . $file;
                     }
                     $path = Koken::$location['root_folder'] . '/' . (Koken::$draft ? 'preview.php?/' : (Koken::$rewrite ? '' : 'index.php?/')) . $file . (Koken::$preview ? '&preview=' . Koken::$preview : '');
-                    $info = array( 'extension' => 'css' );
+                    $info = ['extension' => 'css'];
                     $id = ' id="koken_settings_css_link"';
                 } else {
-                    preg_match_all('/([a-z_]+)="([^"]+)"/', $matches[1], $params);
+                    preg_match_all('/([a-z_]+)="([^"]+)"/', (string) $matches[1], $params);
 
                     foreach ($params[1] as $i => $name) {
                         $value = $params[2][$i];
@@ -1019,7 +949,7 @@
 
                     $info = pathinfo($file);
 
-                    if (strpos($file, 'http') === 0) {
+                    if (str_starts_with($file, 'http')) {
                         $path = $file;
                     } else {
                         if (isset($common) && $common) {
@@ -1062,26 +992,26 @@
                 }
 
                 if (!isset($info['extension'])) {
-                    $info['extension'] = strpos($path, 'css') === false ? 'js' : 'css';
+                    $info['extension'] = !str_contains($path, 'css') ? 'js' : 'css';
                 }
 
                 if ($info['extension'] == 'css' || $info['extension'] == 'less') {
                     return "<link$id rel=\"stylesheet\" type=\"text/{$info['extension']}\" href=\"$path\"$parameters />";
                 } elseif ($info['extension'] == 'js') {
                     return "<script src=\"$path\"$parameters></script>";
-                } elseif (in_array($info['extension'], array('jpeg', 'jpg', 'gif', 'png'))) {
+                } elseif (in_array($info['extension'], ['jpeg', 'jpg', 'gif', 'png'])) {
                     return "<img src=\"$path\"$parameters />";
                 } elseif ($info['extension'] === 'svg') {
                     return "<embed src=\"$path\" type=\"image/svg+xml\"$parameters />";
                 }
             }
 
-            while (strpos($tmpl, '<koken:include') !== false) {
-                $tmpl = preg_replace_callback('/<koken\:include\sfile="([^"]+?)" \/>/', 'parse_include', $tmpl);
+            while (str_contains((string) $tmpl, '<koken:include')) {
+                $tmpl = preg_replace_callback('/<koken\:include\sfile="([^"]+?)" \/>/', 'parse_include', (string) $tmpl);
             }
 
-            $tmpl = preg_replace_callback('/<koken\:asset\s?(.+?)\s?\/>/', 'parse_asset', $tmpl);
-            $tmpl = preg_replace_callback('/<koken\:(settings)\s?\/>/', 'parse_asset', $tmpl);
+            $tmpl = preg_replace_callback('/<koken\:asset\s?(.+?)\s?\/>/', 'parse_asset', (string) $tmpl);
+            $tmpl = preg_replace_callback('/<koken\:(settings)\s?\/>/', 'parse_asset', (string) $tmpl);
 
             // Wrap this to control context, variable availability
             function go($tmpl, $pass = 1)
@@ -1132,7 +1062,7 @@
                         $stamp = '?' . KOKEN_VERSION;
                         
                         $koken_js = Koken::$location['root_folder'] . '/' . (Koken::$draft ? 'preview.php?/' : (Koken::$rewrite ? '' : 'index.php?/')) . 'koken.js' . (Koken::$preview ? '&preview=' . Koken::$preview : '');
-                        if (strpos($koken_js, '.php?') === false) {
+                        if (!str_contains($koken_js, '.php?')) {
                             $koken_js .= '?' . Shutter::get_site_scripts_timestamp();
                         }
 
@@ -1236,7 +1166,7 @@ JS;
 
                 if ($pass === 1) {
                     // Rerun parse to catch shortcode renders
-                    while (strpos($contents, '<koken:') !== false && $pass < 3) {
+                    while (str_contains((string) $contents, '<koken:') && $pass < 3) {
                         $pass++;
                         $contents = go($contents, $pass);
                     }
@@ -1246,7 +1176,7 @@ JS;
 
                 $contents .= Koken::cleanup();
 
-                if ((strpos($contents, 'settings.css.lens"') === false && !empty(Koken::$site['custom_css'])) || Koken::$draft) {
+                if ((!str_contains($contents, 'settings.css.lens"') && !empty(Koken::$site['custom_css'])) || Koken::$draft) {
                     $js .= '<style id="koken_custom_css">' . Koken::$site['custom_css'] . '</style>';
                 }
 
@@ -1259,18 +1189,18 @@ JS;
                     $header_str .= "\t" . $header . "\n";
                 }
 
-                if (strpos($header_str, '<title>') !== false) {
-                    $contents = preg_replace('/<title>.*<\/title>/msU', '', $contents);
+                if (str_contains($header_str, '<title>')) {
+                    $contents = preg_replace('/<title>.*<\/title>/msU', '', (string) $contents);
                     $header_str = preg_replace('/<koken_title>.*<\/koken_title>/', '', $header_str);
-                } elseif (strpos($header_str, '<koken_title>') !== false && strpos($contents, '<koken_title') !== false) {
-                    $contents = preg_replace('/<title>.*<\/title>/msU', '', $contents);
+                } elseif (str_contains($header_str, '<koken_title>') && str_contains((string) $contents, '<koken_title')) {
+                    $contents = preg_replace('/<title>.*<\/title>/msU', '', (string) $contents);
                     $header_str = str_replace('koken_title', 'title', $header_str);
-                } elseif (strpos($contents, '<koken_title') !== false) {
+                } elseif (str_contains((string) $contents, '<koken_title')) {
                     $contents = str_replace('koken_title', 'title', $contents);
                 }
 
-                if (Koken::$pjax && strpos($header_str, '<title>')) {
-                    preg_match('~<title>.*</title>~', $header_str, $title_match);
+                if (Koken::$pjax && strpos((string) $header_str, '<title>')) {
+                    preg_match('~<title>.*</title>~', (string) $header_str, $title_match);
                     $contents .= $title_match[0];
                 }
 
@@ -1278,15 +1208,15 @@ JS;
 
                 $header_str .= "\n\t<!--[if IE]>\n\t<script src=\"" . Koken::$location['real_root_folder'] . "/app/site/themes/common/js/html5shiv.js\"></script>\n\t<![endif]-->\n";
 
-                if (strpos($contents, '<head>')) {
-                    preg_match('/<head>(.*)?<\/head>/msU', $contents, $header);
+                if (strpos((string) $contents, '<head>')) {
+                    preg_match('/<head>(.*)?<\/head>/msU', (string) $contents, $header);
                     if (count($header)) {
-                        $head = isset($header[1]) ? $header[1] : '';
+                        $head = $header[1] ?? '';
                         preg_match_all('/<script.*<\/script>/msU', $head, $head_js);
                         $head = preg_replace('/\s*<script.*<\/script>\s*/msU', '', $head) . "\n$header_str\n$js\n" . join("\n", $head_js[0]);
-                        $contents = preg_replace('/<head>(.*)?<\/head>/msU', "<head>\n" . str_replace('$', '\$', $head) . "\n</head>", $contents);
+                        $contents = preg_replace('/<head>(.*)?<\/head>/msU', "<head>\n" . str_replace('$', '\$', $head) . "\n</head>", (string) $contents);
                     }
-                } elseif (strpos($contents, '</body>')) {
+                } elseif (strpos((string) $contents, '</body>')) {
                     $contents = str_replace('</body>', "$js\n$header_str\n</body>", $contents);
                 } elseif (Koken::$pjax) {
                     $contents .= $js;
@@ -1296,7 +1226,7 @@ JS;
 
                 if (preg_match_all('/<body(?:[^>]+)?>/', $contents, $match) && !empty($final_page_classes)) {
                     foreach ($match[0] as $body) {
-                        if (strpos($body, 'class="') !== false) {
+                        if (str_contains($body, 'class="')) {
                             $new_body = preg_replace('/class="([^"]+)"/', "class=\"$1 " . $final_page_classes . "\"", $body);
                         } else {
                             $new_body = str_replace('>', ' class="' . $final_page_classes . '">', $body);
@@ -1307,7 +1237,7 @@ JS;
 
                 if (preg_match_all('/<html(?:[^>]+)?>/', $contents, $match) && !empty($final_page_classes)) {
                     foreach ($match[0] as $html) {
-                        if (strpos($html, 'class="') !== false) {
+                        if (str_contains($html, 'class="')) {
                             $new_html = preg_replace('/class="([^"]+)"/', "class=\"$1 " . $final_page_classes . "\"", $html);
                         } else {
                             $new_html = str_replace('>', ' class="' . $final_page_classes . '">', $html);
@@ -1321,18 +1251,18 @@ JS;
 
                 $contents = preg_replace('/<!-- KOKEN META (DESCRIPTION|KEYWORDS) BEGIN -->.*<!-- KOKEN META (DESCRIPTION|KEYWORDS) END -->/msU', '', $contents);
 
-                $contents = preg_replace('/\t+/', "\t", $contents);
-                $contents = preg_replace('/\n\t*\n/', "\n", $contents);
-                $contents = preg_replace('/\n{2,}/', "\n\n", $contents);
-                $contents = preg_replace('/<title>\s*/ms', '<title>', $contents);
+                $contents = preg_replace('/\t+/', "\t", (string) $contents);
+                $contents = preg_replace('/\n\t*\n/', "\n", (string) $contents);
+                $contents = preg_replace('/\n{2,}/', "\n\n", (string) $contents);
+                $contents = preg_replace('/<title>\s*/ms', '<title>', (string) $contents);
 
 
                 if (count($meta_description) && strlen($meta_description[1]) > 0) {
-                    $contents = preg_replace('/<meta name="description" content=".*" \/>/', '<meta name="description" content="' . str_replace('$', '\$', $meta_description[1]) . '" />', $contents);
+                    $contents = preg_replace('/<meta name="description" content=".*" \/>/', '<meta name="description" content="' . str_replace('$', '\$', $meta_description[1]) . '" />', (string) $contents);
                 }
 
                 if (count($meta_keywords) && strlen($meta_keywords[1]) > 0) {
-                    $contents = preg_replace('/<meta name="keywords" content="(.*)" \/>/', "<meta name=\"keywords\" content=\"$1, {$meta_keywords[1]}\" />", $contents);
+                    $contents = preg_replace('/<meta name="keywords" content="(.*)" \/>/', "<meta name=\"keywords\" content=\"$1, {$meta_keywords[1]}\" />", (string) $contents);
                 }
 
                 if (Koken::$rss) {

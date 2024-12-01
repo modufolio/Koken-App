@@ -29,7 +29,7 @@ class BufferNotEmpty extends AbstractException
     public function __construct(array $config)
     {
         $this->_outputBuffer = $config['outputBuffer'];
-        $this->_fileName = isset($config['fileName']) ? $config['fileName'] : null;
+        $this->_fileName = $config['fileName'] ?? null;
 
         $message = is_null($this->_fileName) ? '' : "Unable to send '{$this->_fileName}'. ";
         $message .= "Output buffer contains the following text (typically warning or errors):\n{$this->_outputBuffer}";

@@ -1,25 +1,25 @@
 <?php
 
-$lang['alpha_dash_dot']		= 'El camp de  %s nomŽs permet carˆcters alfanumrics, guions baixos, ratlles i punts finals.';
-$lang['alpha_slash_dot']	= 'El camp de %s nomŽs permet carˆcters alfanumrics, guions baixos, ratlles, barres i punts finals.';
+$lang['alpha_dash_dot']		= 'El camp de  %s nomï¿½s permet carï¿½cters alfanumï¿½rics, guions baixos, ratlles i punts finals.';
+$lang['alpha_slash_dot']	= 'El camp de %s nomï¿½s permet carï¿½cters alfanumï¿½rics, guions baixos, ratlles, barres i punts finals.';
 $lang['min_date']		= 'El camp de %s ha de ser posterior o igual a %s.';
 $lang['max_date']		= 'El camp de %s no pot superar %s.';
-$lang['min_size']		= 'El camp de %s com a m’nim permet %s.';
-$lang['max_size']		= 'El camp de %s com a mˆxim permet %s.';
+$lang['min_size']		= 'El camp de %s com a mï¿½nim permet %s.';
+$lang['max_size']		= 'El camp de %s com a mï¿½xim permet %s.';
 $lang['transaction']		= '%s ha fallat en %s.';
 $lang['unique'] 		= '%s proposat ja existeix.';
-$lang['unique_pair'] 		= 'La combinaci— proposada de %s amb %s ja existeix.';
-$lang['valid_date']		= 'El camp %s ha de contenir una data vˆlida.';
-$lang['valid_date_group']	= 'El camp %s ha de contenir un grup de dates vˆlides.';
-$lang['valid_match']		= 'El camp %s nomŽs pot contenir %s.';
+$lang['unique_pair'] 		= 'La combinaciï¿½ proposada de %s amb %s ja existeix.';
+$lang['valid_date']		= 'El camp %s ha de contenir una data vï¿½lida.';
+$lang['valid_date_group']	= 'El camp %s ha de contenir un grup de dates vï¿½lides.';
+$lang['valid_match']		= 'El camp %s nomï¿½s pot contenir %s.';
 
-$lang['related_required']	= 'Es requereix la relaci— %s.';
-$lang['related_min_size']	= 'Es requereix que la relaci— %s sigui com a m’nim de %s.';
-$lang['related_max_size']	= 'Es requereix que la relaci— %s no excedeixi %s.';
+$lang['related_required']	= 'Es requereix la relaciï¿½ %s.';
+$lang['related_min_size']	= 'Es requereix que la relaciï¿½ %s sigui com a mï¿½nim de %s.';
+$lang['related_max_size']	= 'Es requereix que la relaciï¿½ %s no excedeixi %s.';
 
-$lang['dm_save_rel_failed']	= 'La relaci— %s no estˆ ben definida.';
-$lang['dm_save_rel_nothis']	= 'No es pot guardar la relaci— %s: Aquest objecte no estˆ guardat.';
-$lang['dm_save_rel_noobj']	= 'No es pot guardar la relaci— %s: Aquest objecte relacionat no estˆ guardat.';
+$lang['dm_save_rel_failed']	= 'La relaciï¿½ %s no estï¿½ ben definida.';
+$lang['dm_save_rel_nothis']	= 'No es pot guardar la relaciï¿½ %s: Aquest objecte no estï¿½ guardat.';
+$lang['dm_save_rel_noobj']	= 'No es pot guardar la relaciï¿½ %s: Aquest objecte relacionat no estï¿½ guardat.';
 
 /* End of file datamapper_lang.php */
 /* Location: ./application/language/catalan/datamapper_lang.php */

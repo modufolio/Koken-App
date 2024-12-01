@@ -21,6 +21,7 @@ class Swift_Mime_HeaderEncoder_Base64HeaderEncoder extends Swift_Encoder_Base64E
      *
      * @return string
      */
+    #[\Override]
     public function getName()
     {
         return 'B';
@@ -39,6 +40,7 @@ class Swift_Mime_HeaderEncoder_Base64HeaderEncoder extends Swift_Encoder_Base64E
      *
      * @return string
      */
+    #[\Override]
     public function encodeString($string, $firstLineOffset = 0, $maxLineLength = 0, $charset = 'utf-8')
     {
         if (strtolower($charset) === 'iso-2022-jp') {

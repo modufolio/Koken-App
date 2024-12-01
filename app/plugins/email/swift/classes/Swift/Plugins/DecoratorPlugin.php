@@ -51,7 +51,7 @@ class Swift_Plugins_DecoratorPlugin implements Swift_Events_SendListener, Swift_
      *
      * @param mixed $replacements Array or Swift_Plugins_Decorator_Replacements
      */
-    public function __construct($replacements)
+    public function __construct(mixed $replacements)
     {
         $this->setReplacements($replacements);
     }
@@ -63,7 +63,7 @@ class Swift_Plugins_DecoratorPlugin implements Swift_Events_SendListener, Swift_
      *
      * @see __construct()
      */
-    public function setReplacements($replacements)
+    public function setReplacements(mixed $replacements)
     {
         if (!($replacements instanceof Swift_Plugins_Decorator_Replacements)) {
             $this->_replacements = (array) $replacements;
@@ -77,6 +77,7 @@ class Swift_Plugins_DecoratorPlugin implements Swift_Events_SendListener, Swift_
      *
      * @param Swift_Events_SendEvent $evt
      */
+    #[\Override]
     public function beforeSendPerformed(Swift_Events_SendEvent $evt)
     {
         $message = $evt->getMessage();
@@ -125,7 +126,7 @@ class Swift_Plugins_DecoratorPlugin implements Swift_Events_SendListener, Swift_
 
             $children = (array) $message->getChildren();
             foreach ($children as $child) {
-                list($type, ) = sscanf($child->getContentType(), '%[^/]/%s');
+                [$type, ] = sscanf($child->getContentType(), '%[^/]/%s');
                 if ('text' == $type) {
                     $body = $child->getBody();
                     $bodyReplaced = str_replace(
@@ -157,14 +158,13 @@ class Swift_Plugins_DecoratorPlugin implements Swift_Events_SendListener, Swift_
      *
      * @return array
      */
+    #[\Override]
     public function getReplacementsFor($address)
     {
         if ($this->_replacements instanceof Swift_Plugins_Decorator_Replacements) {
             return $this->_replacements->getReplacementsFor($address);
         } else {
-            return isset($this->_replacements[$address])
-                ? $this->_replacements[$address]
-                : null
+            return $this->_replacements[$address] ?? null
                 ;
         }
     }
@@ -174,6 +174,7 @@ class Swift_Plugins_DecoratorPlugin implements Swift_Events_SendListener, Swift_
      *
      * @param Swift_Events_SendEvent $evt
      */
+    #[\Override]
     public function sendPerformed(Swift_Events_SendEvent $evt)
     {
         $this->_restoreMessage($evt->getMessage());

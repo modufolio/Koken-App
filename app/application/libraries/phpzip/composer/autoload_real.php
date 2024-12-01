@@ -8,7 +8,7 @@ class ComposerAutoloaderInit5300097b32efa7765562bb1d64a95b1c
 
     public static function loadClassLoader($class)
     {
-        if ('Composer\Autoload\ClassLoader' === $class) {
+        if (\Composer\Autoload\ClassLoader::class === $class) {
             require __DIR__ . '/ClassLoader.php';
         }
     }
@@ -19,9 +19,9 @@ class ComposerAutoloaderInit5300097b32efa7765562bb1d64a95b1c
             return self::$loader;
         }
 
-        spl_autoload_register(array('ComposerAutoloaderInit5300097b32efa7765562bb1d64a95b1c', 'loadClassLoader'), true, true);
+        spl_autoload_register(['ComposerAutoloaderInit5300097b32efa7765562bb1d64a95b1c', 'loadClassLoader'], true, true);
         self::$loader = $loader = new \Composer\Autoload\ClassLoader();
-        spl_autoload_unregister(array('ComposerAutoloaderInit5300097b32efa7765562bb1d64a95b1c', 'loadClassLoader'));
+        spl_autoload_unregister(['ComposerAutoloaderInit5300097b32efa7765562bb1d64a95b1c', 'loadClassLoader']);
 
         $map = require __DIR__ . '/autoload_namespaces.php';
         foreach ($map as $namespace => $path) {

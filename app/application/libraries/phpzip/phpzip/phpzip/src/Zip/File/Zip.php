@@ -86,7 +86,7 @@ class Zip extends AbstractZipArchive
 
             fclose($this->_zipFile);
         } else {
-            fwrite($fd, $this->_zipData);
+            fwrite($fd, (string) $this->_zipData);
             $this->_zipData = null;
         }
 
@@ -212,6 +212,7 @@ class Zip extends AbstractZipArchive
      *
      * @param array $params Array that contains zipEntry.
      */
+    #[\Override]
     public function onBuildZipEntry(array $params)
     {
         $this->zipWrite($params['zipEntry']);
@@ -226,6 +227,7 @@ class Zip extends AbstractZipArchive
      *
      * @param array $params Array that contains gzLength.
      */
+    #[\Override]
     public function onBeginAddFile(array $params)
     {
         if (!is_resource($this->_zipFile) && ($this->offset + $params['gzLength']) > self::MEMORY_THRESHOLD) {
@@ -242,6 +244,7 @@ class Zip extends AbstractZipArchive
      *
      * @param array $params Array that contains gzData.
      */
+    #[\Override]
     public function onEndAddFile(array $params)
     {
         $this->zipWrite($params['gzData']);
@@ -254,6 +257,7 @@ class Zip extends AbstractZipArchive
      * @author A. Grandt <php@grandt.com>
      * @author Greg Kappatos
      */
+    #[\Override]
     public function onBeginBuildResponseHeader()
     {
         if (!$this->isFinalized) {
@@ -268,6 +272,7 @@ class Zip extends AbstractZipArchive
      * @author A. Grandt <php@grandt.com>
      * @author Greg Kappatos
      */
+    #[\Override]
     public function onEndBuildResponseHeader()
     {
         header('Connection: close');
@@ -291,6 +296,7 @@ class Zip extends AbstractZipArchive
      * @author A. Grandt <php@grandt.com>
      * @author Greg Kappatos
      */
+    #[\Override]
     public function onOpenStream()
     {
         $this->zipFlush();
@@ -305,6 +311,7 @@ class Zip extends AbstractZipArchive
      *
      * @param array $params Array that contains data.
      */
+    #[\Override]
     public function onProcessFile(array $params)
     {
         $this->zipWrite($params['data']);
@@ -317,6 +324,7 @@ class Zip extends AbstractZipArchive
      *
      * @param int $gzLength length of the pending data.
      */
+    #[\Override]
     public function zipVerifyMemBuffer($gzLength)
     {
         if (!is_resource($this->_zipFile) && ($this->offset + $gzLength) > self::MEMORY_THRESHOLD) {
@@ -330,6 +338,7 @@ class Zip extends AbstractZipArchive
      *
      * @param string $data
      */
+    #[\Override]
     public function zipWrite($data)
     {
         if (!is_resource($this->_zipFile)) {
@@ -346,11 +355,12 @@ class Zip extends AbstractZipArchive
      * @author A. Grandt <php@grandt.com>
      *
      */
+    #[\Override]
     public function zipFlush()
     {
         if (!is_resource($this->_zipFile)) {
             $this->_zipFile = tmpfile();
-            fwrite($this->_zipFile, $this->_zipData);
+            fwrite($this->_zipFile, (string) $this->_zipData);
             $this->_zipData = null;
         }
     }
@@ -360,6 +370,7 @@ class Zip extends AbstractZipArchive
      * @author A. Grandt <php@grandt.com>
      *
      */
+    #[\Override]
     public function zipFlushBuffer()
     {
         // Does nothing.

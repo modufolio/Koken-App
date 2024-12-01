@@ -62,6 +62,7 @@ class Swift_Transport_LoadBalancedTransport implements Swift_Transport
      *
      * @return bool
      */
+    #[\Override]
     public function isStarted()
     {
         return count($this->_transports) > 0;
@@ -70,6 +71,7 @@ class Swift_Transport_LoadBalancedTransport implements Swift_Transport
     /**
      * Start this Transport mechanism.
      */
+    #[\Override]
     public function start()
     {
         $this->_transports = array_merge($this->_transports, $this->_deadTransports);
@@ -78,6 +80,7 @@ class Swift_Transport_LoadBalancedTransport implements Swift_Transport
     /**
      * Stop this Transport mechanism.
      */
+    #[\Override]
     public function stop()
     {
         foreach ($this->_transports as $transport) {
@@ -96,6 +99,7 @@ class Swift_Transport_LoadBalancedTransport implements Swift_Transport
      *
      * @return int
      */
+    #[\Override]
     public function send(Swift_Mime_Message $message, &$failedRecipients = null)
     {
         $maxTransports = count($this->_transports);
@@ -110,7 +114,7 @@ class Swift_Transport_LoadBalancedTransport implements Swift_Transport
                 if ($sent = $transport->send($message, $failedRecipients)) {
                     break;
                 }
-            } catch (Swift_TransportException $e) {
+            } catch (Swift_TransportException) {
                 $this->_killCurrentTransport();
             }
         }
@@ -129,6 +133,7 @@ class Swift_Transport_LoadBalancedTransport implements Swift_Transport
      *
      * @param Swift_Events_EventListener $plugin
      */
+    #[\Override]
     public function registerPlugin(Swift_Events_EventListener $plugin)
     {
         foreach ($this->_transports as $transport) {
@@ -158,7 +163,7 @@ class Swift_Transport_LoadBalancedTransport implements Swift_Transport
         if ($transport = array_pop($this->_transports)) {
             try {
                 $transport->stop();
-            } catch (Exception $e) {
+            } catch (Exception) {
             }
             $this->_deadTransports[] = $transport;
         }

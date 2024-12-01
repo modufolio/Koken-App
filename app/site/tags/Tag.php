@@ -4,13 +4,11 @@
     {
         public $tokenize 		= false;
         public $untokenize_on_else = false;
-        protected $parameters	= [];
         protected $allows_close	= false;
         protected $attr_parse_level = 0;
 
-        public function __construct($parameters = array())
+        public function __construct(protected $parameters = [])
         {
-            $this->parameters = $parameters;
         }
 
         public function attr_replace($matches)
@@ -39,15 +37,15 @@
         public function attr_parse($val, $wrap = false)
         {
             $pattern = '/\{\{\s*([^\}]+)\s*\}\}/';
-            if (preg_match($pattern, $val)) {
-                $o = preg_replace_callback($pattern, array($this, 'out_cb'), $val);
+            if (preg_match($pattern, (string) $val)) {
+                $o = preg_replace_callback($pattern, $this->out_cb(...), (string) $val);
                 if ($wrap) {
                     return '<?php echo "' . $o. '" ?>';
                 } else {
                     return $o;
                 }
             } else {
-                $o =  preg_replace_callback('/\{([a-z_.0-9]+)\}/', array($this, 'attr_replace'), $val);
+                $o =  preg_replace_callback('/\{([a-z_.0-9]+)\}/', $this->attr_replace(...), (string) $val);
                 if ($wrap) {
                     return '<?php echo "' . $o. '" ?>';
                 } else {
@@ -62,7 +60,7 @@
                 $token_index = $this->attr_parse_level;
             }
 
-            $bits = explode('|', $param);
+            $bits = explode('|', (string) $param);
 
             $options = [];
 
@@ -76,7 +74,7 @@
                     $p = $param;
                 }
 
-                $p = trim($p, '{} ');
+                $p = trim((string) $p, '{} ');
 
                 preg_match('/^(site|location|profile|source|settings|routed_variables|page_variables|pjax|labels|messages)/', $p, $global_matches);
 
@@ -105,16 +103,16 @@
                     return 'count($value' . Koken::$tokens[$token_index] . "['__loop__'])";
                 } else {
                     $pre = '';
-                    while (strpos($p, '_parent.') !== false) {
+                    while (str_contains($p, '_parent.')) {
                         $p = substr($p, strlen('_parent.'));
                         $token_index++;
                     }
                     $p = str_replace('.first', '[0]', $p);
-                    if (strpos($p, '.last') !== false) {
+                    if (str_contains($p, '.last')) {
                         $partial = substr($p, 0, strpos($p, '.last'));
                         $p = str_replace('.last', '[count(' . $this->field_to_keys($partial, $variable, $token_index) . ') - 1]', $p);
                     }
-                    if (strpos($p, '.length') !== false) {
+                    if (str_contains($p, '.length')) {
                         $p = substr($p, 0, strpos($p, '.length'));
                         $postfix = ')';
                         $pre = 'count(';

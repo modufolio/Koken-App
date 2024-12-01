@@ -48,14 +48,7 @@ class Drafts extends Koken_Controller
 
         foreach ($drafts as $d) {
             if (isset($themes[$d->path])) {
-                $final[] = array(
-                    'id' => $d->id,
-                    'theme' => $themes[$d->path],
-                    'published' => (bool) $d->current,
-                    'active' => (bool) $d->draft,
-                    'created_on' => (int) $d->created_on,
-                    'modified_on' => (int) $d->modified_on
-                );
+                $final[] = ['id' => $d->id, 'theme' => $themes[$d->path], 'published' => (bool) $d->current, 'active' => (bool) $d->draft, 'created_on' => (int) $d->created_on, 'modified_on' => (int) $d->modified_on];
             }
         }
         $this->set_response_data($final);

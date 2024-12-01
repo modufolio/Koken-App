@@ -16,25 +16,23 @@
 class Swift_Plugins_ReporterPlugin implements Swift_Events_SendListener
 {
     /**
-     * The reporter backend which takes notifications.
-     *
-     * @var Swift_Plugins_Reporter
-     */
-    private $_reporter;
-
-    /**
      * Create a new ReporterPlugin using $reporter.
      *
-     * @param Swift_Plugins_Reporter $reporter
+     * @param Swift_Plugins_Reporter $_reporter
      */
-    public function __construct(Swift_Plugins_Reporter $reporter)
+    public function __construct(
+        /**
+         * The reporter backend which takes notifications.
+         */
+        private readonly Swift_Plugins_Reporter $_reporter
+    )
     {
-        $this->_reporter = $reporter;
     }
 
     /**
      * Not used.
      */
+    #[\Override]
     public function beforeSendPerformed(Swift_Events_SendEvent $evt)
     {
     }
@@ -44,6 +42,7 @@ class Swift_Plugins_ReporterPlugin implements Swift_Events_SendListener
      *
      * @param Swift_Events_SendEvent $evt
      */
+    #[\Override]
     public function sendPerformed(Swift_Events_SendEvent $evt)
     {
         $message = $evt->getMessage();

@@ -18,15 +18,6 @@ class Swift_Plugins_PopBeforeSmtpPlugin implements Swift_Events_TransportChangeL
     /** A delegate connection to use (mostly a test hook) */
     private $_connection;
 
-    /** Hostname of the POP3 server */
-    private $_host;
-
-    /** Port number to connect on */
-    private $_port;
-
-    /** Encryption type to use (if any) */
-    private $_crypto;
-
     /** Username to use (if any) */
     private $_username;
 
@@ -45,15 +36,12 @@ class Swift_Plugins_PopBeforeSmtpPlugin implements Swift_Events_TransportChangeL
     /**
      * Create a new PopBeforeSmtpPlugin for $host and $port.
      *
-     * @param string  $host
-     * @param int     $port
-     * @param string  $crypto as "tls" or "ssl"
+     * @param string $_host
+     * @param int $_port
+     * @param string $_crypto as "tls" or "ssl"
      */
-    public function __construct($host, $port = 110, $crypto = null)
+    public function __construct(private $_host, private $_port = 110, private $_crypto = null)
     {
-        $this->_host = $host;
-        $this->_port = $port;
-        $this->_crypto = $crypto;
     }
 
     /**
@@ -141,6 +129,7 @@ class Swift_Plugins_PopBeforeSmtpPlugin implements Swift_Events_TransportChangeL
      *
      * @throws Swift_Plugins_Pop_Pop3Exception if connection fails
      */
+    #[\Override]
     public function connect()
     {
         if (isset($this->_connection)) {
@@ -179,6 +168,7 @@ class Swift_Plugins_PopBeforeSmtpPlugin implements Swift_Events_TransportChangeL
     /**
      * Disconnect from the POP3 host.
      */
+    #[\Override]
     public function disconnect()
     {
         if (isset($this->_connection)) {
@@ -199,6 +189,7 @@ class Swift_Plugins_PopBeforeSmtpPlugin implements Swift_Events_TransportChangeL
      *
      * @param Swift_Events_TransportChangeEvent $evt
      */
+    #[\Override]
     public function beforeTransportStarted(Swift_Events_TransportChangeEvent $evt)
     {
         if (isset($this->_transport)) {
@@ -214,6 +205,7 @@ class Swift_Plugins_PopBeforeSmtpPlugin implements Swift_Events_TransportChangeL
     /**
      * Not used.
      */
+    #[\Override]
     public function transportStarted(Swift_Events_TransportChangeEvent $evt)
     {
     }
@@ -221,6 +213,7 @@ class Swift_Plugins_PopBeforeSmtpPlugin implements Swift_Events_TransportChangeL
     /**
      * Not used.
      */
+    #[\Override]
     public function beforeTransportStopped(Swift_Events_TransportChangeEvent $evt)
     {
     }
@@ -228,21 +221,22 @@ class Swift_Plugins_PopBeforeSmtpPlugin implements Swift_Events_TransportChangeL
     /**
      * Not used.
      */
+    #[\Override]
     public function transportStopped(Swift_Events_TransportChangeEvent $evt)
     {
     }
 
     private function _command($command)
     {
-        if (!fwrite($this->_socket, $command)) {
+        if (!fwrite($this->_socket, (string) $command)) {
             throw new Swift_Plugins_Pop_Pop3Exception(
-                sprintf('Failed to write command [%s] to POP3 host', trim($command))
+                sprintf('Failed to write command [%s] to POP3 host', trim((string) $command))
             );
         }
 
         if (false === $response = fgets($this->_socket)) {
             throw new Swift_Plugins_Pop_Pop3Exception(
-                sprintf('Failed to read from POP3 host after command [%s]', trim($command))
+                sprintf('Failed to read from POP3 host after command [%s]', trim((string) $command))
             );
         }
 
@@ -253,9 +247,9 @@ class Swift_Plugins_PopBeforeSmtpPlugin implements Swift_Events_TransportChangeL
 
     private function _assertOk($response)
     {
-        if (substr($response, 0, 3) != '+OK') {
+        if (!str_starts_with((string) $response, '+OK')) {
             throw new Swift_Plugins_Pop_Pop3Exception(
-                sprintf('POP3 command failed [%s]', trim($response))
+                sprintf('POP3 command failed [%s]', trim((string) $response))
             );
         }
     }
@@ -263,15 +257,11 @@ class Swift_Plugins_PopBeforeSmtpPlugin implements Swift_Events_TransportChangeL
     private function _getHostString()
     {
         $host = $this->_host;
-        switch (strtolower($this->_crypto)) {
-            case 'ssl':
-                $host = 'ssl://'.$host;
-                break;
-
-            case 'tls':
-                $host = 'tls://'.$host;
-                break;
-        }
+        $host = match (strtolower((string) $this->_crypto)) {
+            'ssl' => 'ssl://'.$host,
+            'tls' => 'tls://'.$host,
+            default => $host,
+        };
 
         return $host;
     }

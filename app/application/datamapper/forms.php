@@ -28,7 +28,7 @@ class DMZ_Forms
      * @param	array $fields Array of fields to include.  If empty, includes all database columns.
      * @return	object, the Datamapper object
      */
-    public function update_from_post($object, $fields = array(), $allfields = true)
+    public function update_from_post($object, $fields = [], $allfields = true)
     {
         // make sure $fields is an array
         $fields = (array) $fields;

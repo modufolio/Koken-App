@@ -1,7 +1,7 @@
 <?php
 
 // Hack to get original essay content without XSS filters
-function keep_vars($vars = array())
+function keep_vars($vars = [])
 {
     if (empty($vars)) {
         return;
@@ -16,6 +16,6 @@ function keep_vars($vars = array())
     }
 
     foreach ($raw_input_data as &$value) {
-        $value = stripslashes($value);
+        $value = stripslashes((string) $value);
     }
 }

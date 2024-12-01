@@ -32,7 +32,7 @@ $zip->addFile("Hello World!", "hello.txt");
 if ($handle) {
     /* This is the correct way to loop over the directory. */
     while (false !== ($file = readdir($handle))) {
-        if (strpos($file, ".php") !== false) {
+        if (str_contains($file, ".php")) {
             $pathData = pathinfo($fileDir . $file);
             $fileName = $pathData['filename'];
 

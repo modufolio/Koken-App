@@ -16,9 +16,6 @@
  */
 class Swift_FileSpool extends Swift_ConfigurableSpool
 {
-    /** The spool directory */
-    private $_path;
-
     /**
      * File WriteRetry Limit
      *
@@ -29,14 +26,12 @@ class Swift_FileSpool extends Swift_ConfigurableSpool
     /**
      * Create a new FileSpool.
      *
-     * @param string $path
+     * @param string $_path
      *
      * @throws Swift_IoException
      */
-    public function __construct($path)
+    public function __construct(private $_path)
     {
-        $this->_path = $path;
-
         if (!file_exists($this->_path)) {
             if (!mkdir($this->_path, 0777, true)) {
                 throw new Swift_IoException('Unable to create Path ['.$this->_path.']');
@@ -49,6 +44,7 @@ class Swift_FileSpool extends Swift_ConfigurableSpool
      *
      * @return bool
      */
+    #[\Override]
     public function isStarted()
     {
         return true;
@@ -57,6 +53,7 @@ class Swift_FileSpool extends Swift_ConfigurableSpool
     /**
      * Starts this Spool mechanism.
      */
+    #[\Override]
     public function start()
     {
     }
@@ -64,6 +61,7 @@ class Swift_FileSpool extends Swift_ConfigurableSpool
     /**
      * Stops this Spool mechanism.
      */
+    #[\Override]
     public function stop()
     {
     }
@@ -89,6 +87,7 @@ class Swift_FileSpool extends Swift_ConfigurableSpool
      *
      * @throws Swift_IoException
      */
+    #[\Override]
     public function queueMessage(Swift_Mime_Message $message)
     {
         $ser = serialize($message);
@@ -121,7 +120,7 @@ class Swift_FileSpool extends Swift_ConfigurableSpool
         foreach (new DirectoryIterator($this->_path) as $file) {
             $file = $file->getRealPath();
 
-            if (substr($file, - 16) == '.message.sending') {
+            if (str_ends_with($file, '.message.sending')) {
                 $lockedtime = filectime($file);
                 if ((time() - $lockedtime) > $timeout) {
                     rename($file, substr($file, 0, - 8));
@@ -138,6 +137,7 @@ class Swift_FileSpool extends Swift_ConfigurableSpool
      *
      * @return int     The number of sent e-mail's
      */
+    #[\Override]
     public function flushQueue(Swift_Transport $transport, &$failedRecipients = null)
     {
         $directoryIterator = new DirectoryIterator($this->_path);
@@ -145,7 +145,7 @@ class Swift_FileSpool extends Swift_ConfigurableSpool
         /* Start the transport only if there are queued files to send */
         if (!$transport->isStarted()) {
             foreach ($directoryIterator as $file) {
-                if (substr($file->getRealPath(), -8) == '.message') {
+                if (str_ends_with($file->getRealPath(), '.message')) {
                     $transport->start();
                     break;
                 }
@@ -158,7 +158,7 @@ class Swift_FileSpool extends Swift_ConfigurableSpool
         foreach ($directoryIterator as $file) {
             $file = $file->getRealPath();
 
-            if (substr($file, -8) != '.message') {
+            if (!str_ends_with($file, '.message')) {
                 continue;
             }
 
@@ -200,7 +200,7 @@ class Swift_FileSpool extends Swift_ConfigurableSpool
         $ret = '';
         $strlen = strlen($base);
         for ($i = 0; $i < $count; ++$i) {
-            $ret .= $base[((int) rand(0, $strlen - 1))];
+            $ret .= $base[((int) random_int(0, $strlen - 1))];
         }
 
         return $ret;

@@ -5,7 +5,7 @@
 }
 
 if (isset($_SERVER['HTTP_HOST'])) {
-    $__protocol = (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) !== 'off') ||
+    $__protocol = (!empty($_SERVER['HTTPS']) && strtolower((string) $_SERVER['HTTPS']) !== 'off') ||
         $_SERVER['SERVER_PORT'] == 443 ||
         (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') ? 'https' : 'http';
     $__full =  $__protocol . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
@@ -31,7 +31,7 @@ if ($key) {
 
 if (!defined('MAGICK_PATH')) {
     define('MAGICK_PATH_FINAL', 'convert');
-} elseif (strpos(strtolower(MAGICK_PATH), 'c:\\') !== false) {
+} elseif (str_contains(strtolower((string) MAGICK_PATH), 'c:\\')) {
     define('MAGICK_PATH_FINAL', '"' . MAGICK_PATH . '"');
 } else {
     define('MAGICK_PATH_FINAL', MAGICK_PATH);

@@ -15,31 +15,31 @@
  */
 class Swift_Mime_ContentEncoder_QpContentEncoder extends Swift_Encoder_QpEncoder implements Swift_Mime_ContentEncoder
 {
-    protected $_dotEscape;
-
     /**
      * Creates a new QpContentEncoder for the given CharacterStream.
      *
      * @param Swift_CharacterStream $charStream to use for reading characters
      * @param Swift_StreamFilter    $filter     if canonicalization should occur
-     * @param bool                  $dotEscape  if dot stuffing workaround must be enabled
+     * @param bool $_dotEscape if dot stuffing workaround must be enabled
      */
-    public function __construct(Swift_CharacterStream $charStream, Swift_StreamFilter $filter = null, $dotEscape = false)
+    public function __construct(Swift_CharacterStream $charStream, Swift_StreamFilter $filter = null, protected $_dotEscape = false)
     {
-        $this->_dotEscape = $dotEscape;
         parent::__construct($charStream, $filter);
     }
 
+    #[\Override]
     public function __sleep()
     {
-        return array('_charStream', '_filter', '_dotEscape');
+        return ['_charStream', '_filter', '_dotEscape'];
     }
 
+    #[\Override]
     protected function getSafeMapShareId()
     {
-        return get_class($this).($this->_dotEscape ? '.dotEscape' : '');
+        return static::class.($this->_dotEscape ? '.dotEscape' : '');
     }
 
+    #[\Override]
     protected function initSafeMap()
     {
         parent::initSafeMap();
@@ -61,6 +61,7 @@ class Swift_Mime_ContentEncoder_QpContentEncoder extends Swift_Encoder_QpEncoder
      * @param int                    $firstLineOffset
      * @param int                    $maxLineLength
      */
+    #[\Override]
     public function encodeByteStream(Swift_OutputByteStream $os, Swift_InputByteStream $is, $firstLineOffset = 0, $maxLineLength = 0)
     {
         if ($maxLineLength > 76 || $maxLineLength <= 0) {
@@ -116,6 +117,7 @@ class Swift_Mime_ContentEncoder_QpContentEncoder extends Swift_Encoder_QpEncoder
      *
      * @return string
      */
+    #[\Override]
     public function getName()
     {
         return 'quoted-printable';

@@ -17,7 +17,7 @@
 
             $format_pre = $format_post = '';
 
-            if (preg_match('/(_on|\.?date)$/', $this->parameters['data'])) {
+            if (preg_match('/(_on|\.?date)$/', (string) $this->parameters['data'])) {
                 if (isset($this->parameters['date_format'])) {
                     $f = "'{$this->parameters['date_format']}'";
                 } else {
@@ -32,7 +32,7 @@
                 $pre = "date($f, ";
                 $post = "['timestamp'])";
             } else {
-                list($pre, $post) = $this->parse_formatters();
+                [$pre, $post] = $this->parse_formatters();
             }
 
             if ($token) {
@@ -78,7 +78,7 @@ DOC;
                 }
 
                 if (isset($this->parameters['truncate']) && is_numeric($this->parameters['truncate'])) {
-                    $after = isset($this->parameters['after_truncate']) ? $this->parameters['after_truncate'] : '...';
+                    $after = $this->parameters['after_truncate'] ?? '...';
                     $format_pre = 'Koken::truncate(' . $format_pre;
                     $format_post .= ", {$this->parameters['truncate']},  '$after')";
                 }
@@ -89,6 +89,6 @@ DOC;
                 }
             }
 
-            return array($format_pre, $format_post);
+            return [$format_pre, $format_post];
         }
     }

@@ -2,31 +2,7 @@
 
 class Album extends Koken
 {
-    public array $validation = array(
-        'internal_id' => array(
-            'label' => 'Internal id',
-            'rules' => array('internalize', 'required')
-        ),
-        'created_on' => array(
-            'rules' => array('validate_time')
-        ),
-        'published_on' => array(
-            'rules' => array('validate_time')
-        ),
-        'left_id' => array(
-            'rules' => array('into_tree', 'required')
-        ),
-        'visibility' => array(
-            'rules' => array('tree')
-        ),
-        'title' => array(
-            'rules' => array('required'),
-            'get_rules' => array('readify')
-        ),
-        'slug' => array(
-            'rules' => array('slug', 'required')
-        )
-    );
+    public array $validation = ['internal_id' => ['label' => 'Internal id', 'rules' => ['internalize', 'required']], 'created_on' => ['rules' => ['validate_time']], 'published_on' => ['rules' => ['validate_time']], 'left_id' => ['rules' => ['into_tree', 'required']], 'visibility' => ['rules' => ['tree']], 'title' => ['rules' => ['required'], 'get_rules' => ['readify']], 'slug' => ['rules' => ['slug', 'required']]];
 
     public $db_join_prefix;
 
@@ -60,17 +36,13 @@ Q;
              ->where('deleted', $keep->deleted)
              ->where('right_id >=', $keep->right_id)
              ->where('id !=', $keep->id)
-             ->update(array(
-                'right_id' => "right_id + 1",
-             ), false);
+             ->update(['right_id' => "right_id + 1"], false);
 
         $this->where('visibility', $keep->visibility)
              ->where('deleted', $keep->deleted)
              ->where('left_id >=', $keep->left_id)
              ->where('id !=', $keep->id)
-             ->update(array(
-                'left_id' => "left_id + 1",
-             ), false);
+             ->update(['left_id' => "left_id + 1"], false);
 
         return $this->repair_tree();
     }
@@ -79,7 +51,7 @@ Q;
     {
         if (is_null($this->left_id)) {
             if (!is_numeric($this->visibility)) {
-                $values = array('public', 'unlisted', 'private');
+                $values = ['public', 'unlisted', 'private'];
 
                 if (in_array($this->visibility, $values)) {
                     $visibility = array_search($this->visibility, $values);
@@ -111,10 +83,10 @@ Q;
             return true;
         }
 
-        $this->load->helper(array('url', 'text', 'string'));
+        $this->load->helper(['url', 'text', 'string']);
         $slug = reduce_multiples(
             strtolower(
-                        url_title(
+                        (string) url_title(
                             convert_accented_characters($this->title),
                             'dash'
                         )
@@ -148,11 +120,10 @@ Q;
     {
         $a = new Album();
         $a->where('album_type', 2)
-            ->update(array(
-                'total_count' => "(right_id - left_id - 1)/2"
-            ), false);
+            ->update(['total_count' => "(right_id - left_id - 1)/2"], false);
     }
 
+    #[\Override]
     public function update_counts($save = true, $special_case = false)
     {
         if (is_null($this->visibility)) {
@@ -162,7 +133,7 @@ Q;
         $c = $this->content->where('deleted', 0);
 
         if ($special_case) {
-            $values = array('public', 'unlisted', 'private');
+            $values = ['public', 'unlisted', 'private'];
             $visibility_translated = array_search($special_case['visibility'], $values);
 
             if ($visibility_translated <= $this->visibility) {
@@ -209,10 +180,7 @@ Q;
         $level_diff = $this->level - 1;
 
         if ($diff === 0) {
-            $this->where('visibility', $this->visibility)->where('deleted', 1)->where('left_id >=', $this->left_id)->where('right_id <=', $this->right_id)->update(array(
-                    'level' => "level - $level_diff",
-                    'deleted' => 0
-                ), false);
+            $this->where('visibility', $this->visibility)->where('deleted', 1)->where('left_id >=', $this->left_id)->where('right_id <=', $this->right_id)->update(['level' => "level - $level_diff", 'deleted' => 0], false);
         } else {
             if ($diff < 0) {
                 $op = '+';
@@ -220,12 +188,7 @@ Q;
                 $op = '-';
             }
             $diff = abs($diff);
-            $this->where('visibility', $this->visibility)->where('deleted', 1)->where('left_id >=', $this->left_id)->where('right_id <=', $this->right_id)->update(array(
-                    'right_id' => "right_id $op $diff",
-                    'left_id' => "left_id $op $diff",
-                    'level' => "level - $level_diff",
-                    'deleted' => 0
-                ), false);
+            $this->where('visibility', $this->visibility)->where('deleted', 1)->where('left_id >=', $this->left_id)->where('right_id <=', $this->right_id)->update(['right_id' => "right_id $op $diff", 'left_id' => "left_id $op $diff", 'level' => "level - $level_diff", 'deleted' => 0], false);
         }
     }
 
@@ -246,7 +209,7 @@ Q;
             $diff = $this->left_id - $max_right;
             $level_diff = $this->level - 1;
 
-            $update = array('deleted' => 1, 'level' => "level - $level_diff");
+            $update = ['deleted' => 1, 'level' => "level - $level_diff"];
 
             if ($diff !== 0) {
                 if ($diff < 0) {
@@ -266,24 +229,16 @@ Q;
                     ->update($update, false);
 
 
-            $this->where('visibility', $this->visibility)->where('deleted', 0)->where('right_id >', $this->right_id)->update(array(
-                    'right_id' => "right_id - $size",
-                ), false);
+            $this->where('visibility', $this->visibility)->where('deleted', 0)->where('right_id >', $this->right_id)->update(['right_id' => "right_id - $size"], false);
 
-            $this->where('visibility', $this->visibility)->where('deleted', 0)->where('left_id >', $this->right_id)->update(array(
-                    'left_id' => "left_id - $size",
-                ), false);
+            $this->where('visibility', $this->visibility)->where('deleted', 0)->where('left_id >', $this->right_id)->update(['left_id' => "left_id - $size"], false);
         }
     }
 
     public function _do_match_visibility($params = false)
     {
         if (!$params) {
-            $params = array(
-                'left_id' => $this->left_id,
-                'right_id' => $this->right_id,
-                'visibility' => $this->visibility,
-            );
+            $params = ['left_id' => $this->left_id, 'right_id' => $this->right_id, 'visibility' => $this->visibility];
         }
 
         $aggregator = new Album();
@@ -310,7 +265,7 @@ Q;
                 $c->where('visibility <', 2);
             }
 
-            $c->update(array('visibility' => $params['visibility']));
+            $c->update(['visibility' => $params['visibility']]);
         }
     }
 
@@ -337,10 +292,7 @@ Q;
 
         if (is_numeric($this->id)) {
             if ($diff === 0) {
-                $this->where('visibility', $this->old_visibility)->where('left_id >=', $this->left_id)->where('right_id <=', $this->right_id)->update(array(
-                        'visibility' => $this->visibility,
-                        'level' => "level - $level_diff"
-                    ), false);
+                $this->where('visibility', $this->old_visibility)->where('left_id >=', $this->left_id)->where('right_id <=', $this->right_id)->update(['visibility' => $this->visibility, 'level' => "level - $level_diff"], false);
             } else {
                 if ($diff < 0) {
                     $op = '+';
@@ -348,21 +300,12 @@ Q;
                     $op = '-';
                 }
                 $diff = abs($diff);
-                $this->where('visibility', $this->old_visibility)->where('left_id >=', $this->left_id)->where('right_id <=', $this->right_id)->update(array(
-                        'right_id' => "right_id $op $diff",
-                        'left_id' => "left_id $op $diff",
-                        'visibility' => $this->visibility,
-                        'level' => "level - $level_diff"
-                    ), false);
+                $this->where('visibility', $this->old_visibility)->where('left_id >=', $this->left_id)->where('right_id <=', $this->right_id)->update(['right_id' => "right_id $op $diff", 'left_id' => "left_id $op $diff", 'visibility' => $this->visibility, 'level' => "level - $level_diff"], false);
             }
 
-            $this->where('visibility', $this->old_visibility)->where('right_id >', $old_right)->update(array(
-                    'right_id' => "right_id - $size",
-                ), false);
+            $this->where('visibility', $this->old_visibility)->where('right_id >', $old_right)->update(['right_id' => "right_id - $size"], false);
 
-            $this->where('visibility', $this->old_visibility)->where('left_id >', $old_right)->update(array(
-                    'left_id' => "left_id - $size",
-                ), false);
+            $this->where('visibility', $this->old_visibility)->where('left_id >', $old_right)->update(['left_id' => "left_id - $size"], false);
 
             if ($this->album_type < 1) {
                 $this->update_counts();
@@ -374,7 +317,7 @@ Q;
 
     public function _tree($field)
     {
-        $values = array('public', 'unlisted', 'private');
+        $values = ['public', 'unlisted', 'private'];
 
         if (in_array($this->visibility, $values)) {
             $this->visibility = array_search($this->visibility, $values);
@@ -406,19 +349,7 @@ Q;
 
         $this->db_join_prefix = $db_config['prefix'] . 'join_';
 
-        $this->has_many = array(
-            'content',
-            'category',
-            'text',
-            'tag',
-            'cover' => array(
-                'class' => 'content',
-                'join_table' => $this->db_join_prefix . 'albums_covers',
-                'other_field' => 'covers',
-                'join_other_as' => 'cover',
-                'join_self_as' => 'album',
-            )
-        );
+        $this->has_many = ['content', 'category', 'text', 'tag', 'cover' => ['class' => 'content', 'join_table' => $this->db_join_prefix . 'albums_covers', 'other_field' => 'covers', 'join_other_as' => 'cover', 'join_self_as' => 'album']];
 
         parent::__construct($id);
     }
@@ -433,7 +364,7 @@ Q;
             $n = $params['neighbors']/2;
         }
 
-        $to_arr_options = array('auth' => $auth);
+        $to_arr_options = ['auth' => $auth];
 
         if (!isset($params['context_order'])) {
             $params['context_order'] = 'left_id';
@@ -444,7 +375,7 @@ Q;
             $params['context_order'] = 'left_id';
         }
 
-        $next_operator = strtolower($params['context_order_direction']) === 'asc' ? '>' : '<';
+        $next_operator = strtolower((string) $params['context_order_direction']) === 'asc' ? '>' : '<';
         $prev_operator = $next_operator === '>' ? '<' : '>';
 
         $arr = [];
@@ -452,8 +383,8 @@ Q;
         $next = new Album();
         $prev = new Album();
 
-        if (isset($params['context']) && strpos($params['context'], 'tag-') === 0) {
-            $tag = str_replace('tag-', '', urldecode($params['context']));
+        if (isset($params['context']) && str_starts_with((string) $params['context'], 'tag-')) {
+            $tag = str_replace('tag-', '', urldecode((string) $params['context']));
             $t = new Tag();
             $t->where('name', $tag)->get();
 
@@ -481,10 +412,10 @@ Q;
                 $url = $t->url();
 
                 if ($url) {
-                    list($arr['__koken_url'], $arr['url']) = $url;
+                    [$arr['__koken_url'], $arr['url']] = $url;
                 }
             }
-        } elseif (isset($params['context']) && strpos($params['context'], 'category-') === 0) {
+        } elseif (isset($params['context']) && str_starts_with((string) $params['context'], 'category-')) {
             $category = str_replace('category-', '', $params['context']);
             $cat = new Category();
             $cat->where('slug', $category)->get();
@@ -511,7 +442,7 @@ Q;
                 $url = $cat->url();
 
                 if ($url) {
-                    list($arr['__koken_url'], $arr['url']) = $url;
+                    [$arr['__koken_url'], $arr['url']] = $url;
                 }
             }
         } else {
@@ -599,41 +530,15 @@ Q;
     {
         $sort = $this->_get_site_order('album');
 
-        $options = array(
-            'trash' => false,
-            'page' => 1,
-            'order_by' => $sort['by'],
-            'order_direction' => $sort['direction'],
-            'search' => false,
-            'search_filter' => false,
-            'tags' => false,
-            'tags_not' => false,
-            'match_all_tags' => false,
-            'limit' => false,
-            'include_empty' => true,
-            'types' => false,
-            'featured' => false,
-            'category' => false,
-            'category_not' => false,
-            'year' => false,
-            'year_not' => false,
-            'month' => false,
-            'month_not' => false,
-            'day' => false,
-            'day_not' => false,
-            'flat' => false,
-            'reduce' => false,
-            'id_not' => false,
-            'auth' => false,
-        );
+        $options = ['trash' => false, 'page' => 1, 'order_by' => $sort['by'], 'order_direction' => $sort['direction'], 'search' => false, 'search_filter' => false, 'tags' => false, 'tags_not' => false, 'match_all_tags' => false, 'limit' => false, 'include_empty' => true, 'types' => false, 'featured' => false, 'category' => false, 'category_not' => false, 'year' => false, 'year_not' => false, 'month' => false, 'month_not' => false, 'day' => false, 'day_not' => false, 'flat' => false, 'reduce' => false, 'id_not' => false, 'auth' => false];
         $options = array_merge($options, $params);
 
         if (isset($params['order_by']) && !isset($params['order_direction'])) {
-            $options['order_direction'] = in_array($params['order_by'], array('created_on', 'modified_on', 'published_on', 'total_count', 'image_count', 'video_count')) ? 'DESC' : 'ASC';
+            $options['order_direction'] = in_array($params['order_by'], ['created_on', 'modified_on', 'published_on', 'total_count', 'image_count', 'video_count']) ? 'DESC' : 'ASC';
         }
 
         $options = Shutter::filter('api.albums.listing.options', $options);
-        Shutter::hook('albums.listing', array($this, $options));
+        Shutter::hook('albums.listing', [$this, $options]);
 
         if ($options['order_by'] === 'manual') {
             $options['order_by'] = 'left_id';
@@ -678,7 +583,7 @@ Q;
         }
 
         if ($options['search']) {
-            $term = urldecode($options['search']);
+            $term = urldecode((string) $options['search']);
             if ($options['search_filter']) {
                 if ($options['search_filter'] === 'category') {
                     $cat = new Category();
@@ -712,7 +617,7 @@ Q;
         }
 
         if ($options['id_not']) {
-            $this->where_not_in('id', explode(',', $options['id_not']));
+            $this->where_not_in('id', explode(',', (string) $options['id_not']));
         }
 
         $sub_list = false;
@@ -727,7 +632,7 @@ Q;
             $options['visibility'] = $this->visibility;
         } elseif ($options['auth']) {
             if (isset($options['visibility'])) {
-                $values = array('public', 'unlisted', 'private');
+                $values = ['public', 'unlisted', 'private'];
                 if (in_array($options['visibility'], $values)) {
                     $options['visibility'] = array_search($options['visibility'], $values);
                 } else {
@@ -775,7 +680,7 @@ Q;
             $options['order_direction'] = 'asc';
         }
 
-        if (in_array($options['order_by'], array('created_on', 'modified_on'))) {
+        if (in_array($options['order_by'], ['created_on', 'modified_on'])) {
             $date_col = $options['order_by'];
         } else {
             $date_col = 'published_on';
@@ -783,7 +688,7 @@ Q;
 
         $s = new Setting();
         $s->where('name', 'site_timezone')->get();
-        $tz = new DateTimeZone($s->value);
+        $tz = new DateTimeZone($s->value ?? 'UTC');
         $offset = $tz->getOffset(new DateTime('now', new DateTimeZone('UTC')));
 
         if ($offset === 0) {
@@ -863,7 +768,7 @@ Q;
         $this->include_related_count('text');
         $this->include_related_count('categories');
 
-        if (preg_match('/_on$/', $options['order_by'])) {
+        if (preg_match('/_on$/', (string) $options['order_by'])) {
             $options['order_by'] .= ' ' . $options['order_direction'] . ',id ' . $options['order_direction'];
         } else {
             $options['order_by'] .= ' ' . $options['order_direction'];
@@ -875,11 +780,7 @@ Q;
             $final['total'] = $data->result_count();
         }
 
-        $final['counts'] = array(
-            'albums' => $final['total'] - $set_count,
-            'sets' => $set_count,
-            'total' => $final['total']
-        );
+        $final['counts'] = ['albums' => $final['total'] - $set_count, 'sets' => $set_count, 'total' => $final['total']];
 
         $final['albums'] = [];
 
@@ -888,7 +789,7 @@ Q;
         $tag_map = $this->_eager_load_tags($data);
 
         foreach ($data as $album) {
-            $tags = isset($tag_map['c' . $album->id]) ? $tag_map['c' . $album->id] : array();
+            $tags = $tag_map['c' . $album->id] ?? [];
             $params['eager_tags'] = $tags;
             $params['include_parent'] = !$sub_list;
             $final['albums'][] = $album->to_array($params);
@@ -944,10 +845,10 @@ Q;
 
     public function manage_content($content_id, $method = 'post', $match_album_visibility = false)
     {
-        if (strpos($content_id, ',') !== false) {
-            $ids = explode(',', $content_id);
+        if (str_contains((string) $content_id, ',')) {
+            $ids = explode(',', (string) $content_id);
         } else {
-            $ids = array($content_id);
+            $ids = [$content_id];
         }
 
         $h = new History();
@@ -1000,7 +901,7 @@ Q;
                 $change->where_in('id', $added_ids)
                     ->where('visibility !=', $this->visibility)
                     ->where('visibility <', 2)
-                    ->update(array('visibility' => $this->visibility));
+                    ->update(['visibility' => $this->visibility]);
             }
 
             if (count($ids) == 1) {
@@ -1030,11 +931,7 @@ Q;
                             $level_delta = 'level ' . $delta;
 
                             if (isset($_POST['match_album_visibility']) && $_POST['match_album_visibility'] > 0) {
-                                $this->_do_match_visibility(array(
-                                    'left_id' => $move_copy->left_id,
-                                    'right_id' => $move_copy->right_id,
-                                    'visibility' => $this->visibility,
-                                ));
+                                $this->_do_match_visibility(['left_id' => $move_copy->left_id, 'right_id' => $move_copy->right_id, 'visibility' => $this->visibility]);
                             }
                         } else {
                             // For removals, we simply move the object back to the root
@@ -1062,14 +959,9 @@ Q;
                         $a->where('left_id >=', $left)
                                 ->where('right_id <=', $right)
                                 ->where('visibility', $move_copy->visibility)
-                                ->update(array(
-                                    'left_id' => "left_id $delta",
-                                    'right_id' => "right_id $delta",
-                                    'visibility' => $this->visibility,
-                                    'level' => $level_delta
-                                ), false);
+                                ->update(['left_id' => "left_id $delta", 'right_id' => "right_id $delta", 'visibility' => $this->visibility, 'level' => $level_delta], false);
 
-                        $a->where('visibility', 1)->where('published_on', null)->update(array('published_on' => time()));
+                        $a->where('visibility', 1)->where('published_on', null)->update(['published_on' => time()]);
 
                         $a->shift_tree_values($right + 1, -$size, $move_copy->visibility);
                     }
@@ -1087,7 +979,7 @@ Q;
         if ($method == 'delete') {
             $message = str_replace('move', 'remove', $message);
         }
-        $h->message = array($message, $c, $this->title);
+        $h->message = [$message, $c, $this->title];
         $h->save();
     }
 
@@ -1097,30 +989,26 @@ Q;
 
         $this->where('left_id >=', $first)
                 ->where('visibility', $visibility)
-                ->update(array(
-                    'left_id' => "left_id $delta"
-                ), false);
+                ->update(['left_id' => "left_id $delta"], false);
 
         $this->where('right_id >=', $first)
                 ->where('visibility', $visibility)
-                ->update(array(
-                    'right_id' => "right_id $delta"
-                ), false);
+                ->update(['right_id' => "right_id $delta"], false);
     }
 
-    public function to_array($options = array())
+    public function to_array($options = [])
     {
-        $options = array_merge(array('with_covers' => true, 'auth' => false), $options);
+        $options = array_merge(['with_covers' => true, 'auth' => false], $options);
 
         $koken_url_info = $this->config->item('koken_url_info');
 
-        $exclude = array('deleted', 'total_count', 'video_count', 'featured_order', 'tags_old', 'old_slug');
-        $dates = array('created_on', 'modified_on', 'featured_on', 'published_on');
-        $strings = array('title', 'summary', 'description', 'koken_password_protect_password');
+        $exclude = ['deleted', 'total_count', 'video_count', 'featured_order', 'tags_old', 'old_slug'];
+        $dates = ['created_on', 'modified_on', 'featured_on', 'published_on'];
+        $strings = ['title', 'summary', 'description', 'koken_password_protect_password'];
 
-        $bools = array('featured');
+        $bools = ['featured'];
 
-        list($data, $public_fields) = $this->prepare_for_output($options, $exclude, $bools, $dates, $strings);
+        [$data, $public_fields] = $this->prepare_for_output($options, $exclude, $bools, $dates, $strings);
 
         if (!$options['auth'] && $data['visibility'] < 1) {
             unset($data['internal_id']);
@@ -1131,23 +1019,18 @@ Q;
         }
 
         $sort = [];
-        list($sort['by'], $sort['direction']) = explode(' ', $data['sort']);
+        [$sort['by'], $sort['direction']] = explode(' ', (string) $data['sort']);
 
         $data['sort'] = $sort;
 
         $data['__koken__'] = 'album';
 
         if (array_key_exists('album_type', $data)) {
-            switch ($data['album_type']) {
-                case 2:
-                    $data['album_type'] = 'set';
-                    break;
-                case 1:
-                    $data['album_type'] = 'smart';
-                    break;
-                default:
-                    $data['album_type'] = 'standard';
-            }
+            $data['album_type'] = match ($data['album_type']) {
+                2 => 'set',
+                1 => 'smart',
+                default => 'standard',
+            };
         }
 
         if ($this->album_type == 2) {
@@ -1160,30 +1043,16 @@ Q;
                 ->where('visibility', 0)
                 ->get();
 
-            $data['counts'] = array(
-                'total' => (int) $this->total_count,
-                'videos' => (int) $sum->video_count,
-                'images' => $sum->total_count - $sum->video_count
-            );
+            $data['counts'] = ['total' => (int) $this->total_count, 'videos' => (int) $sum->video_count, 'images' => $sum->total_count - $sum->video_count];
         } else {
-            $data['counts'] = array(
-                'total' => (int) $this->total_count,
-                'videos' => (int) $this->video_count,
-                'images' => $this->total_count - $this->video_count
-            );
+            $data['counts'] = ['total' => (int) $this->total_count, 'videos' => (int) $this->video_count, 'images' => $this->total_count - $this->video_count];
         }
 
         $data['tags'] = $this->_get_tags_for_output($options);
 
-        $data['categories'] = array(
-            'count' => is_null($this->category_count) ? $this->categories->count() : (int) $this->category_count,
-            'url' => $koken_url_info->base . 'api.php?/albums/' . $data['id'] . '/categories'
-        );
+        $data['categories'] = ['count' => is_null($this->category_count) ? $this->categories->count() : (int) $this->category_count, 'url' => $koken_url_info->base . 'api.php?/albums/' . $data['id'] . '/categories'];
 
-        $data['topics'] = array(
-            'count' => is_null($this->text_count) ? $this->text->count() : (int) $this->text_count,
-            'url' => $koken_url_info->base . 'api.php?/albums/' . $data['id'] . '/topics'
-        );
+        $data['topics'] = ['count' => is_null($this->text_count) ? $this->text->count() : (int) $this->text_count, 'url' => $koken_url_info->base . 'api.php?/albums/' . $data['id'] . '/topics'];
 
         if ($options['with_covers']) {
             $data['covers'] = $existing = [];
@@ -1195,12 +1064,12 @@ Q;
                 $data['__cover_hint_before'] = $options['before'];
             }
 
-            $covers->include_related_count('albums', null, array('visibility' => 0));
+            $covers->include_related_count('albums', null, ['visibility' => 0]);
             $covers->include_related_count('categories');
 
             foreach ($covers->order_by("covers_{$this->db_join_prefix}albums_covers.id ASC")->get_iterated() as $f) {
                 if ($f->exists()) {
-                    $data['covers'][] = $f->to_array(array('in_album' => $this));
+                    $data['covers'][] = $f->to_array(['in_album' => $this]);
                     $existing[] = $f->id;
                 }
             }
@@ -1242,7 +1111,7 @@ Q;
                         $c->where_in('id', $f_ids)->get_iterated();
                         foreach ($c as $content) {
                             // TODO: auth needs to be passed in here
-                            array_unshift($data['covers'], $content->to_array(array('in_album' => $this)));
+                            array_unshift($data['covers'], $content->to_array(['in_album' => $this]));
                         }
                     }
                 }
@@ -1252,7 +1121,7 @@ Q;
             $data['covers'] = array_reverse($data['covers']);
         }
 
-        if (isset($options['order_by']) && in_array($options['order_by'], array( 'created_on', 'modified_on' ))) {
+        if (isset($options['order_by']) && in_array($options['order_by'], ['created_on', 'modified_on'])) {
             $data['date'] =& $data[ $options['order_by'] ];
         } else {
             $data['date'] =& $data['published_on'];
@@ -1273,7 +1142,7 @@ Q;
             $data['parent'] = false;
         }
 
-        $cat = isset($options['category']) ? $options['category'] : (isset($options['context']) && strpos($options['context'], 'category-') === 0 ? str_replace('category-', '', $options['context']) : false);
+        $cat = $options['category'] ?? (isset($options['context']) && str_starts_with((string) $options['context'], 'category-') ? str_replace('category-', '', $options['context']) : false);
 
         if ($cat) {
             if (is_numeric($cat)) {
@@ -1287,15 +1156,11 @@ Q;
         }
 
         $data['url'] = $this->url(
-            array(
-                'date' => $data['published_on'],
-                'tag' => isset($options['tags']) ? $options['tags'] : (isset($options['context']) && strpos($options['context'], 'tag-') === 0 ? str_replace('tag-', '', $options['context']) : false),
-                'category' => $cat,
-            )
+            ['date' => $data['published_on'], 'tag' => $options['tags'] ?? (isset($options['context']) && str_starts_with((string) $options['context'], 'tag-') ? str_replace('tag-', '', $options['context']) : false), 'category' => $cat]
         );
 
         if ($data['url']) {
-            list($data['__koken_url'], $data['url']) = $data['url'];
+            [$data['__koken_url'], $data['url']] = $data['url'];
             $data['canonical_url'] = $data['url'];
         }
 
@@ -1304,30 +1169,21 @@ Q;
         }
 
         if (array_key_exists('visibility', $data)) {
-            switch ($data['visibility']) {
-                case 1:
-                    $raw = 'unlisted';
-                    break;
-                case 2:
-                    $raw = 'private';
-                    break;
-                default:
-                    $raw = 'public';
-                    break;
-            }
+            $raw = match ($data['visibility']) {
+                1 => 'unlisted',
+                2 => 'private',
+                default => 'public',
+            };
 
-            $data['visibility'] = array(
-                'raw' => $raw,
-                'clean' => ucwords($raw)
-            );
+            $data['visibility'] = ['raw' => $raw, 'clean' => ucwords($raw)];
 
             $data['public'] = $raw === 'public';
         }
 
-        return Shutter::filter('api.album', array( $data, $this, $options ));
+        return Shutter::filter('api.album', [$data, $this, $options]);
     }
 
-    public function apply_smart_conditions($smart_rules, $options = array(), $limit_for_preview = false)
+    public function apply_smart_conditions($smart_rules, $options = [], $limit_for_preview = false)
     {
         $content = new Content();
         $array = unserialize($smart_rules);
@@ -1437,7 +1293,7 @@ Q;
             $final = $content->paginate($options);
         }
 
-        return array($content, $final);
+        return [$content, $final];
     }
 }
 

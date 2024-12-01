@@ -211,7 +211,7 @@ class Dir
 
         try {
             return symlink($source, $link) === true;
-        } catch (Throwable $e) {
+        } catch (Throwable) {
             return false;
         }
     }
@@ -326,7 +326,7 @@ class Dir
         }
 
         // create the ignore pattern
-        $ignore = $ignore ?? static::$ignore;
+        $ignore ??= static::$ignore;
         $ignore = array_merge($ignore, ['.', '..']);
 
         // scan for all files and dirs
@@ -334,9 +334,7 @@ class Dir
 
         // add absolute paths
         if ($absolute === true) {
-            $result = array_map(function ($item) use ($dir) {
-                return $dir . '/' . $item;
-            }, $result);
+            $result = array_map(fn($item) => $dir . '/' . $item, $result);
         }
 
         return $result;

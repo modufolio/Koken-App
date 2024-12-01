@@ -242,9 +242,9 @@ class CI_Input extends stdClass
     {
         if (is_array($name)) {
             // always leave 'name' in last place, as the loop will break otherwise, due to $$item
-            foreach (array('value', 'expire', 'domain', 'path', 'prefix', 'secure', 'httponly', 'name') as $item) {
+            foreach (['value', 'expire', 'domain', 'path', 'prefix', 'secure', 'httponly', 'name'] as $item) {
                 if (isset($name[$item])) {
-                    $$item = $name[$item];
+                    ${$item} = $name[$item];
                 }
             }
         }
@@ -271,7 +271,7 @@ class CI_Input extends stdClass
             $expire = ($expire > 0) ? time() + $expire : 0;
         }
 
-        setcookie($prefix.$name, $value, $expire, $path, $domain, $secure, $httponly);
+        setcookie($prefix.$name, (string) $value, ['expires' => $expire, 'path' => (string) $path, 'domain' => (string) $domain, 'secure' => $secure, 'httponly' => $httponly]);
     }
 
     // --------------------------------------------------------------------
@@ -305,12 +305,12 @@ class CI_Input extends stdClass
         $proxy_ips = config_item('proxy_ips');
         if (! empty($proxy_ips)) {
             $proxy_ips = explode(',', str_replace(' ', '', $proxy_ips));
-            foreach (array('HTTP_X_FORWARDED_FOR', 'HTTP_CLIENT_IP', 'HTTP_X_CLIENT_IP', 'HTTP_X_CLUSTER_CLIENT_IP') as $header) {
+            foreach (['HTTP_X_FORWARDED_FOR', 'HTTP_CLIENT_IP', 'HTTP_X_CLIENT_IP', 'HTTP_X_CLUSTER_CLIENT_IP'] as $header) {
                 if (($spoof = $this->server($header)) !== false) {
                     // Some proxies typically list the whole chain of IP
                     // addresses through which the client has reached us.
                     // e.g. client_ip, proxy_ip1, proxy_ip2, etc.
-                    if (strpos($spoof, ',') !== false) {
+                    if (str_contains($spoof, ',')) {
                         $spoof = explode(',', $spoof, 2);
                         $spoof = $spoof[0];
                     }
@@ -364,7 +364,7 @@ class CI_Input extends stdClass
     */
     protected function _valid_ipv4($ip)
     {
-        $ip_segments = explode('.', $ip);
+        $ip_segments = explode('.', (string) $ip);
 
         // Always 4 segments needed
         if (count($ip_segments) !== 4) {
@@ -406,7 +406,7 @@ class CI_Input extends stdClass
         $collapsed = false;
 
         $chunks = array_filter(
-            preg_split('/(:{1,2})/', $str, null, PREG_SPLIT_DELIM_CAPTURE)
+            preg_split('/(:{1,2})/', (string) $str, null, PREG_SPLIT_DELIM_CAPTURE)
         );
 
         // Rule out easy nonsense
@@ -415,7 +415,7 @@ class CI_Input extends stdClass
         }
 
         // PHP supports IPv4-mapped IPv6 addresses, so we'll expect those as well
-        if (strpos(end($chunks), '.') !== false) {
+        if (str_contains(end($chunks), '.')) {
             $ipv4 = array_pop($chunks);
 
             if (! $this->_valid_ipv4($ipv4)) {
@@ -488,24 +488,21 @@ class CI_Input extends stdClass
     public function _sanitize_globals()
     {
         // It would be "wrong" to unset any of these GLOBALS.
-        $protected = array('_SERVER', '_GET', '_POST', '_FILES', '_REQUEST',
-                            '_SESSION', '_ENV', 'GLOBALS', 'HTTP_RAW_POST_DATA',
-                            'system_folder', 'application_folder', 'BM', 'EXT',
-                            'CFG', 'URI', 'RTR', 'OUT', 'IN');
+        $protected = ['_SERVER', '_GET', '_POST', '_FILES', '_REQUEST', '_SESSION', '_ENV', 'GLOBALS', 'HTTP_RAW_POST_DATA', 'system_folder', 'application_folder', 'BM', 'EXT', 'CFG', 'URI', 'RTR', 'OUT', 'IN'];
 
         // Unset globals for securiy.
         // This is effectively the same as register_globals = off
-        foreach (array($_GET, $_POST, $_COOKIE) as $global) {
+        foreach ([$_GET, $_POST, $_COOKIE] as $global) {
             if (! is_array($global)) {
                 if (! in_array($global, $protected)) {
-                    global $$global;
-                    $$global = null;
+                    global ${$global};
+                    ${$global} = null;
                 }
             } else {
                 foreach ($global as $key => $val) {
                     if (! in_array($key, $protected)) {
-                        global $$key;
-                        $$key = null;
+                        global ${$key};
+                        ${$key} = null;
                     }
                 }
             }
@@ -560,7 +557,7 @@ class CI_Input extends stdClass
         }
 
         // Sanitize PHP_SELF
-        $_SERVER['PHP_SELF'] = strip_tags($_SERVER['PHP_SELF']);
+        $_SERVER['PHP_SELF'] = strip_tags((string) $_SERVER['PHP_SELF']);
 
 
         // CSRF Protection check on HTTP requests
@@ -599,7 +596,7 @@ class CI_Input extends stdClass
              it will probably not exist in future versions at all.
         */
         if (! is_php('5.4') && get_magic_quotes_gpc()) {
-            $str = stripslashes($str);
+            $str = stripslashes((string) $str);
         }
 
         // Clean UTF-8 if supported
@@ -617,8 +614,8 @@ class CI_Input extends stdClass
 
         // Standardize newlines if needed
         if ($this->_standardize_newlines == true) {
-            if (strpos($str, "\r") !== false) {
-                $str = str_replace(array("\r\n", "\r", "\r\n\n"), PHP_EOL, $str);
+            if (str_contains((string) $str, "\r")) {
+                $str = str_replace(["\r\n", "\r", "\r\n\n"], PHP_EOL, $str);
             }
         }
 
@@ -640,7 +637,7 @@ class CI_Input extends stdClass
     */
     public function _clean_input_keys($str)
     {
-        if (! preg_match("/^[a-z0-9:_\/-]+$/i", $str)) {
+        if (! preg_match("/^[a-z0-9:_\/-]+$/i", (string) $str)) {
             exit('Disallowed Key Characters.');
         }
 
@@ -670,10 +667,10 @@ class CI_Input extends stdClass
         if (function_exists('apache_request_headers')) {
             $headers = apache_request_headers();
         } else {
-            $headers['Content-Type'] = (isset($_SERVER['CONTENT_TYPE'])) ? $_SERVER['CONTENT_TYPE'] : @getenv('CONTENT_TYPE');
+            $headers['Content-Type'] = $_SERVER['CONTENT_TYPE'] ?? @getenv('CONTENT_TYPE');
 
             foreach ($_SERVER as $key => $val) {
-                if (strncmp($key, 'HTTP_', 5) === 0) {
+                if (str_starts_with($key, 'HTTP_')) {
                     $headers[substr($key, 5)] = $this->_fetch_from_array($_SERVER, $key, $xss_clean);
                 }
             }

@@ -50,7 +50,7 @@ class KokenPlugin
     }
 
     /* Following functions are "final" and cannot be overriden in plugin classes */
-    final protected function redirect($url, $params = array())
+    final protected function redirect($url, $params = [])
     {
         Koken::redirect($url, $params);
     }
@@ -71,17 +71,17 @@ class KokenPlugin
 
     final protected function get_key()
     {
-        $reflector = new ReflectionClass(get_class($this));
+        $reflector = new ReflectionClass(static::class);
         return basename(dirname($reflector->getFileName()));
     }
 
     final protected function clear_image_cache($id = false)
     {
-        $root = dirname(dirname(dirname(dirname(__FILE__))));
+        $root = dirname(__FILE__, 4);
         include_once($root . '/app/helpers/file_helper.php');
         $path = $root . '/storage/cache/images';
         if ($id) {
-            $padded_id = str_pad($id, 6, '0', STR_PAD_LEFT);
+            $padded_id = str_pad((string) $id, 6, '0', STR_PAD_LEFT);
             $path .= '/' . substr($padded_id, 0, 3) . '/' . substr($padded_id, 3);
         }
         delete_files($path, true, 1);
@@ -89,7 +89,7 @@ class KokenPlugin
 
     final protected function root_path()
     {
-        return dirname(dirname(dirname(dirname(__FILE__))));
+        return dirname(__FILE__, 4);
     }
 
     final protected function get_main_storage_path()
@@ -99,7 +99,7 @@ class KokenPlugin
 
     final protected function get_file_path()
     {
-        $root = dirname(dirname(dirname(dirname(__FILE__))));
+        $root = dirname(__FILE__, 4);
         return $root . '/storage/plugins/' . $this->get_key();
     }
 
@@ -134,17 +134,17 @@ class KokenPlugin
 
     final protected function register_hook($hook, $method)
     {
-        Shutter::register_hook($hook, array($this, $method));
+        Shutter::register_hook($hook, [$this, $method]);
     }
 
     final protected function register_filter($filter, $method)
     {
-        Shutter::register_filter($filter, array($this, $method));
+        Shutter::register_filter($filter, [$this, $method]);
     }
 
     final protected function register_shortcode($shortcode, $method)
     {
-        Shutter::register_shortcode($shortcode, array($this, $method));
+        Shutter::register_shortcode($shortcode, [$this, $method]);
     }
 
     final protected function register_site_script($path)

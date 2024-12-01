@@ -5,43 +5,7 @@ class Content extends Koken
     public string $table = 'content';
     public string $created_field = 'uploaded_on';
 
-    public array $validation = array(
-        'internal_id' => array(
-            'label' => 'Internal id',
-            'rules' => array('required')
-        ),
-        'uploaded_on' => array(
-            'rules' => array('validate_time')
-        ),
-        'published_on' => array(
-            'rules' => array('validate_time')
-        ),
-        'captured_on' => array(
-            'rules' => array('validate_time')
-        ),
-        'filename' => array(
-            'rules' => array('before'),
-            'get_rules' => array('readify')
-        ),
-        'title' => array(
-            'rules' => array('title_to_slug')
-        ),
-        'license' => array(
-            'rules' => array('validate_license')
-        ),
-        'visibility' => array(
-            'rules' => array('validate_visibility')
-        ),
-        'max_download' => array(
-            'rules' => array('validate_max_download')
-        ),
-        'focal_point' => array(
-            'rules' => array('validate_focal_point')
-        ),
-        'slug' => array(
-            'rules' => array('slug', 'required')
-        )
-    );
+    public array $validation = ['internal_id' => ['label' => 'Internal id', 'rules' => ['required']], 'uploaded_on' => ['rules' => ['validate_time']], 'published_on' => ['rules' => ['validate_time']], 'captured_on' => ['rules' => ['validate_time']], 'filename' => ['rules' => ['before'], 'get_rules' => ['readify']], 'title' => ['rules' => ['title_to_slug']], 'license' => ['rules' => ['validate_license']], 'visibility' => ['rules' => ['validate_visibility']], 'max_download' => ['rules' => ['validate_max_download']], 'focal_point' => ['rules' => ['validate_focal_point']], 'slug' => ['rules' => ['slug', 'required']]];
 
     public $exif_cache = [];
 
@@ -53,8 +17,8 @@ class Content extends Koken
 
     public function clean_filename($file)
     {
-        $this->load->helper(array('url', 'text', 'string'));
-        $info = pathinfo($file);
+        $this->load->helper(['url', 'text', 'string']);
+        $info = pathinfo((string) $file);
         return reduce_multiples(
             str_replace(
                 '_',
@@ -86,7 +50,7 @@ class Content extends Koken
             return true;
         }
 
-        $this->load->helper(array('url', 'text', 'string'));
+        $this->load->helper(['url', 'text', 'string']);
 
         if (empty($this->title)) {
             $info = pathinfo($this->filename);
@@ -97,7 +61,7 @@ class Content extends Koken
 
         $slug = reduce_multiples(
             strtolower(
-                        url_title(
+                        (string) url_title(
                             convert_accented_characters($base),
                             'dash'
                         )
@@ -155,12 +119,10 @@ class Content extends Koken
     // Multibyte safe unserialization for cray cray EXIF/IPTC junk
     public function _unserialize($string)
     {
-        $original = MB_ENABLED ? mb_convert_encoding($string, 'ISO-8859-1') : utf8_decode($string);
+        $original = MB_ENABLED ? mb_convert_encoding($string, 'ISO-8859-1') : mb_convert_encoding($string, 'ISO-8859-1');
         $string = preg_replace_callback(
             '!s:(\d+):"(.*?)";!s',
-            function ($matches) {
-                return "s:" . strlen($matches[2]) . ":\"" . $matches[2] . "\";";
-            },
+            fn($matches) => "s:" . strlen((string) $matches[2]) . ":\"" . $matches[2] . "\";",
             $original
         );
         $mb = @unserialize($string);
@@ -170,13 +132,13 @@ class Content extends Koken
         } elseif (json_encode($original)) {
             return $original;
         } else {
-            return array();
+            return [];
         }
     }
 
     public function _validate_max_download()
     {
-        $values = array('none', 'original', 'huge', 'xlarge', 'large', 'medium_large', 'medium');
+        $values = ['none', 'original', 'huge', 'xlarge', 'large', 'medium_large', 'medium'];
         if (in_array($this->max_download, $values)) {
             $this->max_download = array_search($this->max_download, $values);
         } else {
@@ -186,7 +148,7 @@ class Content extends Koken
 
     public function _validate_visibility()
     {
-        $values = array('public', 'unlisted', 'private');
+        $values = ['public', 'unlisted', 'private'];
         if (in_array($this->visibility, $values)) {
             if ($this->id) {
                 $a = new Album();
@@ -195,7 +157,7 @@ class Content extends Koken
                     if ($this->visibility === 'public') {
                         $album->reset_covers($this->id);
                     }
-                    $album->update_counts(true, array('id' => $this->id, 'visibility' => $this->visibility));
+                    $album->update_counts(true, ['id' => $this->id, 'visibility' => $this->visibility]);
                 }
 
                 if ($this->visibility !== 'public') {
@@ -238,20 +200,20 @@ class Content extends Koken
 
         if ($this->exists()) {
             if ($reset) {
-                $internal_id = substr($this->internal_id, 0, 4) . substr(koken_rand(), 4);
+                $internal_id = substr($this->internal_id, 0, 4) . substr((string) koken_rand(), 4);
             } else {
                 $internal_id = $this->internal_id;
             }
             $path = $base . $this->path;
         } else {
             $internal_id = koken_rand();
-            $hash = substr($internal_id, 0, 2) . DIRECTORY_SEPARATOR . substr($internal_id, 2, 2);
+            $hash = substr((string) $internal_id, 0, 2) . DIRECTORY_SEPARATOR . substr((string) $internal_id, 2, 2);
             $path = $base . $hash;
             if (!make_child_dir($path)) {
                 $path = false;
             }
         }
-        return array($internal_id, $path . DIRECTORY_SEPARATOR);
+        return [$internal_id, $path . DIRECTORY_SEPARATOR];
     }
 
     public function _force_utf($string)
@@ -260,7 +222,7 @@ class Content extends Koken
             return $string;
         }
 
-        if (mb_detect_encoding($string) !== 'UTF-8') {
+        if (mb_detect_encoding((string) $string) !== 'UTF-8') {
             return mb_convert_encoding($string, 'UTF-8');
         }
 
@@ -278,7 +240,7 @@ class Content extends Koken
             return iptcparse($info['APP13']);
         }
 
-        return array();
+        return [];
     }
 
     public function _get_exif_data($path = false)
@@ -288,8 +250,8 @@ class Content extends Koken
                 $path = $this->path_to_original();
             }
 
-            $pathinfo = pathinfo($path);
-            if (in_array(strtolower($pathinfo['extension']), array('jpg', 'jpeg')) && is_callable('exif_read_data')) {
+            $pathinfo = pathinfo((string) $path);
+            if (in_array(strtolower($pathinfo['extension']), ['jpg', 'jpeg']) && is_callable('exif_read_data')) {
                 @$this->exif_cache[$this->id] = exif_read_data($path, 0, true);
             } else {
                 $this->exif_cache[$this->id] = [];
@@ -304,18 +266,18 @@ class Content extends Koken
         if (!preg_match('~^https?://~', $this->filename)) {
             $this->file_type = (int) $this->set_type();
             $path = $this->path_to_original();
-            $pathinfo = pathinfo($path);
+            $pathinfo = pathinfo((string) $path);
 
             if ($this->file_type > 0) {
                 include_once(FCPATH . 'app' . DIRECTORY_SEPARATOR . 'koken' . DIRECTORY_SEPARATOR . 'ffmpeg.php');
                 $ffmpeg = new FFmpeg($path);
                 if ($ffmpeg->version()) {
                     $this->duration = $ffmpeg->duration();
-                    list($this->width, $this->height) = $ffmpeg->dimensions();
+                    [$this->width, $this->height] = $ffmpeg->dimensions();
                     $this->lg_preview = $ffmpeg->create_thumbs();
                 }
             } else {
-                list($this->width, $this->height) = getimagesize($path);
+                [$this->width, $this->height] = getimagesize($path);
 
                 @unlink($path . '.icc');
 
@@ -348,12 +310,12 @@ class Content extends Koken
                     $words = [];
 
                     if (count($iptc['2#025']) == 1) {
-                        $words = array($iptc['2#025'][0]);
+                        $words = [$iptc['2#025'][0]];
                     } else {
                         $words = $iptc['2#025'];
                     }
 
-                    $_POST['tags'] = rtrim($_POST['tags'], ',') . ',' . join(',', $words);
+                    $_POST['tags'] = rtrim((string) $_POST['tags'], ',') . ',' . join(',', $words);
                 }
 
                 $captured_on = $this->parse_captured($iptc, $exif);
@@ -363,15 +325,15 @@ class Content extends Koken
                 }
 
                 $longest = max($this->width, $this->height);
-                $midsize = preg_replace('/\.' . $pathinfo['extension'] . '$/', '.1600.' . $pathinfo['extension'], $path);
+                $midsize = preg_replace('/\.' . $pathinfo['extension'] . '$/', '.1600.' . $pathinfo['extension'], (string) $path);
 
                 if (file_exists($midsize)) {
                     unlink($midsize);
                 }
 
-                $orientation = isset($exif['IFD0']['Orientation']) ? $exif['IFD0']['Orientation'] : false;
+                $orientation = $exif['IFD0']['Orientation'] ?? false;
 
-                if (in_array($orientation, array(3, 6, 8), true)) {
+                if (in_array($orientation, [3, 6, 8], true)) {
                     include_once(FCPATH . 'app' . DIRECTORY_SEPARATOR . 'koken' . DIRECTORY_SEPARATOR . 'DarkroomUtils.php');
 
                     $s = new Setting();
@@ -396,7 +358,7 @@ class Content extends Koken
                     if ($orientation !== 3) {
                         // swap values
                         $width = $this->width;
-                        list($this->width, $this->height) = array($this->height, $width);
+                        [$this->width, $this->height] = [$this->height, $width];
                     }
                 }
 
@@ -416,7 +378,7 @@ class Content extends Koken
                       ->quality($quality)
                       ->render($midsize);
 
-                    $external = Shutter::store_original($midsize, $this->path . '/' . basename($midsize));
+                    $external = Shutter::store_original($midsize, $this->path . '/' . basename((string) $midsize));
 
                     if ($external) {
                         $this->storage_url_midsize = $external;
@@ -448,11 +410,9 @@ class Content extends Koken
     }
 
     // Called by plugins
-    public function create($options = array())
+    public function create($options = [])
     {
-        $defaults = array(
-            'tags' => array()
-        );
+        $defaults = ['tags' => []];
 
         $options = array_merge($defaults, $options);
 
@@ -462,7 +422,7 @@ class Content extends Koken
             }
 
             $this->_readify();
-            $content = $this->to_array(array('auth' => true));
+            $content = $this->to_array(['auth' => true]);
             Shutter::hook('content.create', $content);
             return $content['id'];
         }
@@ -476,21 +436,7 @@ class Content extends Koken
     {
         $db_config = Shutter::get_db_configuration();
 
-        $this->has_many = array(
-            'text' => array(
-                'other_field' => 'featured_image'
-            ),
-            'album',
-            'tag',
-            'category',
-            'covers' => array(
-                'class' => 'album',
-                'join_table' => $db_config['prefix'] . 'join_albums_covers',
-                'other_field' => 'cover',
-                'join_self_as' => 'cover',
-                'join_other_as' => 'album'
-            )
-        );
+        $this->has_many = ['text' => ['other_field' => 'featured_image'], 'album', 'tag', 'category', 'covers' => ['class' => 'album', 'join_table' => $db_config['prefix'] . 'join_albums_covers', 'other_field' => 'cover', 'join_self_as' => 'cover', 'join_other_as' => 'album']];
         parent::__construct($id);
     }
 
@@ -518,8 +464,8 @@ class Content extends Koken
 
         if (empty($this->storage_url)) {
             $original = $this->path_to_original();
-            $info = pathinfo($original);
-            $mid = preg_replace('/\.' . $info['extension'] . '$/', '.1600.' . $info['extension'], $original);
+            $info = pathinfo((string) $original);
+            $mid = preg_replace('/\.' . $info['extension'] . '$/', '.1600.' . $info['extension'], (string) $original);
             unlink($original);
             if (file_exists($mid)) {
                 unlink($mid);
@@ -528,8 +474,8 @@ class Content extends Koken
                 delete_files($original . '_previews', true, 1);
             }
 
-            if (@rmdir(dirname($original))) {
-                @rmdir(dirname(dirname($original)));
+            if (@rmdir(dirname((string) $original))) {
+                @rmdir(dirname((string) $original, 2));
             }
         } else {
             Shutter::delete_original($this->storage_url);
@@ -539,7 +485,7 @@ class Content extends Koken
             }
         }
 
-        Shutter::hook('content.delete', $this->to_array(array('auth' => true)));
+        Shutter::hook('content.delete', $this->to_array(['auth' => true]));
 
         $s = new Slug();
         $this->db->query("DELETE FROM {$s->table} WHERE id = 'content.{$this->slug}'");
@@ -549,24 +495,16 @@ class Content extends Koken
 
     public function set_type()
     {
-        $image_types = array('jpg', 'jpeg', 'png', 'gif');
-        $audio_types = array('mp3');
+        $image_types = ['jpg', 'jpeg', 'png', 'gif'];
+        $audio_types = ['mp3'];
         $info = pathinfo($this->filename);
         $ext = strtolower($info['extension']);
 
-        switch (true) {
-            case in_array($ext, $image_types):
-                return 0;
-                break;
-
-            case in_array($ext, $audio_types):
-                return 2;
-                break;
-
-            default:
-                return 1;
-                break;
-        }
+        return match (true) {
+            in_array($ext, $image_types) => 0,
+            in_array($ext, $audio_types) => 2,
+            default => 1,
+        };
     }
 
     public function path_to_original()
@@ -595,8 +533,8 @@ class Content extends Koken
             $dig = $exif['EXIF']['DateTimeDigitized'];
         }
 
-        if (isset($dig) && preg_match('/\d{4}:\d{2}:\d{2} \d{2}:\d{2}:\d{2}$/', $dig)) {
-            $bits = explode(' ', $dig);
+        if (isset($dig) && preg_match('/\d{4}:\d{2}:\d{2} \d{2}:\d{2}:\d{2}$/', (string) $dig)) {
+            $bits = explode(' ', (string) $dig);
             $captured_on = strtotime(str_replace(':', '-', $bits[0]) . ' ' . $bits[1]);
         } elseif (!empty($iptc['2#055'][0]) && !empty($iptc['2#060'][0])) {
             $captured_on = strtotime($iptc['2#055'][0] . ' ' . $iptc['2#060'][0]);
@@ -613,7 +551,7 @@ class Content extends Koken
                 $array = explode(':', $this->lg_preview);
                 $preview_file = array_shift($array);
                 $preview_path = $this->path_to_original() . '_previews' . DIRECTORY_SEPARATOR . $preview_file;
-                list($original_width, $original_height) = getimagesize($preview_path);
+                [$original_width, $original_height] = getimagesize($preview_path);
                 $original_aspect = $original_width/$original_height;
             }
         } else {
@@ -624,20 +562,20 @@ class Content extends Koken
 
         if ($square) {
             $side = min($w, $h, $original_width, $original_height);
-            return array($side, $side);
+            return [$side, $side];
         } else {
             $target_aspect = $w/$h;
             if ($original_aspect >= $target_aspect) {
                 if ($w > $original_width) {
-                    return array($original_width, $original_height);
+                    return [$original_width, $original_height];
                 } else {
-                    return array($w, round(($w*$original_height)/$original_width));
+                    return [$w, round(($w*$original_height)/$original_width)];
                 }
             } else {
                 if ($h > $original_height) {
-                    return array($original_width, $original_height);
+                    return [$original_width, $original_height];
                 } else {
-                    return array(round(($h*$original_width)/$original_height), $h);
+                    return [round(($h*$original_width)/$original_height), $h];
                 }
             }
         }
@@ -648,7 +586,7 @@ class Content extends Koken
         $path = FCPATH . 'storage' . DIRECTORY_SEPARATOR . 'custom' . DIRECTORY_SEPARATOR . $filename;
 
         // Fake out compute_cache_size et al to think this is a real image
-        list($this->width, $this->height) = getimagesize($path);
+        [$this->width, $this->height] = getimagesize($path);
         $this->aspect_ratio = round($this->width/$this->height, 3);
         $this->file_modified_on = filemtime($path);
 
@@ -658,61 +596,37 @@ class Content extends Koken
         $cache_base = $koken_url_info->base . (KOKEN_REWRITE ? 'storage/cache/images' : 'i.php?') . '/custom/' . $prefix . '-' . $info['extension'] . '/';
         $relative_cache_base = str_replace($koken_url_info->base, $koken_url_info->relative_base, $cache_base);
 
-        $data = array(
-            '__koken__' => 'content',
-            'custom' => true,
-            'filename' => $filename,
-            'filesize' => filesize($path),
-            'width' => $this->width,
-            'height' => $this->height,
-            'aspect_ratio' => $this->aspect_ratio,
-            'cache_path' => array(
-                'prefix' => $cache_base,
-                'relative_prefix' => $relative_cache_base,
-                'extension' => $this->file_modified_on . '.' . $info['extension']
-            ),
-            'presets' => array()
-        );
+        $data = ['__koken__' => 'content', 'custom' => true, 'filename' => $filename, 'filesize' => filesize($path), 'width' => $this->width, 'height' => $this->height, 'aspect_ratio' => $this->aspect_ratio, 'cache_path' => ['prefix' => $cache_base, 'relative_prefix' => $relative_cache_base, 'extension' => $this->file_modified_on . '.' . $info['extension']], 'presets' => []];
 
         include_once(FCPATH . 'app' . DIRECTORY_SEPARATOR . 'koken' . DIRECTORY_SEPARATOR . 'DarkroomUtils.php');
 
         foreach (DarkroomUtils::$presets as $name => $opts) {
             $dims = $this->compute_cache_size($opts['width'], $opts['height']);
             if ($dims) {
-                list($w, $h) = $dims;
-                $data['presets'][$name] = array(
-                    'url' => $cache_base . "$name.{$this->file_modified_on}.{$info['extension']}",
-                    'hidpi_url' => $cache_base . "$name.2x.{$this->file_modified_on}.{$info['extension']}",
-                    'width' => (int) $w,
-                    'height' => (int) $h
-                );
+                [$w, $h] = $dims;
+                $data['presets'][$name] = ['url' => $cache_base . "$name.{$this->file_modified_on}.{$info['extension']}", 'hidpi_url' => $cache_base . "$name.2x.{$this->file_modified_on}.{$info['extension']}", 'width' => (int) $w, 'height' => (int) $h];
 
-                list($cx, $cy) = $this->compute_cache_size($opts['width'], $opts['height'], true);
+                [$cx, $cy] = $this->compute_cache_size($opts['width'], $opts['height'], true);
 
-                $data['presets'][$name]['cropped'] = array(
-                    'url' => $cache_base . "$name.crop.{$this->file_modified_on}.{$info['extension']}",
-                    'hidpi_url' => $cache_base . "$name.crop.2x.{$this->file_modified_on}.{$info['extension']}",
-                    'width' => (int) $cx,
-                    'height' => (int) $cy
-                );
+                $data['presets'][$name]['cropped'] = ['url' => $cache_base . "$name.crop.{$this->file_modified_on}.{$info['extension']}", 'hidpi_url' => $cache_base . "$name.crop.2x.{$this->file_modified_on}.{$info['extension']}", 'width' => (int) $cx, 'height' => (int) $cy];
             }
         }
 
         return $data;
     }
 
-    public function to_array($options = array())
+    public function to_array($options = [])
     {
-        $options['auth'] = isset($options['auth']) ? $options['auth'] : false;
-        $options['in_album'] = isset($options['in_album']) ? $options['in_album'] : false;
+        $options['auth'] ??= false;
+        $options['in_album'] ??= false;
 
-        $exclude = array('storage_url', 'storage_url_midsize', 'deleted', 'featured_order', 'favorite_order', 'old_slug', 'has_exif', 'has_iptc', 'tags_old');
-        $bools = array('featured', 'favorite');
-        $dates = array('uploaded_on', 'modified_on', 'captured_on', 'featured_on', 'file_modified_on', 'published_on');
-        $strings = array('title', 'caption');
-        list($data, $fields) = $this->prepare_for_output($options, $exclude, $bools, $dates, $strings);
+        $exclude = ['storage_url', 'storage_url_midsize', 'deleted', 'featured_order', 'favorite_order', 'old_slug', 'has_exif', 'has_iptc', 'tags_old'];
+        $bools = ['featured', 'favorite'];
+        $dates = ['uploaded_on', 'modified_on', 'captured_on', 'featured_on', 'file_modified_on', 'published_on'];
+        $strings = ['title', 'caption'];
+        [$data, $fields] = $this->prepare_for_output($options, $exclude, $bools, $dates, $strings);
 
-        $data = Shutter::filter('api.content.before', array( $data, $this, $options ));
+        $data = Shutter::filter('api.content.before', [$data, $this, $options]);
 
         if (!$data['featured']) {
             unset($data['featured_on']);
@@ -737,35 +651,21 @@ class Content extends Koken
             if (preg_match('/^https?:/', $this->filename)) {
                 $data['original'] = [];
             } elseif (!empty($this->storage_url)) {
-                $data['original'] = array(
-                    'url' => $this->storage_url,
-                    'width' => (int) $this->width,
-                    'height' => (int) $this->height
-                );
+                $data['original'] = ['url' => $this->storage_url, 'width' => (int) $this->width, 'height' => (int) $this->height];
 
                 if (!empty($this->storage_url_midsize)) {
                     $data['original']['midsize'] = $this->storage_url_midsize;
                 }
             } else {
-                $data['original'] = array(
-                    'url' => $url,
-                    'relative_url' => '/' . $path,
-                    'width' => (int) $this->width,
-                    'height' => (int) $this->height
-                );
+                $data['original'] = ['url' => $url, 'relative_url' => '/' . $path, 'width' => (int) $this->width, 'height' => (int) $this->height];
             }
 
             if (isset($preview_file)) {
                 $path .= '_previews/' . $preview_file;
                 $url = $koken_url_info->base . $path;
-                list($pw, $ph) = getimagesize(FCPATH . $path);
+                [$pw, $ph] = getimagesize(FCPATH . $path);
 
-                $data['original']['preview'] = array(
-                    'url' => $url,
-                    'relative_url' => '/' . $path,
-                    'width' => $pw,
-                    'height' => $ph
-                );
+                $data['original']['preview'] = ['url' => $url, 'relative_url' => '/' . $path, 'width' => $pw, 'height' => $ph];
             }
         }
 
@@ -776,21 +676,7 @@ class Content extends Koken
         if (!preg_match('~https?://~', $this->filename)) {
             $info = pathinfo($this->filename);
 
-            $mimes = array(
-                'jpg' => 'image/jpeg',
-                'jpeg' => 'image/jpeg',
-                'gif' => 'image/gif',
-                'png' => 'image/png',
-                'flv' => 'video/x-flv',
-                'f4v' => 'video/f4v',
-                'swf' => 'application/x-shockwave-flash',
-                'mov' => 'video/mp4',
-                'mp4' => 'video/mp4',
-                'm4v' => 'video/x-m4v',
-                '3gp' => 'video/3gpp',
-                '3g2' => 'video/3gpp2',
-                'mp3' => 'audio/mpeg'
-            );
+            $mimes = ['jpg' => 'image/jpeg', 'jpeg' => 'image/jpeg', 'gif' => 'image/gif', 'png' => 'image/png', 'flv' => 'video/x-flv', 'f4v' => 'video/f4v', 'swf' => 'application/x-shockwave-flash', 'mov' => 'video/mp4', 'mp4' => 'video/mp4', 'm4v' => 'video/x-m4v', '3gp' => 'video/3gpp', '3g2' => 'video/3gpp2', 'mp3' => 'audio/mpeg'];
 
             if (array_key_exists(strtolower($info['extension']), $mimes)) {
                 $data['mime_type'] = $mimes[strtolower($info['extension'])];
@@ -810,25 +696,14 @@ class Content extends Koken
 
             if ($this->file_type > 0 && empty($this->lg_preview)) {
                 $prefix = $koken_url_info->base . 'admin/images/no-thumb,';
-                $data['cache_path'] = array(
-                    'prefix' => $prefix,
-                    'extension' => 'png'
-                );
+                $data['cache_path'] = ['prefix' => $prefix, 'extension' => 'png'];
 
                 $data['presets'] = [];
                 foreach (DarkroomUtils::$presets as $name => $opts) {
                     $h = ($opts['width'] * 2) / 3;
-                    $data['presets'][$name] = array(
-                        'url' => $koken_url_info->base . "admin/images/no-thumb,$name.png",
-                        'width' => $opts['width'],
-                        'height' => round($h)
-                    );
+                    $data['presets'][$name] = ['url' => $koken_url_info->base . "admin/images/no-thumb,$name.png", 'width' => $opts['width'], 'height' => round($h)];
 
-                    $data['presets'][$name]['cropped'] = array(
-                        'url' => $koken_url_info->base . "admin/images/no-thumb,$name.crop.png",
-                        'width' => $opts['width'],
-                        'height' => $opts['width']
-                    );
+                    $data['presets'][$name]['cropped'] = ['url' => $koken_url_info->base . "admin/images/no-thumb,$name.crop.png", 'width' => $opts['width'], 'height' => $opts['width']];
                 }
             } elseif ($this->file_type > 0 || !preg_match('~^https?://~', $this->filename)) {
                 if (isset($info['extension'])) {
@@ -838,38 +713,25 @@ class Content extends Koken
                 }
 
                 if (isset($preview_file)) {
-                    $info = pathinfo($preview_file);
+                    $info = pathinfo((string) $preview_file);
                 }
 
                 $cache_base = $koken_url_info->base . (KOKEN_REWRITE ? 'storage/cache/images' : 'i.php?') . '/' . str_replace('\\', '/', $this->cache_path) . '/' . $prefix . ',';
                 $relative_cache_base = str_replace($koken_url_info->base, $koken_url_info->relative_base, $cache_base);
 
-                $data['cache_path'] = array(
-                    'prefix' => $cache_base,
-                    'relative_prefix' => $relative_cache_base,
-                );
+                $data['cache_path'] = ['prefix' => $cache_base, 'relative_prefix' => $relative_cache_base];
 
                 $data['cache_path']['extension'] = $data['file_modified_on']['timestamp'] . '.' . $info['extension'];
                 $data['presets'] = [];
                 foreach (DarkroomUtils::$presets as $name => $opts) {
                     $dims = $this->compute_cache_size($opts['width'], $opts['height']);
                     if ($dims) {
-                        list($w, $h) = $dims;
-                        $data['presets'][$name] = array(
-                            'url' => $cache_base . "$name.{$data['file_modified_on']['timestamp']}.{$info['extension']}",
-                            'hidpi_url' => $cache_base . "$name.2x.{$data['file_modified_on']['timestamp']}.{$info['extension']}",
-                            'width' => (int) $w,
-                            'height' => (int) $h
-                        );
+                        [$w, $h] = $dims;
+                        $data['presets'][$name] = ['url' => $cache_base . "$name.{$data['file_modified_on']['timestamp']}.{$info['extension']}", 'hidpi_url' => $cache_base . "$name.2x.{$data['file_modified_on']['timestamp']}.{$info['extension']}", 'width' => (int) $w, 'height' => (int) $h];
 
-                        list($cx, $cy) = $this->compute_cache_size($opts['width'], $opts['height'], true);
+                        [$cx, $cy] = $this->compute_cache_size($opts['width'], $opts['height'], true);
 
-                        $data['presets'][$name]['cropped'] = array(
-                            'url' => $cache_base . "$name.crop.{$data['file_modified_on']['timestamp']}.{$info['extension']}",
-                            'hidpi_url' => $cache_base . "$name.crop.2x.{$data['file_modified_on']['timestamp']}.{$info['extension']}",
-                            'width' => (int) $cx,
-                            'height' => (int) $cy
-                        );
+                        $data['presets'][$name]['cropped'] = ['url' => $cache_base . "$name.crop.{$data['file_modified_on']['timestamp']}.{$info['extension']}", 'hidpi_url' => $cache_base . "$name.crop.2x.{$data['file_modified_on']['timestamp']}.{$info['extension']}", 'width' => (int) $cx, 'height' => (int) $cy];
                     }
                 }
             }
@@ -899,7 +761,7 @@ class Content extends Koken
         $data['iptc'] = $data['iptc_fields'] = $data['exif'] = $data['exif_fields'] = [];
 
         if ($this->has_iptc) {
-            list($data['iptc'], $data['iptc_fields']) = $this->iptc_to_human();
+            [$data['iptc'], $data['iptc_fields']] = $this->iptc_to_human();
         }
 
         $data['geolocation'] = false;
@@ -914,13 +776,10 @@ class Content extends Koken
             if (isset($exif['GPS']['GPSLatitude'])) {
                 include_once(FCPATH . 'app' . DIRECTORY_SEPARATOR . 'koken' . DIRECTORY_SEPARATOR . 'gps.php');
                 $gps = new GPS($exif['GPS']);
-                $data['geolocation'] = array(
-                    'latitude' => rtrim(sprintf('%.12f', $gps->latitude()), '0'),
-                    'longitude' => rtrim(sprintf('%.12f', $gps->longitude()), '0')
-                );
+                $data['geolocation'] = ['latitude' => rtrim(sprintf('%.12f', $gps->latitude()), '0'), 'longitude' => rtrim(sprintf('%.12f', $gps->longitude()), '0')];
             }
 
-            list($data['exif'], $data['exif_fields']) = $this->exif_to_human($data['exif'], $options['exif']);
+            [$data['exif'], $data['exif_fields']] = $this->exif_to_human($data['exif'], $options['exif']);
         }
 
         if (array_key_exists('file_type', $data)) {
@@ -939,22 +798,13 @@ class Content extends Koken
         }
 
         if (array_key_exists('visibility', $data)) {
-            switch ($data['visibility']) {
-                case 1:
-                    $raw = 'unlisted';
-                    break;
-                case 2:
-                    $raw = 'private';
-                    break;
-                default:
-                    $raw = 'public';
-                    break;
-            }
+            $raw = match ($data['visibility']) {
+                1 => 'unlisted',
+                2 => 'private',
+                default => 'public',
+            };
 
-            $data['visibility'] = array(
-                'raw' => $raw,
-                'clean' => ucwords($raw)
-            );
+            $data['visibility'] = ['raw' => $raw, 'clean' => ucwords($raw)];
 
             $data['public'] = $raw === 'public';
         }
@@ -990,10 +840,7 @@ class Content extends Koken
                     $clean = 'Medium (480)';
                     break;
             }
-            $data['max_download'] = array(
-                'raw' => $data['max_download'],
-                'clean' => $clean
-            );
+            $data['max_download'] = ['raw' => $data['max_download'], 'clean' => $clean];
         }
 
         if (array_key_exists('license', $data) && !is_null($data['license'])) {
@@ -1002,7 +849,7 @@ class Content extends Koken
             } else {
                 // Data is stored as commercial,modifications ... (y|n),(y,s,n)
                 // Example: NonCommercial ShareAlike == n,s
-                list($commercial, $mods) = explode(',', $data['license']);
+                [$commercial, $mods] = explode(',', (string) $data['license']);
 
                 $license_url = 'http://creativecommons.org/licenses/by';
 
@@ -1029,10 +876,7 @@ class Content extends Koken
 
                 $license_url .= '/3.0/deed.en_US';
             }
-            $data['license'] = array(
-                'raw' => $data['license'],
-                'clean' => $clean
-            );
+            $data['license'] = ['raw' => $data['license'], 'clean' => $clean];
 
             if (isset($license_url)) {
                 $data['license']['url'] = $license_url;
@@ -1041,17 +885,11 @@ class Content extends Koken
 
         $data['tags'] = $this->_get_tags_for_output($options);
 
-        $data['categories'] = array(
-            'count' => is_null($this->category_count) ? $this->categories->count() : (int) $this->category_count,
-            'url' => $koken_url_info->base . 'api.php?/content/' . $data['id'] . '/categories'
-        );
+        $data['categories'] = ['count' => is_null($this->category_count) ? $this->categories->count() : (int) $this->category_count, 'url' => $koken_url_info->base . 'api.php?/content/' . $data['id'] . '/categories'];
 
-        $data['albums'] = array(
-            'count' => is_null($this->album_count) ? $this->albums->count() : (int) $this->album_count,
-            'url' => $koken_url_info->base . 'api.php?/content/' . $data['id'] . '/albums'
-        );
+        $data['albums'] = ['count' => is_null($this->album_count) ? $this->albums->count() : (int) $this->album_count, 'url' => $koken_url_info->base . 'api.php?/content/' . $data['id'] . '/albums'];
 
-        if (isset($options['order_by']) && in_array($options['order_by'], array( 'uploaded_on', 'modified_on', 'captured_on' ))) {
+        if (isset($options['order_by']) && in_array($options['order_by'], ['uploaded_on', 'modified_on', 'captured_on'])) {
             $data['date'] =& $data[ $options['order_by'] ];
         } else {
             $data['date'] =& $data['published_on'];
@@ -1060,7 +898,7 @@ class Content extends Koken
         if ($data['visibility'] === 'private') {
             $data['url'] = false;
         } else {
-            $cat = isset($options['category']) ? $options['category'] : (isset($options['context']) && strpos($options['context'], 'category-') === 0 ? str_replace('category-', '', $options['context']) : false);
+            $cat = $options['category'] ?? (isset($options['context']) && str_starts_with((string) $options['context'], 'category-') ? str_replace('category-', '', $options['context']) : false);
 
             if ($cat) {
                 if (is_numeric($cat)) {
@@ -1072,17 +910,10 @@ class Content extends Koken
                     }
                 }
             }
-            $data['url'] = $this->url(array(
-                'date' => $data['published_on'],
-                'album' => $options['in_album'],
-                'tag' => isset($options['tags']) ? $options['tags'] : (isset($options['context']) && strpos($options['context'], 'tag-') === 0 ? str_replace('tag-', '', $options['context']) : false),
-                'category' => $cat,
-                'favorite' => isset($options['favorite']) || (isset($options['context']) && $options['context'] === 'favorites') ? true : false,
-                'feature' => isset($options['featured']) || (isset($options['context']) && $options['context'] === 'features') ? true : false,
-            ));
+            $data['url'] = $this->url(['date' => $data['published_on'], 'album' => $options['in_album'], 'tag' => $options['tags'] ?? (isset($options['context']) && str_starts_with((string) $options['context'], 'tag-') ? str_replace('tag-', '', $options['context']) : false), 'category' => $cat, 'favorite' => isset($options['favorite']) || (isset($options['context']) && $options['context'] === 'favorites') ? true : false, 'feature' => isset($options['featured']) || (isset($options['context']) && $options['context'] === 'features') ? true : false]);
 
             if ($data['url']) {
-                list($data['__koken_url'], $data['url']) = $data['url'];
+                [$data['__koken_url'], $data['url']] = $data['url'];
                 $data['canonical_url'] = $data['url'];
             }
         }
@@ -1094,15 +925,12 @@ class Content extends Koken
         if (empty($data['source'])) {
             $data['source'] = false;
         } else {
-            $data['source'] = array(
-                'title' => $data['source'],
-                'url' => $data['source_url'],
-            );
+            $data['source'] = ['title' => $data['source'], 'url' => $data['source_url']];
         }
 
         unset($data['source_url']);
 
-        $final = Shutter::filter('api.content', array( $data, $this, $options ));
+        $final = Shutter::filter('api.content', [$data, $this, $options]);
 
         if (!isset($final['html']) || empty($final['html'])) {
             $final['html'] = false;
@@ -1130,69 +958,12 @@ class Content extends Koken
 
     public function iptc_to_human()
     {
-        $mappings = array(
-            'byline' 		=> array(
-                'label' => 'Byline',
-                'index' => '080'
-            ),
-            'byline_title' 	=> array(
-                'label' => 'Byline title',
-                'index' => '085'
-            ),
-            'caption' 		=> array(
-                'label' => 'Caption',
-                'index' => '120'
-            ),
-            'category' 		=> array(
-                'label' => 'Category',
-                'index' => '050'
-            ),
-            'city' 			=> array(
-                'label' => 'City',
-                'index' => '090'
-            ),
-            'country' 		=> array(
-                'label' => 'Country',
-                'index' => '101'
-            ),
-            'copyright' 	=> array(
-                'label' => 'Copyright',
-                'index' => '116'
-            ),
-            'contact' 		=> array(
-                'label' => 'Contact',
-                'index' => '118'
-            ),
-            'credit' 		=> array(
-                'label' => 'Credit',
-                'index' => '110'
-            ),
-            'headline' 		=> array(
-                'label' => 'Headline',
-                'index' => '105'
-            ),
-            'keywords' 		=> array(
-                'label' => 'Keywords',
-                'index' => '025'
-            ),
-            'source' 		=> array(
-                'label' => 'Source',
-                'index' => '115'
-            ),
-            'state' 		=> array(
-                'label' => 'State',
-                'index' => '095'
-            ),
-            'title' 		=> array(
-                'label' => 'Title',
-                'index' => '005'
-            )
-        );
+        $mappings = ['byline' 		=> ['label' => 'Byline', 'index' => '080'], 'byline_title' 	=> ['label' => 'Byline title', 'index' => '085'], 'caption' 		=> ['label' => 'Caption', 'index' => '120'], 'category' 		=> ['label' => 'Category', 'index' => '050'], 'city' 			=> ['label' => 'City', 'index' => '090'], 'country' 		=> ['label' => 'Country', 'index' => '101'], 'copyright' 	=> ['label' => 'Copyright', 'index' => '116'], 'contact' 		=> ['label' => 'Contact', 'index' => '118'], 'credit' 		=> ['label' => 'Credit', 'index' => '110'], 'headline' 		=> ['label' => 'Headline', 'index' => '105'], 'keywords' 		=> ['label' => 'Keywords', 'index' => '025'], 'source' 		=> ['label' => 'Source', 'index' => '115'], 'state' 		=> ['label' => 'State', 'index' => '095'], 'title' 		=> ['label' => 'Title', 'index' => '005']];
 
         $iptc = $this->_get_iptc_data();
 
         if (!$iptc || empty($iptc)) {
-            return array(array(), array());
+            return [[], []];
         } else {
             $final = $keys = [];
 
@@ -1203,224 +974,31 @@ class Content extends Koken
                     if (is_array($value)) {
                         $value = $value[0];
                     }
-                    $value = preg_replace('/<script.*>.*<\/script>/', '', $value);
+                    $value = preg_replace('/<script.*>.*<\/script>/', '', (string) $value);
                     $keys[] = $name;
-                    $final[] = array(
-                        'label' => $options['label'],
-                        'value' => $this->_force_utf($value),
-                        'key' => $name
-                    );
+                    $final[] = ['label' => $options['label'], 'value' => $this->_force_utf($value), 'key' => $name];
                 }
             }
 
             natcasesort($keys);
-            return array($final, array_values($keys));
+            return [$final, array_values($keys)];
         }
     }
 
     public function exif_to_human($exif, $include = 'all')
     {
-        $mappings = array(
-            'make' => array(
-                'label' => 'Camera make',
-                'field' => "IFD0.Make"
-            ),
-            'model' => array(
-                'label' => 'Camera',
-                'field' => "IFD0.Model",
-                'core' => true
-            ),
-            'lens_make' => array(
-                'label' => 'Lens make',
-                'field' => "EXIF.LensMake"
-            ),
-            'image_description' => array(
-                'label' => 'Description',
-                'field' => "IFD0.ImageDescription"
-            ),
-            'aperture' => array(
-                'label' => 'Aperture',
-                'field' => "EXIF.FNumber",
-                'divide' => true,
-                'pre' => 'f/',
-                'core' => true
-            ),
-            'aperture_max' => array(
-                'label' => 'Max aperture',
-                'field' => "EXIF.MaxApertureValue",
-                'divide' => true,
-                'pre' => 'f/'
-            ),
-            'exposure' => array(
-                'label' => 'Exposure',
-                'field' => "EXIF.ExposureTime",
-                'divide' => true,
-                'post' => ' sec',
-                'core' => true
-            ),
-            'exposure_bias' => array(
-                'label' => 'Exposure bias',
-                'field' => "EXIF.ExposureBiasValue",
-                'divide' => true,
-                'post' => ' EV'
-            ),
-            'exposure_mode' => array(
-                'label' => 'Exposure mode',
-                'field' => "EXIF.ExposureMode",
-                'values' => array(
-                    0 => 'Auto',
-                    1 => 'Manual',
-                    2 => 'Auto bracket'
-                )
-            ),
-            'exposure_program' => array(
-                'label' => 'Exposure program',
-                'field' => "EXIF.ExposureProgram",
-                'values' => array(
-                    0 => 'Not Defined',
-                    1 => 'Manual',
-                    2 => 'Program AE',
-                    3 => 'Aperture-priority AE',
-                    4 => 'Shutter speed priority AE',
-                    5 => 'Creative (Slow speed)',
-                    6 => 'Action (High speed)',
-                    7 => 'Portrait',
-                    8 => 'Landscape',
-                    9 => 'Bulb'
-                )
-            ),
-            'date_time_original' => array(
-                'label' => "Date Time Original",
-                'field' => 'EXIF.DateTimeOriginal'
-            ),
-            'flash' => array(
-                'label' => 'Flash',
-                'field' => 'EXIF.Flash',
-                'boolean' => array(
-                    'test' => array(0,16,24,32),
-                    'result' => false
-                ),
-                'values' => array(
-                    0 => 'No Flash',
-                    1 => 'Flash',
-                    5 => 'Flash, strobe return light not detected',
-                    7 => 'Flash, strob return light detected',
-                    9 => 'Compulsory Flash',
-                    13 => 'Compulsory Flash, Return light not detected',
-                    16 => 'No Flash',
-                    24 => 'No Flash',
-                    25 => 'Flash, Auto-Mode',
-                    29 => 'Flash, Auto-Mode, Return light not detected',
-                    31 => 'Flash, Auto-Mode, Return light detected',
-                    32 => 'No Flash',
-                    65 => 'Red Eye',
-                    69 => 'Red Eye, Return light not detected',
-                    71 => 'Red Eye, Return light detected',
-                    73 => 'Red Eye, Compulsory Flash',
-                    77 => 'Red Eye, Compulsory Flash, Return light not detected',
-                    79 => 'Red Eye, Compulsory Flash, Return light detected',
-                    89 => 'Red Eye, Auto-Mode',
-                    93 => 'Red Eye, Auto-Mode, Return light not detected',
-                    95 => 'Red Eye, Auto-Mode, Return light detected'
-                )
-            ),
-            'focal_length' => array(
-                'label' => 'Focal length',
-                'field' => "EXIF.FocalLength",
-                'divide' => true,
-                'post' => 'mm',
-                'core' => true
-            ),
-            'iso_speed_ratings' => array(
-                'label' => 'ISO',
-                'field' => 'EXIF.ISOSpeedRatings',
-                'core' => true,
-                'pre' => 'ISO '
-            ),
-            'metering_mode' => array(
-                'label' => 'Metering mode',
-                'field' => 'EXIF.MeteringMode',
-                'values' => array(
-                    0 => 'Unknown',
-                    1 => 'Average',
-                    2 => 'Center Weighted Average',
-                    3 => 'Spot',
-                    4 => 'Multi-Spot',
-                    5 => 'Multi-Segment',
-                    6 => 'Partial',
-                    255 => 'Other'
-                )
-            ),
-            'white_balance' => array(
-                'label' => 'White balance',
-                'field' => 'EXIF.WhiteBalance',
-                'values' => array(
-                    0 => 'Auto',
-                    1 => 'Sunny',
-                    2 => 'Cloudy',
-                    3 => 'Tungsten',
-                    4 => 'Fluorescent',
-                    5 => 'Flash',
-                    6 => 'Custom',
-                    129 => 'Manual'
-                )
-            ),
-            'light_source' => array(
-                'label' => 'Light source',
-                'field' => 'EXIF.LightSource',
-                'values' => array(
-                    0 => 'Unknown',
-                    1 => 'Daylight',
-                    2 => 'Fluorescent',
-                    3 => 'Tungsten (Incandescent)',
-                    4 => 'Flash',
-                    9 => 'Fine Weather',
-                    10 => 'Cloudy',
-                    11 => 'Shade',
-                    12 => 'Daylight Fluorescent',
-                    13 => 'Day White Fluorescent',
-                    14 => 'Cool White Fluorescent',
-                    15 => 'White Fluorescent',
-                    16 => 'Warm White Fluorescent',
-                    17 => 'Standard Light A',
-                    18 => 'Standard Light B',
-                    20 => 'D55',
-                    21 => 'D65',
-                    22 => 'D75',
-                    23 => 'D50',
-                    24 => 'ISO Studio Tungsten',
-                    255 => 'Other'
-                )
-            ),
-            'scene_capture_type' => array(
-                'label' => 'Scene capture type',
-                'field' => 'EXIF.SceneCaptureType',
-                'values' => array(
-                    0 => 'Standard',
-                    1 => 'Landscape',
-                    2 => 'Portrait',
-                    3 => 'Night'
-                )
-            )
-        );
+        $mappings = ['make' => ['label' => 'Camera make', 'field' => "IFD0.Make"], 'model' => ['label' => 'Camera', 'field' => "IFD0.Model", 'core' => true], 'lens_make' => ['label' => 'Lens make', 'field' => "EXIF.LensMake"], 'image_description' => ['label' => 'Description', 'field' => "IFD0.ImageDescription"], 'aperture' => ['label' => 'Aperture', 'field' => "EXIF.FNumber", 'divide' => true, 'pre' => 'f/', 'core' => true], 'aperture_max' => ['label' => 'Max aperture', 'field' => "EXIF.MaxApertureValue", 'divide' => true, 'pre' => 'f/'], 'exposure' => ['label' => 'Exposure', 'field' => "EXIF.ExposureTime", 'divide' => true, 'post' => ' sec', 'core' => true], 'exposure_bias' => ['label' => 'Exposure bias', 'field' => "EXIF.ExposureBiasValue", 'divide' => true, 'post' => ' EV'], 'exposure_mode' => ['label' => 'Exposure mode', 'field' => "EXIF.ExposureMode", 'values' => [0 => 'Auto', 1 => 'Manual', 2 => 'Auto bracket']], 'exposure_program' => ['label' => 'Exposure program', 'field' => "EXIF.ExposureProgram", 'values' => [0 => 'Not Defined', 1 => 'Manual', 2 => 'Program AE', 3 => 'Aperture-priority AE', 4 => 'Shutter speed priority AE', 5 => 'Creative (Slow speed)', 6 => 'Action (High speed)', 7 => 'Portrait', 8 => 'Landscape', 9 => 'Bulb']], 'date_time_original' => ['label' => "Date Time Original", 'field' => 'EXIF.DateTimeOriginal'], 'flash' => ['label' => 'Flash', 'field' => 'EXIF.Flash', 'boolean' => ['test' => [0, 16, 24, 32], 'result' => false], 'values' => [0 => 'No Flash', 1 => 'Flash', 5 => 'Flash, strobe return light not detected', 7 => 'Flash, strob return light detected', 9 => 'Compulsory Flash', 13 => 'Compulsory Flash, Return light not detected', 16 => 'No Flash', 24 => 'No Flash', 25 => 'Flash, Auto-Mode', 29 => 'Flash, Auto-Mode, Return light not detected', 31 => 'Flash, Auto-Mode, Return light detected', 32 => 'No Flash', 65 => 'Red Eye', 69 => 'Red Eye, Return light not detected', 71 => 'Red Eye, Return light detected', 73 => 'Red Eye, Compulsory Flash', 77 => 'Red Eye, Compulsory Flash, Return light not detected', 79 => 'Red Eye, Compulsory Flash, Return light detected', 89 => 'Red Eye, Auto-Mode', 93 => 'Red Eye, Auto-Mode, Return light not detected', 95 => 'Red Eye, Auto-Mode, Return light detected']], 'focal_length' => ['label' => 'Focal length', 'field' => "EXIF.FocalLength", 'divide' => true, 'post' => 'mm', 'core' => true], 'iso_speed_ratings' => ['label' => 'ISO', 'field' => 'EXIF.ISOSpeedRatings', 'core' => true, 'pre' => 'ISO '], 'metering_mode' => ['label' => 'Metering mode', 'field' => 'EXIF.MeteringMode', 'values' => [0 => 'Unknown', 1 => 'Average', 2 => 'Center Weighted Average', 3 => 'Spot', 4 => 'Multi-Spot', 5 => 'Multi-Segment', 6 => 'Partial', 255 => 'Other']], 'white_balance' => ['label' => 'White balance', 'field' => 'EXIF.WhiteBalance', 'values' => [0 => 'Auto', 1 => 'Sunny', 2 => 'Cloudy', 3 => 'Tungsten', 4 => 'Fluorescent', 5 => 'Flash', 6 => 'Custom', 129 => 'Manual']], 'light_source' => ['label' => 'Light source', 'field' => 'EXIF.LightSource', 'values' => [0 => 'Unknown', 1 => 'Daylight', 2 => 'Fluorescent', 3 => 'Tungsten (Incandescent)', 4 => 'Flash', 9 => 'Fine Weather', 10 => 'Cloudy', 11 => 'Shade', 12 => 'Daylight Fluorescent', 13 => 'Day White Fluorescent', 14 => 'Cool White Fluorescent', 15 => 'White Fluorescent', 16 => 'Warm White Fluorescent', 17 => 'Standard Light A', 18 => 'Standard Light B', 20 => 'D55', 21 => 'D65', 22 => 'D75', 23 => 'D50', 24 => 'ISO Studio Tungsten', 255 => 'Other']], 'scene_capture_type' => ['label' => 'Scene capture type', 'field' => 'EXIF.SceneCaptureType', 'values' => [0 => 'Standard', 1 => 'Landscape', 2 => 'Portrait', 3 => 'Night']]];
 
         $exif = $this->_get_exif_data();
 
         if (!$exif || empty($exif)) {
-            return array(array(), array());
+            return [[], []];
         } else {
-            if (strpos($include, ',')) {
-                $include = explode(',', $include);
+            if (strpos((string) $include, ',')) {
+                $include = explode(',', (string) $include);
             }
             $final = $keys = [];
-            $defaults = array(
-                'divide' => false,
-                'pre' => '',
-                'post' => '',
-                'values' => false,
-                'boolean' => false,
-                'core' => false
-            );
+            $defaults = ['divide' => false, 'pre' => '', 'post' => '', 'values' => false, 'boolean' => false, 'core' => false];
             foreach ($mappings as $property => $options) {
                 $options = array_merge($defaults, $options);
                 if (is_array($include) && !in_array($property, $include)) {
@@ -1436,10 +1014,10 @@ class Content extends Koken
                         $value = $value[0];
                     }
 
-                    $value = preg_replace('/<script.*>.*<\/script>/', '', $value);
+                    $value = preg_replace('/<script.*>.*<\/script>/', '', (string) $value);
 
                     if ($options['divide']) {
-                        list($n, $d) = explode('/', $value);
+                        [$n, $d] = explode('/', (string) $value);
                         if ($d < 1) {
                             $result = $value = 0;
                         } else {
@@ -1455,7 +1033,7 @@ class Content extends Koken
                     } elseif ($options['values'] && isset($options['values'][(int) $value])) {
                         $clean = $options['values'][(int) $value];
                     } else {
-                        $value = trim($value);
+                        $value = trim((string) $value);
                         if (!empty($options['pre']) || !empty($options['post'])) {
                             $clean = $value;
                         }
@@ -1493,14 +1071,14 @@ class Content extends Koken
 
             // Best Lens info is in this tag
             if (isset($exif['EXIF']['UndefinedTag:0xA434'])) {
-                $lens = trim($exif['EXIF']['UndefinedTag:0xA434']);
+                $lens = trim((string) $exif['EXIF']['UndefinedTag:0xA434']);
             }
             // If the above doesn't work, this is a fallback
             elseif (isset($exif['EXIF']['UndefinedTag:0xA432'])) {
                 $val = $exif['EXIF']['UndefinedTag:0xA432'];
-                $array = explode('/', $val[0]);
+                $array = explode('/', (string) $val[0]);
                 $short = array_shift($array);
-                $array1 = explode('/', $val[1]);
+                $array1 = explode('/', (string) $val[1]);
                 $long = array_shift($array1);
                 $lens = $short;
                 if ($short != $long) {
@@ -1510,16 +1088,12 @@ class Content extends Koken
             }
 
             if ($lens) {
-                $final[] = array(
-                    'label' => 'Lens',
-                    'raw' => $this->_force_utf($lens),
-                    'key' => 'lens'
-                );
+                $final[] = ['label' => 'Lens', 'raw' => $this->_force_utf($lens), 'key' => 'lens'];
                 $keys[] = 'lens';
             }
 
             natcasesort($keys);
-            return array($final, array_values($keys));
+            return [$final, array_values($keys)];
         }
     }
 
@@ -1527,46 +1101,15 @@ class Content extends Koken
     {
         $sort = $this->_get_site_order('content');
 
-        $options = array(
-            'order_by' => $sort['by'],
-            'order_direction' => $sort['direction'],
-            'search' => false,
-            'search_filter' => false,
-            'tags' => false,
-            'tags_not' => false,
-            'page' => 1,
-            'match_all_tags' => false,
-            'limit' => 100,
-            'include_presets' => true,
-            'featured' => null,
-            'types' => false,
-            'auth' => false,
-            'favorites' => null,
-            'before' => false,
-            'after' => false,
-            'after_column' => 'uploaded_on',
-            'before_column' => 'uploaded_on',
-            'category' => false,
-            'category_not' => false,
-            'year' => false,
-            'year_not' => false,
-            'month' => false,
-            'month_not' => false,
-            'day' => false,
-            'day_not' => false,
-            'in_album' => false,
-            'reduce' => false,
-            'is_cover' => true,
-            'independent' => false
-        );
+        $options = ['order_by' => $sort['by'], 'order_direction' => $sort['direction'], 'search' => false, 'search_filter' => false, 'tags' => false, 'tags_not' => false, 'page' => 1, 'match_all_tags' => false, 'limit' => 100, 'include_presets' => true, 'featured' => null, 'types' => false, 'auth' => false, 'favorites' => null, 'before' => false, 'after' => false, 'after_column' => 'uploaded_on', 'before_column' => 'uploaded_on', 'category' => false, 'category_not' => false, 'year' => false, 'year_not' => false, 'month' => false, 'month_not' => false, 'day' => false, 'day_not' => false, 'in_album' => false, 'reduce' => false, 'is_cover' => true, 'independent' => false];
 
         $options = array_merge($options, $params);
 
         if (isset($params['order_by']) && !isset($params['order_direction'])) {
-            $options['order_direction'] = in_array($params['order_by'], array('title', 'filename')) ? 'ASC' : 'DESC';
+            $options['order_direction'] = in_array($params['order_by'], ['title', 'filename']) ? 'ASC' : 'DESC';
         }
 
-        Shutter::hook('content.listing', array($this, $options));
+        Shutter::hook('content.listing', [$this, $options]);
 
         if ($options['featured'] == 1 && !isset($params['order_by'])) {
             $options['order_by'] = 'featured_on';
@@ -1576,7 +1119,7 @@ class Content extends Koken
 
         if ($options['auth']) {
             if (isset($options['visibility']) && $options['visibility'] !== 'album') {
-                $values = array('public', 'unlisted', 'private');
+                $values = ['public', 'unlisted', 'private'];
                 if (in_array($options['visibility'], $values)) {
                     $options['visibility'] = array_search($options['visibility'], $values);
                 } elseif ($options['visibility'] === 'any') {
@@ -1637,7 +1180,7 @@ class Content extends Koken
         }
 
         if ($options['search']) {
-            $term = urldecode($options['search']);
+            $term = urldecode((string) $options['search']);
 
             if ($options['search_filter']) {
                 if ($options['search_filter'] === 'category') {
@@ -1701,7 +1244,7 @@ class Content extends Koken
         }
         if ($id) {
             $sql_order = "ORDER BY FIELD(id,$id)";
-            $id = explode(',', $id);
+            $id = explode(',', (string) $id);
             $this->where_in('id', $id);
         }
 
@@ -1713,7 +1256,7 @@ class Content extends Koken
 
         $s = new Setting();
         $s->where('name', 'site_timezone')->get();
-        $tz = new DateTimeZone($s->value);
+        $tz = new DateTimeZone($s->value ?? 'UTC');
         $offset = $tz->getOffset(new DateTime('now', new DateTimeZone('UTC')));
 
         if ($offset === 0) {
@@ -1741,7 +1284,7 @@ class Content extends Koken
             $dates[$b->year][$b->month] = (int) $b->count;
         }
 
-        if (in_array($options['order_by'], array('captured_on', 'uploaded_on', 'modified_on'))) {
+        if (in_array($options['order_by'], ['captured_on', 'uploaded_on', 'modified_on'])) {
             $date_col = $options['order_by'];
         } else {
             $date_col = 'published_on';
@@ -1820,7 +1363,7 @@ class Content extends Koken
         $final = $this->paginate($options);
         $final['dates'] = $dates;
 
-        $this->include_related_count('albums', null, array('visibility' => 0));
+        $this->include_related_count('albums', null, ['visibility' => 0]);
         $this->include_related_count('categories');
 
         if ($id && !isset($params['order_by'])) {
@@ -1844,12 +1387,7 @@ class Content extends Koken
             $final['total'] = $data->result_count();
         }
 
-        $final['counts'] = array(
-            'videos' => $vid_count,
-            'audio' => $aud_count,
-            'images' => $final['total'] - $vid_count - $aud_count,
-            'total' => $final['total']
-        );
+        $final['counts'] = ['videos' => $vid_count, 'audio' => $aud_count, 'images' => $final['total'] - $vid_count - $aud_count, 'total' => $final['total']];
 
         $final['content'] = [];
 
@@ -1858,7 +1396,7 @@ class Content extends Koken
         $tag_map = $this->_eager_load_tags($data);
 
         foreach ($data as $content) {
-            $tags = isset($tag_map['c' . $content->id]) ? $tag_map['c' . $content->id] : array();
+            $tags = $tag_map['c' . $content->id] ?? [];
             $options['eager_tags'] = $tags;
             $final['content'][] = $content->to_array($options);
         }

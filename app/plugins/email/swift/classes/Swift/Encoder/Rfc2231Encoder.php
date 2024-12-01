@@ -16,20 +16,17 @@
 class Swift_Encoder_Rfc2231Encoder implements Swift_Encoder
 {
     /**
-     * A character stream to use when reading a string as characters instead of bytes.
-     *
-     * @var Swift_CharacterStream
-     */
-    private $_charStream;
-
-    /**
      * Creates a new Rfc2231Encoder using the given character stream instance.
      *
      * @param Swift_CharacterStream
      */
-    public function __construct(Swift_CharacterStream $charStream)
+    public function __construct(
+        /**
+         * A character stream to use when reading a string as characters instead of bytes.
+         */
+        private Swift_CharacterStream $_charStream
+    )
     {
-        $this->_charStream = $charStream;
     }
 
     /**
@@ -42,6 +39,7 @@ class Swift_Encoder_Rfc2231Encoder implements Swift_Encoder
      *
      * @return string
      */
+    #[\Override]
     public function encodeString($string, $firstLineOffset = 0, $maxLineLength = 0)
     {
         $lines = [];
@@ -77,6 +75,7 @@ class Swift_Encoder_Rfc2231Encoder implements Swift_Encoder
      *
      * @param string $charset
      */
+    #[\Override]
     public function charsetChanged($charset)
     {
         $this->_charStream->setCharacterSet($charset);

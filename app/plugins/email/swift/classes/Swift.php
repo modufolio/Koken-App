@@ -30,7 +30,7 @@ abstract class Swift
      *
      * @param mixed $callable A valid PHP callable that will be called when autoloading the first Swift class
      */
-    public static function init($callable)
+    public static function init(mixed $callable)
     {
         self::$inits[] = $callable;
     }
@@ -43,11 +43,11 @@ abstract class Swift
     public static function autoload($class)
     {
         // Don't interfere with other autoloaders
-        if (0 !== strpos($class, 'Swift_')) {
+        if (!str_starts_with($class, 'Swift_')) {
             return;
         }
 
-        $path = dirname(__FILE__).'/'.str_replace('_', '/', $class).'.php';
+        $path = __DIR__.'/'.str_replace('_', '/', $class).'.php';
 
         if (!file_exists($path)) {
             return;
@@ -70,11 +70,11 @@ abstract class Swift
      *
      * @param mixed $callable A valid PHP callable that will be called when autoloading the first Swift class
      */
-    public static function registerAutoload($callable = null)
+    public static function registerAutoload(mixed $callable = null)
     {
         if (null !== $callable) {
             self::$inits[] = $callable;
         }
-        spl_autoload_register(array('Swift', 'autoload'));
+        spl_autoload_register(['Swift', 'autoload']);
     }
 }

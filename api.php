@@ -4,14 +4,10 @@ require __DIR__ . '/bootstrap.php';
 
 $__uri = $_SERVER['REQUEST_URI'];
 
-if (($_POST || strpos($__uri, 'api.php?/system') !== false) && file_exists('system.lock'))
+if (($_POST || str_contains((string) $__uri, 'api.php?/system')) && file_exists('system.lock'))
 {
 	header('HTTP/1.1 503 Service Unavailable');
-	die(json_encode(array(
-		'request' => $__uri,
-		'error' => 'Koken is in a read-only state due to maintenance or an update that is in progress. Please try again in a few minutes.',
-		'http' => 503
-	)));
+	die(json_encode(['request' => $__uri, 'error' => 'Koken is in a read-only state due to maintenance or an update that is in progress. Please try again in a few minutes.', 'http' => 503]));
 }
 
 /*
@@ -55,7 +51,7 @@ if (defined('ENVIRONMENT'))
 		case 'testing':
 		case 'production':
 			define('KOKEN_STORE_URL', 'https://store.koken.me');
-			error_reporting(0);
+			error_reporting(E_ALL);ini_set('display_errors', 1);
 		break;
 
 		default:
@@ -156,7 +152,7 @@ if (defined('ENVIRONMENT'))
 	// Set the current directory correctly for CLI requests
 	if (defined('STDIN'))
 	{
-		chdir(dirname(__FILE__));
+		chdir(__DIR__);
 	}
 
 	if (realpath($system_path) !== FALSE)

@@ -4,14 +4,14 @@
     {
         public function _clean_val($val)
         {
-            if (strpos($val, '$') === 0) {
+            if (str_starts_with((string) $val, '$')) {
                 return $val;
-            } elseif (strpos($val, '{$') === false) {
+            } elseif (!str_contains((string) $val, '{$')) {
                 if ($val != 'true' && $val != 'false' && !is_numeric($val)) {
                     $val = "\"$val\"";
                 }
             } else {
-                $val = "trim('" . preg_replace('/\{(\$[^}]+)\}/', "' . $1 . '", $val) . "')";
+                $val = "trim('" . preg_replace('/\{(\$[^}]+)\}/', "' . $1 . '", (string) $val) . "')";
                 $val = "is_numeric($val) ? (int) $val : ( $val == 'false' || $val == 'true' ? $val === 'true' : $val)";
             }
             return $val;
@@ -19,10 +19,7 @@
 
         public function generate()
         {
-            $options = array(
-                'group' => 'default',
-                'relative' => true,
-            );
+            $options = ['group' => 'default', 'relative' => true];
             $disabled = [];
 
             $group_wrap = '<?php echo "default"; ?>';
@@ -31,7 +28,7 @@
 
             $params = [];
             foreach ($this->parameters as $key => $val) {
-                if ($key === 'source' || strpos($key, 'filter:') === 0) {
+                if ($key === 'source' || str_starts_with($key, 'filter:')) {
                     $params[] = "'$key' => \"" . $this->attr_parse($val) . '"';
                     unset($this->parameters[$key]);
                 } elseif ($key === 'style') {
@@ -42,7 +39,7 @@
                         $group_wrap = $this->attr_parse($val, true);
                     }
                     $val = $this->attr_parse($val);
-                    if (strpos($key, ':') !== false) {
+                    if (str_contains($key, ':')) {
                         $bits = explode(':', $key);
                         if (in_array($bits[0], $disabled)) {
                             continue;
@@ -74,7 +71,7 @@
                 unset($options['data_from_url']);
             } elseif (isset($options['data'])) {
                 $data = $this->field_to_keys('data');
-                if (strpos($data, 'covers') !== false) {
+                if (str_contains($data, 'covers')) {
                     $base = str_replace("['covers']", '', $data);
                     $options['data'] = "array( 'content' => $data, 'album_id' => {$base}['id'], 'album_type' => {$base}['album_type'] )";
                 } else {

@@ -32,7 +32,7 @@
 function &DB($params = '', $active_record_override = null)
 {
     // Load the DB config file if a DSN string wasn't passed
-    if (is_string($params) and strpos($params, '://') === false) {
+    if (is_string($params) and !str_contains($params, '://')) {
         // Is the config file in the environment folder?
         if (! defined('ENVIRONMENT') or ! file_exists($file_path = APPPATH.'config/'.ENVIRONMENT.'/database.php')) {
             if (! file_exists($file_path = APPPATH.'config/database.php')) {
@@ -68,13 +68,7 @@ function &DB($params = '', $active_record_override = null)
             show_error('Invalid DB Connection String');
         }
 
-        $params = array(
-                            'dbdriver'	=> $dns['scheme'],
-                            'hostname'	=> (isset($dns['host'])) ? rawurldecode($dns['host']) : '',
-                            'username'	=> (isset($dns['user'])) ? rawurldecode($dns['user']) : '',
-                            'password'	=> (isset($dns['pass'])) ? rawurldecode($dns['pass']) : '',
-                            'database'	=> (isset($dns['path'])) ? rawurldecode(substr($dns['path'], 1)) : ''
-                        );
+        $params = ['dbdriver'	=> $dns['scheme'], 'hostname'	=> (isset($dns['host'])) ? rawurldecode($dns['host']) : '', 'username'	=> (isset($dns['user'])) ? rawurldecode($dns['user']) : '', 'password'	=> (isset($dns['pass'])) ? rawurldecode($dns['pass']) : '', 'database'	=> (isset($dns['path'])) ? rawurldecode(substr($dns['path'], 1)) : ''];
 
         // were additional config items set?
         if (isset($dns['query'])) {

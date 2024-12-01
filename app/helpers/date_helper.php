@@ -45,7 +45,7 @@ if (! function_exists('now')) {
     {
         $CI =& get_instance();
 
-        if (strtolower($CI->config->item('time_reference')) == 'gmt') {
+        if (strtolower((string) $CI->config->item('time_reference')) == 'gmt') {
             $now = time();
             $system_time = mktime(gmdate("H", $now), gmdate("i", $now), gmdate("s", $now), gmdate("m", $now), gmdate("d", $now), gmdate("Y", $now));
 
@@ -91,7 +91,7 @@ if (! function_exists('mdate')) {
             $time = now();
         }
 
-        $datestr = str_replace('%\\', '', preg_replace("/([a-z]+?){1}/i", "\\\\\\1", $datestr));
+        $datestr = str_replace('%\\', '', preg_replace("/([a-z]+?){1}/i", "\\\\\\1", (string) $datestr));
         return date($datestr, $time);
     }
 }
@@ -111,17 +111,7 @@ if (! function_exists('mdate')) {
 if (! function_exists('standard_date')) {
     function standard_date($fmt = 'DATE_RFC822', $time = '')
     {
-        $formats = array(
-                        'DATE_ATOM'		=>	'%Y-%m-%dT%H:%i:%s%Q',
-                        'DATE_COOKIE'	=>	'%l, %d-%M-%y %H:%i:%s UTC',
-                        'DATE_ISO8601'	=>	'%Y-%m-%dT%H:%i:%s%Q',
-                        'DATE_RFC822'	=>	'%D, %d %M %y %H:%i:%s %O',
-                        'DATE_RFC850'	=>	'%l, %d-%M-%y %H:%i:%s UTC',
-                        'DATE_RFC1036'	=>	'%D, %d %M %y %H:%i:%s %O',
-                        'DATE_RFC1123'	=>	'%D, %d %M %Y %H:%i:%s %O',
-                        'DATE_RSS'		=>	'%D, %d %M %Y %H:%i:%s %O',
-                        'DATE_W3C'		=>	'%Y-%m-%dT%H:%i:%s%Q'
-                        );
+        $formats = ['DATE_ATOM'		=>	'%Y-%m-%dT%H:%i:%s%Q', 'DATE_COOKIE'	=>	'%l, %d-%M-%y %H:%i:%s UTC', 'DATE_ISO8601'	=>	'%Y-%m-%dT%H:%i:%s%Q', 'DATE_RFC822'	=>	'%D, %d %M %y %H:%i:%s %O', 'DATE_RFC850'	=>	'%l, %d-%M-%y %H:%i:%s UTC', 'DATE_RFC1036'	=>	'%D, %d %M %y %H:%i:%s %O', 'DATE_RFC1123'	=>	'%D, %d %M %Y %H:%i:%s %O', 'DATE_RSS'		=>	'%D, %d %M %Y %H:%i:%s %O', 'DATE_W3C'		=>	'%Y-%m-%dT%H:%i:%s%Q'];
 
         if (! isset($formats[$fmt])) {
             return false;
@@ -260,7 +250,7 @@ if (! function_exists('days_in_month')) {
             }
         }
 
-        $days_in_month	= array(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31);
+        $days_in_month	= [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
         return $days_in_month[$month - 1];
     }
 }
@@ -403,14 +393,14 @@ if (! function_exists('human_to_unix')) {
             return false;
         }
 
-        $datestr = trim($datestr);
+        $datestr = trim((string) $datestr);
         $datestr = preg_replace("/\040+/", ' ', $datestr);
 
-        if (! preg_match('/^[0-9]{2,4}\-[0-9]{1,2}\-[0-9]{1,2}\s[0-9]{1,2}:[0-9]{1,2}(?::[0-9]{1,2})?(?:\s[AP]M)?$/i', $datestr)) {
+        if (! preg_match('/^[0-9]{2,4}\-[0-9]{1,2}\-[0-9]{1,2}\s[0-9]{1,2}:[0-9]{1,2}(?::[0-9]{1,2})?(?:\s[AP]M)?$/i', (string) $datestr)) {
             return false;
         }
 
-        $split = explode(' ', $datestr);
+        $split = explode(' ', (string) $datestr);
 
         $ex = explode("-", $split['0']);
 
@@ -433,11 +423,11 @@ if (! function_exists('human_to_unix')) {
         if (isset($split['2'])) {
             $ampm = strtolower($split['2']);
 
-            if (substr($ampm, 0, 1) == 'p' and $hour < 12) {
+            if (str_starts_with($ampm, 'p') and $hour < 12) {
                 $hour = $hour + 12;
             }
 
-            if (substr($ampm, 0, 1) == 'a' and $hour == 12) {
+            if (str_starts_with($ampm, 'a') and $hour == 12) {
                 $hour =  '00';
             }
 
@@ -510,48 +500,7 @@ if (! function_exists('timezones')) {
         // Note: Don't change the order of these even though
         // some items appear to be in the wrong order
 
-        $zones = array(
-                        'UM12'		=> -12,
-                        'UM11'		=> -11,
-                        'UM10'		=> -10,
-                        'UM95'		=> -9.5,
-                        'UM9'		=> -9,
-                        'UM8'		=> -8,
-                        'UM7'		=> -7,
-                        'UM6'		=> -6,
-                        'UM5'		=> -5,
-                        'UM45'		=> -4.5,
-                        'UM4'		=> -4,
-                        'UM35'		=> -3.5,
-                        'UM3'		=> -3,
-                        'UM2'		=> -2,
-                        'UM1'		=> -1,
-                        'UTC'		=> 0,
-                        'UP1'		=> +1,
-                        'UP2'		=> +2,
-                        'UP3'		=> +3,
-                        'UP35'		=> +3.5,
-                        'UP4'		=> +4,
-                        'UP45'		=> +4.5,
-                        'UP5'		=> +5,
-                        'UP55'		=> +5.5,
-                        'UP575'		=> +5.75,
-                        'UP6'		=> +6,
-                        'UP65'		=> +6.5,
-                        'UP7'		=> +7,
-                        'UP8'		=> +8,
-                        'UP875'		=> +8.75,
-                        'UP9'		=> +9,
-                        'UP95'		=> +9.5,
-                        'UP10'		=> +10,
-                        'UP105'		=> +10.5,
-                        'UP11'		=> +11,
-                        'UP115'		=> +11.5,
-                        'UP12'		=> +12,
-                        'UP1275'	=> +12.75,
-                        'UP13'		=> +13,
-                        'UP14'		=> +14
-                    );
+        $zones = ['UM12'		=> -12, 'UM11'		=> -11, 'UM10'		=> -10, 'UM95'		=> -9.5, 'UM9'		=> -9, 'UM8'		=> -8, 'UM7'		=> -7, 'UM6'		=> -6, 'UM5'		=> -5, 'UM45'		=> -4.5, 'UM4'		=> -4, 'UM35'		=> -3.5, 'UM3'		=> -3, 'UM2'		=> -2, 'UM1'		=> -1, 'UTC'		=> 0, 'UP1'		=> +1, 'UP2'		=> +2, 'UP3'		=> +3, 'UP35'		=> +3.5, 'UP4'		=> +4, 'UP45'		=> +4.5, 'UP5'		=> +5, 'UP55'		=> +5.5, 'UP575'		=> +5.75, 'UP6'		=> +6, 'UP65'		=> +6.5, 'UP7'		=> +7, 'UP8'		=> +8, 'UP875'		=> +8.75, 'UP9'		=> +9, 'UP95'		=> +9.5, 'UP10'		=> +10, 'UP105'		=> +10.5, 'UP11'		=> +11, 'UP115'		=> +11.5, 'UP12'		=> +12, 'UP1275'	=> +12.75, 'UP13'		=> +13, 'UP14'		=> +14];
 
         if ($tz == '') {
             return $zones;

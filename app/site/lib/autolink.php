@@ -16,13 +16,11 @@
     # functions to change the output.
     #
 
-    $GLOBALS['autolink_options'] = array(
-
+    $GLOBALS['autolink_options'] = [
         # Should http:// be visibly stripped from the front
         # of URLs?
         'strip_protocols' => true,
-
-    );
+    ];
 
     ####################################################################
 
@@ -39,12 +37,12 @@
 
     function autolink_do($text, $sub, $limit, $tagfill, $auto_title, $force_prefix=null)
     {
-        $text_l = StrToLower($text);
+        $text_l = StrToLower((string) $text);
         $cursor = 0;
         $loop = 1;
         $buffer = '';
 
-        while (($cursor < strlen($text)) && $loop) {
+        while (($cursor < strlen((string) $text)) && $loop) {
             $ok = 1;
             $matched = preg_match($sub, $text_l, $m, PREG_OFFSET_CAPTURE, $cursor);
 
@@ -55,10 +53,10 @@
                 $pos = $m[0][1];
                 $sub_len = strlen($m[0][0]);
 
-                $pre_hit = substr($text, $cursor, $pos-$cursor);
-                $hit = substr($text, $pos, $sub_len);
-                $pre = substr($text, 0, $pos);
-                $post = substr($text, $pos + $sub_len);
+                $pre_hit = substr((string) $text, $cursor, $pos-$cursor);
+                $hit = substr((string) $text, $pos, $sub_len);
+                $pre = substr((string) $text, 0, $pos);
+                $post = substr((string) $text, $pos + $sub_len);
 
                 $fail_text = $pre_hit.$hit;
                 $fail_len = strlen($fail_text);
@@ -69,7 +67,7 @@
 
                 $bits = preg_split("!</a>!i", $pre);
                 $last_bit = array_pop($bits);
-                if (preg_match("!<a\s!i", $last_bit)) {
+                if (preg_match("!<a\s!i", (string) $last_bit)) {
 
                     #echo "fail 1 at $cursor<br />\n";
 
@@ -119,7 +117,7 @@
                         $url = substr($url, 0, strlen($url)-1);
                         $cursor--;
                     }
-                    foreach (array('()', '[]', '{}') as $pair) {
+                    foreach (['()', '[]', '{}'] as $pair) {
                         $o = substr($pair, 0, 1);
                         $c = substr($pair, 1, 1);
                         if (preg_match("!^(\\$c|^)[^\\$o]+\\$c$!", $url)) {
@@ -153,8 +151,8 @@
                     # add the url
                     #
 
-                    if ($display_url != $link_url && !preg_match('@title=@msi', $tagfill) && $auto_title) {
-                        $display_quoted = preg_quote($display_url, '!');
+                    if ($display_url != $link_url && !preg_match('@title=@msi', (string) $tagfill) && $auto_title) {
+                        $display_quoted = preg_quote((string) $display_url, '!');
 
                         if (!preg_match("!^(http|https)://{$display_quoted}$!i", $link_url)) {
                             $tagfill .= ' title="'.$link_url.'"';
@@ -162,7 +160,7 @@
                     }
 
                     $link_url_enc = HtmlSpecialChars($link_url);
-                    $display_url_enc = HtmlSpecialChars($display_url);
+                    $display_url_enc = HtmlSpecialChars((string) $display_url);
 
                     $buffer .= "<a href=\"{$link_url_enc}\"$tagfill>{$display_url_enc}</a>";
                 } else {
@@ -179,7 +177,7 @@
         # add everything from the cursor to the end onto the buffer.
         #
 
-        $buffer .= substr($text, $cursor);
+        $buffer .= substr((string) $text, $cursor);
 
         return $buffer;
     }
@@ -192,8 +190,8 @@
             return $text;
         }
 
-        if (strlen($text) > $limit) {
-            return substr($text, 0, $limit-3).'...';
+        if (strlen((string) $text) > $limit) {
+            return substr((string) $text, 0, $limit-3).'...';
         }
 
         return $text;
@@ -207,12 +205,12 @@
 
         #die($atom);
 
-        $text_l = StrToLower($text);
+        $text_l = StrToLower((string) $text);
         $cursor = 0;
         $loop = 1;
         $buffer = '';
 
-        while (($cursor < strlen($text)) && $loop) {
+        while (($cursor < strlen((string) $text)) && $loop) {
 
             #
             # find an '@' symbol
@@ -225,9 +223,9 @@
                 $loop = 0;
                 $ok = 0;
             } else {
-                $pre = substr($text, $cursor, $pos-$cursor);
-                $hit = substr($text, $pos, 1);
-                $post = substr($text, $pos + 1);
+                $pre = substr((string) $text, $cursor, $pos-$cursor);
+                $hit = substr((string) $text, $pos, 1);
+                $post = substr((string) $text, $pos + 1);
 
                 $fail_text = $pre.$hit;
                 $fail_len = strlen($fail_text);
@@ -240,7 +238,7 @@
 
                 $bits = preg_split("!</a>!i", $pre);
                 $last_bit = array_pop($bits);
-                if (preg_match("!<a\s!i", $last_bit)) {
+                if (preg_match("!<a\s!i", (string) $last_bit)) {
 
                     #echo "fail 1 at $cursor<br />\n";
 
@@ -311,7 +309,7 @@
         # add everything from the cursor to the end onto the buffer.
         #
 
-        $buffer .= substr($text, $cursor);
+        $buffer .= substr((string) $text, $cursor);
 
         return $buffer;
     }

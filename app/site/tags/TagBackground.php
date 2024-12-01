@@ -6,14 +6,7 @@
 
         public function generate()
         {
-            $defaults = array(
-                'tag' => 'div',
-                'data' => false,
-                'position' => 'focal',
-                'lazy' => false,
-                'fade' => true,
-                'relative' => true,
-            );
+            $defaults = ['tag' => 'div', 'data' => false, 'position' => 'focal', 'lazy' => false, 'fade' => true, 'relative' => true];
 
             $options = array_merge($defaults, $this->parameters);
 

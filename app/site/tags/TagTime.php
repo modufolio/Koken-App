@@ -4,7 +4,7 @@
     {
         public function generate()
         {
-            $defaults = array('show' => 'date', 'class' => 'false', 'rss' => 'false', 'relative' => 'false');
+            $defaults = ['show' => 'date', 'class' => 'false', 'rss' => 'false', 'relative' => 'false'];
             $options = array_merge($defaults, $this->parameters);
 
 

@@ -16,31 +16,21 @@
 class Swift_Events_CommandEvent extends Swift_Events_EventObject
 {
     /**
-     * The command sent to the server.
-     *
-     * @var string
-     */
-    private $_command;
-
-    /**
-     * An array of codes which a successful response will contain.
-     *
-     * @var integer[]
-     */
-    private $_successCodes = [];
-
-    /**
      * Create a new CommandEvent for $source with $command.
      *
      * @param Swift_Transport $source
-     * @param string          $command
-     * @param array           $successCodes
+     * @param string $_command
+     * @param array $_successCodes
      */
-    public function __construct(Swift_Transport $source, $command, $successCodes = array())
+    public function __construct(Swift_Transport $source, /**
+     * The command sent to the server.
+     */
+    private $_command, /**
+     * An array of codes which a successful response will contain.
+     */
+    private $_successCodes = [])
     {
         parent::__construct($source);
-        $this->_command = $command;
-        $this->_successCodes = $successCodes;
     }
 
     /**

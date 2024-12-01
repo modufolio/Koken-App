@@ -40,7 +40,7 @@ class CI_Migration
 
     protected $_error_string = '';
 
-    public function __construct($config = array())
+    public function __construct($config = [])
     {
         # Only run this constructor on main library load
         if (get_parent_class($this) !== false) {
@@ -62,7 +62,7 @@ class CI_Migration
         $this->_migration_path == '' and $this->_migration_path = APPPATH . 'migrations/';
 
         // Add trailing slash if not set
-        $this->_migration_path = rtrim($this->_migration_path, '/').'/';
+        $this->_migration_path = rtrim((string) $this->_migration_path, '/').'/';
 
         // Load migration language
         $this->lang->load('migration');
@@ -72,13 +72,11 @@ class CI_Migration
 
         // If the migrations table is missing, make it
         if (! $this->db->table_exists('migrations')) {
-            $this->dbforge->add_field(array(
-                'version' => array('type' => 'INT', 'constraint' => 3),
-            ));
+            $this->dbforge->add_field(['version' => ['type' => 'INT', 'constraint' => 3]]);
 
             $this->dbforge->create_table('migrations', true);
 
-            $this->db->insert('migrations', array('version' => 0));
+            $this->db->insert('migrations', ['version' => 0]);
         }
     }
 
@@ -157,7 +155,7 @@ class CI_Migration
                     return false;
                 }
 
-                if (! is_callable(array($class, $method))) {
+                if (! is_callable([$class, $method])) {
                     $this->_error_string = sprintf($this->lang->line('migration_missing_'.$method.'_method'), $class);
                     return false;
                 }
@@ -174,7 +172,7 @@ class CI_Migration
         $version = $i + ($step == 1 ? -1 : 0);
 
         // If there is nothing to do so quit
-        if ($migrations === array()) {
+        if ($migrations === []) {
             return true;
         }
 
@@ -184,7 +182,7 @@ class CI_Migration
         foreach ($migrations as $migration) {
             // Run the migration class
             $class = 'Migration_' . ucfirst(strtolower($migration));
-            call_user_func(array(new $class(), $method));
+            call_user_func([new $class(), $method]);
 
             $current_version += $step;
             $this->_update_version($current_version);
@@ -209,7 +207,7 @@ class CI_Migration
             return false;
         }
 
-        $last_migration = basename(end($migrations));
+        $last_migration = basename((string) end($migrations));
 
         // Calculate the last migration step from existing migration
         // filenames and procceed to the standard version migration
@@ -288,20 +286,16 @@ class CI_Migration
      */
     protected function _update_version($migrations)
     {
-        return $this->db->update('migrations', array(
-            'version' => $migrations
-        ));
+        return $this->db->update('migrations', ['version' => $migrations]);
     }
 
     // --------------------------------------------------------------------
-
     /**
      * Enable the use of CI super-global
      *
-     * @param	mixed	$var
      * @return	mixed
      */
-    public function __get($var)
+    public function __get(mixed $var)
     {
         return get_instance()->$var;
     }

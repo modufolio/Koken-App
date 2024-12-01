@@ -50,7 +50,7 @@ class Swift_ByteStream_ArrayByteStream implements Swift_InputByteStream, Swift_O
      *
      * @param mixed $stack of bytes in string or array form, optional
      */
-    public function __construct($stack = null)
+    public function __construct(mixed $stack = null)
     {
         if (is_array($stack)) {
             $this->_array = $stack;
@@ -74,6 +74,7 @@ class Swift_ByteStream_ArrayByteStream implements Swift_InputByteStream, Swift_O
      *
      * @return string
      */
+    #[\Override]
     public function read($length)
     {
         if ($this->_offset == $this->_arraySize) {
@@ -98,6 +99,7 @@ class Swift_ByteStream_ArrayByteStream implements Swift_InputByteStream, Swift_O
      *
      * @param string $bytes
      */
+    #[\Override]
     public function write($bytes)
     {
         $to_add = str_split($bytes);
@@ -114,6 +116,7 @@ class Swift_ByteStream_ArrayByteStream implements Swift_InputByteStream, Swift_O
     /**
      * Not used.
      */
+    #[\Override]
     public function commit()
     {
     }
@@ -126,6 +129,7 @@ class Swift_ByteStream_ArrayByteStream implements Swift_InputByteStream, Swift_O
      *
      * @param Swift_InputByteStream $is
      */
+    #[\Override]
     public function bind(Swift_InputByteStream $is)
     {
         $this->_mirrors[] = $is;
@@ -140,6 +144,7 @@ class Swift_ByteStream_ArrayByteStream implements Swift_InputByteStream, Swift_O
      *
      * @param Swift_InputByteStream $is
      */
+    #[\Override]
     public function unbind(Swift_InputByteStream $is)
     {
         foreach ($this->_mirrors as $k => $stream) {
@@ -156,6 +161,7 @@ class Swift_ByteStream_ArrayByteStream implements Swift_InputByteStream, Swift_O
      *
      * @return bool
      */
+    #[\Override]
     public function setReadPointer($byteOffset)
     {
         if ($byteOffset > $this->_arraySize) {
@@ -171,6 +177,7 @@ class Swift_ByteStream_ArrayByteStream implements Swift_InputByteStream, Swift_O
      * Flush the contents of the stream (empty it) and set the internal pointer
      * to the beginning.
      */
+    #[\Override]
     public function flushBuffers()
     {
         $this->_offset = 0;

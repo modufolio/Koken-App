@@ -1,6 +1,6 @@
 <?php
 
-    $base_folder = preg_replace('/\/api\.php(.*)?$/', '', $_SERVER['SCRIPT_NAME']);
+    $base_folder = preg_replace('/\/api\.php(.*)?$/', '', (string) $_SERVER['SCRIPT_NAME']);
 
     $curl = curl_init();
     curl_setopt($curl, CURLOPT_URL, 'http://' . $_SERVER['HTTP_HOST'] . $base_folder . '/api.php?/update/migrate/schema');

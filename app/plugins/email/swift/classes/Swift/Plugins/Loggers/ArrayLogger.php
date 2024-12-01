@@ -23,20 +23,18 @@ class Swift_Plugins_Loggers_ArrayLogger implements Swift_Plugins_Logger
     private $_log = [];
 
     /**
-     * Max size of the log.
-     *
-     * @var int
-     */
-    private $_size = 0;
-
-    /**
      * Create a new ArrayLogger with a maximum of $size entries.
      *
      * @var int $size
+     * @param int $size
      */
-    public function __construct($size = 50)
+    public function __construct(
+        /**
+         * Max size of the log.
+         */
+        private $_size = 50
+    )
     {
-        $this->_size = $size;
     }
 
     /**
@@ -44,6 +42,7 @@ class Swift_Plugins_Loggers_ArrayLogger implements Swift_Plugins_Logger
      *
      * @param string $entry
      */
+    #[\Override]
     public function add($entry)
     {
         $this->_log[] = $entry;
@@ -55,6 +54,7 @@ class Swift_Plugins_Loggers_ArrayLogger implements Swift_Plugins_Logger
     /**
      * Clear the log contents.
      */
+    #[\Override]
     public function clear()
     {
         $this->_log = [];
@@ -65,6 +65,7 @@ class Swift_Plugins_Loggers_ArrayLogger implements Swift_Plugins_Logger
      *
      * @return string
      */
+    #[\Override]
     public function dump()
     {
         return implode(PHP_EOL, $this->_log);

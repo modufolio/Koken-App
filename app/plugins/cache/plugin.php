@@ -24,16 +24,17 @@ class DDI_Cache extends KokenPlugin implements KokenCache
             $path = str_replace('compiled', $this->request_read_token(), $path);
         }
 
-        if (strpos($path, 'api/') === 0) {
-            return $this->base_path . 'api/' . md5($path) . '.cache';
+        if (str_starts_with((string) $path, 'api/')) {
+            return $this->base_path . 'api/' . md5((string) $path) . '.cache';
         }
 
         return $this->base_path . $path;
     }
 
+    #[\Override]
     public function get($path, $lastModified = false)
     {
-        $is_api = strpos($path, 'api') === 0;
+        $is_api = str_starts_with((string) $path, 'api');
 
         $path = $this->make_full_path($path);
 
@@ -43,42 +44,38 @@ class DDI_Cache extends KokenPlugin implements KokenCache
             $mtime = filemtime($path);
 
             if (!$is_api || $mtime > $cache_stamp) {
-                if ($lastModified && strtotime($lastModified) && is_int($mtime) && strtotime($lastModified) >= $mtime) {
-                    return array(
-                        'status' => 304
-                    );
+                if ($lastModified && strtotime((string) $lastModified) && is_int($mtime) && strtotime((string) $lastModified) >= $mtime) {
+                    return ['status' => 304];
                 }
 
                 // Path traversal check
                 $realpath = realpath($this->base_path);
                 $realpathfile = realpath($path);
 
-                if (!$realpathfile || strpos($realpathfile, $realpath) !== 0) {
+                if (!$realpathfile || !str_starts_with($realpathfile, $realpath)) {
                     return false;
                 }
 
-                return array(
-                    'data' => file_get_contents($path),
-                    'status' => 200,
-                    'modified' => $mtime
-                );
+                return ['data' => file_get_contents($path), 'status' => 200, 'modified' => $mtime];
             }
         }
 
         return false;
     }
 
+    #[\Override]
     public function write($path, $content)
     {
         $full_path = $this->make_full_path($path);
-        $this->make_child_dir(dirname($full_path));
+        $this->make_child_dir(dirname((string) $full_path));
         file_put_contents($full_path, $content);
     }
 
+    #[\Override]
     public function clear($path)
     {
         $full_path = $this->make_full_path($path);
-        if (strpos($path, 'api') === 0) {
+        if (str_starts_with((string) $path, 'api')) {
             touch($this->stamp);
         } elseif (is_dir($full_path)) {
             $this->delete_files($full_path, true, 1);
@@ -95,7 +92,7 @@ class DDI_Cache extends KokenPlugin implements KokenCache
         }
 
         // Make sure parent exists
-        $parent = dirname($path);
+        $parent = dirname((string) $path);
         if (!is_dir($parent)) {
             $this->make_child_dir($parent);
         }
@@ -122,7 +119,7 @@ class DDI_Cache extends KokenPlugin implements KokenCache
     private function delete_files($path, $del_dir = false, $level = 0)
     {
         // Trim the trailing slash
-        $path = rtrim($path, DIRECTORY_SEPARATOR);
+        $path = rtrim((string) $path, DIRECTORY_SEPARATOR);
 
         if (! $current_dir = @opendir($path)) {
             return false;
@@ -132,7 +129,7 @@ class DDI_Cache extends KokenPlugin implements KokenCache
             if ($filename != "." and $filename != "..") {
                 if (is_dir($path.DIRECTORY_SEPARATOR.$filename)) {
                     // Ignore empty folders
-                    if (substr($filename, 0, 1) != '.') {
+                    if (!str_starts_with($filename, '.')) {
                         $this->delete_files($path.DIRECTORY_SEPARATOR.$filename, $del_dir, $level + 1);
                     }
                 } else {

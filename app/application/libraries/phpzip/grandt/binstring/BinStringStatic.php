@@ -100,11 +100,11 @@ class BinStringStatic
             }
             $lang = mb_language(); // get current language
             mb_language("en"); // Force encoding to iso8859-1
-            $rv = mb_send_mail($to, $subject, $message, $additional_headers, $additional_parameters);
+            $rv = mb_send_mail((string) $to, (string) $subject, (string) $message, $additional_headers, $additional_parameters);
             mb_language($lang);
             return $rv;
         } else {
-            return mail($to, $subject, $message, $additional_headers, $additional_parameters);
+            return mail((string) $to, (string) $subject, (string) $message, $additional_headers, $additional_parameters);
         }
     }
 
@@ -117,9 +117,9 @@ class BinStringStatic
             if (self::$USE_MB_ORIG) {
                 return mb_orig_strlen($string);
             }
-            return mb_strlen($string, 'latin1');
+            return mb_strlen((string) $string, 'latin1');
         } else {
-            return strlen($string);
+            return strlen((string) $string);
         }
     }
 
@@ -132,9 +132,9 @@ class BinStringStatic
             if (self::$USE_MB_ORIG) {
                 return mb_orig_strpos($haystack, $needle, $offset);
             }
-            return mb_strpos($haystack, $needle, $offset, 'latin1');
+            return mb_strpos((string) $haystack, (string) $needle, $offset, 'latin1');
         } else {
-            return strpos($haystack, $needle, $offset);
+            return strpos((string) $haystack, (string) $needle, $offset);
         }
     }
 
@@ -147,9 +147,9 @@ class BinStringStatic
             if (self::$USE_MB_ORIG) {
                 return mb_orig_strrpos($haystack, $needle, $offset);
             }
-            return mb_strrpos($haystack, $needle, $offset, 'latin1');
+            return mb_strrpos((string) $haystack, (string) $needle, $offset, 'latin1');
         } else {
-            return strrpos($haystack, $needle, $offset);
+            return strrpos((string) $haystack, (string) $needle, $offset);
         }
     }
 
@@ -162,9 +162,9 @@ class BinStringStatic
             if (self::$USE_MB_ORIG) {
                 return mb_orig_stripos($haystack, $needle, $offset);
             }
-            return mb_stripos($haystack, $needle, $offset, 'latin1');
+            return mb_stripos((string) $haystack, (string) $needle, $offset, 'latin1');
         } else {
-            return stripos($haystack, $needle, $offset);
+            return stripos((string) $haystack, (string) $needle, $offset);
         }
     }
 
@@ -177,9 +177,9 @@ class BinStringStatic
             if (self::$USE_MB_ORIG) {
                 return mb_orig_strripos($haystack, $needle, $offset);
             }
-            return mb_strripos($haystack, $needle, $offset, 'latin1');
+            return mb_strripos((string) $haystack, (string) $needle, $offset, 'latin1');
         } else {
-            return strripos($haystack, $needle, $offset);
+            return strripos((string) $haystack, (string) $needle, $offset);
         }
     }
 
@@ -192,9 +192,9 @@ class BinStringStatic
             if (self::$USE_MB_ORIG) {
                 return mb_orig_strstr($haystack, $needle, $before_needle);
             }
-            return mb_strstr($haystack, $needle, $before_needle, 'latin1');
+            return mb_strstr((string) $haystack, (string) $needle, $before_needle, 'latin1');
         } else {
-            return strstr($haystack, $needle, $before_needle);
+            return strstr((string) $haystack, (string) $needle, $before_needle);
         }
     }
 
@@ -207,9 +207,9 @@ class BinStringStatic
             if (self::$USE_MB_ORIG) {
                 return mb_orig_stristr($haystack, $needle, $before_needle);
             }
-            return mb_stristr($haystack, $needle, $before_needle, 'latin1');
+            return mb_stristr((string) $haystack, (string) $needle, $before_needle, 'latin1');
         } else {
-            return stristr($haystack, $needle, $before_needle);
+            return stristr((string) $haystack, (string) $needle, $before_needle);
         }
     }
 
@@ -222,9 +222,9 @@ class BinStringStatic
             if (self::$USE_MB_ORIG) {
                 return mb_orig_strrchr($haystack, $needle);
             }
-            return mb_strrchr($haystack, $needle, 'latin1');
+            return mb_strrchr((string) $haystack, (string) $needle, 'latin1');
         } else {
-            return strrchr($haystack, $needle);
+            return strrchr((string) $haystack, (string) $needle);
         }
     }
 
@@ -241,14 +241,14 @@ class BinStringStatic
                 return mb_orig_substr($string, $start, $length);
             }
             if (func_num_args() == 2) { // Kludgry hack, as mb_substr is lobotomized, AND broken.
-                return mb_substr($string, $start, mb_strlen($string, 'latin1'), 'latin1');
+                return mb_substr((string) $string, $start, mb_strlen((string) $string, 'latin1'), 'latin1');
             }
-            return mb_substr($string, $start, $length, 'latin1');
+            return mb_substr((string) $string, $start, $length, 'latin1');
         } else {
             if (func_num_args() == 2) { // Kludgry hack, as PHP substr is lobotomized.
-                return substr($string, $start);
+                return substr((string) $string, $start);
             }
-            return substr($string, $start, $length);
+            return substr((string) $string, $start, $length);
         }
     }
 
@@ -261,9 +261,9 @@ class BinStringStatic
             if (self::$USE_MB_ORIG) {
                 return mb_orig_strtolower($string);
             }
-            return mb_strtolower($string, 'latin1');
+            return mb_strtolower((string) $string, 'latin1');
         } else {
-            return strtolower($string);
+            return strtolower((string) $string);
         }
     }
 
@@ -276,9 +276,9 @@ class BinStringStatic
             if (self::$USE_MB_ORIG) {
                 return mb_orig_strtoupper($string);
             }
-            return mb_strtoupper($string, 'latin1');
+            return mb_strtoupper((string) $string, 'latin1');
         } else {
-            return strtoupper($string);
+            return strtoupper((string) $string);
         }
     }
 
@@ -294,12 +294,12 @@ class BinStringStatic
                 }
                 return mb_orig_substr_count($haystack, $needle, $offset);
             }
-            return mb_substr_count($haystack, $needle, 'latin1');
+            return mb_substr_count((string) $haystack, (string) $needle, 'latin1');
         } else {
             if (func_num_args() > 3) { // Kludgry hack, as PHP substr_count is lobotomized.
-                return substr_count($haystack, $needle, $offset, $length);
+                return substr_count((string) $haystack, (string) $needle, $offset, $length);
             }
-            return substr_count($haystack, $needle, $offset);
+            return substr_count((string) $haystack, (string) $needle, $offset);
         }
     }
 
@@ -315,11 +315,11 @@ class BinStringStatic
             }
             $enc = mb_regex_encoding(); // get current encoding
             mb_regex_encoding("latin1"); // Force encoding to iso8859-1
-            $rv = mb_ereg($pattern, $string, $regs);
+            $rv = mb_ereg((string) $pattern, (string) $string, $regs);
             mb_regex_encoding($enc);
             return $rv;
         } else {
-            return ereg($pattern, $string, $regs);
+            return preg_match('#' . preg_quote((string) $pattern, '#') . '#m', (string) $string, $regs);
         }
     }
 
@@ -335,11 +335,11 @@ class BinStringStatic
             }
             $enc = mb_regex_encoding(); // get current encoding
             mb_regex_encoding("latin1"); // Force encoding to iso8859-1
-            $rv = mb_eregi($pattern, $string, $regs);
+            $rv = mb_eregi((string) $pattern, (string) $string, $regs);
             mb_regex_encoding($enc);
             return $rv;
         } else {
-            return eregi($pattern, $string, $regs);
+            return preg_match('#' . preg_quote((string) $pattern, '#') . '#mi', (string) $string, $regs);
         }
     }
 
@@ -355,11 +355,11 @@ class BinStringStatic
             }
             $enc = mb_regex_encoding(); // get current encoding
             mb_regex_encoding("latin1"); // Force encoding to iso8859-1
-            $rv = mb_ereg_replace($pattern, $replacement, $string, $mb_specific_option);
+            $rv = mb_ereg_replace((string) $pattern, (string) $replacement, (string) $string, $mb_specific_option);
             mb_regex_encoding($enc);
             return $rv;
         } else {
-            return ereg_replace($pattern, $replacement, $string);
+            return preg_replace('#' . preg_quote((string) $pattern, '#') . '#m', (string) $replacement, (string) $string);
         }
     }
 
@@ -375,11 +375,11 @@ class BinStringStatic
             }
             $enc = mb_regex_encoding(); // get current encoding
             mb_regex_encoding("latin1"); // Force encoding to iso8859-1
-            $rv = mb_eregi_replace($pattern, $replacement, $string, $mb_specific_option);
+            $rv = mb_eregi_replace((string) $pattern, (string) $replacement, (string) $string, $mb_specific_option);
             mb_regex_encoding($enc);
             return $rv;
         } else {
-            return eregi_replace($pattern, $replacement, $string);
+            return preg_replace('#' . preg_quote((string) $pattern, '#') . '#mi', (string) $replacement, (string) $string);
         }
     }
 
@@ -395,11 +395,11 @@ class BinStringStatic
             }
             $enc = mb_regex_encoding(); // get current encoding
             mb_regex_encoding("latin1"); // Force encoding to iso8859-1
-            $rv = mb_split($pattern, $string, $limit);
+            $rv = mb_split((string) $pattern, (string) $string, $limit);
             mb_regex_encoding($enc);
             return $rv;
         } else {
-            return split($pattern, $string, $limit);
+            return preg_split('#' . preg_quote((string) $pattern, '#') . '#m', (string) $string, $limit);
         }
     }
 

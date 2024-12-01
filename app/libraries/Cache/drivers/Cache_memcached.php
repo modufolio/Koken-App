@@ -33,13 +33,7 @@ class CI_Cache_memcached extends CI_Driver
 {
     private $_memcached;	// Holds the memcached object
 
-    protected $_memcache_conf 	= array(
-                    'default' => array(
-                        'default_host'		=> '127.0.0.1',
-                        'default_port'		=> 11211,
-                        'default_weight'	=> 1
-                    )
-                );
+    protected $_memcache_conf 	= ['default' => ['default_host'		=> '127.0.0.1', 'default_port'		=> 11211, 'default_weight'	=> 1]];
 
     // ------------------------------------------------------------------------
 
@@ -68,10 +62,10 @@ class CI_Cache_memcached extends CI_Driver
      */
     public function save($id, $data, $ttl = 60)
     {
-        if (get_class($this->_memcached) == 'Memcached') {
-            return $this->_memcached->set($id, array($data, time(), $ttl), $ttl);
-        } elseif (get_class($this->_memcached) == 'Memcache') {
-            return $this->_memcached->set($id, array($data, time(), $ttl), 0, $ttl);
+        if ($this->_memcached::class == 'Memcached') {
+            return $this->_memcached->set($id, [$data, time(), $ttl], $ttl);
+        } elseif ($this->_memcached::class == 'Memcache') {
+            return $this->_memcached->set($id, [$data, time(), $ttl], 0, $ttl);
         }
 
         return false;
@@ -131,13 +125,9 @@ class CI_Cache_memcached extends CI_Driver
             return false;
         }
 
-        list($data, $time, $ttl) = $stored;
+        [$data, $time, $ttl] = $stored;
 
-        return array(
-            'expire'	=> $time + $ttl,
-            'mtime'		=> $time,
-            'data'		=> $data
-        );
+        return ['expire'	=> $time + $ttl, 'mtime'		=> $time, 'data'		=> $data];
     }
 
     // ------------------------------------------------------------------------

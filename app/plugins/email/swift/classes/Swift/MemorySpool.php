@@ -22,6 +22,7 @@ class Swift_MemorySpool implements Swift_Spool
      *
      * @return bool
      */
+    #[\Override]
     public function isStarted()
     {
         return true;
@@ -30,6 +31,7 @@ class Swift_MemorySpool implements Swift_Spool
     /**
      * Starts this Transport mechanism.
      */
+    #[\Override]
     public function start()
     {
     }
@@ -37,6 +39,7 @@ class Swift_MemorySpool implements Swift_Spool
     /**
      * Stops this Transport mechanism.
      */
+    #[\Override]
     public function stop()
     {
     }
@@ -48,6 +51,7 @@ class Swift_MemorySpool implements Swift_Spool
      *
      * @return bool    Whether the operation has succeeded
      */
+    #[\Override]
     public function queueMessage(Swift_Mime_Message $message)
     {
         //clone the message to make sure it is not changed while in the queue
@@ -64,6 +68,7 @@ class Swift_MemorySpool implements Swift_Spool
      *
      * @return int     The number of sent emails
      */
+    #[\Override]
     public function flushQueue(Swift_Transport $transport, &$failedRecipients = null)
     {
         if (!$this->messages) {

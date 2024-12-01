@@ -59,6 +59,7 @@ class Swift_Plugins_MessageLogger implements Swift_Events_SendListener
      *
      * @param Swift_Events_SendEvent $evt
      */
+    #[\Override]
     public function beforeSendPerformed(Swift_Events_SendEvent $evt)
     {
         $this->messages[] = clone $evt->getMessage();
@@ -69,6 +70,7 @@ class Swift_Plugins_MessageLogger implements Swift_Events_SendListener
      *
      * @param Swift_Events_SendEvent $evt
      */
+    #[\Override]
     public function sendPerformed(Swift_Events_SendEvent $evt)
     {
     }

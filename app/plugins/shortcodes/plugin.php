@@ -26,7 +26,7 @@ class BD_Shortcodes extends KokenPlugin
                 $secret_key = $_POST['g-recaptcha-key'];
 
                 $key = Shutter::get_encryption_key();
-                $secret_key = base64_decode($secret_key);
+                $secret_key = base64_decode((string) $secret_key);
                 $iv = substr($secret_key, 0, 16);
                 $secret_key = substr($secret_key, 16);
                 $secret_key = openssl_decrypt($secret_key, 'AES-256-CTR', $key, 0, $iv);
@@ -47,18 +47,16 @@ class BD_Shortcodes extends KokenPlugin
             }
 
             // convert unicode escaped to utf-8
-            $labels = preg_replace_callback('/\\\\u([0-9a-fA-F]{4})/', function ($match) {
-                return mb_convert_encoding(pack('H*', $match[1]), 'UTF-8', 'UCS-2BE');
-            }, $_POST['labels']);
+            $labels = preg_replace_callback('/\\\\u([0-9a-fA-F]{4})/', fn($match) => mb_convert_encoding(pack('H*', $match[1]), 'UTF-8', 'UCS-2BE'), (string) $_POST['labels']);
 
             // stripslashes required here for PHP 5.3 weirdness
-            $labels = json_decode(stripslashes($labels), true);
+            $labels = json_decode(stripslashes((string) $labels), true);
             $separator = str_repeat('–', 30);
 
-            $msg = array("You have received a new Koken contact form submission. The details of the submission are below.");
+            $msg = ["You have received a new Koken contact form submission. The details of the submission are below."];
             foreach ($labels as $index => $label) {
                 $key = 'k-contact-field-' . $index;
-                $value = isset($_POST[$key]) ? $_POST[$key] : 'No';
+                $value = $_POST[$key] ?? 'No';
 
                 if (empty($value)) {
                     continue;
@@ -92,8 +90,8 @@ HTML;
 
         $fromEmail = false;
 
-        foreach (json_decode($attr['fields']) as $index => $field) {
-            $labels[] = htmlentities($field[0], ENT_QUOTES);
+        foreach (json_decode((string) $attr['fields']) as $index => $field) {
+            $labels[] = htmlentities((string) $field[0], ENT_QUOTES);
             $name = 'k-contact-field-' . $index;
             $type = $field[1];
 
@@ -132,7 +130,7 @@ HTML;
 HTML;
         }
 
-        list($recaptcha, $site_key, $secret_key) = json_decode($attr['recaptcha']);
+        [$recaptcha, $site_key, $secret_key] = json_decode((string) $attr['recaptcha']);
 
         if ($recaptcha) {
             $key = Shutter::get_encryption_key();
@@ -218,8 +216,8 @@ HTML;
 
         $endpoint = $attr['endpoint'];
 
-        if (strpos($endpoint, 'maxwidth=') === false) {
-            if (strpos($endpoint, '?') !== false) {
+        if (!str_contains((string) $endpoint, 'maxwidth=')) {
+            if (str_contains((string) $endpoint, '?')) {
                 $endpoint .= '&';
             } else {
                 $endpoint .= '?';
@@ -228,7 +226,7 @@ HTML;
             $endpoint .= 'maxwidth=1920&maxheight=1080';
         }
 
-        if (strpos($endpoint, '?') !== false) {
+        if (str_contains((string) $endpoint, '?')) {
             $endpoint .= '&';
         } else {
             $endpoint .= '?';
@@ -237,7 +235,7 @@ HTML;
         $info = Shutter::get_oembed($endpoint . 'url=' . $attr['url']);
 
         if (isset($info['html'])) {
-            $html = preg_replace('/<iframe/', '<iframe style="display:none"', $info['html']);
+            $html = preg_replace('/<iframe/', '<iframe style="display:none"', (string) $info['html']);
         } elseif (isset($info['url'])) {
             $html = '<img src="' . $info['url'] . '" />';
         } else {
@@ -338,7 +336,7 @@ HTML;
             $text = "<figcaption class=\"k-content-text\">$text</figcaption>";
         }
 
-        if (strpos($src, 'http://') === 0) {
+        if (str_starts_with((string) $src, 'http://')) {
             return <<<HTML
 <figure class="k-content-embed">
 	<div class="k-content">
@@ -376,7 +374,7 @@ HTML;
 
     public function koken_slideshow($attr)
     {
-        $rand = 'p' . md5(uniqid(function_exists('mt_rand') ? mt_rand() : rand(), true));
+        $rand = 'p' . md5(uniqid(function_exists('mt_rand') ? mt_rand() : random_int(0, mt_getrandmax()), true));
 
         if (!isset($attr['link_to'])) {
             $attr['link_to'] = 'default';

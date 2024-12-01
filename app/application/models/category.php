@@ -2,21 +2,9 @@
 
 class Category extends Koken
 {
-    public array $has_many = array(
-        'content',
-        'album',
-        'text'
-    );
+    public array $has_many = ['content', 'album', 'text'];
 
-    public array $validation = array(
-        'title' => array(
-            'label' => 'Title',
-            'rules' => array('required')
-        ),
-        'slug' => array(
-            'rules' => array('slug', 'required')
-        )
-    );
+    public array $validation = ['title' => ['label' => 'Title', 'rules' => ['required']], 'slug' => ['rules' => ['slug', 'required']]];
 
     /**
      * Constructor: calls parent constructor
@@ -28,7 +16,7 @@ class Category extends Koken
 
     public function get_grouped_status($ids, $model)
     {
-        $mixed = $this->distinct()->select('id')->where_in_related(strtolower($model), 'id', $ids)->get_iterated();
+        $mixed = $this->distinct()->select('id')->where_in_related(strtolower((string) $model), 'id', $ids)->get_iterated();
 
         $mixed_ids = [];
         foreach ($mixed as $cat) {
@@ -48,7 +36,7 @@ class Category extends Koken
             }
 
             if (!isset($aggregate[$item->id])) {
-                $aggregate[$item->id] = array((int) $item->category_id);
+                $aggregate[$item->id] = [(int) $item->category_id];
             } else {
                 $aggregate[$item->id][] = (int) $item->category_id;
             }
@@ -64,28 +52,16 @@ class Category extends Koken
             $common_ids = [];
         }
 
-        return array(
-            'mixed' => array_values(array_diff($mixed_ids, $common_ids)),
-            'common' => $common_ids
-        );
+        return ['mixed' => array_values(array_diff($mixed_ids, $common_ids)), 'common' => $common_ids];
     }
 
-    public function listing($params = array())
+    public function listing($params = [])
     {
-        $options = array(
-            'auth' => false,
-            'page' => 1,
-            'limit' => 20,
-            'order_by' => 'title',
-            'order_direction' => 'asc',
-            'category' => false,
-            'limit_to' => false,
-            'include_empty' => true
-        );
+        $options = ['auth' => false, 'page' => 1, 'limit' => 20, 'order_by' => 'title', 'order_direction' => 'asc', 'category' => false, 'limit_to' => false, 'include_empty' => true];
 
         $options = array_merge($options, $params);
 
-        $this->select_func('', array('@content_count', '+', '@text_count',  '+',  '@album_count'), 'total_count');
+        $this->select_func('', ['@content_count', '+', '@text_count', '+', '@album_count'], 'total_count');
         $this->select('*');
 
         if (!is_numeric($options['limit'])) {
@@ -96,19 +72,19 @@ class Category extends Koken
             $this->where('id', $options['category']);
         }
 
-        if ($options['order_by'] !== 'count' && strpos($options['order_by'], 'count') !== false) {
+        if ($options['order_by'] !== 'count' && str_contains((string) $options['order_by'], 'count')) {
             if ($options['order_by'] === 'essay_count') {
                 $options['order_by'] = 'text_count';
             }
             $this->where("{$options['order_by']} >", 0);
         } elseif ($options['limit_to']) {
-            $limit = str_replace('essay', 'text', rtrim($options['limit_to'], 's')) . '_count';
+            $limit = str_replace('essay', 'text', rtrim((string) $options['limit_to'], 's')) . '_count';
 
             if (!$options['auth']) {
                 $this->where("$limit >", 0);
             }
         } elseif (!$options['include_empty']) {
-            $this->where_func('', array('@content_count', '+', '@text_count',  '+',  '@album_count', '>', 0), null);
+            $this->where_func('', ['@content_count', '+', '@text_count', '+', '@album_count', '>', 0], null);
         }
 
         $final = $this->paginate($options);
@@ -117,7 +93,7 @@ class Category extends Koken
             $options['order_by'] = 'total_count';
         }
 
-        if (strpos($options['order_by'], 'count') !== false && !isset($params['order_direction'])) {
+        if (str_contains((string) $options['order_by'], 'count') && !isset($params['order_direction'])) {
             $options['order_direction'] = 'DESC';
         }
 
@@ -148,10 +124,10 @@ class Category extends Koken
             return true;
         }
 
-        $this->load->helper(array('url', 'text', 'string'));
+        $this->load->helper(['url', 'text', 'string']);
         $slug = reduce_multiples(
             strtolower(
-                        url_title(
+                        (string) url_title(
                             convert_accented_characters($this->title),
                             'dash'
                         )
@@ -194,24 +170,16 @@ class Category extends Koken
         $this->slug = $slug;
     }
 
-    public function to_array($options = array())
+    public function to_array($options = [])
     {
-        $exclude = array('content_count', 'album_count', 'text_count', 'count');
-        list($data, $public_fields) = $this->prepare_for_output($options, $exclude);
+        $exclude = ['content_count', 'album_count', 'text_count', 'count'];
+        [$data, $public_fields] = $this->prepare_for_output($options, $exclude);
         if (isset($options['limit_to']) && $options['limit_to']) {
-            $key = rtrim($options['limit_to'], 's') . '_count';
+            $key = rtrim((string) $options['limit_to'], 's') . '_count';
             $key = $key === 'essay_count' ? 'text_count' : $key;
-            $data['counts'] = array(
-                $options['limit_to'] => (int) $this->{$key},
-                'total' => (int) $this->{$key},
-            );
+            $data['counts'] = [$options['limit_to'] => (int) $this->{$key}, 'total' => (int) $this->{$key}];
         } else {
-            $data['counts'] = array(
-                'content' => (int) $this->content_count,
-                'albums' => (int) $this->album_count,
-                'essays' => (int) $this->text_count,
-                'total' => $this->content_count + $this->album_count + $this->text_count
-            );
+            $data['counts'] = ['content' => (int) $this->content_count, 'albums' => (int) $this->album_count, 'essays' => (int) $this->text_count, 'total' => $this->content_count + $this->album_count + $this->text_count];
         }
 
         $data['__koken__'] = 'category';
@@ -219,7 +187,7 @@ class Category extends Koken
         $data['url'] = $this->url($options);
 
         if ($data['url']) {
-            list($data['__koken_url'], $data['url']) = $data['url'];
+            [$data['__koken_url'], $data['url']] = $data['url'];
         }
 
         return $data;

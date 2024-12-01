@@ -9,9 +9,9 @@ class Tags extends Koken_Controller
 
     public function index()
     {
-        $defaults = array('page' => 1, 'limit' => 20, 'context_order' => 'count');
+        $defaults = ['page' => 1, 'limit' => 20, 'context_order' => 'count'];
 
-        list($params, $id, $slug) = $this->parse_params(func_get_args());
+        [$params, $id, $slug] = $this->parse_params(func_get_args());
 
         $params = array_merge($defaults, $params);
 
@@ -38,7 +38,7 @@ class Tags extends Koken_Controller
         if (!$slug && is_null($id)) {
             $final = $t->listing($params);
         } else {
-            $slug = urldecode($slug);
+            $slug = urldecode((string) $slug);
 
             if ($slug) {
                 $t->where('name', $slug)->get();
@@ -53,7 +53,7 @@ class Tags extends Koken_Controller
 
                 $params['tag'] = $t->id;
                 $params['tag_slug'] = $t->name;
-                list($final, $counts) = $this->aggregate('tag', $params);
+                [$final, $counts] = $this->aggregate('tag', $params);
 
                 $final['counts'] = $counts;
                 $final = array_merge($tag_array, $final);
@@ -66,23 +66,23 @@ class Tags extends Koken_Controller
 
                 if ($params['context_order'] === 'count') {
                     $prev->group_start();
-                    $prev->where_func('', array('@content_count', '+', '@text_count',  '+',  '@album_count', '>', $t->essay_count + $t->album_count + $t->content_count), null);
+                    $prev->where_func('', ['@content_count', '+', '@text_count', '+', '@album_count', '>', $t->essay_count + $t->album_count + $t->content_count], null);
                     $prev->or_group_start();
-                    $prev->where_func('', array('@content_count', '+', '@text_count',  '+',  '@album_count', '=', $t->essay_count + $t->album_count + $t->content_count), null);
+                    $prev->where_func('', ['@content_count', '+', '@text_count', '+', '@album_count', '=', $t->essay_count + $t->album_count + $t->content_count], null);
                     $prev->where('name <', $t->name);
                     $prev->group_end();
                     $prev->group_end();
 
                     $next->group_start();
-                    $next->where_func('', array('@content_count', '+', '@text_count',  '+',  '@album_count', '<', $t->essay_count + $t->album_count + $t->content_count), null);
+                    $next->where_func('', ['@content_count', '+', '@text_count', '+', '@album_count', '<', $t->essay_count + $t->album_count + $t->content_count], null);
                     $next->or_group_start();
-                    $next->where_func('', array('@content_count', '+', '@text_count',  '+',  '@album_count', '=', $t->essay_count + $t->album_count + $t->content_count), null);
+                    $next->where_func('', ['@content_count', '+', '@text_count', '+', '@album_count', '=', $t->essay_count + $t->album_count + $t->content_count], null);
                     $next->where('name >', $t->name);
                     $next->group_end();
                     $next->group_end();
 
-                    $prev->order_by_func('', array('@content_count', '+', '@text_count',  '+',  '@album_count'), 'ASC');
-                    $next->order_by_func('', array('@content_count', '+', '@text_count',  '+',  '@album_count'), 'DESC');
+                    $prev->order_by_func('', ['@content_count', '+', '@text_count', '+', '@album_count'], 'ASC');
+                    $next->order_by_func('', ['@content_count', '+', '@text_count', '+', '@album_count'], 'DESC');
                 } else {
                     $prev->where('name <', $t->name);
                     $next->where('name >', $t->name);

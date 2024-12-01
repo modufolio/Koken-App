@@ -11,7 +11,7 @@ class Events extends Koken_Controller
     {
         $s = new Setting();
         $s->where('name', 'site_timezone')->get();
-        $tz = new DateTimeZone($s->value);
+        $tz = new DateTimeZone($s->value ?? 'UTC');
         $offset = $tz->getOffset(new DateTime('now', new DateTimeZone('UTC')));
 
         if ($offset === 0) {
@@ -86,16 +86,7 @@ class Events extends Koken_Controller
                 $key = strtotime($key);
 
                 if (is_numeric($content->event_year)) {
-                    $dates[$key] = array(
-                        'year' => (int) $content->event_year,
-                        'month' => (int) $content->event_month,
-                        'day' => (int) $content->event_day,
-                        'counts' => array(
-                            'content' => (int) $content->count,
-                            'albums' => 0,
-                            'essays' => 0
-                        )
-                    );
+                    $dates[$key] = ['year' => (int) $content->event_year, 'month' => (int) $content->event_month, 'day' => (int) $content->event_day, 'counts' => ['content' => (int) $content->count, 'albums' => 0, 'essays' => 0]];
                 }
             }
         }
@@ -113,16 +104,7 @@ class Events extends Koken_Controller
 
                 if (is_numeric($album->event_year)) {
                     if (!isset($dates[$key])) {
-                        $dates[$key] = array(
-                            'year' => (int) $album->event_year,
-                            'month' => (int) $album->event_month,
-                            'day' => (int) $album->event_day,
-                            'counts' => array(
-                                'content' => 0,
-                                'albums' => (int) $album->count,
-                                'essays' => 0
-                            )
-                        );
+                        $dates[$key] = ['year' => (int) $album->event_year, 'month' => (int) $album->event_month, 'day' => (int) $album->event_day, 'counts' => ['content' => 0, 'albums' => (int) $album->count, 'essays' => 0]];
                     } else {
                         $dates[$key]['counts']['albums'] = (int) $album->count;
                     }
@@ -144,16 +126,7 @@ class Events extends Koken_Controller
 
                 if (is_numeric($essay->event_year)) {
                     if (!isset($dates[$key])) {
-                        $dates[$key] = array(
-                            'year' => (int) $essay->event_year,
-                            'month' => (int) $essay->event_month,
-                            'day' => (int) $essay->event_day,
-                            'counts' => array(
-                                'content' => 0,
-                                'albums' => 0,
-                                'essays' => (int) $essay->count
-                            )
-                        );
+                        $dates[$key] = ['year' => (int) $essay->event_year, 'month' => (int) $essay->event_month, 'day' => (int) $essay->event_day, 'counts' => ['content' => 0, 'albums' => 0, 'essays' => (int) $essay->count]];
                     } else {
                         $dates[$key]['counts']['essays'] = (int) $essay->count;
                     }
@@ -168,18 +141,9 @@ class Events extends Koken_Controller
 
     public function index()
     {
-        list($params, ) = $this->parse_params(func_get_args());
+        [$params, ] = $this->parse_params(func_get_args());
 
-        $defaults = array(
-            'year' => false,
-            'month' => false,
-            'limit_to' => false,
-            'limit' => false,
-            'content_column' => 'published_on',
-            'featured' => false,
-            'scope' => false,
-            'load_items' => false,
-        );
+        $defaults = ['year' => false, 'month' => false, 'limit_to' => false, 'limit' => false, 'content_column' => 'published_on', 'featured' => false, 'scope' => false, 'load_items' => false];
 
         $params = array_merge($defaults, $params);
 
@@ -201,12 +165,7 @@ class Events extends Koken_Controller
 
         if ($params['year']) {
             if (count($all) === 1) {
-                $context = array(
-                    'total' => 1,
-                    'position' => 1,
-                    'previous' => array(),
-                    'next' => array()
-                );
+                $context = ['total' => 1, 'position' => 1, 'previous' => [], 'next' => []];
             } elseif ($params['month']) {
                 $next = $previous = $current = false;
                 $marker = $i = $pos = 0;
@@ -223,9 +182,9 @@ class Events extends Koken_Controller
                         $current = true;
                         $dates[] = $event;
                     } elseif ($current && !$next) {
-                        $next = array('year' => $event['year'], 'month' => $event['month']);
+                        $next = ['year' => $event['year'], 'month' => $event['month']];
                     } elseif (!$current) {
-                        $previous = array('year' => $event['year'], 'month' => $event['month']);
+                        $previous = ['year' => $event['year'], 'month' => $event['month']];
                     }
                 }
             } else {
@@ -242,33 +201,28 @@ class Events extends Koken_Controller
                         $current = true;
                         $dates[] = $event;
                     } elseif ($current && !$next) {
-                        $next = array('year' => $event['year']);
+                        $next = ['year' => $event['year']];
                     } elseif (!$current) {
-                        $previous = array('year' => $event['year']);
+                        $previous = ['year' => $event['year']];
                     }
                 }
             }
 
             if ($next) {
                 $this->archive_urls($next, $urls, $url_base, $params);
-                $next = array($next);
+                $next = [$next];
             } else {
                 $next = [];
             }
 
             if ($previous) {
                 $this->archive_urls($previous, $urls, $url_base, $params);
-                $previous = array($previous);
+                $previous = [$previous];
             } else {
                 $previous = [];
             }
 
-            $context = array(
-                'total' => $i,
-                'position' => $pos,
-                'previous' => $previous,
-                'next' => $next
-            );
+            $context = ['total' => $i, 'position' => $pos, 'previous' => $previous, 'next' => $next];
         } else {
             $dates = $all;
         }
@@ -276,25 +230,14 @@ class Events extends Koken_Controller
         $total = count($dates);
 
         if ($params['limit']) {
-            $stream = array(
-                'page' => isset($params['page']) ? (int) $params['page'] : 1,
-                'pages' => ceil($total/$params['limit']),
-                'per_page' => min($params['limit'], $total),
-                'total' => $total,
-                'events' => array(),
-            );
+            $stream = ['page' => isset($params['page']) ? (int) $params['page'] : 1, 'pages' => ceil($total/$params['limit']), 'per_page' => min($params['limit'], $total), 'total' => $total, 'events' => []];
             $dates = array_slice($dates, ($stream['page']-1)*$params['limit'], $params['limit']);
         } else {
-            $stream = array(
-                'total' => $total,
-                'events' => array()
-            );
+            $stream = ['total' => $total, 'events' => []];
         }
 
         if ($params['year']) {
-            $event = array(
-                'year' => (int) $params['year']
-            );
+            $event = ['year' => (int) $params['year']];
 
             $this->archive_urls($event, $urls, $url_base, $params);
 
@@ -319,7 +262,7 @@ class Events extends Koken_Controller
             }
 
             if ($params['load_items']) {
-                list($items, $cs) = $this->aggregate('date', array('year' => $event['year'], 'month' => $event['month'], 'day' => $event['day'], 'limit' => 50));
+                [$items, $cs] = $this->aggregate('date', ['year' => $event['year'], 'month' => $event['month'], 'day' => $event['day'], 'limit' => 50]);
                 $event['items'] = $items['items'];
             } else {
                 $this->event_urls($event, $urls, $url_base, $params);
@@ -339,7 +282,7 @@ class Events extends Koken_Controller
         if ($urls['archive_timeline']) {
             $event['__koken_url'] = $urls['timeline'] .  $event['year'] . '/';
             if ($params['month']) {
-                $event['__koken_url'] .= str_pad($event['month'], 2, '0', STR_PAD_LEFT) . '/';
+                $event['__koken_url'] .= str_pad((string) $event['month'], 2, '0', STR_PAD_LEFT) . '/';
             }
             $event['url'] = $url_base . $event['__koken_url'];
         } else {
@@ -353,7 +296,7 @@ class Events extends Koken_Controller
         $base = $koken_url_info->base;
 
         if (isset($event['month'])) {
-            $m = str_pad($event['month'], 2, '0', STR_PAD_LEFT);
+            $m = str_pad((string) $event['month'], 2, '0', STR_PAD_LEFT);
         }
 
         if ($params && $params['limit_to'] || $params['scope']) {
@@ -361,7 +304,7 @@ class Events extends Koken_Controller
                 $key = 'archive_' . ($params['limit_to'] === 'content' ? 'contents' : $params['limit_to']);
                 if (isset($urls[$key]) && $urls[$key]) {
                     $event['__koken_url'] = str_replace(':year', $event['year'], $urls[$key]);
-                    $event['__koken_url'] = str_replace(array('/:day', '(?:', ')?'), '', str_replace(':month', $m, $event['__koken_url']));
+                    $event['__koken_url'] = str_replace(['/:day', '(?:', ')?'], '', str_replace(':month', $m, $event['__koken_url']));
                 } else {
                     $event['__koken_url'] = false;
                 }
@@ -373,13 +316,13 @@ class Events extends Koken_Controller
                 }
             }
         } else {
-            $d = str_pad($event['day'], 2, '0', STR_PAD_LEFT);
+            $d = str_pad((string) $event['day'], 2, '0', STR_PAD_LEFT);
             $tail = '/year:' . $event['year'] . '/month:' . $event['month'] . '/day:' . $event['day'] . '/reduce:1';
             $event['__koken_url'] = isset($urls['event_timeline']) && $urls['event_timeline'] ? $urls['timeline'] .  $event['year'] . '/' .  $m . '/' . $d . '/' : false;
             $event['items'] = $base . "api.php?/events/{$event['year']}-$m-$d";
-            $event['content'] = $event['counts']['content'] > 0 ? $base . 'api.php?/content/order_by:published_on' . $tail : array();
-            $event['albums'] = $event['counts']['albums'] > 0 ? $base . 'api.php?/albums/order_by:published_on/include_empty:0' . $tail : array();
-            $event['essays'] = $event['counts']['essays'] > 0 ? $base . 'api.php?/text/page_type:essay' . $tail : array();
+            $event['content'] = $event['counts']['content'] > 0 ? $base . 'api.php?/content/order_by:published_on' . $tail : [];
+            $event['albums'] = $event['counts']['albums'] > 0 ? $base . 'api.php?/albums/order_by:published_on/include_empty:0' . $tail : [];
+            $event['essays'] = $event['counts']['essays'] > 0 ? $base . 'api.php?/text/page_type:essay' . $tail : [];
         }
 
         $event['__koken__'] = 'event';
@@ -401,36 +344,23 @@ class Events extends Koken_Controller
             $params['limit'] = 50;
         }
 
-        $all = $this->_all(array(
-            'year' => false,
-            'month' => false,
-            'limit_to' => false,
-            'limit' => false,
-            'content_column' => 'published_on',
-            'featured' => false,
-            'scope' => false
-        ));
+        $all = $this->_all(['year' => false, 'month' => false, 'limit_to' => false, 'limit' => false, 'content_column' => 'published_on', 'featured' => false, 'scope' => false]);
 
-        preg_match('/(\d{4})\-(\d{1,2})\-(\d{1,2})/', $id, $matches);
+        preg_match('/(\d{4})\-(\d{1,2})\-(\d{1,2})/', (string) $id, $matches);
 
-        list(, $year, $month, $day) = $matches;
+        [, $year, $month, $day] = $matches;
 
         $month = (int) $month;
         $day = (int) $day;
 
-        list($stream, $counts) = $this->aggregate('date', array_merge($params, array('year' => $year, 'month' => $month, 'day' => $day)));
+        [$stream, $counts] = $this->aggregate('date', array_merge($params, ['year' => $year, 'month' => $month, 'day' => $day]));
 
         $t = new Tag();
         $urls = $t->form_urls();
         $url_base = $t->get_base();
 
         if (count($all) === 1) {
-            $context = array(
-                'total' => 1,
-                'position' => 1,
-                'previous' => array(),
-                'next' => array()
-            );
+            $context = ['total' => 1, 'position' => 1, 'previous' => [], 'next' => []];
         } else {
             $next = $previous = $current = false;
             $i = 1;
@@ -449,33 +379,22 @@ class Events extends Koken_Controller
 
             if ($next) {
                 $this->event_urls($next, $urls, $url_base);
-                $next = array($next);
+                $next = [$next];
             } else {
                 $next = [];
             }
 
             if ($previous) {
                 $this->event_urls($previous, $urls, $url_base);
-                $previous = array($previous);
+                $previous = [$previous];
             } else {
                 $previous = [];
             }
 
-            $context = array(
-                'total' => count($all),
-                'position' => $i,
-                'previous' => $previous,
-                'next' => $next
-            );
+            $context = ['total' => count($all), 'position' => $i, 'previous' => $previous, 'next' => $next];
         }
 
-        $stream['event'] = array(
-            'year' => (int) $year,
-            'month' => (int) $month,
-            'day' => (int) $day,
-            'counts' => $counts,
-            'context' => $context
-        );
+        $stream['event'] = ['year' => (int) $year, 'month' => (int) $month, 'day' => (int) $day, 'counts' => $counts, 'context' => $context];
 
         $this->event_urls($stream['event'], $urls, $url_base);
 

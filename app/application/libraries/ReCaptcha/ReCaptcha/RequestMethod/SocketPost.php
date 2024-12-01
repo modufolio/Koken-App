@@ -83,6 +83,7 @@ class SocketPost implements RequestMethod
      * @param RequestParameters $params Request parameters
      * @return string Body of the reCAPTCHA response
      */
+    #[\Override]
     public function submit(RequestParameters $params)
     {
         $errno = 0;
@@ -110,7 +111,7 @@ class SocketPost implements RequestMethod
 
         $this->socket->fclose();
 
-        if (0 !== strpos($response, 'HTTP/1.1 200 OK')) {
+        if (!str_starts_with($response, 'HTTP/1.1 200 OK')) {
             return self::BAD_RESPONSE;
         }
 

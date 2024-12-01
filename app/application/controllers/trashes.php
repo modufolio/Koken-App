@@ -18,19 +18,16 @@ class Trashes extends Koken_Controller
             $t = new Trash();
             $tag = new Tag();
 
-            $options = array(
-                'content' => array(),
-                'albums' => array()
-            );
+            $options = ['content' => [], 'albums' => []];
 
             $params = array_merge($options, $params);
 
             if (!empty($params['content'])) {
-                $params['content'] = explode(',', $params['content']);
+                $params['content'] = explode(',', (string) $params['content']);
             }
 
             if (!empty($params['albums'])) {
-                $params['albums'] = explode(',', $params['albums']);
+                $params['albums'] = explode(',', (string) $params['albums']);
             }
 
             switch ($this->method) {
@@ -44,8 +41,8 @@ class Trashes extends Koken_Controller
                     if (!empty($params['content'])) {
                         $content = $c->where_in('id', $params['content'])->get_iterated();
                         foreach ($content as $c) {
-                            $s = serialize($c->to_array(array('auth' => $this->auth)));
-                            $q[] = "('content-{$c->id}', '" . $this->db->escape_str(MB_ENABLED ? mb_convert_encoding($s, 'UTF-8') : utf8_encode($s)) . "', $now)";
+                            $s = serialize($c->to_array(['auth' => $this->auth]));
+                            $q[] = "('content-{$c->id}', '" . $this->db->escape_str(MB_ENABLED ? mb_convert_encoding($s, 'UTF-8') : mb_convert_encoding($s, 'UTF-8', 'ISO-8859-1')) . "', $now)";
                         }
                     }
 
@@ -56,7 +53,7 @@ class Trashes extends Koken_Controller
 
                             if ($al->exists()) {
                                 $s = serialize($al->to_array());
-                                $q[] = "('album-{$al->id}', '" . $this->db->escape_str(MB_ENABLED ? mb_convert_encoding($s, 'UTF-8') : utf8_encode($s)) . "', $now)";
+                                $q[] = "('album-{$al->id}', '" . $this->db->escape_str(MB_ENABLED ? mb_convert_encoding($s, 'UTF-8') : mb_convert_encoding($s, 'UTF-8', 'ISO-8859-1')) . "', $now)";
                                 $al->tree_trash();
 
                                 foreach ($al->categories->get_iterated() as $category) {
@@ -171,10 +168,7 @@ class Trashes extends Koken_Controller
             }
         }
 
-        $options = array(
-            'page' => 1,
-            'limit' => 100
-        );
+        $options = ['page' => 1, 'limit' => 100];
         $options = array_merge($options, $params);
         if (is_numeric($options['limit']) && $options['limit'] > 0) {
             $options['limit'] = min($options['limit'], 100);
@@ -188,7 +182,7 @@ class Trashes extends Koken_Controller
 
         $final['trash'] = [];
         foreach ($data as $member) {
-            $content = @unserialize(MB_ENABLED ? mb_convert_encoding($member->data, 'ISO-8859-1') : utf8_decode($member->data));
+            $content = @unserialize(MB_ENABLED ? mb_convert_encoding($member->data, 'ISO-8859-1') : mb_convert_encoding($member->data, 'ISO-8859-1'));
             if (!$content) {
                 $content = unserialize($member->data);
             }
@@ -198,7 +192,7 @@ class Trashes extends Koken_Controller
                 $type = 'content';
             }
             if ($content) {
-                $final['trash'][] = array('type' => $type, 'data' => $content);
+                $final['trash'][] = ['type' => $type, 'data' => $content];
             } else {
                 $final['total']--;
             }

@@ -6,13 +6,9 @@ class DarkroomImagick extends Darkroom
     private $limits = [];
     private $rotate = false;
 
-    public function __construct($limits = array())
+    public function __construct($limits = [])
     {
-        $this->limits = array_merge(array(
-            'thread' => false,
-            'memory' => false,
-            'map' => false,
-        ), $limits);
+        $this->limits = array_merge(['thread' => false, 'memory' => false, 'map' => false], $limits);
 
         $memory_limit = (int) ini_get('memory_limit');
 
@@ -32,6 +28,7 @@ class DarkroomImagick extends Darkroom
         return $quality;
     }
 
+    #[\Override]
     public function rotate($path, $degrees)
     {
         $image = new Imagick();
@@ -87,6 +84,7 @@ class DarkroomImagick extends Darkroom
         $image->scaleImage($this->width, $this->height, $this->bestfit);
     }
 
+    #[\Override]
     public function createImage()
     {
         $this->init($this->width, $this->height);
@@ -109,6 +107,7 @@ class DarkroomImagick extends Darkroom
         $image->setImagePage($this->width, $this->height, 0, 0);
     }
 
+    #[\Override]
     public function createCroppedImage($interstitialWidth, $interstitialHeight, $cropX, $cropY)
     {
         $this->init($interstitialWidth, $interstitialHeight);

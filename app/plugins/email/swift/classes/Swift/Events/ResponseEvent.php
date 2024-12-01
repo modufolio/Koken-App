@@ -16,31 +16,21 @@
 class Swift_Events_ResponseEvent extends Swift_Events_EventObject
 {
     /**
-     * The overall result.
-     *
-     * @var bool
-     */
-    private $_valid;
-
-    /**
-     * The response received from the server.
-     *
-     * @var string
-     */
-    private $_response;
-
-    /**
      * Create a new ResponseEvent for $source and $response.
      *
      * @param Swift_Transport $source
-     * @param string          $response
-     * @param bool            $valid
+     * @param string $_response
+     * @param bool $_valid
      */
-    public function __construct(Swift_Transport $source, $response, $valid = false)
+    public function __construct(Swift_Transport $source, /**
+     * The response received from the server.
+     */
+    private $_response, /**
+     * The overall result.
+     */
+    private $_valid = false)
     {
         parent::__construct($source);
-        $this->_response = $response;
-        $this->_valid = $valid;
     }
 
     /**

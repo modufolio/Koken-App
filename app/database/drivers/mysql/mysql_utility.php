@@ -80,7 +80,7 @@ class CI_DB_mysql_utility extends CI_DB_utility
      * @param	array	Preferences
      * @return	mixed
      */
-    public function _backup($params = array())
+    public function _backup($params = [])
     {
         if (count($params) == 0) {
             return false;
@@ -144,7 +144,7 @@ class CI_DB_mysql_utility extends CI_DB_utility
                 $is_int[$i] = (
                     in_array(
                     strtolower(mysql_field_type($query->result_id, $i)),
-                    array('tinyint', 'smallint', 'mediumint', 'int', 'bigint'), //, 'timestamp'),
+                    ['tinyint', 'smallint', 'mediumint', 'int', 'bigint'], //, 'timestamp'),
                                         true
                 )
                 ) ? true : false;

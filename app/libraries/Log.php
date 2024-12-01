@@ -35,7 +35,7 @@ class CI_Log
     protected $_threshold	= 1;
     protected $_date_fmt	= 'Y-m-d H:i:s';
     protected $_enabled	= true;
-    protected $_levels	= array('ERROR' => '1', 'DEBUG' => '2',  'INFO' => '3', 'ALL' => '4');
+    protected $_levels	= ['ERROR' => '1', 'DEBUG' => '2', 'INFO' => '3', 'ALL' => '4'];
 
     /**
      * Constructor
@@ -77,7 +77,7 @@ class CI_Log
             return false;
         }
 
-        $level = strtoupper($level);
+        $level = strtoupper((string) $level);
 
         if (! isset($this->_levels[$level]) or ($this->_levels[$level] > $this->_threshold)) {
             return false;

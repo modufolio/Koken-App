@@ -78,7 +78,7 @@ if (! function_exists('is_really_writable')) {
         // For windows servers and safe_mode "on" installations we'll actually
         // write a file then read it.  Bah...
         if (is_dir($file)) {
-            $file = rtrim($file, '/').'/'.md5(mt_rand(1, 100).mt_rand(1, 100));
+            $file = rtrim((string) $file, '/').'/'.md5(mt_rand(1, 100).mt_rand(1, 100));
 
             if (($fp = @fopen($file, FOPEN_WRITE_CREATE)) === false) {
                 return false;
@@ -126,7 +126,7 @@ if (! function_exists('load_class')) {
 
         // Look for the class first in the local application/libraries folder
         // then in the native system/libraries folder
-        foreach (array(APPPATH, BASEPATH) as $path) {
+        foreach ([APPPATH, BASEPATH] as $path) {
             if (file_exists($path.$directory.'/'.$class.'.php')) {
                 $name = $prefix.$class;
 
@@ -177,7 +177,7 @@ if (! function_exists('is_loaded')) {
         static $_is_loaded = [];
 
         if ($class != '') {
-            $_is_loaded[strtolower($class)] = $class;
+            $_is_loaded[strtolower((string) $class)] = $class;
         }
 
         return $_is_loaded;
@@ -196,7 +196,7 @@ if (! function_exists('is_loaded')) {
 * @return	array
 */
 if (! function_exists('get_config')) {
-    function &get_config($replace = array())
+    function &get_config($replace = [])
     {
         static $_config;
 
@@ -276,7 +276,7 @@ if (! function_exists('config_item')) {
 * @return	void
 */
 if (! function_exists('show_error')) {
-    function show_error($message, $status_code = 500, $heading = 'An Error Was Encountered')
+    function show_error($message, $status_code = 500, $heading = 'An Error Was Encountered'): never
     {
         $_error =& load_class('Exceptions', 'core');
         echo $_error->show_error($heading, $message, 'error_general', $status_code);
@@ -297,7 +297,7 @@ if (! function_exists('show_error')) {
 * @return	void
 */
 if (! function_exists('show_404')) {
-    function show_404($page = '', $log_error = true)
+    function show_404($page = '', $log_error = true): never
     {
         $_error =& load_class('Exceptions', 'core');
         $_error->show_404($page, $log_error);
@@ -343,47 +343,7 @@ if (! function_exists('log_message')) {
 if (! function_exists('set_status_header')) {
     function set_status_header($code = 200, $text = '')
     {
-        $stati = array(
-                            200	=> 'OK',
-                            201	=> 'Created',
-                            202	=> 'Accepted',
-                            203	=> 'Non-Authoritative Information',
-                            204	=> 'No Content',
-                            205	=> 'Reset Content',
-                            206	=> 'Partial Content',
-
-                            300	=> 'Multiple Choices',
-                            301	=> 'Moved Permanently',
-                            302	=> 'Found',
-                            304	=> 'Not Modified',
-                            305	=> 'Use Proxy',
-                            307	=> 'Temporary Redirect',
-
-                            400	=> 'Bad Request',
-                            401	=> 'Unauthorized',
-                            403	=> 'Forbidden',
-                            404	=> 'Not Found',
-                            405	=> 'Method Not Allowed',
-                            406	=> 'Not Acceptable',
-                            407	=> 'Proxy Authentication Required',
-                            408	=> 'Request Timeout',
-                            409	=> 'Conflict',
-                            410	=> 'Gone',
-                            411	=> 'Length Required',
-                            412	=> 'Precondition Failed',
-                            413	=> 'Request Entity Too Large',
-                            414	=> 'Request-URI Too Long',
-                            415	=> 'Unsupported Media Type',
-                            416	=> 'Requested Range Not Satisfiable',
-                            417	=> 'Expectation Failed',
-
-                            500	=> 'Internal Server Error',
-                            501	=> 'Not Implemented',
-                            502	=> 'Bad Gateway',
-                            503	=> 'Service Unavailable',
-                            504	=> 'Gateway Timeout',
-                            505	=> 'HTTP Version Not Supported'
-                        );
+        $stati = [200	=> 'OK', 201	=> 'Created', 202	=> 'Accepted', 203	=> 'Non-Authoritative Information', 204	=> 'No Content', 205	=> 'Reset Content', 206	=> 'Partial Content', 300	=> 'Multiple Choices', 301	=> 'Moved Permanently', 302	=> 'Found', 304	=> 'Not Modified', 305	=> 'Use Proxy', 307	=> 'Temporary Redirect', 400	=> 'Bad Request', 401	=> 'Unauthorized', 403	=> 'Forbidden', 404	=> 'Not Found', 405	=> 'Method Not Allowed', 406	=> 'Not Acceptable', 407	=> 'Proxy Authentication Required', 408	=> 'Request Timeout', 409	=> 'Conflict', 410	=> 'Gone', 411	=> 'Length Required', 412	=> 'Precondition Failed', 413	=> 'Request Entity Too Large', 414	=> 'Request-URI Too Long', 415	=> 'Unsupported Media Type', 416	=> 'Requested Range Not Satisfiable', 417	=> 'Expectation Failed', 500	=> 'Internal Server Error', 501	=> 'Not Implemented', 502	=> 'Bad Gateway', 503	=> 'Service Unavailable', 504	=> 'Gateway Timeout', 505	=> 'HTTP Version Not Supported'];
 
         if ($code == '' or ! is_numeric($code)) {
             show_error('Status codes must be numeric', 500);
@@ -397,9 +357,9 @@ if (! function_exists('set_status_header')) {
             show_error('No status text available.  Please check your status code number or supply your own message text.', 500);
         }
 
-        $server_protocol = (isset($_SERVER['SERVER_PROTOCOL'])) ? $_SERVER['SERVER_PROTOCOL'] : false;
+        $server_protocol = $_SERVER['SERVER_PROTOCOL'] ?? false;
 
-        if (substr(php_sapi_name(), 0, 3) == 'cgi') {
+        if (str_starts_with(php_sapi_name(), 'cgi')) {
             header("Status: {$code} {$text}", true);
         } elseif ($server_protocol == 'HTTP/1.1' or $server_protocol == 'HTTP/1.0') {
             header($server_protocol." {$code} {$text}", true, $code);
@@ -479,7 +439,7 @@ if (! function_exists('remove_invisible_characters')) {
         $non_displayables[] = '/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]+/S';	// 00-08, 11, 12, 14-31, 127
 
         do {
-            $str = preg_replace($non_displayables, '', $str, -1, $count);
+            $str = preg_replace($non_displayables, '', (string) $str, -1, $count);
         } while ($count);
 
         return $str;
@@ -501,7 +461,7 @@ if (! function_exists('html_escape')) {
         if (is_array($var)) {
             return array_map('html_escape', $var);
         } else {
-            return htmlspecialchars($var, ENT_QUOTES, config_item('charset'));
+            return htmlspecialchars((string) $var, ENT_QUOTES, config_item('charset'));
         }
     }
 }

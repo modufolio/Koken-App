@@ -28,7 +28,7 @@ class DMZ_Translate
      * @param	array $fields Array of fields to include.  If empty, includes all database columns.
      * @return	object, the Datamapper object
      */
-    public function translate($object, $fields = array())
+    public function translate($object, $fields = [])
     {
         // make sure $fields is an array
         $fields = (array) $fields;

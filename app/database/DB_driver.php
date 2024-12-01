@@ -68,7 +68,7 @@ class CI_DB_driver
 
     // Private variables
     public $_protect_identifiers	= true;
-    public $_reserved_identifiers	= array('*'); // Identifiers that should NOT be escaped
+    public $_reserved_identifiers	= ['*']; // Identifiers that should NOT be escaped
 
     // These are use with Oracle
     public $stmt_id;
@@ -208,7 +208,7 @@ class CI_DB_driver
 
         // Some DBs have functions that return the version, and don't run special
         // SQL queries per se. In these instances, just return the result.
-        $driver_version_exceptions = array('oci8', 'sqlite', 'cubrid');
+        $driver_version_exceptions = ['oci8', 'sqlite', 'cubrid'];
 
         if (in_array($this->dbdriver, $driver_version_exceptions)) {
             return $sql;
@@ -246,7 +246,7 @@ class CI_DB_driver
 
         // Verify table prefix and replace if necessary
         if (($this->dbprefix != '' and $this->swap_pre != '') and ($this->dbprefix != $this->swap_pre)) {
-            $sql = preg_replace("/(\W)".$this->swap_pre."(\S+?)/", "\\1".$this->dbprefix."\\2", $sql);
+            $sql = preg_replace("/(\W)".$this->swap_pre."(\S+?)/", "\\1".$this->dbprefix."\\2", (string) $sql);
         }
 
         // Compile binds if needed
@@ -257,7 +257,7 @@ class CI_DB_driver
         // Is query caching enabled?  If the query is a "read type"
         // we will load the caching class and return the previously
         // cached query if it exists
-        if ($this->cache_on == true and stristr($sql, 'SELECT')) {
+        if ($this->cache_on == true and stristr((string) $sql, 'SELECT')) {
             if ($this->_cache_init()) {
                 $this->load_rdriver();
                 if (false !== ($cache = $this->CACHE->read($sql))) {
@@ -272,7 +272,7 @@ class CI_DB_driver
         }
 
         // Start the Query Timer
-        $time_start = list($sm, $ss) = explode(' ', microtime());
+        $time_start = [$sm, $ss] = explode(' ', microtime());
 
         // Run the Query
         if (false === ($this->result_id = $this->simple_query($sql))) {
@@ -298,11 +298,7 @@ class CI_DB_driver
                 // Log and display errors
                 log_message('error', 'Query error: '.$error_msg);
                 return $this->display_error(
-                    array(
-                                                'Error Number: '.$error_no,
-                                                $error_msg,
-                                                $sql
-                                            )
+                    ['Error Number: '.$error_no, $error_msg, $sql]
                 );
             }
 
@@ -310,7 +306,7 @@ class CI_DB_driver
         }
 
         // Stop and aggregate the query time results
-        $time_end = list($em, $es) = explode(' ', microtime());
+        $time_end = [$em, $es] = explode(' ', microtime());
         $this->benchmark += ($em + $es) - ($sm + $ss);
 
         if ($this->save_queries == true) {
@@ -539,16 +535,16 @@ class CI_DB_driver
      */
     public function compile_binds($sql, $binds)
     {
-        if (strpos($sql, $this->bind_marker) === false) {
+        if (!str_contains((string) $sql, (string) $this->bind_marker)) {
             return $sql;
         }
 
         if (! is_array($binds)) {
-            $binds = array($binds);
+            $binds = [$binds];
         }
 
         // Get the sql segments around the bind markers
-        $segments = explode($this->bind_marker, $sql);
+        $segments = explode($this->bind_marker, (string) $sql);
 
         // The count of bind should be 1 less then the count of segments
         // If there are more bind arguments trim it down
@@ -578,7 +574,7 @@ class CI_DB_driver
      */
     public function is_write_type($sql)
     {
-        if (! preg_match('/^\s*"?(SET|INSERT|UPDATE|DELETE|REPLACE|CREATE|DROP|TRUNCATE|LOAD DATA|COPY|ALTER|GRANT|REVOKE|LOCK|UNLOCK)\s+/i', $sql)) {
+        if (! preg_match('/^\s*"?(SET|INSERT|UPDATE|DELETE|REPLACE|CREATE|DROP|TRUNCATE|LOAD DATA|COPY|ALTER|GRANT|REVOKE|LOCK|UNLOCK)\s+/i', (string) $sql)) {
             return false;
         }
         return true;
@@ -868,7 +864,7 @@ class CI_DB_driver
         }
 
         if (! is_array($where)) {
-            $dest = array($where);
+            $dest = [$where];
         } else {
             $dest = [];
             foreach ($where as $key => $val) {
@@ -900,7 +896,7 @@ class CI_DB_driver
      */
     public function _has_operator($str)
     {
-        $str = trim($str);
+        $str = trim((string) $str);
         if (! preg_match("/(\s|<|>|!|=|is null|is not null)/i", $str)) {
             return false;
         }
@@ -922,7 +918,7 @@ class CI_DB_driver
     {
         $driver = ($this->dbdriver == 'postgre') ? 'pg_' : $this->dbdriver.'_';
 
-        if (false === strpos($driver, $function)) {
+        if (!str_contains($driver, (string) $function)) {
             $function = $driver.$function;
         }
 
@@ -1079,7 +1075,7 @@ class CI_DB_driver
         if ($native == true) {
             $message = $error;
         } else {
-            $message = (! is_array($error)) ? array(str_replace('%s', $swap, $LANG->line($error))) : $error;
+            $message = (! is_array($error)) ? [str_replace('%s', $swap, $LANG->line($error))] : $error;
         }
 
         // Find the most likely culprit of the error by going through
@@ -1089,9 +1085,9 @@ class CI_DB_driver
         $trace = debug_backtrace();
 
         foreach ($trace as $call) {
-            if (isset($call['file']) && strpos($call['file'], BASEPATH.'database') === false) {
+            if (isset($call['file']) && !str_contains($call['file'], BASEPATH.'database')) {
                 // Found it - use a relative path for safety
-                $message[] = 'Filename: '.str_replace(array(BASEPATH, APPPATH), '', $call['file']);
+                $message[] = 'Filename: '.str_replace([BASEPATH, APPPATH], '', $call['file']);
                 $message[] = 'Line Number: '.$call['line'];
 
                 break;
@@ -1165,18 +1161,18 @@ class CI_DB_driver
         }
 
         // HACK to allow fns in datamapper selects
-        if (strpos($item, '(') !== false) {
+        if (str_contains((string) $item, '(')) {
             return $item; // Note this is different!
         }
 
         // Convert tabs or multiple spaces into single spaces
-        $item = preg_replace('/[\t ]+/', ' ', $item);
+        $item = preg_replace('/[\t ]+/', ' ', (string) $item);
 
         // If the item has an alias declaration we remove it and set it aside.
         // Basically we remove everything to the right of the first space
-        if (strpos($item, ' ') !== false) {
-            $alias = strstr($item, ' ');
-            $item = substr($item, 0, - strlen($alias));
+        if (str_contains((string) $item, ' ')) {
+            $alias = strstr((string) $item, ' ');
+            $item = substr((string) $item, 0, - strlen($alias));
         } else {
             $alias = '';
         }
@@ -1185,15 +1181,15 @@ class CI_DB_driver
         // If a parenthesis is found we know that we do not need to
         // escape the data or add a prefix.  There's probably a more graceful
         // way to deal with this, but I'm not thinking of it -- Rick
-        if (strpos($item, '(') !== false) {
+        if (str_contains((string) $item, '(')) {
             return $item.$alias;
         }
 
         // Break the string apart if it contains periods, then insert the table prefix
         // in the correct location, assuming the period doesn't indicate that we're dealing
         // with an alias. While we're at it, we will escape the components
-        if (strpos($item, '.') !== false) {
-            $parts	= explode('.', $item);
+        if (str_contains((string) $item, '.')) {
+            $parts	= explode('.', (string) $item);
 
             // Does the first segment of the exploded item match
             // one of the aliases previously identified?  If so,
@@ -1237,12 +1233,12 @@ class CI_DB_driver
                 }
 
                 // Verify table prefix and replace if necessary
-                if ($this->swap_pre != '' && strncmp($parts[$i], $this->swap_pre, strlen($this->swap_pre)) === 0) {
+                if ($this->swap_pre != '' && str_starts_with($parts[$i], (string) $this->swap_pre)) {
                     $parts[$i] = preg_replace("/^".$this->swap_pre."(\S+?)/", $this->dbprefix."\\1", $parts[$i]);
                 }
 
                 // We only add the table prefix if it does not already exist
-                if (substr($parts[$i], 0, strlen($this->dbprefix)) != $this->dbprefix) {
+                if (!str_starts_with((string) $parts[$i], (string) $this->dbprefix)) {
                     $parts[$i] = $this->dbprefix.$parts[$i];
                 }
 
@@ -1260,12 +1256,12 @@ class CI_DB_driver
         // Is there a table prefix?  If not, no need to insert it
         if ($this->dbprefix != '') {
             // Verify table prefix and replace if necessary
-            if ($this->swap_pre != '' && strncmp($item, $this->swap_pre, strlen($this->swap_pre)) === 0) {
-                $item = preg_replace("/^".$this->swap_pre."(\S+?)/", $this->dbprefix."\\1", $item);
+            if ($this->swap_pre != '' && str_starts_with((string) $item, (string) $this->swap_pre)) {
+                $item = preg_replace("/^".$this->swap_pre."(\S+?)/", $this->dbprefix."\\1", (string) $item);
             }
 
             // Do we prefix an item with no segments?
-            if ($prefix_single == true and substr($item, 0, strlen($this->dbprefix)) != $this->dbprefix) {
+            if ($prefix_single == true and !str_starts_with((string) $item, (string) $this->dbprefix)) {
                 $item = $this->dbprefix.$item;
             }
         }

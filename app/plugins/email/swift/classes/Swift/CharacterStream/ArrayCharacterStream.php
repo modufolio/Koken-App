@@ -57,6 +57,7 @@ class Swift_CharacterStream_ArrayCharacterStream implements Swift_CharacterStrea
      *
      * @param string $charset
      */
+    #[\Override]
     public function setCharacterSet($charset)
     {
         $this->_charset = $charset;
@@ -68,6 +69,7 @@ class Swift_CharacterStream_ArrayCharacterStream implements Swift_CharacterStrea
      *
      * @param Swift_CharacterReaderFactory $factory
      */
+    #[\Override]
     public function setCharacterReaderFactory(Swift_CharacterReaderFactory $factory)
     {
         $this->_charReaderFactory = $factory;
@@ -78,6 +80,7 @@ class Swift_CharacterStream_ArrayCharacterStream implements Swift_CharacterStrea
      *
      * @param Swift_OutputByteStream $os output stream to read from
      */
+    #[\Override]
     public function importByteStream(Swift_OutputByteStream $os)
     {
         if (!isset($this->_charReader)) {
@@ -111,6 +114,7 @@ class Swift_CharacterStream_ArrayCharacterStream implements Swift_CharacterStrea
      *
      * @param string $string
      */
+    #[\Override]
     public function importString($string)
     {
         $this->flushContents();
@@ -125,6 +129,7 @@ class Swift_CharacterStream_ArrayCharacterStream implements Swift_CharacterStrea
      *
      * @return string
      */
+    #[\Override]
     public function read($length)
     {
         if ($this->_offset == $this->_array_size) {
@@ -157,6 +162,7 @@ class Swift_CharacterStream_ArrayCharacterStream implements Swift_CharacterStrea
      *
      * @return integer[]
      */
+    #[\Override]
     public function readBytes($length)
     {
         if ($this->_offset == $this->_array_size) {
@@ -180,6 +186,7 @@ class Swift_CharacterStream_ArrayCharacterStream implements Swift_CharacterStrea
      *
      * @param string $chars
      */
+    #[\Override]
     public function write($chars)
     {
         if (!isset($this->_charReader)) {
@@ -195,7 +202,7 @@ class Swift_CharacterStream_ArrayCharacterStream implements Swift_CharacterStrea
         unset($chars);
         fseek($fp, 0, SEEK_SET);
 
-        $buffer = array(0);
+        $buffer = [0];
         $buf_pos = 1;
         $buf_len = 1;
         $has_datas = true;
@@ -249,6 +256,7 @@ class Swift_CharacterStream_ArrayCharacterStream implements Swift_CharacterStrea
      *
      * @param int     $charOffset
      */
+    #[\Override]
     public function setPointer($charOffset)
     {
         if ($charOffset > $this->_array_size) {
@@ -262,6 +270,7 @@ class Swift_CharacterStream_ArrayCharacterStream implements Swift_CharacterStrea
     /**
      * Empty the stream and reset the internal pointer.
      */
+    #[\Override]
     public function flushContents()
     {
         $this->_offset = 0;

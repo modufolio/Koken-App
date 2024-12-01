@@ -2,11 +2,8 @@
 
 class GPS
 {
-    private $exif;
-
-    public function __construct($exif)
+    public function __construct(private $exif)
     {
-        $this->exif = $exif;
     }
 
     public function latitude()
@@ -25,7 +22,7 @@ class GPS
         $m = $this->divide($arr[1]);
         $s = $this->divide($arr[2]);
         $dec = ((($s/60)+$m)/60) + $d;
-        if (strtolower($quadrant) == 's' || strtolower($quadrant) == 'w') {
+        if (strtolower((string) $quadrant) == 's' || strtolower((string) $quadrant) == 'w') {
             $dec = -$dec;
         }
         return $dec;
@@ -33,7 +30,7 @@ class GPS
 
     private function divide($str)
     {
-        $bits = explode('/', $str);
+        $bits = explode('/', (string) $str);
         $dec = $bits[0] / $bits[1];
         return $dec;
     }

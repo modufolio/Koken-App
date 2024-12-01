@@ -18,32 +18,14 @@
 class Swift_Mime_ContentEncoder_QpContentEncoderProxy implements Swift_Mime_ContentEncoder
 {
     /**
-     * @var Swift_Mime_ContentEncoder_QpContentEncoder
-     */
-    private $safeEncoder;
-
-    /**
-     * @var Swift_Mime_ContentEncoder_NativeQpContentEncoder
-     */
-    private $nativeEncoder;
-
-    /**
-     * @var null|string
-     */
-    private $charset;
-
-    /**
      * Constructor.
      *
      * @param Swift_Mime_ContentEncoder_QpContentEncoder       $safeEncoder
      * @param Swift_Mime_ContentEncoder_NativeQpContentEncoder $nativeEncoder
      * @param string|null                                      $charset
      */
-    public function __construct(Swift_Mime_ContentEncoder_QpContentEncoder $safeEncoder, Swift_Mime_ContentEncoder_NativeQpContentEncoder $nativeEncoder, $charset)
+    public function __construct(private Swift_Mime_ContentEncoder_QpContentEncoder $safeEncoder, private Swift_Mime_ContentEncoder_NativeQpContentEncoder $nativeEncoder, private $charset)
     {
-        $this->safeEncoder = $safeEncoder;
-        $this->nativeEncoder = $nativeEncoder;
-        $this->charset = $charset;
     }
 
     /**
@@ -58,6 +40,7 @@ class Swift_Mime_ContentEncoder_QpContentEncoderProxy implements Swift_Mime_Cont
     /**
      * {@inheritdoc}
      */
+    #[\Override]
     public function charsetChanged($charset)
     {
         $this->charset = $charset;
@@ -66,6 +49,7 @@ class Swift_Mime_ContentEncoder_QpContentEncoderProxy implements Swift_Mime_Cont
     /**
      * {@inheritdoc}
      */
+    #[\Override]
     public function encodeByteStream(Swift_OutputByteStream $os, Swift_InputByteStream $is, $firstLineOffset = 0, $maxLineLength = 0)
     {
         $this->getEncoder()->encodeByteStream($os, $is, $firstLineOffset, $maxLineLength);
@@ -74,6 +58,7 @@ class Swift_Mime_ContentEncoder_QpContentEncoderProxy implements Swift_Mime_Cont
     /**
      * {@inheritdoc}
      */
+    #[\Override]
     public function getName()
     {
         return 'quoted-printable';
@@ -82,6 +67,7 @@ class Swift_Mime_ContentEncoder_QpContentEncoderProxy implements Swift_Mime_Cont
     /**
      * {@inheritdoc}
      */
+    #[\Override]
     public function encodeString($string, $firstLineOffset = 0, $maxLineLength = 0)
     {
         return $this->getEncoder()->encodeString($string, $firstLineOffset, $maxLineLength);

@@ -103,7 +103,7 @@ class CI_Jquery extends CI_Javascript
     public function _click($element = 'this', $js = '', $ret_false = true)
     {
         if (! is_array($js)) {
-            $js = array($js);
+            $js = [$js];
         }
 
         if ($ret_false) {
@@ -177,7 +177,7 @@ class CI_Jquery extends CI_Javascript
      * @param	string	- Javascript code for mouse out
      * @return	string
      */
-    public function _hover($element = 'this', $over, $out)
+    public function _hover($over, $out, $element = 'this')
     {
         $event = "\n\t$(" . $this->_prep_element($element) . ").hover(\n\t\tfunction()\n\t\t{\n\t\t\t{$over}\n\t\t}, \n\t\tfunction()\n\t\t{\n\t\t\t{$out}\n\t\t});\n";
 
@@ -320,7 +320,7 @@ class CI_Jquery extends CI_Javascript
     public function _output($array_js = '')
     {
         if (! is_array($array_js)) {
-            $array_js = array($array_js);
+            $array_js = [$array_js];
         }
 
         foreach ($array_js as $js) {
@@ -412,7 +412,7 @@ class CI_Jquery extends CI_Javascript
      * @param	string	- Javascript callback function
      * @return	string
      */
-    public function _animate($element = 'this', $params = array(), $speed = '', $extra = '')
+    public function _animate($element = 'this', $params = [], $speed = '', $extra = '')
     {
         $element = $this->_prep_element($element);
         $speed = $this->_validate_speed($speed);
@@ -696,11 +696,11 @@ class CI_Jquery extends CI_Javascript
      * @return	string
      */
 
-    public function _updater($container = 'this', $controller, $options = '')
+    public function _updater($controller, $container = 'this', $options = '')
     {
         $container = $this->_prep_element($container);
 
-        $controller = (strpos('://', $controller) === false) ? $controller : $this->CI->config->site_url($controller);
+        $controller = (!str_contains('://', (string) $controller)) ? $controller : $this->CI->config->site_url($controller);
 
         // ajaxStart and ajaxStop are better choices here... but this is a stop gap
         if ($this->CI->config->item('javascript_ajax_img') == '') {
@@ -745,7 +745,7 @@ class CI_Jquery extends CI_Javascript
         $this->jquery_code_for_compile[] = $zebra;
 
         if ($hover != '') {
-            $hover = $this->hover("table{$class} tbody tr", "$(this).addClass('hover');", "$(this).removeClass('hover');");
+            $hover = $this->hover("$(this).addClass('hover');", "$(this).removeClass('hover');", "table{$class} tbody tr");
         }
 
         return $zebra;
@@ -847,7 +847,7 @@ class CI_Jquery extends CI_Javascript
      * @access	public
      * @return	void
      */
-    public function sortable($element, $options = array())
+    public function sortable($element, $options = [])
     {
         if (count($options) > 0) {
             $sort_options = [];
@@ -856,7 +856,7 @@ class CI_Jquery extends CI_Javascript
             }
             $sort_options = implode(",", $sort_options);
         } else {
-            $sort_options = '';
+            $sort_options = [];
         }
 
         return "$(" . $this->_prep_element($element) . ").sortable({".$sort_options."\n\t});";
@@ -918,7 +918,7 @@ class CI_Jquery extends CI_Javascript
     {
         // External references
         $external_scripts = implode('', $this->jquery_code_for_load);
-        $this->CI->load->vars(array('library_src' => $external_scripts));
+        $this->CI->load->vars(['library_src' => $external_scripts]);
 
         if (count($this->jquery_code_for_compile) == 0) {
             // no inline references, let's just return
@@ -932,7 +932,7 @@ class CI_Jquery extends CI_Javascript
 
         $output = ($script_tags === false) ? $script : $this->inline($script);
 
-        $this->CI->load->vars(array($view_var => $output));
+        $this->CI->load->vars([$view_var => $output]);
     }
 
     // --------------------------------------------------------------------
@@ -963,7 +963,7 @@ class CI_Jquery extends CI_Javascript
     public function _document_ready($js)
     {
         if (! is_array($js)) {
-            $js = array($js);
+            $js = [$js];
         }
 
         foreach ($js as $script) {
@@ -1024,9 +1024,9 @@ class CI_Jquery extends CI_Javascript
      */
     public function _validate_speed($speed)
     {
-        if (in_array($speed, array('slow', 'normal', 'fast'))) {
+        if (in_array($speed, ['slow', 'normal', 'fast'])) {
             $speed = '"'.$speed.'"';
-        } elseif (preg_match("/[^0-9]/", $speed)) {
+        } elseif (preg_match("/[^0-9]/", (string) $speed)) {
             $speed = '';
         }
 

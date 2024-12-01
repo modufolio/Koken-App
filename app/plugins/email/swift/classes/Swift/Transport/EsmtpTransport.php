@@ -34,15 +34,7 @@ class Swift_Transport_EsmtpTransport extends Swift_Transport_AbstractSmtpTranspo
      *
      * @var array
      */
-    private $_params = array(
-        'protocol' => 'tcp',
-        'host' => 'localhost',
-        'port' => 25,
-        'timeout' => 30,
-        'blocking' => 1,
-        'tls' => false,
-        'type' => Swift_Transport_IoBuffer::TYPE_SOCKET,
-        );
+    private $_params = ['protocol' => 'tcp', 'host' => 'localhost', 'port' => 25, 'timeout' => 30, 'blocking' => 1, 'tls' => false, 'type' => Swift_Transport_IoBuffer::TYPE_SOCKET];
 
     /**
      * Creates a new EsmtpTransport using the given I/O buffer.
@@ -167,6 +159,7 @@ class Swift_Transport_EsmtpTransport extends Swift_Transport_AbstractSmtpTranspo
      *
      * @return Swift_Transport_EsmtpTransport
      */
+    #[\Override]
     public function setSourceIp($source)
     {
         $this->_params['sourceIp'] = $source;
@@ -179,6 +172,7 @@ class Swift_Transport_EsmtpTransport extends Swift_Transport_AbstractSmtpTranspo
      *
      * @return string
      */
+    #[\Override]
     public function getSourceIp()
     {
         return $this->_params['sourceIp'];
@@ -197,7 +191,7 @@ class Swift_Transport_EsmtpTransport extends Swift_Transport_AbstractSmtpTranspo
         foreach ($handlers as $handler) {
             $assoc[$handler->getHandledKeyword()] = $handler;
         }
-        uasort($assoc, array($this, '_sortHandlers'));
+        uasort($assoc, [$this, '_sortHandlers']);
         $this->_handlers = $assoc;
         $this->_setHandlerParams();
 
@@ -226,7 +220,8 @@ class Swift_Transport_EsmtpTransport extends Swift_Transport_AbstractSmtpTranspo
      *
      * @return string
      */
-    public function executeCommand($command, $codes = array(), &$failures = null)
+    #[\Override]
+    public function executeCommand($command, $codes = [], &$failures = null)
     {
         $failures = (array) $failures;
         $stopSignal = false;
@@ -254,12 +249,12 @@ class Swift_Transport_EsmtpTransport extends Swift_Transport_AbstractSmtpTranspo
     {
         foreach ($this->_handlers as $handler) {
             if (in_array(
-                strtolower($method),
+                strtolower((string) $method),
                 array_map('strtolower', (array) $handler->exposeMixinMethods())
             )) {
-                $return = call_user_func_array(array($handler, $method), $args);
+                $return = call_user_func_array([$handler, $method], $args);
                 // Allow fluid method calls
-                if (is_null($return) && substr($method, 0, 3) == 'set') {
+                if (is_null($return) && str_starts_with((string) $method, 'set')) {
                     return $this;
                 } else {
                     return $return;
@@ -270,18 +265,20 @@ class Swift_Transport_EsmtpTransport extends Swift_Transport_AbstractSmtpTranspo
     }
 
     /** Get the params to initialize the buffer */
+    #[\Override]
     protected function _getBufferParams()
     {
         return $this->_params;
     }
 
     /** Overridden to perform EHLO instead */
+    #[\Override]
     protected function _doHeloCommand()
     {
         try {
             $response = $this->executeCommand(
                 sprintf("EHLO %s\r\n", $this->_domain),
-                array(250)
+                [250]
             );
         } catch (Swift_TransportException $e) {
             return parent::_doHeloCommand();
@@ -289,7 +286,7 @@ class Swift_Transport_EsmtpTransport extends Swift_Transport_AbstractSmtpTranspo
 
         if ($this->_params['tls']) {
             try {
-                $this->executeCommand("STARTTLS\r\n", array(220));
+                $this->executeCommand("STARTTLS\r\n", [220]);
 
                 if (!$this->_buffer->startTLS()) {
                     throw new Swift_TransportException('Unable to connect with TLS encryption');
@@ -298,9 +295,9 @@ class Swift_Transport_EsmtpTransport extends Swift_Transport_AbstractSmtpTranspo
                 try {
                     $response = $this->executeCommand(
                         sprintf("EHLO %s\r\n", $this->_domain),
-                        array(250)
+                        [250]
                     );
-                } catch (Swift_TransportException $e) {
+                } catch (Swift_TransportException) {
                     return parent::_doHeloCommand();
                 }
             } catch (Swift_TransportException $e) {
@@ -316,6 +313,7 @@ class Swift_Transport_EsmtpTransport extends Swift_Transport_AbstractSmtpTranspo
     }
 
     /** Overridden to add Extension support */
+    #[\Override]
     protected function _doMailFromCommand($address)
     {
         $handlers = $this->_getActiveHandlers();
@@ -326,11 +324,12 @@ class Swift_Transport_EsmtpTransport extends Swift_Transport_AbstractSmtpTranspo
         $paramStr = !empty($params) ? ' '.implode(' ', $params) : '';
         $this->executeCommand(
             sprintf("MAIL FROM: <%s>%s\r\n", $address, $paramStr),
-            array(250)
+            [250]
         );
     }
 
     /** Overridden to add Extension support */
+    #[\Override]
     protected function _doRcptToCommand($address)
     {
         $handlers = $this->_getActiveHandlers();
@@ -341,7 +340,7 @@ class Swift_Transport_EsmtpTransport extends Swift_Transport_AbstractSmtpTranspo
         $paramStr = !empty($params) ? ' '.implode(' ', $params) : '';
         $this->executeCommand(
             sprintf("RCPT TO: <%s>%s\r\n", $address, $paramStr),
-            array(250, 251, 252)
+            [250, 251, 252]
         );
     }
 
@@ -349,14 +348,14 @@ class Swift_Transport_EsmtpTransport extends Swift_Transport_AbstractSmtpTranspo
     private function _getCapabilities($ehloResponse)
     {
         $capabilities = [];
-        $ehloResponse = trim($ehloResponse);
+        $ehloResponse = trim((string) $ehloResponse);
         $lines = explode("\r\n", $ehloResponse);
         array_shift($lines);
         foreach ($lines as $line) {
             if (preg_match('/^[0-9]{3}[ -]([A-Z0-9-]+)((?:[ =].*)?)$/Di', $line, $matches)) {
                 $keyword = strtoupper($matches[1]);
                 $paramStr = strtoupper(ltrim($matches[2], ' ='));
-                $params = !empty($paramStr) ? explode(' ', $paramStr) : array();
+                $params = !empty($paramStr) ? explode(' ', $paramStr) : [];
                 $capabilities[$keyword] = $params;
             }
         }

@@ -27,9 +27,7 @@ $fileTime = date("D, d M Y H:i:s T");
 
 // Setting this to a function to create the temp files requires PHP 5.3 or newer:
 //Zip::$temp = function() { return tempnam(sys_get_temp_dir(), 'Zip');};
-\PHPZip\Zip\File\Zip::$temp = function () {
-    return "./tempFile_" . rand(100000, 999999);
-};
+\PHPZip\Zip\File\Zip::$temp = fn() => "./tempFile_" . random_int(100000, 999999);
 
 $zip = new \PHPZip\Zip\File\Zip(); // $zip = new Zip();
 // Archive comments don't really support utf-8. Some tools detect and read it though.
@@ -40,7 +38,7 @@ $zip->addFile("Hello World!", "hello.txt");
 if ($handle) {
     /* This is the correct way to loop over the directory. */
     while (false !== ($file = readdir($handle))) {
-        if (strpos($file, ".php") !== false) {
+        if (str_contains($file, ".php")) {
             $pathData = pathinfo($fileDir . $file);
             $fileName = $pathData['filename'];
 

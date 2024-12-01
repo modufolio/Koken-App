@@ -37,6 +37,7 @@ class CI_DB_sqlite_result extends CI_DB_result
      * @access	public
      * @return	integer
      */
+    #[\Override]
     public function num_rows()
     {
         return @sqlite_num_rows($this->result_id);
@@ -50,6 +51,7 @@ class CI_DB_sqlite_result extends CI_DB_result
      * @access	public
      * @return	integer
      */
+    #[\Override]
     public function num_fields()
     {
         return @sqlite_num_fields($this->result_id);
@@ -65,6 +67,7 @@ class CI_DB_sqlite_result extends CI_DB_result
      * @access	public
      * @return	array
      */
+    #[\Override]
     public function list_fields()
     {
         $field_names = [];
@@ -85,6 +88,7 @@ class CI_DB_sqlite_result extends CI_DB_result
      * @access	public
      * @return	array
      */
+    #[\Override]
     public function field_data()
     {
         $retval = [];
@@ -109,6 +113,7 @@ class CI_DB_sqlite_result extends CI_DB_result
      *
      * @return	null
      */
+    #[\Override]
     public function free_result()
     {
         // Not implemented in SQLite
@@ -126,6 +131,7 @@ class CI_DB_sqlite_result extends CI_DB_result
      * @access	private
      * @return	array
      */
+    #[\Override]
     public function _data_seek($n = 0)
     {
         return sqlite_seek($this->result_id, $n);
@@ -141,6 +147,7 @@ class CI_DB_sqlite_result extends CI_DB_result
      * @access	private
      * @return	array
      */
+    #[\Override]
     public function _fetch_assoc()
     {
         return sqlite_fetch_array($this->result_id);
@@ -156,6 +163,7 @@ class CI_DB_sqlite_result extends CI_DB_result
      * @access	private
      * @return	object
      */
+    #[\Override]
     public function _fetch_object()
     {
         if (function_exists('sqlite_fetch_object')) {

@@ -22,6 +22,7 @@ class Swift_Plugins_Reporters_HtmlReporter implements Swift_Plugins_Reporter
      * @param string             $address
      * @param int                $result  from {@see RESULT_PASS, RESULT_FAIL}
      */
+    #[\Override]
     public function notify(Swift_Mime_Message $message, $address, $result)
     {
         if (self::RESULT_PASS == $result) {

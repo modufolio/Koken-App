@@ -43,6 +43,7 @@ class CI_DB_oci8_result extends CI_DB_result
      *
      * @return  integer
      */
+    #[\Override]
     public function num_rows()
     {
         if ($this->num_rows === 0 && count($this->result_array()) > 0) {
@@ -65,6 +66,7 @@ class CI_DB_oci8_result extends CI_DB_result
      * @access  public
      * @return  integer
      */
+    #[\Override]
     public function num_fields()
     {
         $count = @oci_num_fields($this->stmt_id);
@@ -87,6 +89,7 @@ class CI_DB_oci8_result extends CI_DB_result
      * @access	public
      * @return	array
      */
+    #[\Override]
     public function list_fields()
     {
         $field_names = [];
@@ -106,6 +109,7 @@ class CI_DB_oci8_result extends CI_DB_result
      * @access  public
      * @return  array
      */
+    #[\Override]
     public function field_data()
     {
         $retval = [];
@@ -128,6 +132,7 @@ class CI_DB_oci8_result extends CI_DB_result
      *
      * @return	null
      */
+    #[\Override]
     public function free_result()
     {
         if (is_resource($this->result_id)) {
@@ -146,9 +151,10 @@ class CI_DB_oci8_result extends CI_DB_result
      * @access  protected
      * @return  array
      */
+    #[\Override]
     protected function _fetch_assoc()
     {
-        $id = ($this->curs_id) ? $this->curs_id : $this->stmt_id;
+        $id = $this->curs_id ?: $this->stmt_id;
         return oci_fetch_assoc($id);
     }
 
@@ -162,9 +168,10 @@ class CI_DB_oci8_result extends CI_DB_result
      * @access  protected
      * @return  object
      */
+    #[\Override]
     protected function _fetch_object()
     {
-        $id = ($this->curs_id) ? $this->curs_id : $this->stmt_id;
+        $id = $this->curs_id ?: $this->stmt_id;
         return @oci_fetch_object($id);
     }
 
@@ -176,6 +183,7 @@ class CI_DB_oci8_result extends CI_DB_result
      * @access  public
      * @return  array
      */
+    #[\Override]
     public function result_array()
     {
         if (count($this->result_array) > 0) {
@@ -202,6 +210,7 @@ class CI_DB_oci8_result extends CI_DB_result
      * @access	protected
      * @return	array
      */
+    #[\Override]
     protected function _data_seek($n = 0)
     {
         return false; // Not needed

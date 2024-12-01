@@ -64,6 +64,7 @@ class ZipStream extends AbstractZipArchive
      *
      * @param array $params Array that contains zipEntry.
      */
+    #[\Override]
     public function onBuildZipEntry(array $params)
     {
         print($params['zipEntry']);
@@ -78,6 +79,7 @@ class ZipStream extends AbstractZipArchive
      *
      * @param array $params Array that contains gzLength.
      */
+    #[\Override]
     public function onBeginAddFile(array $params)
     {
         // Do nothing.
@@ -92,6 +94,7 @@ class ZipStream extends AbstractZipArchive
      *
      * @param array $params Array that contains gzData.
      */
+    #[\Override]
     public function onEndAddFile(array $params)
     {
         print($params['gzData']);
@@ -104,6 +107,7 @@ class ZipStream extends AbstractZipArchive
      * @author A. Grandt <php@grandt.com>
      * @author Greg Kappatos
      */
+    #[\Override]
     public function onBeginBuildResponseHeader()
     {
         // Do nothing.
@@ -116,6 +120,7 @@ class ZipStream extends AbstractZipArchive
      * @author A. Grandt <php@grandt.com>
      * @author Greg Kappatos
      */
+    #[\Override]
     public function onEndBuildResponseHeader()
     {
         //header("Connection: Keep-Alive");
@@ -129,6 +134,7 @@ class ZipStream extends AbstractZipArchive
      * @author A. Grandt <php@grandt.com>
      * @author Greg Kappatos
      */
+    #[\Override]
     public function onOpenStream()
     {
         // Do nothing.
@@ -143,6 +149,7 @@ class ZipStream extends AbstractZipArchive
      *
      * @param array $params Array that contains data.
      */
+    #[\Override]
     public function onProcessFile(array $params)
     {
         print($params['data']);
@@ -156,6 +163,7 @@ class ZipStream extends AbstractZipArchive
      *
      * @param int $gzLength length of the pending data.
      */
+    #[\Override]
     public function zipVerifyMemBuffer($gzLength)
     {
         if (ob_get_length() !== false && ob_get_length() > $this->maxStreamBufferLength) {
@@ -173,6 +181,7 @@ class ZipStream extends AbstractZipArchive
      *
      * @param string $data
      */
+    #[\Override]
     public function zipWrite($data)
     {
         print($data);
@@ -184,6 +193,7 @@ class ZipStream extends AbstractZipArchive
      * @author A. Grandt <php@grandt.com>
      *
      */
+    #[\Override]
     public function zipFlush()
     {
         // Does nothing.
@@ -194,6 +204,7 @@ class ZipStream extends AbstractZipArchive
      * @author A. Grandt <php@grandt.com>
      *
      */
+    #[\Override]
     public function zipFlushBuffer()
     {
         flush();

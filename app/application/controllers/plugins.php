@@ -7,7 +7,7 @@ class Plugins extends Koken_Controller
         parent::__construct();
     }
 
-    public function compile()
+    public function compile(): never
     {
         $this->_compile_plugins();
         exit;
@@ -141,7 +141,7 @@ class Plugins extends Koken_Controller
                         foreach ($plugin->database_fields as $table => $fields) {
                             $table = $db_config['prefix'] . $table;
                             foreach ($fields as $column => $info) {
-                                $this->dbforge->add_column($table, array( $column => $info ));
+                                $this->dbforge->add_column($table, [$column => $info]);
                             }
                         }
 
@@ -177,7 +177,7 @@ class Plugins extends Koken_Controller
                 break;
 
             default:
-                $data = array( 'plugins' => $plugins );
+                $data = ['plugins' => $plugins];
 
                 function sortByName($a, $b)
                 {
@@ -186,7 +186,7 @@ class Plugins extends Koken_Controller
 
                 usort($data['plugins'], 'sortByName');
 
-                $data['plugins'] = Shutter::filter('api.plugins', array($data['plugins']));
+                $data['plugins'] = Shutter::filter('api.plugins', [$data['plugins']]);
                 $data['custom_sources'] = Shutter::$custom_sources;
 
                 $this->set_response_data($data);

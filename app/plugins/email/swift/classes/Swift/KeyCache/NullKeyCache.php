@@ -25,6 +25,7 @@ class Swift_KeyCache_NullKeyCache implements Swift_KeyCache
      * @param string  $string
      * @param int     $mode
      */
+    #[\Override]
     public function setString($nsKey, $itemKey, $string, $mode)
     {
     }
@@ -39,6 +40,7 @@ class Swift_KeyCache_NullKeyCache implements Swift_KeyCache
      * @param Swift_OutputByteStream $os
      * @param int                    $mode
      */
+    #[\Override]
     public function importFromByteStream($nsKey, $itemKey, Swift_OutputByteStream $os, $mode)
     {
     }
@@ -54,6 +56,7 @@ class Swift_KeyCache_NullKeyCache implements Swift_KeyCache
      *
      * @return Swift_InputByteStream
      */
+    #[\Override]
     public function getInputByteStream($nsKey, $itemKey, Swift_InputByteStream $writeThrough = null)
     {
     }
@@ -66,6 +69,7 @@ class Swift_KeyCache_NullKeyCache implements Swift_KeyCache
      *
      * @return string
      */
+    #[\Override]
     public function getString($nsKey, $itemKey)
     {
     }
@@ -77,6 +81,7 @@ class Swift_KeyCache_NullKeyCache implements Swift_KeyCache
      * @param string                $itemKey
      * @param Swift_InputByteStream $is      to write the data to
      */
+    #[\Override]
     public function exportToByteStream($nsKey, $itemKey, Swift_InputByteStream $is)
     {
     }
@@ -89,6 +94,7 @@ class Swift_KeyCache_NullKeyCache implements Swift_KeyCache
      *
      * @return bool
      */
+    #[\Override]
     public function hasKey($nsKey, $itemKey)
     {
         return false;
@@ -100,6 +106,7 @@ class Swift_KeyCache_NullKeyCache implements Swift_KeyCache
      * @param string $nsKey
      * @param string $itemKey
      */
+    #[\Override]
     public function clearKey($nsKey, $itemKey)
     {
     }
@@ -109,6 +116,7 @@ class Swift_KeyCache_NullKeyCache implements Swift_KeyCache
      *
      * @param string $nsKey
      */
+    #[\Override]
     public function clearAll($nsKey)
     {
     }

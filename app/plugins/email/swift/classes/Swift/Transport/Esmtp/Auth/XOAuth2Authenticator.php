@@ -29,6 +29,7 @@ class Swift_Transport_Esmtp_Auth_XOAuth2Authenticator implements Swift_Transport
      *
      * @return string
      */
+    #[\Override]
     public function getAuthKeyword()
     {
         return 'XOAUTH2';
@@ -43,15 +44,16 @@ class Swift_Transport_Esmtp_Auth_XOAuth2Authenticator implements Swift_Transport
      *
      * @return bool
      */
+    #[\Override]
     public function authenticate(Swift_Transport_SmtpAgent $agent, $email, $token)
     {
         try {
             $param = $this->constructXOAuth2Params($email, $token);
-            $agent->executeCommand("AUTH XOAUTH2 ".$param."\r\n", array(235));
+            $agent->executeCommand("AUTH XOAUTH2 ".$param."\r\n", [235]);
 
             return true;
-        } catch (Swift_TransportException $e) {
-            $agent->executeCommand("RSET\r\n", array(250));
+        } catch (Swift_TransportException) {
+            $agent->executeCommand("RSET\r\n", [250]);
 
             return false;
         }

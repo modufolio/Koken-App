@@ -15,20 +15,17 @@
 class Swift_Plugins_ImpersonatePlugin implements Swift_Events_SendListener
 {
     /**
-     * The sender to impersonate.
-     *
-     * @var String
-     */
-    private $_sender;
-
-    /**
      * Create a new ImpersonatePlugin to impersonate $sender.
      *
-     * @param string $sender address
+     * @param string $_sender address
      */
-    public function __construct($sender)
+    public function __construct(
+        /**
+         * The sender to impersonate.
+         */
+        private $_sender
+    )
     {
-        $this->_sender = $sender;
     }
 
     /**
@@ -36,6 +33,7 @@ class Swift_Plugins_ImpersonatePlugin implements Swift_Events_SendListener
      *
      * @param Swift_Events_SendEvent $evt
      */
+    #[\Override]
     public function beforeSendPerformed(Swift_Events_SendEvent $evt)
     {
         $message = $evt->getMessage();
@@ -53,6 +51,7 @@ class Swift_Plugins_ImpersonatePlugin implements Swift_Events_SendListener
      *
      * @param Swift_Events_SendEvent $evt
      */
+    #[\Override]
     public function sendPerformed(Swift_Events_SendEvent $evt)
     {
         $message = $evt->getMessage();

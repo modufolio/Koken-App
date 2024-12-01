@@ -63,21 +63,12 @@ class CurlPost implements RequestMethod
      * @param RequestParameters $params Request parameters
      * @return string Body of the reCAPTCHA response
      */
+    #[\Override]
     public function submit(RequestParameters $params)
     {
         $handle = $this->curl->init(self::SITE_VERIFY_URL);
 
-        $options = array(
-            CURLOPT_POST => true,
-            CURLOPT_POSTFIELDS => $params->toQueryString(),
-            CURLOPT_HTTPHEADER => array(
-                'Content-Type: application/x-www-form-urlencoded'
-            ),
-            CURLINFO_HEADER_OUT => false,
-            CURLOPT_HEADER => false,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_SSL_VERIFYPEER => true
-        );
+        $options = [CURLOPT_POST => true, CURLOPT_POSTFIELDS => $params->toQueryString(), CURLOPT_HTTPHEADER => ['Content-Type: application/x-www-form-urlencoded'], CURLINFO_HEADER_OUT => false, CURLOPT_HEADER => false, CURLOPT_RETURNTRANSFER => true, CURLOPT_SSL_VERIFYPEER => true];
         $this->curl->setoptArray($handle, $options);
 
         $response = $this->curl->exec($handle);

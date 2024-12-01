@@ -31,7 +31,7 @@ class HeadersSent extends AbstractException
     {
         $this->_headerFile = $config['headerFile'];
         $this->_headerLine = $config['headerLine'];
-        $this->_fileName = isset($config['fileName']) ? $config['fileName'] : null;
+        $this->_fileName = $config['fileName'] ?? null;
 
         $message = is_null($this->_fileName) ? '' : "Unable to send '{$this->_fileName}'. ";
         $message .= "Headers have already been sent from '{$this->_headerFile}' in line {$this->_headerLine}";

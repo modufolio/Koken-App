@@ -45,7 +45,7 @@ class CI_Cart
      *
      * The constructor loads the Session class, used to store the shopping cart contents.
      */
-    public function __construct($params = array())
+    public function __construct($params = [])
     {
         // Set the super object to a local variable for use later
         $this->CI =& get_instance();
@@ -82,7 +82,7 @@ class CI_Cart
      * @param	array
      * @return	bool
      */
-    public function insert($items = array())
+    public function insert($items = [])
     {
         // Was any cart data passed? No? Bah...
         if (! is_array($items) or count($items) == 0) {
@@ -113,7 +113,7 @@ class CI_Cart
         // Save the cart data if the insert was successful
         if ($save_cart == true) {
             $this->_save_cart();
-            return isset($rowid) ? $rowid : true;
+            return $rowid ?? true;
         }
 
         return false;
@@ -128,7 +128,7 @@ class CI_Cart
      * @param	array
      * @return	bool
      */
-    public function _insert($items = array())
+    public function _insert($items = [])
     {
         // Was any cart data passed? No? Bah...
         if (! is_array($items) or count($items) == 0) {
@@ -147,9 +147,9 @@ class CI_Cart
         // --------------------------------------------------------------------
 
         // Prep the quantity. It can only be a number.  Duh...
-        $items['qty'] = trim(preg_replace('/([^0-9])/i', '', $items['qty']));
+        $items['qty'] = trim((string) preg_replace('/([^0-9])/i', '', (string) $items['qty']));
         // Trim any leading zeros
-        $items['qty'] = trim(preg_replace('/(^[0]+)/i', '', $items['qty']));
+        $items['qty'] = trim((string) preg_replace('/(^[0]+)/i', '', $items['qty']));
 
         // If the quantity is zero or blank there's nothing for us to do
         if (! is_numeric($items['qty']) or $items['qty'] == 0) {
@@ -161,7 +161,7 @@ class CI_Cart
         // Validate the product ID. It can only be alpha-numeric, dashes, underscores or periods
         // Not totally sure we should impose this rule, but it seems prudent to standardize IDs.
         // Note: These can be user-specified by setting the $this->product_id_rules variable.
-        if (! preg_match("/^[".$this->product_id_rules."]+$/i", $items['id'])) {
+        if (! preg_match("/^[".$this->product_id_rules."]+$/i", (string) $items['id'])) {
             log_message('error', 'Invalid product ID.  The product ID can only contain alpha-numeric characters, dashes, and underscores');
             return false;
         }
@@ -170,7 +170,7 @@ class CI_Cart
 
         // Validate the product name. It can only be alpha-numeric, dashes, underscores, colons or periods.
         // Note: These can be user-specified by setting the $this->product_name_rules variable.
-        if (! preg_match("/^[".$this->product_name_rules."]+$/i", $items['name'])) {
+        if (! preg_match("/^[".$this->product_name_rules."]+$/i", (string) $items['name'])) {
             log_message('error', 'An invalid name was submitted as the product name: '.$items['name'].' The name can only contain alpha-numeric characters, dashes, underscores, colons, and spaces');
             return false;
         }
@@ -178,9 +178,9 @@ class CI_Cart
         // --------------------------------------------------------------------
 
         // Prep the price.  Remove anything that isn't a number or decimal point.
-        $items['price'] = trim(preg_replace('/([^0-9\.])/i', '', $items['price']));
+        $items['price'] = trim((string) preg_replace('/([^0-9\.])/i', '', (string) $items['price']));
         // Trim any leading zeros
-        $items['price'] = trim(preg_replace('/(^[0]+)/i', '', $items['price']));
+        $items['price'] = trim((string) preg_replace('/(^[0]+)/i', '', $items['price']));
 
         // Is the price a valid number?
         if (! is_numeric($items['price'])) {
@@ -206,7 +206,7 @@ class CI_Cart
             // No options were submitted so we simply MD5 the product ID.
             // Technically, we don't need to MD5 the ID in this case, but it makes
             // sense to standardize the format of array indexes for both conditions
-            $rowid = md5($items['id']);
+            $rowid = md5((string) $items['id']);
         }
 
         // --------------------------------------------------------------------
@@ -243,7 +243,7 @@ class CI_Cart
      * @param	string
      * @return	bool
      */
-    public function update($items = array())
+    public function update($items = [])
     {
         // Was any cart data passed?
         if (! is_array($items) or count($items) == 0) {
@@ -292,7 +292,7 @@ class CI_Cart
      * @param	array
      * @return	bool
      */
-    public function _update($items = array())
+    public function _update($items = [])
     {
         // Without these array indexes there is nothing we can do
         if (! isset($items['qty']) or ! isset($items['rowid']) or ! isset($this->_cart_contents[$items['rowid']])) {
@@ -300,7 +300,7 @@ class CI_Cart
         }
 
         // Prep the quantity
-        $items['qty'] = preg_replace('/([^0-9])/i', '', $items['qty']);
+        $items['qty'] = preg_replace('/([^0-9])/i', '', (string) $items['qty']);
 
         // Is the quantity a number?
         if (! is_numeric($items['qty'])) {
@@ -368,7 +368,7 @@ class CI_Cart
 
         // If we made it this far it means that our cart has data.
         // Let's pass it to the Session class so it can be stored
-        $this->CI->session->set_userdata(array('cart_contents' => $this->_cart_contents));
+        $this->CI->session->set_userdata(['cart_contents' => $this->_cart_contents]);
 
         // Woot!
         return true;
@@ -456,7 +456,7 @@ class CI_Cart
     public function product_options($rowid = '')
     {
         if (! isset($this->_cart_contents[$rowid]['options'])) {
-            return array();
+            return [];
         }
 
         return $this->_cart_contents[$rowid]['options'];
@@ -479,7 +479,7 @@ class CI_Cart
         }
 
         // Remove anything that isn't a number or decimal point.
-        $n = trim(preg_replace('/([^0-9\.])/i', '', $n));
+        $n = trim((string) preg_replace('/([^0-9\.])/i', '', (string) $n));
 
         return number_format($n, 2, '.', ',');
     }

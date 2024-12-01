@@ -9,7 +9,7 @@ class Categories extends Koken_Controller
 
     public function index()
     {
-        list($params, $id, $slug) = $this->parse_params(func_get_args());
+        [$params, $id, $slug] = $this->parse_params(func_get_args());
 
         // Create or update
         if ($this->method != 'get') {
@@ -31,12 +31,12 @@ class Categories extends Koken_Controller
                     }
 
                     // Don't allow these fields to be saved generically
-                    $private = array('album_count', 'content_count', 'text_count');
+                    $private = ['album_count', 'content_count', 'text_count'];
                     foreach ($private as $p) {
                         unset($_POST[$p]);
                     }
 
-                    if (!$c->from_array($_POST, array(), true)) {
+                    if (!$c->from_array($_POST, [], true)) {
                         // TODO: More info
                         $this->error('500', 'Save failed.');
                         return;
@@ -67,7 +67,7 @@ class Categories extends Koken_Controller
                                 return;
                             }
                         } else {
-                            $id = explode(',', $id);
+                            $id = explode(',', (string) $id);
 
                             $c->where_in('id', $id);
                             $cats = $c->get_iterated();
@@ -98,36 +98,30 @@ class Categories extends Koken_Controller
             }
 
             if ($category->exists()) {
-                $options = array(
-                    'page' => 1,
-                    'limit' => 50
-                );
+                $options = ['page' => 1, 'limit' => 50];
 
                 $options = array_merge($options, $params);
 
                 $category_arr = $category->to_array($options);
 
                 $options['category'] = $category->id;
-                list($final, $counts) = $this->aggregate('category', $options);
+                [$final, $counts] = $this->aggregate('category', $options);
 
                 $prev = new Category();
                 $next = new Category();
 
                 $prev->where('title <', $category->title)
-                    ->where_func('', array('@content_count', '+', '@text_count',  '+',  '@album_count', '>', 0), null)
+                    ->where_func('', ['@content_count', '+', '@text_count', '+', '@album_count', '>', 0], null)
                     ->order_by('title DESC, id DESC');
 
                 $next->where('title >', $category->title)
-                    ->where_func('', array('@content_count', '+', '@text_count',  '+',  '@album_count', '>', 0), null)
+                    ->where_func('', ['@content_count', '+', '@text_count', '+', '@album_count', '>', 0], null)
                     ->order_by('title ASC, id ASC');
 
                 $max = $next->get_clone()->count();
                 $min = $prev->get_clone()->count();
 
-                $context = array(
-                    'total' => $max + $min + 1,
-                    'position' => $min + 1
-                );
+                $context = ['total' => $max + $min + 1, 'position' => $min + 1];
 
                 $prev->limit(1)->get();
                 $next->limit(1)->get();
@@ -135,13 +129,13 @@ class Categories extends Koken_Controller
                 unset($options['category']);
 
                 if ($prev->exists()) {
-                    $context['previous'] = array( $prev->to_array($options) );
+                    $context['previous'] = [$prev->to_array($options)];
                 } else {
                     $context['previous'] = [];
                 }
 
                 if ($next->exists()) {
-                    $context['next'] = array( $next->to_array($options) );
+                    $context['next'] = [$next->to_array($options)];
                 } else {
                     $context['next'] = [];
                 }
@@ -159,7 +153,7 @@ class Categories extends Koken_Controller
 
     public function members()
     {
-        list($params, $id, $slug) = $this->parse_params(func_get_args());
+        [$params, $id, $slug] = $this->parse_params(func_get_args());
 
         $cat = new Category();
         if (isset($params['content'])) {
@@ -178,20 +172,20 @@ class Categories extends Koken_Controller
             $this->error('403', 'Required parameter "id" not present.');
             return;
         } elseif (is_array($id)) {
-            list($id, $content_id) = $id;
+            [$id, $content_id] = $id;
         }
 
         if ($this->method != 'get') {
-            $id = explode(',', $id);
+            $id = explode(',', (string) $id);
 
             if (!isset($content_id)) {
                 $this->error('403', 'Required content id not present.');
                 return;
             }
-            if (strpos($content_id, ',') !== false) {
-                $ids = explode(',', $content_id);
+            if (str_contains((string) $content_id, ',')) {
+                $ids = explode(',', (string) $content_id);
             } else {
-                $ids = array($content_id);
+                $ids = [$content_id];
             }
             if (isset($params['content'])) {
                 $c = new Content();
@@ -254,7 +248,7 @@ class Categories extends Koken_Controller
         $params['auth'] = $this->auth;
 
         if ($model === 'album') {
-            $final = $getter->listing(array_merge($params, array('category' => $category->id)));
+            $final = $getter->listing(array_merge($params, ['category' => $category->id]));
         } else {
             $params['category'] = $category->id;
             $final = $getter->listing($params);

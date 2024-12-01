@@ -9,15 +9,15 @@ class Koken extends DataMapper
 
         $config = unserialize($current->data);
 
-        if (in_array($type, array('content', 'essay'))) {
-            $sort = array('published_on', 'desc');
+        if (in_array($type, ['content', 'essay'])) {
+            $sort = ['published_on', 'desc'];
         } else {
-            $sort = array('manual', 'asc');
+            $sort = ['manual', 'asc'];
         }
 
         foreach ($config as $url_conf) {
             if ($url_conf['type'] === $type && isset($url_conf['data']['order'])) {
-                $sort = explode(' ', $url_conf['data']['order']);
+                $sort = explode(' ', (string) $url_conf['data']['order']);
                 break;
             }
         }
@@ -26,11 +26,11 @@ class Koken extends DataMapper
             $sort[0] = 'published_on';
         }
 
-        if (in_array($type, array('content', 'essay')) && $sort[0] === 'manual') {
-            $sort = array('published_on', 'desc');
+        if (in_array($type, ['content', 'essay']) && $sort[0] === 'manual') {
+            $sort = ['published_on', 'desc'];
         }
 
-        return array('by' => $sort[0], 'direction' => $sort[1]);
+        return ['by' => $sort[0], 'direction' => $sort[1]];
     }
 
     public function _do_tag_filtering($options)
@@ -42,7 +42,7 @@ class Koken extends DataMapper
             $not = false;
         }
 
-        $tags = explode(',', urldecode($options['tags']));
+        $tags = explode(',', urldecode((string) $options['tags']));
 
         if ($options['match_all_tags'] || $not) {
             $content_ids = false;
@@ -207,7 +207,7 @@ class Koken extends DataMapper
             if (isset($tag_map[$key])) {
                 $tag_map[$key][] = $tag_as_array;
             } else {
-                $tag_map[$key] = array($tag_as_array);
+                $tag_map[$key] = [$tag_as_array];
             }
         }
 
@@ -217,11 +217,11 @@ class Koken extends DataMapper
     public function _tag_for_output($model)
     {
         $t = $this->to_array();
-        list($t['__koken_url'], $t['url']) = $this->url(array('limit_to' => $model === 'text' ? 'essays' : $model));
+        [$t['__koken_url'], $t['url']] = $this->url(['limit_to' => $model === 'text' ? 'essays' : $model]);
         return $t;
     }
 
-    public function _get_tags_for_output($options = array())
+    public function _get_tags_for_output($options = [])
     {
         if (isset($options['eager_tags'])) {
             return $options['eager_tags'];
@@ -246,7 +246,7 @@ class Koken extends DataMapper
                 return;
             }
 
-            $base = strtolower(get_class($this));
+            $base = strtolower(static::class);
 
             if ($base === 'text') {
                 $base = $this->page_type < 1 ? 'essay' : 'page';
@@ -283,14 +283,14 @@ class Koken extends DataMapper
         } elseif ($val === 'captured_on' && $field === 'published_on') {
             $s = new Setting();
             $s->where('name', 'site_timezone')->get();
-            $tz = new DateTimeZone($s->value);
+            $tz = new DateTimeZone($s->value ?? 'UTC');
             $offset = $tz->getOffset(new DateTime(date('c', $this->captured_on), new DateTimeZone('UTC')));
             $this->published_on = $this->captured_on - $offset;
             return true;
         } elseif (isset($this->{$previous})) {
             $test = trim(preg_replace('/\-?\s*(year|month|day|hour|second)s?/', '', $test));
             if (strlen($test) === 0) {
-                $diff = time() - strtotime($val);
+                $diff = time() - strtotime((string) $val);
                 $this->{$field} = $this->{$previous} - $diff;
                 return true;
             }

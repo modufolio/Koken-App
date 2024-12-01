@@ -147,10 +147,7 @@ class ZipMerge
             $pkPos = ftell($handle);
 
             if ($curPos < ($pkPos)) {
-                $this->_throwException(new HeaderPositionError(array(
-                    'expected' => $curPos,
-                    'actual' => $pkPos
-                )));
+                $this->_throwException(new HeaderPositionError(['expected' => $curPos, 'actual' => $pkPos]));
             }
 
             if ($pkHeader === AbstractZipHeader::ZIP_CENTRAL_FILE_HEADER) {
@@ -275,18 +272,11 @@ class ZipMerge
 
         $ob = ob_get_contents();
         if ($ob !== false && BinStringStatic::_strlen($ob)) {
-            $this->_throwException(new BufferNotEmpty(array(
-                'outputBuffer' => $ob,
-                'fileName' => $fileName,
-            )));
+            $this->_throwException(new BufferNotEmpty(['outputBuffer' => $ob, 'fileName' => $fileName]));
         }
 
         if (headers_sent($headerFile, $headerLine)) {
-            $this->_throwException(new HeadersSent(array(
-                'headerFile' => $headerFile,
-                'headerLine' => $headerLine,
-                'fileName' => $fileName,
-            )));
+            $this->_throwException(new HeadersSent(['headerFile' => $headerFile, 'headerLine' => $headerLine, 'fileName' => $fileName]));
         }
 
         if (@ini_get($zlibConfig)) {
@@ -322,11 +312,7 @@ class ZipMerge
     public function checkVersion()
     {
         if (version_compare(PHP_VERSION, self::MIN_PHP_VERSION, '<') || !function_exists('sys_get_temp_dir')) {
-            $this->_throwException(new IncompatiblePhpVersion(array(
-                'appName' => self::APP_NAME,
-                'appVersion' => self::VERSION,
-                'minVersion' => self::MIN_PHP_VERSION,
-            )));
+            $this->_throwException(new IncompatiblePhpVersion(['appName' => self::APP_NAME, 'appVersion' => self::VERSION, 'minVersion' => self::MIN_PHP_VERSION]));
             return false;
         }
         return true;
@@ -374,7 +360,7 @@ class ZipMerge
      * @param string|null $method (Optional) The name of the event to fire. If this is null, then the calling method is used.
      * @param array       $data Method parameters passed as an array.
      */
-    private function _notifyListeners($method = null, array $data = array())
+    private function _notifyListeners($method = null, array $data = [])
     {
         if (is_null($method)) {
             $trace = debug_backtrace();
@@ -400,11 +386,9 @@ class ZipMerge
      *
      * @throws AbstractException $exception
      */
-    private function _throwException(AbstractException $exception)
+    private function _throwException(AbstractException $exception): never
     {
-        $this->_notifyListeners('Exception', array(
-            'exception' => $exception,
-        ));
+        $this->_notifyListeners('Exception', ['exception' => $exception]);
 
         throw $exception;
     }
@@ -438,7 +422,7 @@ class ZipMerge
             print($data);
         } else {
 //            print "<pre>" . __CLASS__ . "->zipWrite: " . strlen($data) . ":" . bin2hex($data) . "</pre>\n";
-            call_user_func_array(array($this->writer, "zipWrite"), array($data));
+            call_user_func_array([$this->writer, "zipWrite"], [$data]);
         }
     }
 

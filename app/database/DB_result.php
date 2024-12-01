@@ -76,11 +76,11 @@ class CI_DB_result
         }
 
         if ($this->result_id === false or $this->num_rows() == 0) {
-            return array();
+            return [];
         }
 
         // add the data to the object
-        $this->_data_seek(0);
+        $this->_data_seek();
         $result_object = [];
 
         while ($row = $this->_fetch_object()) {
@@ -115,10 +115,10 @@ class CI_DB_result
         // will return FALSE since there isn't a valid SQL resource so
         // we'll simply return an empty array.
         if ($this->result_id === false or $this->num_rows() == 0) {
-            return array();
+            return [];
         }
 
-        $this->_data_seek(0);
+        $this->_data_seek();
         while ($row = $this->_fetch_object()) {
             $this->result_object[] = $row;
         }
@@ -144,10 +144,10 @@ class CI_DB_result
         // will return FALSE since there isn't a valid SQL resource so
         // we'll simply return an empty array.
         if ($this->result_id === false or $this->num_rows() == 0) {
-            return array();
+            return [];
         }
 
-        $this->_data_seek(0);
+        $this->_data_seek();
         while ($row = $this->_fetch_assoc()) {
             $this->result_array[] = $row;
         }
@@ -388,11 +388,11 @@ class CI_DB_result
     }
     public function list_fields()
     {
-        return array();
+        return [];
     }
     public function field_data()
     {
-        return array();
+        return [];
     }
     public function free_result()
     {
@@ -404,11 +404,11 @@ class CI_DB_result
     }
     protected function _fetch_assoc()
     {
-        return array();
+        return [];
     }
     protected function _fetch_object()
     {
-        return array();
+        return [];
     }
 }
 // END DB_result class

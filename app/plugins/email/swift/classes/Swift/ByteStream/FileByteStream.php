@@ -60,6 +60,7 @@ class Swift_ByteStream_FileByteStream extends Swift_ByteStream_AbstractFilterabl
      *
      * @return string
      */
+    #[\Override]
     public function getPath()
     {
         return $this->_path;
@@ -79,6 +80,7 @@ class Swift_ByteStream_FileByteStream extends Swift_ByteStream_AbstractFilterabl
      *
      * @throws Swift_IoException
      */
+    #[\Override]
     public function read($length)
     {
         $fp = $this->_getReadHandle();
@@ -115,6 +117,7 @@ class Swift_ByteStream_FileByteStream extends Swift_ByteStream_AbstractFilterabl
      *
      * @return bool
      */
+    #[\Override]
     public function setReadPointer($byteOffset)
     {
         if (isset($this->_reader)) {
@@ -124,6 +127,7 @@ class Swift_ByteStream_FileByteStream extends Swift_ByteStream_AbstractFilterabl
     }
 
     /** Just write the bytes to the file */
+    #[\Override]
     protected function _commit($bytes)
     {
         fwrite($this->_getWriteHandle(), $bytes);
@@ -131,6 +135,7 @@ class Swift_ByteStream_FileByteStream extends Swift_ByteStream_AbstractFilterabl
     }
 
     /** Not used */
+    #[\Override]
     protected function _flush()
     {
     }

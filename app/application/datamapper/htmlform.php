@@ -31,24 +31,9 @@ class DMZ_HTMLForm
     // this is the default template (view) to use for the individual rows
     public $section_template = 'dmz_htmlform/section';
 
-    public $auto_rule_classes = array(
-        'integer' => 'integer',
-        'numeric' => 'numeric',
-        'is_natural' => 'natural',
-        'is_natural_no_zero' => 'positive_int',
-        'valid_email' => 'email',
-        'valid_ip' => 'ip',
-        'valid_base64' => 'base64',
-        'valid_date' => 'date',
-        'alpha_dash_dot' => 'alpha_dash_dot',
-        'alpha_slash_dot' => 'alpha_slash_dot',
-        'alpha' => 'alpha',
-        'alpha_numeric' => 'alpha_numeric',
-        'alpha_dash' => 'alpha_dash',
-        'required' => 'required'
-    );
+    public $auto_rule_classes = ['integer' => 'integer', 'numeric' => 'numeric', 'is_natural' => 'natural', 'is_natural_no_zero' => 'positive_int', 'valid_email' => 'email', 'valid_ip' => 'ip', 'valid_base64' => 'base64', 'valid_date' => 'date', 'alpha_dash_dot' => 'alpha_dash_dot', 'alpha_slash_dot' => 'alpha_slash_dot', 'alpha' => 'alpha', 'alpha_numeric' => 'alpha_numeric', 'alpha_dash' => 'alpha_dash', 'required' => 'required'];
 
-    public function __construct($options = array(), $object = null)
+    public function __construct($options = [], $object = null)
     {
         foreach ($options as $k => $v) {
             $this->{$k} = $v;
@@ -104,7 +89,7 @@ class DMZ_HTMLForm
             if (! isset($options['list']) || is_object($options['list'])) {
                 if (! isset($options['list'])) {
                     // look up all of the related values
-                    $c = get_class($object->{$field});
+                    $c = $object->{$field}::class;
                     $total_items = new $c();
                     // See if the custom method is defined
                     if (method_exists($total_items, 'get_htmlform_list')) {
@@ -227,7 +212,7 @@ class DMZ_HTMLForm
      * @param string $row_template  The template to use, or NULL to use the default.
      * @return Rendered String.
      */
-    public function render_row($object, $field, $type = null, $options = array(), $row_template = null)
+    public function render_row($object, $field, $type = null, $options = [], $row_template = null)
     {
         // try to determine type automatically
         $type = $this->_get_type($object, $field, $type);
@@ -250,7 +235,7 @@ class DMZ_HTMLForm
                 }
             }
             // determine if there is an existing error
-            $error = isset($object->error->{$field}) ? $object->error->{$field} : '';
+            $error = $object->error->{$field} ?? '';
             // determine if there is a pre-defined label
             $label = $this->_get_validation_info($object, $field, 'label', $field);
             // the field IS the id
@@ -260,15 +245,7 @@ class DMZ_HTMLForm
         $required = $this->_get_validation_rule($object, $field, 'required');
 
         // Append these items.  Values in $options have priority
-        $view_data = $options + array(
-            'object' => $object,
-            'content' => $content,
-            'field' => $field,
-            'label' => $label,
-            'error' => $error,
-            'id' => $id,
-            'required' => $required
-        );
+        $view_data = $options + ['object' => $object, 'content' => $content, 'field' => $field, 'label' => $label, 'error' => $error, 'id' => $id, 'required' => $required];
 
         if (is_null($row_template)) {
             if (empty($type)) {
@@ -299,7 +276,7 @@ class DMZ_HTMLForm
      * @param array  $template_options  The template to use for rows.
      * @return Rendered String.
      */
-    public function render_form($object, $fields, $url = '', $options = array(), $template = null, $row_template = null)
+    public function render_form($object, $fields, $url = '', $options = [], $template = null, $row_template = null)
     {
         if (empty($url)) {
             // set url to current url
@@ -315,12 +292,7 @@ class DMZ_HTMLForm
             $rows .= $this->_render_row_from_form($object, $field, $field_options, $row_template);
         }
 
-        $view_data = $options + array(
-            'object' => $object,
-            'fields' => $fields,
-            'url' => $url,
-            'rows' => $rows
-        );
+        $view_data = $options + ['object' => $object, 'fields' => $fields, 'url' => $url, 'rows' => $rows];
 
         return $this->load->view($template, $view_data, true);
     }
@@ -410,10 +382,7 @@ class DMZ_HTMLForm
     // Returns a field from the validation array
     public function _get_validation_info($object, $field, $val, $default = '')
     {
-        if (isset($object->validation[$field][$val])) {
-            return $object->validation[$field][$val];
-        }
-        return $default;
+        return $object->validation[$field][$val] ?? $default;
     }
 
     // --------------------------------------------------------------------------
@@ -466,11 +435,8 @@ class DMZ_HTMLForm
             $value = $options['value'];
             unset($options['value']);
         }
-        $a = $options + array(
-            'name' => $id,
-            'id' => $id
-        );
-        return $this->_render_node('textarea', $a, htmlspecialchars($value));
+        $a = $options + ['name' => $id, 'id' => $id];
+        return $this->_render_node('textarea', $a, htmlspecialchars((string) $value));
     }
 
     // render a dropdown
@@ -484,7 +450,7 @@ class DMZ_HTMLForm
             unset($options['value']);
         }
         if (! is_array($selected)) {
-            $selected = array($selected);
+            $selected = [$selected];
         } else {
             // force multiple
             $options['multiple'] = 'multiple';
@@ -495,10 +461,7 @@ class DMZ_HTMLForm
         if (isset($options['multiple'])) {
             $name .= '[]';
         }
-        $a = $options + array(
-            'name' => $name,
-            'id' => $id
-        );
+        $a = $options + ['name' => $name, 'id' => $id];
         return $this->_render_node('select', $a, $l);
     }
 
@@ -512,11 +475,11 @@ class DMZ_HTMLForm
                 $l .= $this->_options($label, $sel);
                 $l .= '</optgroup>';
             } else {
-                $a = array('value' => $opt);
+                $a = ['value' => $opt];
                 if (in_array($opt, $sel)) {
                     $a['selected'] = 'selected';
                 }
-                $l .= $this->_render_node('option', $a, htmlspecialchars($label));
+                $l .= $this->_render_node('option', $a, htmlspecialchars((string) $label));
             }
         }
         return $l;
@@ -550,7 +513,7 @@ class DMZ_HTMLForm
                 if (is_null($value) || $value === false || $value === '') {
                     $value = [];
                 } else {
-                    $value = array($value);
+                    $value = [$value];
                 }
             }
             $sep = '<br/>';
@@ -584,12 +547,7 @@ class DMZ_HTMLForm
                 $name .= '[]';
             }
             // node attributes
-            $a = $options + array(
-                'type' => $type,
-                'id' => $node_id,
-                'name' => $name,
-                'value' => $field_value
-            );
+            $a = $options + ['type' => $type, 'id' => $node_id, 'name' => $name, 'value' => $field_value];
             // if checked wasn't overridden
             if (! isset($a['checked'])) {
                 // determine if this is a multiple checkbox or not.
@@ -603,7 +561,7 @@ class DMZ_HTMLForm
             }
             $ret = $this->_render_node('input', $a);
             if (! empty($label)) {
-                $ret .= ' ' . $this->_render_node('label', array('for' => $node_id), $label);
+                $ret .= ' ' . $this->_render_node('label', ['for' => $node_id], $label);
             }
             return $ret;
         }
@@ -612,23 +570,14 @@ class DMZ_HTMLForm
     // render a file upload input
     public function _input_file($object, $id, $value, $options)
     {
-        $a = $options + array(
-            'type' => 'file',
-            'name' => $id,
-            'id' => $id
-        );
+        $a = $options + ['type' => 'file', 'name' => $id, 'id' => $id];
         return $this->_render_node('input', $a);
     }
 
     // Utility method to render a normal <input>
     public function _render_simple_input($type, $id, $value, $options)
     {
-        $a = $options + array(
-            'type' => $type,
-            'name' => $id,
-            'id' => $id,
-            'value' => $value
-        );
+        $a = $options + ['type' => $type, 'name' => $id, 'id' => $id, 'value' => $value];
         return $this->_render_node('input', $a);
     }
 

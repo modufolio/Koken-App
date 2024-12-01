@@ -14,13 +14,7 @@
 |
 */
 
-$hook['pre_system'] = array(
-    'class'    => '',
-    'function' => 'keep_vars',
-    'filename' => 'keep_vars.php',
-    'filepath' => 'hooks',
-    'params'   => array($_POST, $_GET)
-);
+$hook['pre_system'] = ['class'    => '', 'function' => 'keep_vars', 'filename' => 'keep_vars.php', 'filepath' => 'hooks', 'params'   => [$_POST, $_GET]];
 
 /* End of file hooks.php */
 /* Location: ./system/application/config/hooks.php */

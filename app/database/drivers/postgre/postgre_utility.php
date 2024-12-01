@@ -81,7 +81,7 @@ class CI_DB_postgre_utility extends CI_DB_utility
      * @param	array	Preferences
      * @return	mixed
      */
-    public function _backup($params = array())
+    public function _backup($params = [])
     {
         // Currently unsupported
         return $this->db->display_error('db_unsuported_feature');

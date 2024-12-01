@@ -26,27 +26,20 @@ class Swift_Transport_MailTransport implements Swift_Transport
     /** Additional parameters to pass to mail() */
     private $_extraParams = '-f%s';
 
-    /** The event dispatcher from the plugin API */
-    private $_eventDispatcher;
-
-    /** An invoker that calls the mail() function */
-    private $_invoker;
-
     /**
      * Create a new MailTransport with the $log.
      *
-     * @param Swift_Transport_MailInvoker  $invoker
-     * @param Swift_Events_EventDispatcher $eventDispatcher
+     * @param Swift_Transport_MailInvoker $_invoker
+     * @param Swift_Events_EventDispatcher $_eventDispatcher
      */
-    public function __construct(Swift_Transport_MailInvoker $invoker, Swift_Events_EventDispatcher $eventDispatcher)
+    public function __construct(private readonly Swift_Transport_MailInvoker $_invoker, private readonly Swift_Events_EventDispatcher $_eventDispatcher)
     {
-        $this->_invoker = $invoker;
-        $this->_eventDispatcher = $eventDispatcher;
     }
 
     /**
      * Not used.
      */
+    #[\Override]
     public function isStarted()
     {
         return false;
@@ -55,6 +48,7 @@ class Swift_Transport_MailTransport implements Swift_Transport
     /**
      * Not used.
      */
+    #[\Override]
     public function start()
     {
     }
@@ -62,6 +56,7 @@ class Swift_Transport_MailTransport implements Swift_Transport
     /**
      * Not used.
      */
+    #[\Override]
     public function stop()
     {
     }
@@ -105,6 +100,7 @@ class Swift_Transport_MailTransport implements Swift_Transport
      *
      * @return int
      */
+    #[\Override]
     public function send(Swift_Mime_Message $message, &$failedRecipients = null)
     {
         $failedRecipients = (array) $failedRecipients;
@@ -202,6 +198,7 @@ class Swift_Transport_MailTransport implements Swift_Transport
      *
      * @param Swift_Events_EventListener $plugin
      */
+    #[\Override]
     public function registerPlugin(Swift_Events_EventListener $plugin)
     {
         $this->_eventDispatcher->bindEventListener($plugin);

@@ -37,6 +37,7 @@ class CI_DB_cubrid_result extends CI_DB_result
      * @access	public
      * @return	integer
      */
+    #[\Override]
     public function num_rows()
     {
         return @cubrid_num_rows($this->result_id);
@@ -50,6 +51,7 @@ class CI_DB_cubrid_result extends CI_DB_result
      * @access	public
      * @return	integer
      */
+    #[\Override]
     public function num_fields()
     {
         return @cubrid_num_fields($this->result_id);
@@ -65,6 +67,7 @@ class CI_DB_cubrid_result extends CI_DB_result
      * @access	public
      * @return	array
      */
+    #[\Override]
     public function list_fields()
     {
         return cubrid_column_names($this->result_id);
@@ -80,6 +83,7 @@ class CI_DB_cubrid_result extends CI_DB_result
      * @access	public
      * @return	array
      */
+    #[\Override]
     public function field_data()
     {
         $retval = [];
@@ -138,6 +142,7 @@ class CI_DB_cubrid_result extends CI_DB_result
      *
      * @return	null
      */
+    #[\Override]
     public function free_result()
     {
         if (is_resource($this->result_id) ||
@@ -160,6 +165,7 @@ class CI_DB_cubrid_result extends CI_DB_result
      * @access	private
      * @return	array
      */
+    #[\Override]
     public function _data_seek($n = 0)
     {
         return cubrid_data_seek($this->result_id, $n);
@@ -175,6 +181,7 @@ class CI_DB_cubrid_result extends CI_DB_result
      * @access	private
      * @return	array
      */
+    #[\Override]
     public function _fetch_assoc()
     {
         return cubrid_fetch_assoc($this->result_id);
@@ -190,6 +197,7 @@ class CI_DB_cubrid_result extends CI_DB_result
      * @access	private
      * @return	object
      */
+    #[\Override]
     public function _fetch_object()
     {
         return cubrid_fetch_object($this->result_id);

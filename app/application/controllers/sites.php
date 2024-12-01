@@ -11,8 +11,8 @@ class Sites extends Koken_Controller
     {
         if ($type === 'boolean' && is_string($value) && ($value === 'true' || $value === 'false')) {
             $value = $value === 'true';
-        } elseif ($type === 'color' && preg_match('/#[a-z0-9]{3}$/i', $value)) {
-            $value = $value . substr($value, 1);
+        } elseif ($type === 'color' && preg_match('/#[a-z0-9]{3}$/i', (string) $value)) {
+            $value = $value . substr((string) $value, 1);
         }
         return $value;
     }
@@ -26,12 +26,12 @@ class Sites extends Koken_Controller
             if ($name === 'settings' && is_string($val[0])) {
                 $_o = [];
                 foreach ($val as $v) {
-                    $_o[] = array('label' => $v, 'value' => $v);
+                    $_o[] = ['label' => $v, 'value' => $v];
                 }
                 $val = $_o;
             }
             if ($name === 'type') {
-                $val = strtolower($val);
+                $val = strtolower((string) $val);
             }
             $_t[$name] = $val;
         }
@@ -67,13 +67,13 @@ class Sites extends Koken_Controller
         return $_t;
     }
 
-    public function _prep_options($options, $data = array(), $style_vars = array(), $default_style_vars = array(), $scope = false)
+    public function _prep_options($options, $data = [], $style_vars = [], $default_style_vars = [], $scope = false)
     {
         $_options = $flat = [];
 
         if (isset($options)) {
             foreach ($options as $group => $opts) {
-                $tmp = array( 'group' => $group, 'settings' => array() );
+                $tmp = ['group' => $group, 'settings' => []];
 
                 if (isset($opts['collapse']) && $opts['collapse']) {
                     $tmp['collapse'] = true;
@@ -102,7 +102,7 @@ class Sites extends Koken_Controller
                         if (is_array($arr['value'])) {
                             $v = [];
                             foreach ($arr['value'] as $_key => $val) {
-                                if (strpos($_key, ',') === false) {
+                                if (!str_contains($_key, ',')) {
                                     $v[$_key] = $val;
                                 } else {
                                     $keys = explode(',', $_key);
@@ -119,7 +119,7 @@ class Sites extends Koken_Controller
                         foreach ($arr['scope'] as $template) {
                             $copy = $arr;
                             $copy['value'] = is_array($arr['value']) ? $arr['value'][$template] : $arr['value'];
-                            $copy['scope'] = array($template);
+                            $copy['scope'] = [$template];
                             $_key = '__scoped_' . str_replace('.', '-', $template) . '_' . $key;
                             if (isset($groups[$template])) {
                                 $send_as = $groups[$template];
@@ -137,7 +137,7 @@ class Sites extends Koken_Controller
                         unset($_t['key']);
                         $flat[$key] = $_t;
                     } else {
-                        list($sub, $_flat) = $this->_prep_options(array($key => $arr), $data, $style_vars, $default_style_vars, $scope);
+                        [$sub, $_flat] = $this->_prep_options([$key => $arr], $data, $style_vars, $default_style_vars, $scope);
                         $tmp['settings'][] = array_pop($sub);
                         $flat = array_merge($flat, $_flat);
                     }
@@ -147,7 +147,7 @@ class Sites extends Koken_Controller
             }
         }
 
-        return array( $_options, $flat );
+        return [$_options, $flat];
     }
 
     public function set_order()
@@ -191,7 +191,7 @@ class Sites extends Koken_Controller
             $theme_root = $template_path . $params['preview'] . $ds;
             $template_info = json_decode(file_get_contents($theme_root . 'info.json'), true);
             if (!$template_info) {
-                $this->set_response_data(array( 'error' => 'Unable to parse the info.json file for this theme.'));
+                $this->set_response_data(['error' => 'Unable to parse the info.json file for this theme.']);
                 return;
             }
 
@@ -213,7 +213,7 @@ class Sites extends Koken_Controller
                 $template_info = json_decode(file_get_contents($theme_root . 'info.json'), true);
 
                 if (!$template_info) {
-                    $this->set_response_data(array( 'error' => 'Unable to parse the info.json file for this theme.'));
+                    $this->set_response_data(['error' => 'Unable to parse the info.json file for this theme.']);
                     return;
                 }
 
@@ -263,9 +263,7 @@ class Sites extends Koken_Controller
         foreach ($files as $file) {
             $info = pathinfo($file);
             if (isset($info['extension']) && $info['extension'] === 'lens' && $info['filename'] !== 'error' && !isset($template_info['templates'][$info['filename']])) {
-                $template_info['templates'][$info['filename']] = array(
-                    'name' => ucfirst(preg_replace('/[^a-z0-9]/', ' ', strtolower($info['filename'])))
-                );
+                $template_info['templates'][$info['filename']] = ['name' => ucfirst((string) preg_replace('/[^a-z0-9]/', ' ', strtolower($info['filename'])))];
             }
         }
         if (isset($template_info['styles'])) {
@@ -276,12 +274,12 @@ class Sites extends Koken_Controller
                 $key = $draft->data['settings']['__style'] = array_shift($keys);
             }
 
-            $template_info['style'] = array_merge(array('key' => $key), $template_info['styles'][$key]);
+            $template_info['style'] = array_merge(['key' => $key], $template_info['styles'][$key]);
 
             $styles = [];
 
             foreach ($template_info['styles'] as $key => $opts) {
-                $styles[] = array_merge(array('key' => $key), $opts);
+                $styles[] = array_merge(['key' => $key], $opts);
             }
 
             $template_info['styles'] = $styles;
@@ -290,7 +288,7 @@ class Sites extends Koken_Controller
         }
 
         if ($this->method == 'get') {
-            list($data['urls'], $data['url_data'], $routes) = $draft->setup_urls($theme_root);
+            [$data['urls'], $data['url_data'], $routes] = $draft->setup_urls($theme_root);
 
             if (isset($params['draft'])) {
                 function get_live_updates($file, $draft, &$functions)
@@ -299,7 +297,7 @@ class Sites extends Koken_Controller
                         // Strip comments so they don't confuse the parser
                         $contents = preg_replace('/\/\*.*?\*\//si', '', file_get_contents($file));
 
-                        preg_match_all('/@import\surl\(.*\[?\$([a-z_0-9]+)\]?.*\);/', $contents, $imports);
+                        preg_match_all('/@import\surl\(.*\[?\$([a-z_0-9]+)\]?.*\);/', (string) $contents, $imports);
 
                         foreach ($imports[1] as $setting) {
                             if (!isset($functions[$setting])) {
@@ -307,9 +305,9 @@ class Sites extends Koken_Controller
                             }
                         }
 
-                        $contents = preg_replace('/@import\surl\(.*\);/', '', $contents);
+                        $contents = preg_replace('/@import\surl\(.*\);/', '', (string) $contents);
 
-                        preg_match_all('/([^\{]+)\s*\{([^\}]+)\}/s', $contents, $matches);
+                        preg_match_all('/([^\{]+)\s*\{([^\}]+)\}/s', (string) $contents, $matches);
 
                         foreach ($matches[2] as $index => $block) {
                             $selector = $matches[1][$index];
@@ -327,12 +325,7 @@ class Sites extends Koken_Controller
                                         } elseif ($functions[$option] === 'reload') {
                                             continue;
                                         }
-                                        $functions[$option][] = array(
-                                            'selector' => trim(str_replace("\n", '', $selector)),
-                                            'property' => trim($property),
-                                            'template' => trim(str_replace('url(', "url(storage/themes/{$draft->path}/", $rule)),
-                                            'lightbox' => strpos($file, 'lightbox-settings.css.lens') !== false,
-                                        );
+                                        $functions[$option][] = ['selector' => trim(str_replace("\n", '', $selector)), 'property' => trim($property), 'template' => trim(str_replace('url(', "url(storage/themes/{$draft->path}/", $rule)), 'lightbox' => str_contains((string) $file, 'lightbox-settings.css.lens')];
                                     }
                                 }
                             }
@@ -348,7 +341,7 @@ class Sites extends Koken_Controller
 
             $pulse_settings = json_decode(file_get_contents($pulse_base), true);
 
-            list($template_info['pulse'], $template_info['pulse_flat']) = $this->_prep_options($pulse_settings);
+            [$template_info['pulse'], $template_info['pulse_flat']] = $this->_prep_options($pulse_settings);
 
             if (isset($draft->data['pulse_groups'])) {
                 $template_info['pulse_groups'] = $draft->data['pulse_groups'];
@@ -387,7 +380,7 @@ class Sites extends Koken_Controller
             $albums_indexed = [];
             $ceiling = 1;
             foreach ($albums_flat as $a) {
-                $albums_indexed[$a->id] = array('level' => (int) $a->level);
+                $albums_indexed[$a->id] = ['level' => (int) $a->level];
                 $ceiling = max($a->level, $ceiling);
             }
 
@@ -401,7 +394,7 @@ class Sites extends Koken_Controller
 
                 while ($l <= $ceiling) {
                     foreach ($nav as $index => $item) {
-                        if (preg_match('/^(mailto|https?)/', $item['path']) || (!isset($item['auto']) && !isset($routes[$item['path']]))) {
+                        if (preg_match('/^(mailto|https?)/', (string) $item['path']) || (!isset($item['auto']) && !isset($routes[$item['path']]))) {
                             if ($l === 1) {
                                 $nested[] = $item;
                             }
@@ -412,7 +405,7 @@ class Sites extends Koken_Controller
                         } else {
                             $r = false;
                         }
-                        if ((isset($item['auto']) && in_array($item['auto'], array('set', 'album'))) || ($r && isset($r['source']) && in_array($r['source'], array('set', 'album')))) {
+                        if ((isset($item['auto']) && in_array($item['auto'], ['set', 'album'])) || ($r && isset($r['source']) && in_array($r['source'], ['set', 'album']))) {
                             if (isset($item['auto'])) {
                                 $id = $item['id'];
 
@@ -421,8 +414,8 @@ class Sites extends Koken_Controller
                                 }
                             } else {
                                 foreach ($r['filters'] as $f) {
-                                    if (strpos($f, 'id=') === 0) {
-                                        $array = explode('=', $f);
+                                    if (str_starts_with((string) $f, 'id=')) {
+                                        $array = explode('=', (string) $f);
                                         $id = array_pop($array);
                                         break;
                                     }
@@ -507,36 +500,36 @@ class Sites extends Koken_Controller
                             }
 
                             if (!isset($item['label']) || empty($item['label'])) {
-                                $item['label'] = ucwords($item['id']) . ($item['id'] === 'google' ? '+' : '');
+                                $item['label'] = ucwords((string) $item['id']) . ($item['id'] === 'google' ? '+' : '');
                             }
                         } elseif ($item['auto'] === 'rss') {
                             $item['path'] = '/feed/' . $item['id'] . ($item['id'] === 'essay' ? 's' : '') . '/recent.rss';
                             if (!isset($item['label'])) {
                                 $item['label'] = $data['url_data'][$item['id']]['plural'] . ' RSS';
                             }
-                        } elseif (preg_match('/s$/', $item['auto']) || $item['auto'] === 'timeline') {
+                        } elseif (preg_match('/s$/', (string) $item['auto']) || $item['auto'] === 'timeline') {
                             if ($item['auto'] === 'timeline' && isset($item['year'])) {
                                 $item['path'] .= $item['year'] . '/';
                                 if (isset($item['month']) && $item['month'] !== false && $item['month'] !== 'any') {
-                                    $m = str_pad($item['month'], 2, '0', STR_PAD_LEFT);
+                                    $m = str_pad((string) $item['month'], 2, '0', STR_PAD_LEFT);
                                     $item['path'] .= $m . '/';
                                 }
                             }
 
-                            if (strpos($item['auto'], '_') !== false) {
-                                foreach (array('id', 'slug', 'month', 'year', 'day') as $id) {
+                            if (str_contains((string) $item['auto'], '_')) {
+                                foreach (['id', 'slug', 'month', 'year', 'day'] as $id) {
                                     if ($id === 'month') {
                                         if (!isset($item['month']) || $item['month'] === 'any' || $item['month'] === false) {
                                             $item['month'] = '';
                                         } else {
-                                            $item['month'] = str_pad($item['month'], 2, '0', STR_PAD_LEFT);
+                                            $item['month'] = str_pad((string) $item['month'], 2, '0', STR_PAD_LEFT);
                                         }
                                     }
                                     if ($id === 'day' && !isset($item['day'])) {
                                         $item['day'] = '';
                                     }
                                     if ($id === 'slug' && !isset($item['slug']) && isset($item['id'])) {
-                                        if (strpos($item['auto'], 'tag_') === 0) {
+                                        if (str_starts_with((string) $item['auto'], 'tag_')) {
                                             $item['slug'] = $item['id'];
                                         } else {
                                             $c = new Category();
@@ -553,7 +546,7 @@ class Sites extends Koken_Controller
                                     }
                                 }
                             } elseif (!isset($item['label'])) {
-                                $item['label'] = $data['url_data'][$item['auto'] === 'categories' ? 'category' : rtrim($item['auto'], 's')]['plural'];
+                                $item['label'] = $data['url_data'][$item['auto'] === 'categories' ? 'category' : rtrim((string) $item['auto'], 's')]['plural'];
                             }
                         } else {
                             if ($item['auto'] === 'home') {
@@ -616,7 +609,7 @@ class Sites extends Koken_Controller
                                 $c->select('id,slug,captured_on,title');
 
                                 if (isset($item['album_id'])) {
-                                    $item['path'] = preg_replace('/:(id|slug)/', ':album_$1', $data['urls']['album']) . substr(str_replace(':year/:month/', '', $data['urls']['content']), 1);
+                                    $item['path'] = preg_replace('/:(id|slug)/', ':album_$1', (string) $data['urls']['album']) . substr(str_replace(':year/:month/', '', $data['urls']['content']), 1);
 
                                     $a = new Album();
                                     $a->select('id,slug,created_on,title');
@@ -672,7 +665,7 @@ class Sites extends Koken_Controller
                         }
 
                         if ($item['auto'] !== 'profile') {
-                            $item['path'] = str_replace(array(':year', ':month'), '', $item['path']);
+                            $item['path'] = str_replace([':year', ':month'], '', $item['path']);
                             $item['path'] = preg_replace('/[\(\)\?\:]/', '', $item['path']);
                             $item['path'] = preg_replace('~[/]+~', '/', $item['path']);
                         }
@@ -701,7 +694,7 @@ class Sites extends Koken_Controller
             $paths = [];
 
             foreach ($template_info['routes'] as $path => $arr) {
-                $pages[] = array_merge(array('path' => (string) $path), $arr);
+                $pages[] = array_merge(['path' => (string) $path], $arr);
                 $paths[] = $path;
             }
 
@@ -718,15 +711,15 @@ class Sites extends Koken_Controller
                     }
                 }
 
-                list($template_info['settings'], $template_info['settings_flat']) = $this->_prep_options(
+                [$template_info['settings'], $template_info['settings_flat']] = $this->_prep_options(
                     $template_info['settings'],
-                    isset($draft->data['settings']) ? $draft->data['settings'] : array(),
-                    isset($template_info['style']) && isset($template_info['style']['variables']) ? $template_info['style']['variables'] : array(),
+                    $draft->data['settings'] ?? [],
+                    isset($template_info['style']) && isset($template_info['style']['variables']) ? $template_info['style']['variables'] : [],
                     $default_style_vars
                 );
 
                 if (isset($draft->data['settings']) && isset($draft->data['settings']['__style'])) {
-                    $template_info['settings_flat']['__style'] = array('value' => $draft->data['settings']['__style']);
+                    $template_info['settings_flat']['__style'] = ['value' => $draft->data['settings']['__style']];
                 }
             } else {
                 $template_info['settings'] = $template_info['settings_flat'] = [];
@@ -734,12 +727,12 @@ class Sites extends Koken_Controller
 
             if (isset($template_info['style']) && isset($template_info['style']['variables'])) {
                 foreach ($template_info['style']['variables'] as $key => &$varval) {
-                    if (preg_match('/#[a-z0-9]{3}$/i', $varval)) {
-                        $varval = $varval . substr($varval, 1);
+                    if (preg_match('/#[a-z0-9]{3}$/i', (string) $varval)) {
+                        $varval = $varval . substr((string) $varval, 1);
                     }
 
                     if (!isset($template_info['settings_flat'][$key])) {
-                        $template_info['settings_flat'][$key] = array( 'value' => $varval );
+                        $template_info['settings_flat'][$key] = ['value' => $varval];
                     }
                 }
             }
@@ -754,10 +747,7 @@ class Sites extends Koken_Controller
                     $val['source'] = 'archives';
                 }
 
-                $types[] = array(
-                    'path' => $key,
-                    'info' => $val
-                );
+                $types[] = ['path' => $key, 'info' => $val];
 
                 $names[] = $val['name'];
             }
@@ -771,7 +761,7 @@ class Sites extends Koken_Controller
             }
 
             $template_info['templates'] = $final;
-            $bools = array('site_hidpi');
+            $bools = ['site_hidpi'];
             foreach ($site as $s) {
                 $clean_key = preg_replace('/^site_/', '', $s->name);
                 if (isset($data[$clean_key])) {
@@ -785,14 +775,12 @@ class Sites extends Koken_Controller
                 $data[$clean_key] = $val;
             }
             $data['draft_id'] = $draft->id;
-            $data['theme'] = array(
-                'path' => isset($params['preview']) ? $params['preview'] : $draft->path
-            );
+            $data['theme'] = ['path' => $params['preview'] ?? $draft->path];
 
             unset($data['id']);
 
             foreach ($template_info as $key => $val) {
-                if (in_array($key, array('name', 'version', 'description', 'demo'))) {
+                if (in_array($key, ['name', 'version', 'description', 'demo'])) {
                     $data['theme'][$key] = $val;
                 } else {
                     $data[$key] = $val;
@@ -807,17 +795,9 @@ class Sites extends Koken_Controller
             unset($data['templates']);
             unset($data['routes']);
             $data['routes'] = $routes_tmp;
-            $data['templates'] = Shutter::filter('site.templates', array($templates_tmp));
+            $data['templates'] = Shutter::filter('site.templates', [$templates_tmp]);
 
-            $data['profile'] = array(
-                'name' => $user->public_display === 'both' ? $user->public_first_name . ' ' . $user->public_last_name : $user->{"public_{$user->public_display}_name"},
-                'first' => $user->public_first_name,
-                'last' => $user->public_last_name,
-                'email' => $user->public_email,
-                'twitter' => !empty($user->twitter) ? str_replace('@', '', $user->twitter) : '',
-                'facebook' => $user->facebook,
-                'google_plus' => $user->google
-            );
+            $data['profile'] = ['name' => $user->public_display === 'both' ? $user->public_first_name . ' ' . $user->public_last_name : $user->{"public_{$user->public_display}_name"}, 'first' => $user->public_first_name, 'last' => $user->public_last_name, 'email' => $user->public_email, 'twitter' => !empty($user->twitter) ? str_replace('@', '', $user->twitter) : '', 'facebook' => $user->facebook, 'google_plus' => $user->google];
 
             if (isset($draft->data['custom_css'])) {
                 $data['custom_css'] = $draft->data['custom_css'];
@@ -831,7 +811,7 @@ class Sites extends Koken_Controller
                 case 'put':
 
                     global $raw_input_data;
-                    $data = json_decode($raw_input_data['data'], true);
+                    $data = json_decode((string) $raw_input_data['data'], true);
 
                     if (isset($data['revert'])) {
                         if ($data['revert'] === 'all') {
@@ -873,7 +853,7 @@ class Sites extends Koken_Controller
                         }
 
                         if (isset($data['url_data_send'])) {
-                            $source = $data['url_data_send']['source'] === 'categories' ? 'category' : rtrim($data['url_data_send']['source'], 's');
+                            $source = $data['url_data_send']['source'] === 'categories' ? 'category' : rtrim((string) $data['url_data_send']['source'], 's');
                             $u = new Url();
                             $u->order_by('id DESC')->get();
                             $new_data = unserialize($u->data);

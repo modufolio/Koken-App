@@ -52,7 +52,7 @@ class Hash
     public static $portable_hashes;
     public static $random_state;
 
-    public function __construct($config = array())
+    public function __construct($config = [])
     {
         if (isset($config['iterations'])) {
             $iteration_count_log2 = $config['iterations'];
@@ -144,24 +144,24 @@ class Hash
     private static function crypt_private($password, $setting)
     {
         $output = '*0';
-        if (substr($setting, 0, 2) == $output) {
+        if (substr((string) $setting, 0, 2) == $output) {
             $output = '*1';
         }
 
-        $id = substr($setting, 0, 3);
+        $id = substr((string) $setting, 0, 3);
         # We use "$P$", phpBB3 uses "$H$" for the same thing
         if ($id != '$P$' && $id != '$H$') {
             return $output;
         }
 
-        $count_log2 = strpos(self::$itoa64, $setting[3]);
+        $count_log2 = strpos((string) self::$itoa64, (string) $setting[3]);
         if ($count_log2 < 7 || $count_log2 > 30) {
             return $output;
         }
 
         $count = 1 << $count_log2;
 
-        $salt = substr($setting, 4, 8);
+        $salt = substr((string) $setting, 4, 8);
         if (strlen($salt) != 8) {
             return $output;
         }
@@ -184,7 +184,7 @@ class Hash
             } while (--$count);
         }
 
-        $output = substr($setting, 0, 12);
+        $output = substr((string) $setting, 0, 12);
         $output .= self::encode64($hash, 16);
 
         return $output;
@@ -256,24 +256,24 @@ class Hash
         if (CRYPT_BLOWFISH == 1 && !self::$portable_hashes) {
             $random = self::get_random_bytes(16);
             $hash =
-                crypt($password, self::gensalt_blowfish($random));
+                crypt((string) $password, (string) self::gensalt_blowfish($random));
             if (strlen($hash) == 60) {
                 return $hash;
             }
         }
 
         if (CRYPT_EXT_DES == 1 && !self::$portable_hashes) {
-            if (strlen($random) < 3) {
+            if (strlen((string) $random) < 3) {
                 $random = self::get_random_bytes(3);
             }
             $hash =
-                crypt($password, self::gensalt_extended($random));
+                crypt((string) $password, (string) self::gensalt_extended($random));
             if (strlen($hash) == 20) {
                 return $hash;
             }
         }
 
-        if (strlen($random) < 6) {
+        if (strlen((string) $random) < 6) {
             $random = self::get_random_bytes(6);
         }
         $hash =
@@ -281,7 +281,7 @@ class Hash
                 $password,
                 self::gensalt_private($random)
             );
-        if (strlen($hash) == 34) {
+        if (strlen((string) $hash) == 34) {
             return $hash;
         }
 
@@ -295,7 +295,7 @@ class Hash
     {
         $hash = self::crypt_private($password, $stored_hash);
         if ($hash[0] == '*') {
-            $hash = crypt($password, $stored_hash);
+            $hash = crypt((string) $password, (string) $stored_hash);
         }
 
         return $hash == $stored_hash;

@@ -33,7 +33,6 @@ class CI_Form_validation
 {
     protected $CI;
     protected $_field_data			= [];
-    protected $_config_rules		= [];
     protected $_error_array			= [];
     protected $_error_messages		= [];
     protected $_error_prefix		= '<p>';
@@ -44,12 +43,9 @@ class CI_Form_validation
     /**
      * Constructor
      */
-    public function __construct($rules = array())
+    public function __construct(protected $_config_rules = [])
     {
         $this->CI =& get_instance();
-
-        // Validation rules can be stored in a config file.
-        $this->_config_rules = $rules;
 
         // Automatically load the form helper
         $this->CI->load->helper('form');
@@ -111,7 +107,7 @@ class CI_Form_validation
         // Is the field name an array?  We test for the existence of a bracket "[" in
         // the field name to determine this.  If it is an array, we break it apart
         // into its components so that we can fetch the corresponding POST data later
-        if (strpos($field, '[') !== false and preg_match_all('/\[(.*?)\]/', $field, $matches)) {
+        if (str_contains($field, '[') and preg_match_all('/\[(.*?)\]/', $field, $matches)) {
             // Note: Due to a bug in current() that affects some versions
             // of PHP we can not pass function call directly into it
             $x = explode('[', $field);
@@ -130,15 +126,7 @@ class CI_Form_validation
         }
 
         // Build our master array
-        $this->_field_data[$field] = array(
-            'field'				=> $field,
-            'label'				=> $label,
-            'rules'				=> $rules,
-            'is_array'			=> $is_array,
-            'keys'				=> $indexes,
-            'postdata'			=> null,
-            'error'				=> ''
-        );
+        $this->_field_data[$field] = ['field'				=> $field, 'label'				=> $label, 'rules'				=> $rules, 'is_array'			=> $is_array, 'keys'				=> $indexes, 'postdata'			=> null, 'error'				=> ''];
 
         return $this;
     }
@@ -159,7 +147,7 @@ class CI_Form_validation
     public function set_message($lang, $val = '')
     {
         if (! is_array($lang)) {
-            $lang = array($lang => $val);
+            $lang = [$lang => $val];
         }
 
         $this->_error_messages = array_merge($this->_error_messages, $lang);
@@ -279,7 +267,7 @@ class CI_Form_validation
             }
 
             // Is there a validation rule for the particular URI being accessed?
-            $uri = ($group == '') ? trim($this->CI->uri->ruri_string(), '/') : $group;
+            $uri = ($group == '') ? trim((string) $this->CI->uri->ruri_string(), '/') : $group;
 
             if ($uri != '' and isset($this->_config_rules[$uri])) {
                 $this->set_rules($this->_config_rules[$uri]);
@@ -311,7 +299,7 @@ class CI_Form_validation
                 }
             }
 
-            $this->_execute($row, explode('|', $row['rules']), $this->_field_data[$field]['postdata']);
+            $this->_execute($row, explode('|', (string) $row['rules']), $this->_field_data[$field]['postdata']);
         }
 
         // Did we end up with any errors?
@@ -437,7 +425,7 @@ class CI_Form_validation
             // Before we bail out, does the rule contain a callback?
             if (preg_match("/(callback_\w+(\[.*?\])?)/", implode(' ', $rules), $match)) {
                 $callback = true;
-                $rules = (array('1' => $match[1]));
+                $rules = (['1' => $match[1]]);
             } else {
                 return;
             }
@@ -498,15 +486,15 @@ class CI_Form_validation
 
             // Is the rule a callback?
             $callback = false;
-            if (substr($rule, 0, 9) == 'callback_') {
-                $rule = substr($rule, 9);
+            if (str_starts_with((string) $rule, 'callback_')) {
+                $rule = substr((string) $rule, 9);
                 $callback = true;
             }
 
             // Strip the parameter (if exists) from the rule
             // Rules can contain a parameter: max_length[5]
             $param = false;
-            if (preg_match("/(.*?)\[(.*)\]/", $rule, $match)) {
+            if (preg_match("/(.*?)\[(.*)\]/", (string) $rule, $match)) {
                 $rule	= $match[1];
                 $param	= $match[2];
             }
@@ -603,9 +591,9 @@ class CI_Form_validation
     {
         // Do we need to translate the field name?
         // We look for the prefix lang: to determine this
-        if (substr($fieldname, 0, 5) == 'lang:') {
+        if (str_starts_with((string) $fieldname, 'lang:')) {
             // Grab the variable
-            $line = substr($fieldname, 5);
+            $line = substr((string) $fieldname, 5);
 
             // Were we able to translate the field name?  If not we use $line
             if (false === ($fieldname = $this->CI->lang->line($line))) {
@@ -767,7 +755,7 @@ class CI_Form_validation
     public function required($str)
     {
         if (! is_array($str)) {
-            return (trim($str) == '') ? false : true;
+            return (trim((string) $str) == '') ? false : true;
         } else {
             return (! empty($str));
         }
@@ -785,7 +773,7 @@ class CI_Form_validation
      */
     public function regex_match($str, $regex)
     {
-        if (! preg_match($regex, $str)) {
+        if (! preg_match($regex, (string) $str)) {
             return false;
         }
 
@@ -825,8 +813,8 @@ class CI_Form_validation
      */
     public function is_unique($str, $field)
     {
-        list($table, $field)=explode('.', $field);
-        $query = $this->CI->db->limit(1)->get_where($table, array($field => $str));
+        [$table, $field]=explode('.', (string) $field);
+        $query = $this->CI->db->limit(1)->get_where($table, [$field => $str]);
 
         return $query->num_rows() === 0;
     }
@@ -843,15 +831,15 @@ class CI_Form_validation
      */
     public function min_length($str, $val)
     {
-        if (preg_match("/[^0-9]/", $val)) {
+        if (preg_match("/[^0-9]/", (string) $val)) {
             return false;
         }
 
         if (function_exists('mb_strlen')) {
-            return (mb_strlen($str) < $val) ? false : true;
+            return (mb_strlen((string) $str) < $val) ? false : true;
         }
 
-        return (strlen($str) < $val) ? false : true;
+        return (strlen((string) $str) < $val) ? false : true;
     }
 
     // --------------------------------------------------------------------
@@ -866,15 +854,15 @@ class CI_Form_validation
      */
     public function max_length($str, $val)
     {
-        if (preg_match("/[^0-9]/", $val)) {
+        if (preg_match("/[^0-9]/", (string) $val)) {
             return false;
         }
 
         if (function_exists('mb_strlen')) {
-            return (mb_strlen($str) > $val) ? false : true;
+            return (mb_strlen((string) $str) > $val) ? false : true;
         }
 
-        return (strlen($str) > $val) ? false : true;
+        return (strlen((string) $str) > $val) ? false : true;
     }
 
     // --------------------------------------------------------------------
@@ -889,15 +877,15 @@ class CI_Form_validation
      */
     public function exact_length($str, $val)
     {
-        if (preg_match("/[^0-9]/", $val)) {
+        if (preg_match("/[^0-9]/", (string) $val)) {
             return false;
         }
 
         if (function_exists('mb_strlen')) {
-            return (mb_strlen($str) != $val) ? false : true;
+            return (mb_strlen((string) $str) != $val) ? false : true;
         }
 
-        return (strlen($str) != $val) ? false : true;
+        return (strlen((string) $str) != $val) ? false : true;
     }
 
     // --------------------------------------------------------------------
@@ -911,7 +899,7 @@ class CI_Form_validation
      */
     public function valid_email($str)
     {
-        return (! preg_match("/^([a-z0-9\+_\-]+)(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,6}$/ix", $str)) ? false : true;
+        return (! preg_match("/^([a-z0-9\+_\-]+)(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,6}$/ix", (string) $str)) ? false : true;
     }
 
     // --------------------------------------------------------------------
@@ -925,11 +913,11 @@ class CI_Form_validation
      */
     public function valid_emails($str)
     {
-        if (strpos($str, ',') === false) {
-            return $this->valid_email(trim($str));
+        if (!str_contains((string) $str, ',')) {
+            return $this->valid_email(trim((string) $str));
         }
 
-        foreach (explode(',', $str) as $email) {
+        foreach (explode(',', (string) $str) as $email) {
             if (trim($email) != '' && $this->valid_email(trim($email)) === false) {
                 return false;
             }
@@ -964,7 +952,7 @@ class CI_Form_validation
      */
     public function alpha($str)
     {
-        return (! preg_match("/^([a-z])+$/i", $str)) ? false : true;
+        return (! preg_match("/^([a-z])+$/i", (string) $str)) ? false : true;
     }
 
     // --------------------------------------------------------------------
@@ -978,7 +966,7 @@ class CI_Form_validation
      */
     public function alpha_numeric($str)
     {
-        return (! preg_match("/^([a-z0-9])+$/i", $str)) ? false : true;
+        return (! preg_match("/^([a-z0-9])+$/i", (string) $str)) ? false : true;
     }
 
     // --------------------------------------------------------------------
@@ -992,7 +980,7 @@ class CI_Form_validation
      */
     public function alpha_dash($str)
     {
-        return (! preg_match("/^([-a-z0-9_-])+$/i", $str)) ? false : true;
+        return (! preg_match("/^([-a-z0-9_-])+$/i", (string) $str)) ? false : true;
     }
 
     // --------------------------------------------------------------------
@@ -1006,7 +994,7 @@ class CI_Form_validation
      */
     public function numeric($str)
     {
-        return (bool)preg_match('/^[\-+]?[0-9]*\.?[0-9]+$/', $str);
+        return (bool)preg_match('/^[\-+]?[0-9]*\.?[0-9]+$/', (string) $str);
     }
 
     // --------------------------------------------------------------------
@@ -1034,7 +1022,7 @@ class CI_Form_validation
      */
     public function integer($str)
     {
-        return (bool) preg_match('/^[\-+]?[0-9]+$/', $str);
+        return (bool) preg_match('/^[\-+]?[0-9]+$/', (string) $str);
     }
 
     // --------------------------------------------------------------------
@@ -1048,7 +1036,7 @@ class CI_Form_validation
      */
     public function decimal($str)
     {
-        return (bool) preg_match('/^[\-+]?[0-9]+\.[0-9]+$/', $str);
+        return (bool) preg_match('/^[\-+]?[0-9]+\.[0-9]+$/', (string) $str);
     }
 
     // --------------------------------------------------------------------
@@ -1096,7 +1084,7 @@ class CI_Form_validation
      */
     public function is_natural($str)
     {
-        return (bool) preg_match('/^[0-9]+$/', $str);
+        return (bool) preg_match('/^[0-9]+$/', (string) $str);
     }
 
     // --------------------------------------------------------------------
@@ -1110,7 +1098,7 @@ class CI_Form_validation
      */
     public function is_natural_no_zero($str)
     {
-        if (! preg_match('/^[0-9]+$/', $str)) {
+        if (! preg_match('/^[0-9]+$/', (string) $str)) {
             return false;
         }
 
@@ -1135,7 +1123,7 @@ class CI_Form_validation
      */
     public function valid_base64($str)
     {
-        return (bool) ! preg_match('/[^a-zA-Z0-9\/\+=]/', $str);
+        return (bool) ! preg_match('/[^a-zA-Z0-9\/\+=]/', (string) $str);
     }
 
     // --------------------------------------------------------------------
@@ -1164,7 +1152,7 @@ class CI_Form_validation
             return $data;
         }
 
-        return str_replace(array("'", '"', '<', '>'), array("&#39;", "&quot;", '&lt;', '&gt;'), stripslashes($data));
+        return str_replace(["'", '"', '<', '>'], ["&#39;", "&quot;", '&lt;', '&gt;'], stripslashes((string) $data));
     }
 
     // --------------------------------------------------------------------
@@ -1182,7 +1170,7 @@ class CI_Form_validation
             return '';
         }
 
-        if (substr($str, 0, 7) != 'http://' && substr($str, 0, 8) != 'https://') {
+        if (!str_starts_with((string) $str, 'http://') && !str_starts_with((string) $str, 'https://')) {
             $str = 'http://'.$str;
         }
 
@@ -1228,7 +1216,7 @@ class CI_Form_validation
      */
     public function encode_php_tags($str)
     {
-        return str_replace(array('<?php', '<?PHP', '<?', '?>'), array('&lt;?php', '&lt;?PHP', '&lt;?', '?&gt;'), $str);
+        return str_replace(['<?php', '<?PHP', '<?', '?>'], ['&lt;?php', '&lt;?PHP', '&lt;?', '?&gt;'], $str);
     }
 }
 // END Form Validation Class

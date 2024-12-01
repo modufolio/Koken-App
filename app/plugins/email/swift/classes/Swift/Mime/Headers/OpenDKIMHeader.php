@@ -23,21 +23,19 @@ class Swift_Mime_Headers_OpenDKIMHeader implements Swift_Mime_Header
     private $_value;
 
     /**
-     * The name of this Header
-     * @var string
-     */
-    private $_fieldName;
-
-    /**
      * Creates a new SimpleHeader with $name.
      *
-     * @param string                   $name
+     * @param string $_fieldName
      * @param Swift_Mime_HeaderEncoder $encoder
      * @param Swift_Mime_Grammar       $grammar
      */
-    public function __construct($name)
+    public function __construct(
+        /**
+         * The name of this Header
+         */
+        private $_fieldName
+    )
     {
-        $this->_fieldName = $name;
     }
 
     /**
@@ -48,6 +46,7 @@ class Swift_Mime_Headers_OpenDKIMHeader implements Swift_Mime_Header
      *
      * @return int
      */
+    #[\Override]
     public function getFieldType()
     {
         return self::TYPE_TEXT;
@@ -60,6 +59,7 @@ class Swift_Mime_Headers_OpenDKIMHeader implements Swift_Mime_Header
      *
      * @param string $model
      */
+    #[\Override]
     public function setFieldBodyModel($model)
     {
         $this->setValue($model);
@@ -72,6 +72,7 @@ class Swift_Mime_Headers_OpenDKIMHeader implements Swift_Mime_Header
      *
      * @return string
      */
+    #[\Override]
     public function getFieldBodyModel()
     {
         return $this->getValue();
@@ -102,6 +103,7 @@ class Swift_Mime_Headers_OpenDKIMHeader implements Swift_Mime_Header
      *
      * @return string
      */
+    #[\Override]
     public function getFieldBody()
     {
         return $this->_value;
@@ -112,6 +114,7 @@ class Swift_Mime_Headers_OpenDKIMHeader implements Swift_Mime_Header
      *
      * @return string
      */
+    #[\Override]
     public function toString()
     {
         return $this->_fieldName.': '.$this->_value;
@@ -121,6 +124,7 @@ class Swift_Mime_Headers_OpenDKIMHeader implements Swift_Mime_Header
      * Set the Header FieldName
      * @see Swift_Mime_Header::getFieldName()
      */
+    #[\Override]
     public function getFieldName()
     {
         return $this->_fieldName;
@@ -129,6 +133,7 @@ class Swift_Mime_Headers_OpenDKIMHeader implements Swift_Mime_Header
     /**
      * Ignored
      */
+    #[\Override]
     public function setCharset($charset)
     {
     }

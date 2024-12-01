@@ -24,7 +24,7 @@ class Favorites extends Koken_Controller
             switch ($this->method) {
                 case 'put':
                     if (isset($params['order'])) {
-                        $ids = explode(',', $params['order']);
+                        $ids = explode(',', (string) $params['order']);
                         $new_order_map = [];
 
                         foreach ($ids as $key => $val) {
@@ -44,13 +44,13 @@ class Favorites extends Koken_Controller
                 case 'post':
                 case 'delete':
                     if (is_numeric($id)) {
-                        $id = array($id);
+                        $id = [$id];
                     } else {
-                        $id = explode(',', $id);
+                        $id = explode(',', (string) $id);
                     }
 
                     if ($this->method == 'delete') {
-                        $c->where_in('id', $id)->update(array( 'favorite' => 0, 'favorite_order' => null, 'favorited_on' => null ));
+                        $c->where_in('id', $id)->update(['favorite' => 0, 'favorite_order' => null, 'favorited_on' => null]);
                     } else {
                         $max = $c->select_func('max', '@favorite_order', 'max_favorite')->where('favorite', 1)->get();
                         if (!is_numeric($max->max_favorite)) {
@@ -59,7 +59,7 @@ class Favorites extends Koken_Controller
                             $max_order = $max->max_favorite;
                         }
                         foreach ($id as $i) {
-                            $c->where('id', $i)->update(array( 'favorite' => 1, 'favorite_order' => $max_order++, 'favorited_on' => strtotime(gmdate('Y-m-d H:i:s')) ));
+                            $c->where('id', $i)->update(['favorite' => 1, 'favorite_order' => $max_order++, 'favorited_on' => strtotime(gmdate('Y-m-d H:i:s'))]);
                         }
                     }
 
@@ -78,11 +78,7 @@ class Favorites extends Koken_Controller
 
         $sort = $c2->_get_site_order('favorite');
 
-        $options = array(
-            'order_by' => $sort['by'],
-            'order_direction' => $sort['direction'],
-            'favorite' => true
-        );
+        $options = ['order_by' => $sort['by'], 'order_direction' => $sort['direction'], 'favorite' => true];
 
         $params = array_merge($options, $params);
         if ($params['order_by'] === 'manual') {

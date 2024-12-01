@@ -40,7 +40,7 @@ class DMZ_SimpleCache
         // get the arguments, but pop the object.
         $args = func_get_args();
         array_shift($args);
-        call_user_func_array(array($object, 'get'), $args);
+        call_user_func_array($object->get(...), $args);
         $object->db->cache_off();
         return $object;
     }
@@ -56,7 +56,7 @@ class DMZ_SimpleCache
         $args = func_get_args();
         array_shift($args);
         if (! empty($args)) {
-            call_user_func_array(array($object->db, 'cache_delete'), $args);
+            call_user_func_array($object->db->cache_delete(...), $args);
         } else {
             $object->_should_delete_cache = true;
         }

@@ -95,7 +95,7 @@ if (! function_exists('elements')) {
         $return = [];
 
         if (! is_array($items)) {
-            $items = array($items);
+            $items = [$items];
         }
 
         foreach ($items as $item) {

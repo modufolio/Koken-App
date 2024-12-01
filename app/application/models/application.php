@@ -2,9 +2,7 @@
 
 class Application extends DataMapper
 {
-    public array $has_one = array(
-        'user'
-    );
+    public array $has_one = ['user'];
 }
 
 /* End of file application.php */

@@ -14,6 +14,7 @@ class GenericExtraField extends AbstractExtraField
     /**
      * @return string The version of the field for the Local Header.
      */
+    #[\Override]
     public function getLocalField()
     {
         return parent::encodeField($this->header, $this->localData);
@@ -22,6 +23,7 @@ class GenericExtraField extends AbstractExtraField
     /**
      * @return string The version of the field for the Central Header.
      */
+    #[\Override]
     public function getCentralField()
     {
         if ($this->centralData != null) {

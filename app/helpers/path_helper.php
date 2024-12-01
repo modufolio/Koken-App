@@ -44,7 +44,7 @@ if (! function_exists('set_realpath')) {
     function set_realpath($path, $check_existance = false)
     {
         // Security check to make sure the path is NOT a URL.  No remote file inclusion!
-        if (preg_match("#^(http:\/\/|https:\/\/|www\.|ftp|[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})#i", $path)) {
+        if (preg_match("#^(http:\/\/|https:\/\/|www\.|ftp|[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})#i", (string) $path)) {
             show_error('The path you submitted must be a local server path, not a URL');
         }
 
@@ -54,7 +54,7 @@ if (! function_exists('set_realpath')) {
         }
 
         // Add a trailing slash
-        $path = preg_replace("#([^/])/*$#", "\\1/", $path);
+        $path = preg_replace("#([^/])/*$#", "\\1/", (string) $path);
 
         // Make sure the path exists
         if ($check_existance == true) {

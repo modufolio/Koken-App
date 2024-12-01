@@ -63,14 +63,7 @@ class CI_DB_sqlsrv_driver extends CI_DB
         // Check for a UTF-8 charset being passed as CI's default 'utf8'.
         $character_set = (0 === strcasecmp('utf8', $this->char_set)) ? 'UTF-8' : $this->char_set;
 
-        $connection = array(
-            'UID'				=> empty($this->username) ? '' : $this->username,
-            'PWD'				=> empty($this->password) ? '' : $this->password,
-            'Database'			=> $this->database,
-            'ConnectionPooling' => $pooling ? 1 : 0,
-            'CharacterSet'		=> $character_set,
-            'ReturnDatesAsStrings' => 1
-        );
+        $connection = ['UID'				=> empty($this->username) ? '' : $this->username, 'PWD'				=> empty($this->password) ? '' : $this->password, 'Database'			=> $this->database, 'ConnectionPooling' => $pooling ? 1 : 0, 'CharacterSet'		=> $character_set, 'ReturnDatesAsStrings' => 1];
 
         // If the username and password are both empty, assume this is a
         // 'Windows Authentication Mode' connection.
@@ -151,10 +144,7 @@ class CI_DB_sqlsrv_driver extends CI_DB
     public function _execute($sql)
     {
         $sql = $this->_prep_query($sql);
-        return sqlsrv_query($this->conn_id, $sql, null, array(
-            'Scrollable'				=> SQLSRV_CURSOR_STATIC,
-            'SendStreamParamsAtExec'	=> true
-        ));
+        return sqlsrv_query($this->conn_id, $sql, null, ['Scrollable'				=> SQLSRV_CURSOR_STATIC, 'SendStreamParamsAtExec'	=> true]);
     }
 
     // --------------------------------------------------------------------
@@ -422,7 +412,7 @@ class CI_DB_sqlsrv_driver extends CI_DB
     public function _error_number()
     {
         $error = array_shift(sqlsrv_errors());
-        return isset($error['SQLSTATE']) ? $error['SQLSTATE'] : null;
+        return $error['SQLSTATE'] ?? null;
     }
 
     // --------------------------------------------------------------------
@@ -472,7 +462,7 @@ class CI_DB_sqlsrv_driver extends CI_DB
     public function _from_tables($tables)
     {
         if (! is_array($tables)) {
-            $tables = array($tables);
+            $tables = [$tables];
         }
 
         return implode(', ', $tables);
@@ -573,7 +563,7 @@ class CI_DB_sqlsrv_driver extends CI_DB
     {
         $i = $limit + $offset;
 
-        return preg_replace('/(^\SELECT (DISTINCT)?)/i', '\\1 TOP '.$i.' ', $sql);
+        return preg_replace('/(^\SELECT (DISTINCT)?)/i', '\\1 TOP '.$i.' ', (string) $sql);
     }
 
     // --------------------------------------------------------------------

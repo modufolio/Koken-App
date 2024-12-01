@@ -41,7 +41,7 @@ class A
      * @param mixed ...$args Parameters to pass to the closures
      * @return array
      */
-    public static function apply(array $array, ...$args): array
+    public static function apply(array $array, mixed ...$args): array
     {
         array_walk_recursive($array, function (&$item) use ($args) {
             if (is_a($item, 'Closure')) {
@@ -184,7 +184,7 @@ class A
      *                    fill the array
      * @return array The filled-up result array
      */
-    public static function fill(array $array, int $limit, $fill = 'placeholder'): array
+    public static function fill(array $array, int $limit, mixed $fill = 'placeholder'): array
     {
         for ($x = count($array); $x < $limit; $x++) {
             $array[] = is_callable($fill) ? $fill($x) : $fill;
@@ -228,7 +228,7 @@ class A
      *                       returned if no element has been found
      * @return mixed
      */
-    public static function get(array $array, $key, $default = null)
+    public static function get(array $array, mixed $key, mixed $default = null)
     {
         // return the entire array if the key is null
         if ($key === null) {
@@ -249,8 +249,8 @@ class A
         }
 
         // extract data from nested array structures using the dot notation
-        if (str_contains($key, '.')) {
-            $keys     = explode('.', $key);
+        if (str_contains((string) $key, '.')) {
+            $keys     = explode('.', (string) $key);
             $firstKey = array_shift($keys);
 
             // if the input array also uses dot notation, try to find a subset of the $keys
@@ -309,11 +309,10 @@ class A
      * Checks if array has a value
      *
      * @param array $array
-     * @param mixed $value
      * @param bool $strict
      * @return bool
      */
-    public static function has(array $array, $value, bool $strict = false): bool
+    public static function has(array $array, mixed $value, bool $strict = false): bool
     {
         return in_array($value, $array, $strict);
     }
@@ -346,11 +345,9 @@ class A
     }
 
     /**
-     * @param mixed $value
-     * @param mixed $separator
      * @return string
      */
-    public static function join($value, $separator = ', '): string
+    public static function join(mixed $value, mixed $separator = ', '): string
     {
         if (is_string($value) === true) {
             return $value;
@@ -584,7 +581,7 @@ class A
      * @param array $keys List of keys to use sorted from the topmost level
      * @return array|mixed Nested array or (if `$keys` is empty) the input `$value`
      */
-    public static function nestByKeys($value, array $keys)
+    public static function nestByKeys(mixed $value, array $keys)
     {
         // shift off the first key from the list
         $firstKey = array_shift($keys);
@@ -675,10 +672,9 @@ class A
      *
      * @param array $array
      * @param callable $callback
-     * @param mixed $initial
      * @return mixed
      */
-    public static function reduce(array $array, callable $callback, $initial = null): mixed
+    public static function reduce(array $array, callable $callback, mixed $initial = null): mixed
     {
         return array_reduce($array, $callback, $initial);
     }
@@ -847,9 +843,7 @@ class A
             $keys = static::wrap($keys);
         }
 
-        return static::filter($array, function ($value, $key) use ($keys) {
-            return in_array($key, $keys, true) === false;
-        });
+        return static::filter($array, fn($value, $key) => in_array($key, $keys, true) === false);
     }
 
     /**
