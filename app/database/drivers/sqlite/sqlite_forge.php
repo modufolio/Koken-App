@@ -139,7 +139,7 @@ class CI_DB_sqlite_forge extends CI_DB_forge
                 if (is_array($key)) {
                     $key = $this->db->_protect_identifiers($key);
                 } else {
-                    $key = array($this->db->_protect_identifiers($key));
+                    $key = [$this->db->_protect_identifiers($key)];
                 }
 
                 $sql .= ",\n\tUNIQUE (" . implode(', ', $key) . ")";
@@ -166,7 +166,7 @@ class CI_DB_sqlite_forge extends CI_DB_forge
         if ($this->db->db_debug) {
             return $this->db->display_error('db_unsuported_feature');
         }
-        return array();
+        return [];
     }
 
     // --------------------------------------------------------------------

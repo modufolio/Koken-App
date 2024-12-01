@@ -26,6 +26,7 @@ class Swift_StreamFilters_StringReplacementFilterFactory implements Swift_Replac
      *
      * @return Swift_StreamFilter
      */
+    #[\Override]
     public function createFilter($search, $replace)
     {
         if (!isset($this->_filters[$search][$replace])) {

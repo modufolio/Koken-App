@@ -13,7 +13,7 @@ class KokenAPI
 
         $this->curl = curl_init();
 
-        $this->protocol = (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) !== 'off') ||
+        $this->protocol = (!empty($_SERVER['HTTPS']) && strtolower((string) $_SERVER['HTTPS']) !== 'off') ||
             $_SERVER['SERVER_PORT'] == 443 ||
             (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') ? 'https' : 'http';
     }
@@ -25,13 +25,9 @@ class KokenAPI
         $cache = Shutter::get_cache('api/' . $url);
 
         if ($cache) {
-            $data = json_decode($cache['data'], true);
+            $data = json_decode((string) $cache['data'], true);
         } else {
-            $headers = array(
-                'Connection: Keep-Alive',
-                'Keep-Alive: 2',
-                'Cache-Control: must-revalidate'
-            );
+            $headers = ['Connection: Keep-Alive', 'Keep-Alive: 2', 'Cache-Control: must-revalidate'];
 
             if (LOOPBACK_HOST_HEADER) {
                 $host = $_SERVER['SERVER_ADDR'] . ':' . $_SERVER['SERVER_PORT'];
@@ -40,7 +36,7 @@ class KokenAPI
                 $host = $_SERVER['HTTP_HOST'];
             }
 
-            $url = $this->protocol . '://' . $host . preg_replace('~/(app/site/site|(api|i|a))\.php.*~', "/api.php?$url", $_SERVER['SCRIPT_NAME']);
+            $url = $this->protocol . '://' . $host . preg_replace('~/(app/site/site|(api|i|a))\.php.*~', "/api.php?$url", (string) $_SERVER['SCRIPT_NAME']);
 
             curl_setopt($this->curl, CURLOPT_URL, $url);
             curl_setopt($this->curl, CURLOPT_HEADER, 0);

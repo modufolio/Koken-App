@@ -37,9 +37,9 @@
         $this->db->query("ALTER TABLE {$c->table} CHANGE tags tags_old TEXT");
         $this->db->query("ALTER TABLE {$t->table} CHANGE tags tags_old TEXT");
 
-        $a->where('tags_old', null)->update(array('tags_migrated' => 1));
-        $c->where('tags_old', null)->update(array('tags_migrated' => 1));
-        $t->where('tags_old', null)->update(array('tags_migrated' => 1));
+        $a->where('tags_old', null)->update(['tags_migrated' => 1]);
+        $c->where('tags_old', null)->update(['tags_migrated' => 1]);
+        $t->where('tags_old', null)->update(['tags_migrated' => 1]);
     }
 
     $done = true;

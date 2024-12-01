@@ -4,18 +4,10 @@ require_once 'RelativePath.php';
 $docRoot = $_SERVER["DOCUMENT_ROOT"] . "/";
 
 if (!empty($_POST['path'])) {
-    $paths = array(stripslashes($_POST['path']));
+    $paths = [stripslashes((string) $_POST['path'])];
 } else {
     // These paths are designed to be as insane as reasonably possible. Do not try to make much sense of them please :)
-    $paths = array(
-    "../testdir/subdir/anotherdir\\testfile.html",
-    $docRoot . "/../../home/./John Doe/work/site/test/../../www/Project.1",
-    $docRoot . "/../../../../../../../../home//./\\\\/John Doe/work\\site/test/../../www/Project.1",
-    "../../../home/./John Doe/work/site/test/../../www/Project.1/",
-    "../../../home/./John Doe/work/site/test/../../www/Project.1/" . "/../Project.2/index.html",
-    "./././../../../../../../../../../home/./John Doe/work/site/test/../../www/Project.1" . "/" . "../Project.2/index.html",
-    "../../home/../../../John Doe/work/site/test/../../www/Project.1" . "/" . "../Project.2/index.html/../",
-    "/media/Projects/www/test/images/../../home/../../../John Doe/work/site/test.2/../../www/Project.1");
+    $paths = ["../testdir/subdir/anotherdir\\testfile.html", $docRoot . "/../../home/./John Doe/work/site/test/../../www/Project.1", $docRoot . "/../../../../../../../../home//./\\\\/John Doe/work\\site/test/../../www/Project.1", "../../../home/./John Doe/work/site/test/../../www/Project.1/", "../../../home/./John Doe/work/site/test/../../www/Project.1/" . "/../Project.2/index.html", "./././../../../../../../../../../home/./John Doe/work/site/test/../../www/Project.1" . "/" . "../Project.2/index.html", "../../home/../../../John Doe/work/site/test/../../www/Project.1" . "/" . "../Project.2/index.html/../", "/media/Projects/www/test/images/../../home/../../../John Doe/work/site/test.2/../../www/Project.1"];
 }
 
 /**
@@ -28,12 +20,12 @@ if (!empty($_POST['path'])) {
  */
 function execTime($function, $title="", $iterations = 100000)
 {
-    list($usec, $sec) = explode(" ", microtime());
+    [$usec, $sec] = explode(" ", microtime());
     $t1 = ($sec+$usec) * 1000;
     for ($i = 0 ; $i < $iterations ; $i++) {
         $function();
     }
-    list($usec, $sec) = explode(" ", microtime());
+    [$usec, $sec] = explode(" ", microtime());
     $t2 = ($sec+$usec) * 1000;
     $t2 = $t2 - $t1;
     if (!empty($title)) {
@@ -83,7 +75,7 @@ print "<p>docRoot: $docRoot</p>\n";
 <form method="post">
 <p>Path:<br />
 <input type="text" size="120" name="path"
-	value="<?php echo stripslashes($_POST['path']); ?>" /></p>
+	value="<?php echo stripslashes((string) $_POST['path']); ?>" /></p>
 <p><input type="submit" /></p>
 </form>
 <dl>

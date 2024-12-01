@@ -61,7 +61,7 @@ class Mcurl
     }
 
     // method to add curl requests to the multi request queue
-    public function add_call($key=null, $method, $url, $params = array(), $options = array())
+    public function add_call($method, $url, $key=null, $params = [], $options = [])
     {
         if (is_null($key)) {
             $key = count($this->calls);
@@ -75,15 +75,7 @@ class Mcurl
             $this->curl_parent = curl_multi_init();
         }
 
-        $this->calls [$key]= array(
-            "method" => $method,
-            "url" => $url,
-            "params" => $params,
-            "options" => $options,
-            "curl" => null,
-            "response" => null,
-            "error" => null
-        );
+        $this->calls [$key]= ["method" => $method, "url" => $url, "params" => $params, "options" => $options, "curl" => null, "response" => null, "error" => null];
 
         $this->calls[$key]["curl"] = curl_init();
 
@@ -92,7 +84,7 @@ class Mcurl
             $params = http_build_query($params, null, '&');
         }
 
-        $method = strtoupper($method);
+        $method = strtoupper((string) $method);
 
         // only supports get/post requests
         // set some special curl opts for each type of request
@@ -154,7 +146,7 @@ class Mcurl
             if (!is_null($call["error"])) {
                 echo '<p style="color:red;">error: <b>'.$call["error"].'</b></p>';
             }
-            echo '<textarea cols="100" rows="10">'.htmlentities($call["response"])."</textarea><hr>";
+            echo '<textarea cols="100" rows="10">'.htmlentities((string) $call["response"])."</textarea><hr>";
         }
     }
 }

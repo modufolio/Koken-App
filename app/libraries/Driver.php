@@ -42,7 +42,7 @@ class CI_Driver_Library
     public function __get($child)
     {
         if (! isset($this->lib_name)) {
-            $this->lib_name = get_class($this);
+            $this->lib_name = static::class;
         }
 
         // The class will be prefixed with the parent lib
@@ -58,7 +58,7 @@ class CI_Driver_Library
                 // check application path first
                 foreach (get_instance()->load->get_package_paths(true) as $path) {
                     // loves me some nesting!
-                    foreach (array(ucfirst($driver_name), $driver_name) as $class) {
+                    foreach ([ucfirst($driver_name), $driver_name] as $class) {
                         $filepath = $path.'libraries/'.$lib_name.'/drivers/'.$class.'.php';
 
                         if (file_exists($filepath)) {
@@ -127,7 +127,7 @@ class CI_Driver
         // Lock down attributes to what is defined in the class
         // and speed up references in magic methods
 
-        $class_name = get_class($parent);
+        $class_name = $parent::class;
 
         if (! isset(self::$reflections[$class_name])) {
             $r = new ReflectionObject($parent);
@@ -144,9 +144,9 @@ class CI_Driver
                 }
             }
 
-            self::$reflections[$class_name] = array($this->methods, $this->properties);
+            self::$reflections[$class_name] = [$this->methods, $this->properties];
         } else {
-            list($this->methods, $this->properties) = self::$reflections[$class_name];
+            [$this->methods, $this->properties] = self::$reflections[$class_name];
         }
     }
 
@@ -162,10 +162,10 @@ class CI_Driver
      * @param	array
      * @return	mixed
      */
-    public function __call($method, $args = array())
+    public function __call($method, $args = [])
     {
         if (in_array($method, $this->methods)) {
-            return call_user_func_array(array($this->parent, $method), $args);
+            return call_user_func_array([$this->parent, $method], $args);
         }
 
         $trace = debug_backtrace();

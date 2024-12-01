@@ -32,6 +32,7 @@ class Swift_KeyCache_SimpleKeyCacheInputStream implements Swift_KeyCache_KeyCach
      *
      * @param Swift_KeyCache $keyCache
      */
+    #[\Override]
     public function setKeyCache(Swift_KeyCache $keyCache)
     {
         $this->_keyCache = $keyCache;
@@ -42,6 +43,7 @@ class Swift_KeyCache_SimpleKeyCacheInputStream implements Swift_KeyCache_KeyCach
      *
      * @param Swift_InputByteStream $is
      */
+    #[\Override]
     public function setWriteThroughStream(Swift_InputByteStream $is)
     {
         $this->_writeThrough = $is;
@@ -53,6 +55,7 @@ class Swift_KeyCache_SimpleKeyCacheInputStream implements Swift_KeyCache_KeyCach
      * @param string                $bytes
      * @param Swift_InputByteStream $is    optional
      */
+    #[\Override]
     public function write($bytes, Swift_InputByteStream $is = null)
     {
         $this->_keyCache->setString(
@@ -72,6 +75,7 @@ class Swift_KeyCache_SimpleKeyCacheInputStream implements Swift_KeyCache_KeyCach
     /**
      * Not used.
      */
+    #[\Override]
     public function commit()
     {
     }
@@ -79,6 +83,7 @@ class Swift_KeyCache_SimpleKeyCacheInputStream implements Swift_KeyCache_KeyCach
     /**
      * Not used.
      */
+    #[\Override]
     public function bind(Swift_InputByteStream $is)
     {
     }
@@ -86,6 +91,7 @@ class Swift_KeyCache_SimpleKeyCacheInputStream implements Swift_KeyCache_KeyCach
     /**
      * Not used.
      */
+    #[\Override]
     public function unbind(Swift_InputByteStream $is)
     {
     }
@@ -94,6 +100,7 @@ class Swift_KeyCache_SimpleKeyCacheInputStream implements Swift_KeyCache_KeyCach
      * Flush the contents of the stream (empty it) and set the internal pointer
      * to the beginning.
      */
+    #[\Override]
     public function flushBuffers()
     {
         $this->_keyCache->clearKey($this->_nsKey, $this->_itemKey);
@@ -104,6 +111,7 @@ class Swift_KeyCache_SimpleKeyCacheInputStream implements Swift_KeyCache_KeyCach
      *
      * @param string $nsKey
      */
+    #[\Override]
     public function setNsKey($nsKey)
     {
         $this->_nsKey = $nsKey;
@@ -114,6 +122,7 @@ class Swift_KeyCache_SimpleKeyCacheInputStream implements Swift_KeyCache_KeyCach
      *
      * @param string $itemKey
      */
+    #[\Override]
     public function setItemKey($itemKey)
     {
         $this->_itemKey = $itemKey;
@@ -123,6 +132,7 @@ class Swift_KeyCache_SimpleKeyCacheInputStream implements Swift_KeyCache_KeyCach
      * Any implementation should be cloneable, allowing the clone to access a
      * separate $nsKey and $itemKey.
      */
+    #[\Override]
     public function __clone()
     {
         $this->_writeThrough = null;

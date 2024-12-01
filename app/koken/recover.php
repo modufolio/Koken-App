@@ -3,7 +3,7 @@
     function delete_files($path, $del_dir = false, $level = 0)
     {
         // Trim the trailing slash
-        $path = rtrim($path, DIRECTORY_SEPARATOR);
+        $path = rtrim((string) $path, DIRECTORY_SEPARATOR);
 
         if (! $current_dir = @opendir($path)) {
             return false;
@@ -13,7 +13,7 @@
             if ($filename != "." and $filename != "..") {
                 if (is_dir($path.DIRECTORY_SEPARATOR.$filename)) {
                     // Ignore empty folders
-                    if (substr($filename, 0, 1) != '.') {
+                    if (!str_starts_with($filename, '.')) {
                         delete_files($path.DIRECTORY_SEPARATOR.$filename, $del_dir, $level + 1);
                     }
                 } else {
@@ -30,10 +30,10 @@
         return true;
     }
 
-    $movers = array('admin', 'app', 'api.php', 'i.php', 'index.php', 'preview.php', 'dl.php', 'a.php');
+    $movers = ['admin', 'app', 'api.php', 'i.php', 'index.php', 'preview.php', 'dl.php', 'a.php'];
 
     foreach ($movers as $m) {
-        $to = dirname(__FILE__) . '/' . $m;
+        $to = __DIR__ . '/' . $m;
         $path = $to . '.off';
 
         if (file_exists($path)) {

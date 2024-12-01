@@ -48,7 +48,7 @@ class Unzip
     private $central_signature_end = "\x50\x4b\x05\x06";
 
     // ignore these directories (useless meta data)
-    private $_skip_dirs = array('__MACOSX');
+    private $_skip_dirs = ['__MACOSX'];
 
     private $_allow_extensions = null; // What is allowed out of the zip
 
@@ -94,7 +94,7 @@ class Unzip
     {
         $this->_reinit();
         $this->_zip_file = $zip_file;
-        $this->_target_dir = $target_dir ? $target_dir : dirname($this->_zip_file);
+        $this->_target_dir = $target_dir ?: dirname((string) $this->_zip_file);
 
         if (! $files = $this->_list_files()) {
             $this->set_error('ZIP folder was empty.');
@@ -103,8 +103,8 @@ class Unzip
 
         $file_locations = [];
         foreach ($files as $file => $trash) {
-            $dirname = pathinfo($file, PATHINFO_DIRNAME);
-            $extension = pathinfo($file, PATHINFO_EXTENSION);
+            $dirname = pathinfo((string) $file, PATHINFO_DIRNAME);
+            $extension = pathinfo((string) $file, PATHINFO_EXTENSION);
 
             $folders = explode('/', $dirname);
             $out_dn = $this->_target_dir . '/' . $dirname;
@@ -142,11 +142,11 @@ class Unzip
                 }
             }
 
-            if (substr($file, -1, 1) == '/') {
+            if (str_ends_with((string) $file, '/')) {
                 continue;
             }
 
-            $file_locations[] = $file_location = $this->_target_dir . '/' . ($preserve_filepath ? $file : basename($file));
+            $file_locations[] = $file_location = $this->_target_dir . '/' . ($preserve_filepath ? $file : basename((string) $file));
 
             $this->_extract_file($file, $file_location);
         }
@@ -280,7 +280,7 @@ class Unzip
     {
         if (! sizeof($this->compressed_list)) {
             $this->set_debug('Trying to unzip before loading file list... Loading it!');
-            $this->_list_files(false, $compressed_file_name);
+            $this->_list_files(false);
         }
 
         $fdetails = &$this->compressed_list[$compressed_file_name];
@@ -290,7 +290,7 @@ class Unzip
             return false;
         }
 
-        if (substr($compressed_file_name, -1) == '/') {
+        if (str_ends_with((string) $compressed_file_name, '/')) {
             $this->set_error('Trying to unzip a folder name "<strong>$compressed_file_name</strong>".');
             return false;
         }
@@ -423,15 +423,7 @@ class Unzip
                 $zip_comment_lenght = unpack("v", fread($fh, 2)); // zipfile comment length
                 $eodir['zipfile_comment'] = $zip_comment_lenght[1] ? fread($fh, $zip_comment_lenght[1]) : ''; // zipfile comment
 
-                $this->end_of_central = array(
-                    'disk_number_this' => $eodir['disk_number_this'][1],
-                    'disk_number' => $eodir['disk_number'][1],
-                    'total_entries_this' => $eodir['total_entries_this'][1],
-                    'total_entries' => $eodir['total_entries'][1],
-                    'size_of_cd' => $eodir['size_of_cd'][1],
-                    'offset_start_cd' => $eodir['offset_start_cd'][1],
-                    'zipfile_comment' => $eodir['zipfile_comment'],
-                );
+                $this->end_of_central = ['disk_number_this' => $eodir['disk_number_this'][1], 'disk_number' => $eodir['disk_number'][1], 'total_entries_this' => $eodir['total_entries_this'][1], 'total_entries' => $eodir['total_entries'][1], 'size_of_cd' => $eodir['size_of_cd'][1], 'offset_start_cd' => $eodir['offset_start_cd'][1], 'zipfile_comment' => $eodir['zipfile_comment']];
 
                 // Then, load file list
                 fseek($fh, $this->end_of_central['offset_start_cd']);
@@ -469,27 +461,10 @@ class Unzip
                     $last_mod_minute = bindec(substr($binary_mod_time, 5, 6));
                     $last_mod_second = bindec(substr($binary_mod_time, 11, 5));
 
-                    $this->central_dir_list[$dir['file_name']] = array(
-                        'version_madeby' => $dir['version_madeby'][1],
-                        'version_needed' => $dir['version_needed'][1],
-                        'general_bit_flag' => str_pad(decbin($dir['general_bit_flag'][1]), 8, '0', STR_PAD_LEFT),
-                        'compression_method' => $dir['compression_method'][1],
-                        'lastmod_datetime' => mktime($last_mod_hour, $last_mod_minute, $last_mod_second, $last_mod_month, $last_mod_day, $last_mod_year),
-                        'crc-32' => str_pad(dechex(ord($dir['crc-32'][3])), 2, '0', STR_PAD_LEFT) .
-                        str_pad(dechex(ord($dir['crc-32'][2])), 2, '0', STR_PAD_LEFT) .
-                        str_pad(dechex(ord($dir['crc-32'][1])), 2, '0', STR_PAD_LEFT) .
-                        str_pad(dechex(ord($dir['crc-32'][0])), 2, '0', STR_PAD_LEFT),
-                        'compressed_size' => $dir['compressed_size'][1],
-                        'uncompressed_size' => $dir['uncompressed_size'][1],
-                        'disk_number_start' => $dir['disk_number_start'][1],
-                        'internal_attributes' => $dir['internal_attributes'][1],
-                        'external_attributes1' => $dir['external_attributes1'][1],
-                        'external_attributes2' => $dir['external_attributes2'][1],
-                        'relative_offset' => $dir['relative_offset'][1],
-                        'file_name' => $dir['file_name'],
-                        'extra_field' => $dir['extra_field'],
-                        'file_comment' => $dir['file_comment'],
-                    );
+                    $this->central_dir_list[$dir['file_name']] = ['version_madeby' => $dir['version_madeby'][1], 'version_needed' => $dir['version_needed'][1], 'general_bit_flag' => str_pad(decbin($dir['general_bit_flag'][1]), 8, '0', STR_PAD_LEFT), 'compression_method' => $dir['compression_method'][1], 'lastmod_datetime' => mktime($last_mod_hour, $last_mod_minute, $last_mod_second, $last_mod_month, $last_mod_day, $last_mod_year), 'crc-32' => str_pad(dechex(ord($dir['crc-32'][3])), 2, '0', STR_PAD_LEFT) .
+                    str_pad(dechex(ord($dir['crc-32'][2])), 2, '0', STR_PAD_LEFT) .
+                    str_pad(dechex(ord($dir['crc-32'][1])), 2, '0', STR_PAD_LEFT) .
+                    str_pad(dechex(ord($dir['crc-32'][0])), 2, '0', STR_PAD_LEFT), 'compressed_size' => $dir['compressed_size'][1], 'uncompressed_size' => $dir['uncompressed_size'][1], 'disk_number_start' => $dir['disk_number_start'][1], 'internal_attributes' => $dir['internal_attributes'][1], 'external_attributes1' => $dir['external_attributes1'][1], 'external_attributes2' => $dir['external_attributes2'][1], 'relative_offset' => $dir['relative_offset'][1], 'file_name' => $dir['file_name'], 'extra_field' => $dir['extra_field'], 'file_comment' => $dir['file_comment']];
 
                     $signature = fread($fh, 4);
                 }
@@ -510,7 +485,7 @@ class Unzip
                         $this->compressed_list[$filename]['extra_field'] = $i['extra_field'];
                         $this->compressed_list[$filename]['contents_start_offset'] = $i['contents_start_offset'];
 
-                        if (strtolower($stop_on_file) == strtolower($filename)) {
+                        if (strtolower((string) $stop_on_file) == strtolower((string) $filename)) {
                             break;
                         }
                     }
@@ -545,7 +520,7 @@ class Unzip
             $this->compressed_list[$filename] = $details;
             $return = true;
 
-            if (strtolower($stop_on_file) == strtolower($filename)) {
+            if (strtolower((string) $stop_on_file) == strtolower((string) $filename)) {
                 break;
             }
         }
@@ -592,21 +567,10 @@ class Unzip
             $last_mod_second = bindec(substr($binary_mod_time, 11, 5));
 
             // Mount file table
-            $i = array(
-                'file_name' => $file['file_name'],
-                'compression_method' => $file['compression_method'][1],
-                'version_needed' => $file['version_needed'][1],
-                'lastmod_datetime' => mktime($last_mod_hour, $last_mod_minute, $last_mod_second, $last_mod_month, $last_mod_day, $last_mod_year),
-                'crc-32' => str_pad(dechex(ord($file['crc-32'][3])), 2, '0', STR_PAD_LEFT) .
-                str_pad(dechex(ord($file['crc-32'][2])), 2, '0', STR_PAD_LEFT) .
-                str_pad(dechex(ord($file['crc-32'][1])), 2, '0', STR_PAD_LEFT) .
-                str_pad(dechex(ord($file['crc-32'][0])), 2, '0', STR_PAD_LEFT),
-                'compressed_size' => $file['compressed_size'][1],
-                'uncompressed_size' => $file['uncompressed_size'][1],
-                'extra_field' => $file['extra_field'],
-                'general_bit_flag' => str_pad(decbin($file['general_bit_flag'][1]), 8, '0', STR_PAD_LEFT),
-                'contents_start_offset' => $file['contents_start_offset']
-            );
+            $i = ['file_name' => $file['file_name'], 'compression_method' => $file['compression_method'][1], 'version_needed' => $file['version_needed'][1], 'lastmod_datetime' => mktime($last_mod_hour, $last_mod_minute, $last_mod_second, $last_mod_month, $last_mod_day, $last_mod_year), 'crc-32' => str_pad(dechex(ord($file['crc-32'][3])), 2, '0', STR_PAD_LEFT) .
+            str_pad(dechex(ord($file['crc-32'][2])), 2, '0', STR_PAD_LEFT) .
+            str_pad(dechex(ord($file['crc-32'][1])), 2, '0', STR_PAD_LEFT) .
+            str_pad(dechex(ord($file['crc-32'][0])), 2, '0', STR_PAD_LEFT), 'compressed_size' => $file['compressed_size'][1], 'uncompressed_size' => $file['uncompressed_size'][1], 'extra_field' => $file['extra_field'], 'general_bit_flag' => str_pad(decbin($file['general_bit_flag'][1]), 8, '0', STR_PAD_LEFT), 'contents_start_offset' => $file['contents_start_offset']];
 
             return $i;
         }

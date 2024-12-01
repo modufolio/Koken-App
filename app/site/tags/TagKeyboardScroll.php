@@ -4,7 +4,7 @@
     {
         public function generate()
         {
-            $defaults = array('offset' => '0');
+            $defaults = ['offset' => '0'];
             $options = array_merge($defaults, $this->parameters);
 
             return <<<OUT

@@ -22,7 +22,7 @@ class System extends Koken_Controller
 
 
 
-        list($params, ) = $this->parse_params(func_get_args());
+        [$params, ] = $this->parse_params(func_get_args());
 
         include(FCPATH . 'app' . DIRECTORY_SEPARATOR . 'koken' . DIRECTORY_SEPARATOR . 'ffmpeg.php');
 
@@ -30,22 +30,15 @@ class System extends Koken_Controller
 
         function max_upload_to_bytes($val)
         {
-            $val = strtolower($val);
+            $val = strtolower((string) $val);
             if (preg_match('/(k|m|g)/', $val, $match)) {
                 $val = (int) str_replace($match[1], '', $val);
-                switch ($match[1]) {
-                    case 'k':
-                        $val *= 1024;
-                        break;
-
-                    case 'm':
-                        $val *= 1048576;
-                        break;
-
-                    case 'g':
-                        $val *= 1073741824;
-                        break;
-                }
+                match ($match[1]) {
+                    'k' => $val *= 1024,
+                    'm' => $val *= 1048576,
+                    'g' => $val *= 1073741824,
+                    default => $val,
+                };
                 return $val;
             } else {
                 return (int) $val;
@@ -78,19 +71,11 @@ class System extends Koken_Controller
 
         $this->load->library('webhostwhois');
 
-        $webhost = new WebhostWhois(array(
-            'useDns' => false
-        ));
+        $webhost = new WebhostWhois(['useDns' => false]);
 
         if (!defined('MAX_PARALLEL_REQUESTS')) {
             // Hosts we know do not limit parallel requests
-            $power_hosts = array(
-                'dreamhost',
-                'media-temple-grid',
-                'go-daddy',
-                'in-motion',
-                'rackspace-cloud',
-            );
+            $power_hosts = ['dreamhost', 'media-temple-grid', 'go-daddy', 'in-motion', 'rackspace-cloud'];
 
             $parallel = in_array($webhost->key, $power_hosts) ? 8 : 3;
         } else {
@@ -100,10 +85,7 @@ class System extends Koken_Controller
         $auth = $this->authenticate();
 
 
-        $data = array(
-            'version' => KOKEN_VERSION,
-            'max_parallel_requests' => $parallel,
-        );
+        $data = ['version' => KOKEN_VERSION, 'max_parallel_requests' => $parallel];
 
         $authData = [
             'operating_system' => PHP_OS,

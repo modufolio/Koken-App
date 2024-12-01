@@ -28,6 +28,7 @@ class Swift_Transport_SimpleMailInvoker implements Swift_Transport_MailInvoker
      *
      * @return bool
      */
+    #[\Override]
     public function mail($to, $subject, $body, $headers = null, $extraParams = null)
     {
         if (!ini_get('safe_mode')) {

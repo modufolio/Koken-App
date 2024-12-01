@@ -14,10 +14,11 @@ class DDI_DatabaseConfig extends KokenPlugin implements KokenDatabaseConfigurati
 
     private function set_driver()
     {
-        $socket = strpos($this->config['hostname'], ':') !== false;
+        $socket = str_contains((string) $this->config['hostname'], ':');
         $this->config['driver'] = function_exists('mysqli_connect') && !$socket ? 'mysqli' : 'mysql';
     }
 
+    #[\Override]
     public function get()
     {
         if (is_null($this->config)) {
@@ -34,6 +35,7 @@ class DDI_DatabaseConfig extends KokenPlugin implements KokenDatabaseConfigurati
         return $this->config;
     }
 
+    #[\Override]
     public function write($configuration)
     {
         $config = <<<CONF
@@ -60,7 +62,7 @@ CONF;
         }
 
         // Make sure parent exists
-        $parent = dirname($path);
+        $parent = dirname((string) $path);
         if (!is_dir($parent)) {
             $this->make_child_dir($parent);
         }

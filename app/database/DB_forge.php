@@ -138,16 +138,10 @@ class CI_DB_forge
 
         if (is_string($field)) {
             if ($field == 'id') {
-                $this->add_field(array(
-                                        'id' => array(
-                                                    'type' => 'INT',
-                                                    'constraint' => 9,
-                                                    'auto_increment' => true
-                                                    )
-                                ));
+                $this->add_field(['id' => ['type' => 'INT', 'constraint' => 9, 'auto_increment' => true]]);
                 $this->add_key('id', true);
             } else {
-                if (strpos($field, ' ') === false) {
+                if (!str_contains($field, ' ')) {
                     show_error('Field information is required for that operation.');
                 }
 
@@ -236,7 +230,7 @@ class CI_DB_forge
      * @param	string	the column definition
      * @return	bool
      */
-    public function add_column($table = '', $field = array(), $after_field = '')
+    public function add_column($table = '', $field = [], $after_field = '')
     {
         if ($table == '') {
             show_error('A table name is required for that operation.');
@@ -246,7 +240,7 @@ class CI_DB_forge
         // so we cycle through
 
         foreach ($field as $k => $v) {
-            $this->add_field(array($k => $field[$k]));
+            $this->add_field([$k => $field[$k]]);
 
             if (count($this->fields) == 0) {
                 show_error('Field information is required.');
@@ -300,7 +294,7 @@ class CI_DB_forge
      * @param	string	the column definition
      * @return	bool
      */
-    public function modify_column($table = '', $field = array())
+    public function modify_column($table = '', $field = [])
     {
         if ($table == '') {
             show_error('A table name is required for that operation.');
@@ -315,7 +309,7 @@ class CI_DB_forge
                 $field[$k]['name'] = $k;
             }
 
-            $this->add_field(array($k => $field[$k]));
+            $this->add_field([$k => $field[$k]]);
 
             if (count($this->fields) == 0) {
                 show_error('Field information is required.');

@@ -231,14 +231,14 @@ class CI_DB_utility extends CI_DB_forge
      * @param	array	Any preferences
      * @return	string
      */
-    public function xml_from_result($query, $params = array())
+    public function xml_from_result($query, $params = [])
     {
         if (! is_object($query) or ! method_exists($query, 'list_fields')) {
             show_error('You must submit a valid result object');
         }
 
         // Set our default values
-        foreach (array('root' => 'root', 'element' => 'element', 'newline' => "\n", 'tab' => "\t") as $key => $val) {
+        foreach (['root' => 'root', 'element' => 'element', 'newline' => "\n", 'tab' => "\t"] as $key => $val) {
             if (! isset($params[$key])) {
                 $params[$key] = $val;
             }
@@ -274,27 +274,28 @@ class CI_DB_utility extends CI_DB_forge
      * @access	public
      * @return	void
      */
-    public function backup($params = array())
+    public function backup($params = [])
     {
         // If the parameters have not been submitted as an
         // array then we know that it is simply the table
         // name, which is a valid short cut.
         if (is_string($params)) {
-            $params = array('tables' => $params);
+            $params = ['tables' => $params];
         }
 
         // ------------------------------------------------------
 
         // Set up our default preferences
-        $prefs = array(
-                            'tables'		=> array(),
-                            'ignore'		=> array(),
-                            'filename'		=> '',
-                            'format'		=> 'gzip', // gzip, zip, txt
-                            'add_drop'		=> true,
-                            'add_insert'	=> true,
-                            'newline'		=> "\n"
-                        );
+        $prefs = [
+            'tables'		=> [],
+            'ignore'		=> [],
+            'filename'		=> '',
+            'format'		=> 'gzip',
+            // gzip, zip, txt
+            'add_drop'		=> true,
+            'add_insert'	=> true,
+            'newline'		=> "\n",
+        ];
 
         // Did the user submit any preferences? If so set them....
         if (count($params) > 0) {
@@ -316,7 +317,7 @@ class CI_DB_utility extends CI_DB_forge
         // ------------------------------------------------------
 
         // Validate the format
-        if (! in_array($prefs['format'], array('gzip', 'zip', 'txt'), true)) {
+        if (! in_array($prefs['format'], ['gzip', 'zip', 'txt'], true)) {
             $prefs['format'] = 'txt';
         }
 
@@ -360,12 +361,12 @@ class CI_DB_utility extends CI_DB_forge
         // Was a Zip file requested?
         if ($prefs['format'] == 'zip') {
             // If they included the .zip file extension we'll remove it
-            if (preg_match("|.+?\.zip$|", $prefs['filename'])) {
+            if (preg_match("|.+?\.zip$|", (string) $prefs['filename'])) {
                 $prefs['filename'] = str_replace('.zip', '', $prefs['filename']);
             }
 
             // Tack on the ".sql" file extension if needed
-            if (! preg_match("|.+?\.sql$|", $prefs['filename'])) {
+            if (! preg_match("|.+?\.sql$|", (string) $prefs['filename'])) {
                 $prefs['filename'] .= '.sql';
             }
 

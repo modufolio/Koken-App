@@ -7,12 +7,12 @@ class TreeSorter
     public static function sort(&$albums, $sort)
     {
         self::$sort = $sort;
-        usort($albums, array('TreeSorter', 'sorter'));
+        usort($albums, ['TreeSorter', 'sorter']);
     }
 
     public static function sorter($a, $b)
     {
-        list($field, $direction) = explode(' ', self::$sort);
+        [$field, $direction] = explode(' ', (string) self::$sort);
 
         $one = -1;
         $two = 1;
@@ -38,18 +38,13 @@ class Albums extends Koken_Controller
 
     public function tree()
     {
-        list($passed_params, ) = $this->parse_params(func_get_args());
+        [$passed_params, ] = $this->parse_params(func_get_args());
 
         $a = new Album();
 
         $sort = $a->_get_site_order('album');
 
-        $params = array_merge(array(
-                'visibility' => 'public',
-                'include_empty' => true,
-                'order_by' => $sort['by'],
-                'order_direction' => $sort['direction'],
-            ), $passed_params);
+        $params = array_merge(['visibility' => 'public', 'include_empty' => true, 'order_by' => $sort['by'], 'order_direction' => $sort['direction']], $passed_params);
 
         if (!isset($passed_params['visibility']) || !$this->auth) {
             $params['visibility'] = 'public';
@@ -67,7 +62,7 @@ class Albums extends Koken_Controller
             $params['order_by'] = 'title';
         }
 
-        $visibility_values = array('public', 'unlisted', 'private');
+        $visibility_values = ['public', 'unlisted', 'private'];
         $visibility = array_search($params['visibility'], $visibility_values);
 
         if ($visibility === false) {
@@ -92,31 +87,13 @@ class Albums extends Koken_Controller
                 $levels['_' . $album->level] = [];
             }
 
-            switch ($album->album_type) {
-                case 2:
-                    $type = 'set';
-                    break;
-                case 1:
-                    $type = 'smart';
-                    break;
-                default:
-                    $type = 'standard';
-            }
+            $type = match ($album->album_type) {
+                2 => 'set',
+                1 => 'smart',
+                default => 'standard',
+            };
 
-            $arr = array(
-                'id' => $album->id,
-                'title' => $album->title,
-                'album_type' => $type,
-                'left_id' => (int) $album->left_id,
-                'level' => (int) $album->level,
-                'count' => (int) $album->total_count,
-                'featured' => $album->featured == 1,
-                'sort' => $album->sort,
-                'published_on' => (int) $album->published_on,
-                'created_on' => (int) $album->created_on,
-                'modified_on' => (int) $album->modified_on,
-                'visibility' => $visibility_values[$visibility],
-            );
+            $arr = ['id' => $album->id, 'title' => $album->title, 'album_type' => $type, 'left_id' => (int) $album->left_id, 'level' => (int) $album->level, 'count' => (int) $album->total_count, 'featured' => $album->featured == 1, 'sort' => $album->sort, 'published_on' => (int) $album->published_on, 'created_on' => (int) $album->created_on, 'modified_on' => (int) $album->modified_on, 'visibility' => $visibility_values[$visibility]];
 
             $levels['_' . $album->level][$album->left_id] = $arr;
         }
@@ -173,10 +150,10 @@ class Albums extends Koken_Controller
         $params['auth'] = $this->auth;
         $params['limit_to'] = 'albums';
 
-        if (strpos($id, ',') === false) {
+        if (!str_contains((string) $id, ',')) {
             $final = $c->where_related('album', 'id', $id)->listing($params);
         } else {
-            $final = $c->get_grouped_status(explode(',', $id), 'Album');
+            $final = $c->get_grouped_status(explode(',', (string) $id), 'Album');
         }
 
         $this->set_response_data($final);
@@ -195,7 +172,7 @@ class Albums extends Koken_Controller
 
     public function _order($order, $album = false)
     {
-        $ids = explode(',', $order);
+        $ids = explode(',', (string) $order);
         $new_order_map = [];
 
         foreach ($ids as $key => $val) {
@@ -225,11 +202,7 @@ class Albums extends Koken_Controller
                         ->where('right_id <=', $sub_album->right_id)
                         ->where('level >=', $sub_album->level)
                         ->where('modified_on <', $start)
-                        ->update(array(
-                            'left_id' => "left_id $delta",
-                            'right_id' => "right_id $delta",
-                            'modified_on' => $start
-                        ), false);
+                        ->update(['left_id' => "left_id $delta", 'right_id' => "right_id $delta", 'modified_on' => $start], false);
             }
             $next_slot += $size;
         }
@@ -238,7 +211,7 @@ class Albums extends Koken_Controller
 
     public function index()
     {
-        list($params, $id, $slug) = $this->parse_params(func_get_args());
+        [$params, $id, $slug] = $this->parse_params(func_get_args());
         $params['auth'] = $this->auth;
         // Create or update
         if ($this->method != 'get') {
@@ -278,7 +251,7 @@ class Albums extends Koken_Controller
                                 $c = new Content();
                                 $file = $_POST['from_directory'] . DIRECTORY_SEPARATOR . $file;
                                 $filename = basename($file);
-                                list($internal_id, $path) = $c->generate_internal_id();
+                                [$internal_id, $path] = $c->generate_internal_id();
                                 if (file_exists($file)) {
                                     if ($path) {
                                         $path .= $filename;
@@ -291,7 +264,7 @@ class Albums extends Koken_Controller
                                     $from['filename'] = $filename;
                                     $from['internal_id'] = $internal_id;
                                     $from['file_modified_on'] = time();
-                                    $c->from_array($from, array(), true);
+                                    $c->from_array($from, [], true);
                                     $content_ids[] = $c->id;
                                 }
                             }
@@ -301,7 +274,7 @@ class Albums extends Koken_Controller
                     }
 
                     // Don't allow these fields to be saved generically
-                    $private = array('parent_id', 'left_id', 'right_id');
+                    $private = ['parent_id', 'left_id', 'right_id'];
 
                     if ($a->exists()) {
                         $private[] = 'album_type';
@@ -332,7 +305,7 @@ class Albums extends Koken_Controller
                     }
 
                     try {
-                        $a->from_array($_POST, array(), true);
+                        $a->from_array($_POST, [], true);
                     } catch (Exception $e) {
                         $this->error('400', $e->getMessage());
                         return;
@@ -383,9 +356,9 @@ class Albums extends Koken_Controller
                                 $id[] = (int) $item->actual_id;
                             }
                         } elseif (is_numeric($id)) {
-                            $id = array($id);
+                            $id = [$id];
                         } else {
-                            $id = explode(',', $id);
+                            $id = explode(',', (string) $id);
                         }
 
                         $tags = [];
@@ -437,10 +410,7 @@ class Albums extends Koken_Controller
         }
         // Get album by id
         else {
-            $defaults = array(
-                            'neighbors' => false,
-                            'include_empty_neighbors' => false
-                        );
+            $defaults = ['neighbors' => false, 'include_empty_neighbors' => false];
             $options = array_merge($defaults, $params);
 
             $with_token = false;
@@ -513,7 +483,7 @@ class Albums extends Koken_Controller
         $params['auth'] = $this->auth;
 
         // Standard add/delete cover
-        list($id, $content_id) = $id;
+        [$id, $content_id] = $id;
 
         if ($this->method === 'get') {
             $this->redirect("/albums/$id");
@@ -591,7 +561,7 @@ class Albums extends Koken_Controller
                 $a->save_cover($c);
             }
         } else {
-            $content_id = explode(',', $content_id);
+            $content_id = explode(',', (string) $content_id);
 
             if ($this->method == 'delete') {
                 $c->where_related('covers', 'id', $id)->where_in('id', $content_id)->get_iterated();
@@ -629,7 +599,7 @@ class Albums extends Koken_Controller
 
     public function content()
     {
-        list($params, $id, $slug) = $this->parse_params(func_get_args());
+        [$params, $id, $slug] = $this->parse_params(func_get_args());
         $params['auth'] = $this->auth;
 
         $a = new Album();
@@ -639,7 +609,7 @@ class Albums extends Koken_Controller
             $this->error('403', 'Required parameter "id" not present.');
             return;
         } elseif (is_array($id)) {
-            list($id, $content_id) = $id;
+            [$id, $content_id] = $id;
         }
 
         if ($this->method != 'get') {
@@ -656,7 +626,7 @@ class Albums extends Koken_Controller
                 if ($album->album_type == 2) {
                     $this->_order($params['order'], $album);
                 } else {
-                    $ids = explode(',', $params['order']);
+                    $ids = explode(',', (string) $params['order']);
                     $new_order_map = [];
 
                     foreach ($ids as $key => $val) {
@@ -747,12 +717,7 @@ class Albums extends Koken_Controller
         }
 
         if ($album->album_type == 2) {
-            $options = array(
-                'neighbors' => false,
-                'include_empty_neighbors' => false,
-                'order_by' => 'manual',
-                'with_context' => true
-            );
+            $options = ['neighbors' => false, 'include_empty_neighbors' => false, 'order_by' => 'manual', 'with_context' => true];
             $params = array_merge($options, $params);
             if ($params['order_by'] === 'manual') {
                 $params['order_by'] = 'left_id';
@@ -761,16 +726,7 @@ class Albums extends Koken_Controller
 
             $final = $album->listing($params);
         } else {
-            $options = array(
-                'order_by' => 'manual',
-                'covers' => null,
-                'neighbors' => false,
-                'include_empty_neighbors' => false,
-                'in_album' => $album,
-                'with_context' => true,
-                'is_cover' => true,
-                'visibility' => 'any',
-            );
+            $options = ['order_by' => 'manual', 'covers' => null, 'neighbors' => false, 'include_empty_neighbors' => false, 'in_album' => $album, 'with_context' => true, 'is_cover' => true, 'visibility' => 'any'];
 
             if (!isset($params['visibility']) && $with_token) {
                 $params['visibility'] = 'album';
@@ -819,7 +775,7 @@ class Albums extends Koken_Controller
                     ->limit(1)
                     ->get();
 
-            list($params['context_order'], $params['context_order_direction']) = explode(' ', $parent->sort);
+            [$params['context_order'], $params['context_order_direction']] = explode(' ', $parent->sort);
         }
 
         if (isset($final['album']['covers']) && !empty($final['album']['covers']) && isset($final['content'])) {

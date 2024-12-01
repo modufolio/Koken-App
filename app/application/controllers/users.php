@@ -4,7 +4,7 @@ class Users extends Koken_Controller
 {
     public function __construct()
     {
-        $this->auto_authenticate = array('exclude' => array('reset_password'));
+        $this->auto_authenticate = ['exclude' => ['reset_password']];
         parent::__construct();
     }
 
@@ -21,7 +21,7 @@ class Users extends Koken_Controller
                 $subject = 'Koken: Password reset requested';
                 $message = "Hi there -\n\nSomeone (hopefully you!) just requested that the password to your Koken installation at $koken_url_info->base be reset. If you did not request a password reset, ignore this email and your password will stay the same. If you do need your password reset, click the link below.\n\n{$koken_url_info->base}api.php?/users/reset_password/$u->internal_id\n\n- Koken";
                 // Shutter::email($u->email, 'Koken', $u->email, $subject, $message);
-                $this->set_response_data(array('success' => true));
+                $this->set_response_data(['success' => true]);
             } else {
                 $this->error('404', 'User not found.');
                 return;
@@ -30,7 +30,7 @@ class Users extends Koken_Controller
             $u = new User();
             $u->where('internal_id', $id)->get();
             if ($u->exists()) {
-                $new = substr(koken_rand(), 0, 8);
+                $new = substr((string) koken_rand(), 0, 8);
                 $u->password = $new;
                 $u->save();
 
@@ -107,7 +107,7 @@ class Users extends Koken_Controller
                             return;
                         }
                     }
-                    $u->from_array($_POST, array(), true);
+                    $u->from_array($_POST, [], true);
                     $this->redirect("/users/$u->id");
                     break;
                 // case 'delete':
@@ -132,10 +132,7 @@ class Users extends Koken_Controller
         $u = new User();
         // No id, so we want a list
         if (is_null($id)) {
-            $options = array(
-                'page' => 1,
-                'limit' => false
-            );
+            $options = ['page' => 1, 'limit' => false];
             $options = array_merge($options, $params);
             if (!is_numeric($options['limit'])) {
                 $options['limit'] = false;
@@ -177,15 +174,7 @@ class Users extends Koken_Controller
             return;
         }
 
-        $options = array(
-            'order_by' => 'created_on',
-            'order_direction' => 'DESC',
-            'images_only' => false,
-            'videos_only' => false,
-            'audio_only' => false,
-            'page' => 1,
-            'limit' => false
-        );
+        $options = ['order_by' => 'created_on', 'order_direction' => 'DESC', 'images_only' => false, 'videos_only' => false, 'audio_only' => false, 'page' => 1, 'limit' => false];
         $options = array_merge($options, $params);
         if (!is_numeric($options['limit'])) {
             $options['limit'] = false;

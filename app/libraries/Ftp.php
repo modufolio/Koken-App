@@ -45,7 +45,7 @@ class CI_FTP
      *
      * The constructor can be passed an array of config values
      */
-    public function __construct($config = array())
+    public function __construct($config = [])
     {
         if (count($config) > 0) {
             $this->initialize($config);
@@ -63,7 +63,7 @@ class CI_FTP
      * @param	array
      * @return	void
      */
-    public function initialize($config = array())
+    public function initialize($config = [])
     {
         foreach ($config as $key => $val) {
             if (isset($this->$key)) {
@@ -72,7 +72,7 @@ class CI_FTP
         }
 
         // Prep the hostname
-        $this->hostname = preg_replace('|.+?://|', '', $this->hostname);
+        $this->hostname = preg_replace('|.+?://|', '', (string) $this->hostname);
     }
 
     // --------------------------------------------------------------------
@@ -84,7 +84,7 @@ class CI_FTP
      * @param	array	 the connection values
      * @return	bool
      */
-    public function connect($config = array())
+    public function connect($config = [])
     {
         if (count($config) > 0) {
             $this->initialize($config);
@@ -387,7 +387,7 @@ class CI_FTP
         }
 
         // Add a trailing slash to the file path if needed
-        $filepath = preg_replace("/(.+?)\/*$/", "\\1/", $filepath);
+        $filepath = preg_replace("/(.+?)\/*$/", "\\1/", (string) $filepath);
 
         $list = $this->list_files($filepath);
 
@@ -497,9 +497,9 @@ class CI_FTP
 
             // Recursively read the local directory
             while (false !== ($file = readdir($fp))) {
-                if (@is_dir($locpath.$file) && substr($file, 0, 1) != '.') {
+                if (@is_dir($locpath.$file) && !str_starts_with($file, '.')) {
                     $this->mirror($locpath.$file."/", $rempath.$file."/");
-                } elseif (substr($file, 0, 1) != ".") {
+                } elseif (!str_starts_with($file, ".")) {
                     // Get the file extension so we can se the upload type
                     $ext = $this->_getext($file);
                     $mode = $this->_settype($ext);
@@ -525,11 +525,11 @@ class CI_FTP
      */
     public function _getext($filename)
     {
-        if (false === strpos($filename, '.')) {
+        if (!str_contains((string) $filename, '.')) {
             return 'txt';
         }
 
-        $x = explode('.', $filename);
+        $x = explode('.', (string) $filename);
         return end($x);
     }
 
@@ -545,21 +545,7 @@ class CI_FTP
      */
     public function _settype($ext)
     {
-        $text_types = array(
-                            'txt',
-                            'text',
-                            'php',
-                            'phps',
-                            'php4',
-                            'js',
-                            'css',
-                            'htm',
-                            'html',
-                            'phtml',
-                            'shtml',
-                            'log',
-                            'xml'
-                            );
+        $text_types = ['txt', 'text', 'php', 'phps', 'php4', 'js', 'css', 'htm', 'html', 'phtml', 'shtml', 'log', 'xml'];
 
 
         return (in_array($ext, $text_types)) ? 'ascii' : 'binary';
@@ -593,7 +579,7 @@ class CI_FTP
      * @param	string
      * @return	bool
      */
-    public function _error($line)
+    public function _error($line): never
     {
         $CI =& get_instance();
         $CI->lang->load('ftp');

@@ -89,7 +89,7 @@ class CI_URI extends stdClass
      */
     public function _fetch_uri_string()
     {
-        if (strtoupper($this->config->item('uri_protocol')) == 'AUTO') {
+        if (strtoupper((string) $this->config->item('uri_protocol')) == 'AUTO') {
             // Is the request coming from the command line?
             if (php_sapi_name() == 'cli' or defined('STDIN')) {
                 $this->_set_uri_string($this->_parse_cli_args());
@@ -104,15 +104,15 @@ class CI_URI extends stdClass
 
             // Is there a PATH_INFO variable?
             // Note: some servers seem to have trouble with getenv() so we'll test it two ways
-            $path = (isset($_SERVER['PATH_INFO'])) ? $_SERVER['PATH_INFO'] : @getenv('PATH_INFO');
-            if (trim($path, '/') != '' && $path != "/".self) {
+            $path = $_SERVER['PATH_INFO'] ?? @getenv('PATH_INFO');
+            if (trim((string) $path, '/') != '' && $path != "/".\SELF) {
                 $this->_set_uri_string($path);
                 return;
             }
 
             // No PATH_INFO?... What about QUERY_STRING?
-            $path =  (isset($_SERVER['QUERY_STRING'])) ? $_SERVER['QUERY_STRING'] : @getenv('QUERY_STRING');
-            if (trim($path, '/') != '') {
+            $path =  $_SERVER['QUERY_STRING'] ?? @getenv('QUERY_STRING');
+            if (trim((string) $path, '/') != '') {
                 $this->_set_uri_string($path);
                 return;
             }
@@ -128,7 +128,7 @@ class CI_URI extends stdClass
             return;
         }
 
-        $uri = strtoupper($this->config->item('uri_protocol'));
+        $uri = strtoupper((string) $this->config->item('uri_protocol'));
 
         if ($uri == 'REQUEST_URI') {
             $this->_set_uri_string($this->_detect_uri());
@@ -138,7 +138,7 @@ class CI_URI extends stdClass
             return;
         }
 
-        $path = (isset($_SERVER[$uri])) ? $_SERVER[$uri] : @getenv($uri);
+        $path = $_SERVER[$uri] ?? @getenv($uri);
         $this->_set_uri_string($path);
     }
 
@@ -178,18 +178,18 @@ class CI_URI extends stdClass
         }
 
         $uri = $_SERVER['REQUEST_URI'];
-        if (strpos($uri, $_SERVER['SCRIPT_NAME']) === 0) {
-            $uri = substr($uri, strlen($_SERVER['SCRIPT_NAME']));
-        } elseif (strpos($uri, dirname($_SERVER['SCRIPT_NAME'])) === 0) {
-            $uri = substr($uri, strlen(dirname($_SERVER['SCRIPT_NAME'])));
+        if (str_starts_with((string) $uri, (string) $_SERVER['SCRIPT_NAME'])) {
+            $uri = substr((string) $uri, strlen((string) $_SERVER['SCRIPT_NAME']));
+        } elseif (str_starts_with((string) $uri, dirname((string) $_SERVER['SCRIPT_NAME']))) {
+            $uri = substr((string) $uri, strlen(dirname((string) $_SERVER['SCRIPT_NAME'])));
         }
 
         // This section ensures that even on servers that require the URI to be in the query string (Nginx) a correct
         // URI is found, and also fixes the QUERY_STRING server var and $_GET array.
-        if (strncmp($uri, '?/', 2) === 0) {
-            $uri = substr($uri, 2);
+        if (str_starts_with((string) $uri, '?/')) {
+            $uri = substr((string) $uri, 2);
         }
-        $parts = preg_split('#\?#i', $uri, 2);
+        $parts = preg_split('#\?#i', (string) $uri, 2);
         $uri = $parts[0];
         if (isset($parts[1])) {
             $_SERVER['QUERY_STRING'] = $parts[1];
@@ -206,7 +206,7 @@ class CI_URI extends stdClass
         $uri = parse_url($uri, PHP_URL_PATH);
 
         // Do some final cleaning of the URI and return it
-        return str_replace(array('//', '../'), '/', trim($uri, '/'));
+        return str_replace(['//', '../'], '/', trim($uri, '/'));
     }
 
     // --------------------------------------------------------------------
@@ -239,8 +239,8 @@ class CI_URI extends stdClass
     {
         if ($str != '' && $this->config->item('permitted_uri_chars') != '' && $this->config->item('enable_query_strings') == false) {
             // HACK
-            if (strpos($str, '%') === false) {
-                $parts = explode('/', $str);
+            if (!str_contains((string) $str, '%')) {
+                $parts = explode('/', (string) $str);
                 foreach ($parts as &$part) {
                     if (strpos($part, ':')) {
                         $bits = explode(':', $part);
@@ -253,14 +253,14 @@ class CI_URI extends stdClass
             // END HACK
             // preg_quote() in PHP 5.3 escapes -, so the str_replace() and addition of - to preg_quote() is to maintain backwards
             // compatibility as many are unaware of how characters in the permitted_uri_chars will be parsed as a regex pattern
-            if (! preg_match("|^[".str_replace(array('\\-', '\-'), '-', preg_quote($this->config->item('permitted_uri_chars'), '-'))."]+$|i", $str)) {
+            if (! preg_match("|^[".str_replace(['\\-', '\-'], '-', preg_quote((string) $this->config->item('permitted_uri_chars'), '-'))."]+$|i", (string) $str)) {
                 show_error('The URI you submitted has disallowed characters.', 400);
             }
         }
 
         // Convert programatic characters to entities
-        $bad	= array('$',		'(',		')',		'%28',		'%29');
-        $good	= array('&#36;',	'&#40;',	'&#41;',	'&#40;',	'&#41;');
+        $bad	= ['$', '(', ')', '%28', '%29'];
+        $good	= ['&#36;', '&#40;', '&#41;', '&#40;', '&#41;'];
 
         return str_replace($bad, $good, $str);
     }
@@ -276,7 +276,7 @@ class CI_URI extends stdClass
     public function _remove_url_suffix()
     {
         if ($this->config->item('url_suffix') != "") {
-            $this->uri_string = preg_replace("|".preg_quote($this->config->item('url_suffix'))."$|", "", $this->uri_string);
+            $this->uri_string = preg_replace("|".preg_quote((string) $this->config->item('url_suffix'))."$|", "", $this->uri_string);
         }
     }
 
@@ -291,7 +291,7 @@ class CI_URI extends stdClass
      */
     public function _explode_segments()
     {
-        foreach (explode("/", preg_replace("|/*(.+?)/*$|", "\\1", $this->uri_string)) as $val) {
+        foreach (explode("/", (string) preg_replace("|/*(.+?)/*$|", "\\1", $this->uri_string)) as $val) {
             // Filter segments for security
             $val = trim($this->_filter_uri($val));
 
@@ -380,7 +380,7 @@ class CI_URI extends stdClass
      * @param	array	an array of default values
      * @return	array
      */
-    public function uri_to_assoc($n = 3, $default = array())
+    public function uri_to_assoc($n = 3, $default = [])
     {
         return $this->_uri_to_assoc($n, $default, 'segment');
     }
@@ -393,7 +393,7 @@ class CI_URI extends stdClass
      * @return 	array
      *
      */
-    public function ruri_to_assoc($n = 3, $default = array())
+    public function ruri_to_assoc($n = 3, $default = [])
     {
         return $this->_uri_to_assoc($n, $default, 'rsegment');
     }
@@ -409,7 +409,7 @@ class CI_URI extends stdClass
      * @param	string	which array we should use
      * @return	array
      */
-    public function _uri_to_assoc($n = 3, $default = array(), $which = 'segment')
+    public function _uri_to_assoc($n = 3, $default = [], $which = 'segment')
     {
         if ($which == 'segment') {
             $total_segments = 'total_segments';
@@ -429,7 +429,7 @@ class CI_URI extends stdClass
 
         if ($this->$total_segments() < $n) {
             if (count($default) == 0) {
-                return array();
+                return [];
             }
 
             $retval = [];

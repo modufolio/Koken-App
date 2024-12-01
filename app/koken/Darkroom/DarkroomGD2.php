@@ -20,6 +20,7 @@ class DarkroomGD2 extends Darkroom
         return 100;
     }
 
+    #[\Override]
     public function rotate($path, $degrees)
     {
         $this->createSource($path);
@@ -34,6 +35,7 @@ class DarkroomGD2 extends Darkroom
         return $this;
     }
 
+    #[\Override]
     public function createImage()
     {
         $this->createSource();
@@ -41,6 +43,7 @@ class DarkroomGD2 extends Darkroom
         return $this->output();
     }
 
+    #[\Override]
     public function createCroppedImage($interstitialWidth, $interstitialHeight, $cropX, $cropY)
     {
         $this->createSource();
@@ -70,11 +73,7 @@ class DarkroomGD2 extends Darkroom
             $this->sharpening = abs(1 - $this->sharpening);
         }
 
-        $matrix = array(
-            array(-1, -1, -1),
-            array(-1, ceil($this->sharpening*60), -1),
-            array(-1, -1, -1),
-        );
+        $matrix = [[-1, -1, -1], [-1, ceil($this->sharpening*60), -1], [-1, -1, -1]];
 
         $divisor = array_sum(array_map('array_sum', $matrix));
 
@@ -123,7 +122,7 @@ class DarkroomGD2 extends Darkroom
             $path = $this->sourcePath;
         }
 
-        list(, , $this->sourceType) = getimagesize($path);
+        [, , $this->sourceType] = getimagesize($path);
 
         switch ($this->sourceType) {
             case IMAGETYPE_JPEG:

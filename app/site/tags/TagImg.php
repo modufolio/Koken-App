@@ -4,18 +4,7 @@
     {
         public function generate()
         {
-            $defaults = array(
-                'width' => 0,
-                'height' => 0,
-                'crop' => 'false',
-                'assign_to_variable' => false,
-                'preset' => false,
-                'respond_to' => 'width',
-                'size' => false,
-                'lazy' => false,
-                'fade' => true,
-                'relative' => true,
-            );
+            $defaults = ['width' => 0, 'height' => 0, 'crop' => 'false', 'assign_to_variable' => false, 'preset' => false, 'respond_to' => 'width', 'size' => false, 'lazy' => false, 'fade' => true, 'relative' => true];
 
             $options = array_merge($defaults, $this->parameters);
 

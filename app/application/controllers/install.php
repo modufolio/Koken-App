@@ -28,15 +28,7 @@ class Install extends CI_Controller {
             ];
 
 
-            $database_config = array_merge(array(
-                'driver' => 'mysqli',
-                'hostname' => 'localhost',
-                'database' => 'koken',
-                'username' => '',
-                'password' => '',
-                'prefix' => '',
-                'socket' => ''
-            ), $postData);
+            $database_config = array_merge(['driver' => 'mysqli', 'hostname' => 'localhost', 'database' => 'koken', 'username' => '', 'password' => '', 'prefix' => '', 'socket' => ''], $postData);
 
             Shutter::write_db_configuration($database_config);
         }
@@ -197,7 +189,7 @@ class Install extends CI_Controller {
 
             foreach($info['fields'] as $name => &$attr)
             {
-                if (in_array(strtolower($attr['type']), array('text', 'varchar', 'longtext')) && $name !== 'id')
+                if (in_array(strtolower((string) $attr['type']), ['text', 'varchar', 'longtext']) && $name !== 'id')
                 {
                     $attr['null'] = true;
                 }
@@ -310,15 +302,12 @@ class Install extends CI_Controller {
 		$key = md5($_SERVER['HTTP_HOST'] . uniqid('', true));
 		Shutter::write_encryption_key($key);
 
-		Shutter::write_cache('plugins/compiled.cache',  serialize(array(
-			'info' => array('email_delivery_address' => ''),
-			'plugins' => array()
-		)));
+		Shutter::write_cache('plugins/compiled.cache',  serialize(['info' => ['email_delivery_address' => ''], 'plugins' => []]));
 
 		Shutter::hook('install.complete');
 
 		header('Content-type: application/json');
-		die( json_encode(array('success' => true)) );
+		die( json_encode(['success' => true]) );
 	}
 }
 

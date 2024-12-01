@@ -4,21 +4,14 @@ class DarkroomImageMagick extends Darkroom
 {
     private $sourceArgs = [];
     private $destinationArgs = [];
-    private $pathToConvert;
     private $limits = [];
     private $isGmagick = false;
 
-    public function __construct($path = 'convert', $limits = array())
+    public function __construct(private $pathToConvert = 'convert', $limits = [])
     {
-        $this->pathToConvert = $path;
+        $this->isGmagick = str_contains((string) $this->pathToConvert, 'gm convert');
 
-        $this->isGmagick = strpos($this->pathToConvert, 'gm convert') !== false;
-
-        $this->limits = array_merge(array(
-            'thread' => false,
-            'memory' => false,
-            'map' => false,
-        ), $limits);
+        $this->limits = array_merge(['thread' => false, 'memory' => false, 'map' => false], $limits);
 
         if ($this->limits['thread'] !== false) {
             /*
@@ -31,7 +24,7 @@ class DarkroomImageMagick extends Darkroom
             if ($this->isGmagick) {
                 $this->limits['thread'] = false;
             } else {
-                $cache = dirname(__FILE__).'/thread';
+                $cache = __DIR__.'/thread';
 
                 if (file_exists($cache)) {
                     if (trim(file_get_contents($cache)) !== 'on') {
@@ -41,7 +34,7 @@ class DarkroomImageMagick extends Darkroom
                     // Also not supported if it isn't listed in the idenfify output
                     // (not compiled with OpenMP)
                     $resourceOutput = shell_exec(str_replace('convert', 'identify -list resource', $this->pathToConvert));
-                    if (strpos(strtolower($resourceOutput), 'thread') === false) {
+                    if (!str_contains(strtolower($resourceOutput), 'thread')) {
                         $this->limits['thread'] = false;
                     }
 
@@ -53,10 +46,10 @@ class DarkroomImageMagick extends Darkroom
 
     private function setupArgs()
     {
-        $this->sourceArgs = array($this->pathToConvert);
+        $this->sourceArgs = [$this->pathToConvert];
         $this->destinationArgs = array_merge(
             $this->setupLimitArgs(),
-            array('-density 72', "-quality {$this->quality}")
+            ['-density 72', "-quality {$this->quality}"]
         );
 
         if ($this->stripMetadata) {
@@ -97,7 +90,7 @@ class DarkroomImageMagick extends Darkroom
     {
         $sourcePath = $this->sourcePath;
 
-        if ($this->isGmagick && strpos($sourcePath, 'https://') === 0) {
+        if ($this->isGmagick && str_starts_with((string) $sourcePath, 'https://')) {
             $sourcePath = str_replace('https://', 'http://', $sourcePath);
         }
 
@@ -113,9 +106,10 @@ class DarkroomImageMagick extends Darkroom
         return $quality;
     }
 
+    #[\Override]
     public function rotate($path, $degrees)
     {
-        if ($this->isGmagick && strpos($path, 'https://') === 0) {
+        if ($this->isGmagick && str_starts_with((string) $path, 'https://')) {
             $path = str_replace('https://', 'http://', $path);
         }
         $path = '"' . $path . '"';
@@ -126,6 +120,7 @@ class DarkroomImageMagick extends Darkroom
         return $this;
     }
 
+    #[\Override]
     public function createImage()
     {
         $this->setupArgs();
@@ -136,6 +131,7 @@ class DarkroomImageMagick extends Darkroom
         return $this->output();
     }
 
+    #[\Override]
     public function createCroppedImage($interstitialWidth, $interstitialHeight, $cropX, $cropY)
     {
         $this->setupArgs();
@@ -159,7 +155,7 @@ class DarkroomImageMagick extends Darkroom
     {
         $sourcePath = $this->sourcePath;
 
-        if ($this->isGmagick && strpos($sourcePath, 'https://') === 0) {
+        if ($this->isGmagick && str_starts_with((string) $sourcePath, 'https://')) {
             $sourcePath = str_replace('https://', 'http://', $sourcePath);
         }
 

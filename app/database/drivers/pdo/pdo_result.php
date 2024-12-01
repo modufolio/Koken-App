@@ -38,6 +38,7 @@ class CI_DB_pdo_result extends CI_DB_result
      *
      * @return	int
      */
+    #[\Override]
     public function num_rows()
     {
         if (is_int($this->num_rows)) {
@@ -59,6 +60,7 @@ class CI_DB_pdo_result extends CI_DB_result
      * @access	public
      * @return	integer
      */
+    #[\Override]
     public function num_fields()
     {
         return $this->result_id->columnCount();
@@ -74,6 +76,7 @@ class CI_DB_pdo_result extends CI_DB_result
      * @access	public
      * @return	array
      */
+    #[\Override]
     public function list_fields()
     {
         if ($this->db->db_debug) {
@@ -92,6 +95,7 @@ class CI_DB_pdo_result extends CI_DB_result
      * @access	public
      * @return	array
      */
+    #[\Override]
     public function field_data()
     {
         $data = [];
@@ -102,7 +106,7 @@ class CI_DB_pdo_result extends CI_DB_result
             }
 
             return $data;
-        } catch (Exception $e) {
+        } catch (Exception) {
             if ($this->db->db_debug) {
                 return $this->db->display_error('db_unsuported_feature');
             }
@@ -117,6 +121,7 @@ class CI_DB_pdo_result extends CI_DB_result
      *
      * @return	null
      */
+    #[\Override]
     public function free_result()
     {
         if (is_object($this->result_id)) {
@@ -136,6 +141,7 @@ class CI_DB_pdo_result extends CI_DB_result
      * @access	private
      * @return	array
      */
+    #[\Override]
     public function _data_seek($n = 0)
     {
         return false;
@@ -151,6 +157,7 @@ class CI_DB_pdo_result extends CI_DB_result
      * @access	private
      * @return	array
      */
+    #[\Override]
     public function _fetch_assoc()
     {
         return $this->result_id->fetch(PDO::FETCH_ASSOC);
@@ -166,6 +173,7 @@ class CI_DB_pdo_result extends CI_DB_result
      * @access	private
      * @return	object
      */
+    #[\Override]
     public function _fetch_object()
     {
         return $this->result_id->fetchObject();

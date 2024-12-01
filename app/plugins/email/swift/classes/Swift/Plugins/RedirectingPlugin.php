@@ -16,37 +16,27 @@
 class Swift_Plugins_RedirectingPlugin implements Swift_Events_SendListener
 {
     /**
-     * The recipient who will receive all messages.
-     *
-     * @var mixed
-     */
-    private $_recipient;
-
-    /**
-     * List of regular expression for recipient whitelisting
-     *
-     * @var array
-     */
-    private $_whitelist = [];
-
-    /**
      * Create a new RedirectingPlugin.
      *
-     * @param mixed $recipient
-     * @param array  $whitelist
+     * @param array $_whitelist
      */
-    public function __construct($recipient, array $whitelist = array())
+    public function __construct(
+        /**
+         * The recipient who will receive all messages.
+         */
+        private mixed $_recipient,
+        /**
+         * List of regular expression for recipient whitelisting
+         */
+        private array $_whitelist = []
+    )
     {
-        $this->_recipient = $recipient;
-        $this->_whitelist = $whitelist;
     }
 
     /**
      * Set the recipient of all messages.
-     *
-     * @param mixed $recipient
      */
-    public function setRecipient($recipient)
+    public function setRecipient(mixed $recipient)
     {
         $this->_recipient = $recipient;
     }
@@ -86,6 +76,7 @@ class Swift_Plugins_RedirectingPlugin implements Swift_Events_SendListener
      *
      * @param Swift_Events_SendEvent $evt
      */
+    #[\Override]
     public function beforeSendPerformed(Swift_Events_SendEvent $evt)
     {
         $message = $evt->getMessage();
@@ -168,7 +159,7 @@ class Swift_Plugins_RedirectingPlugin implements Swift_Events_SendListener
         }
 
         foreach ($this->_whitelist as $pattern) {
-            if (preg_match($pattern, $recipient)) {
+            if (preg_match($pattern, (string) $recipient)) {
                 return true;
             }
         }
@@ -181,6 +172,7 @@ class Swift_Plugins_RedirectingPlugin implements Swift_Events_SendListener
      *
      * @param Swift_Events_SendEvent $evt
      */
+    #[\Override]
     public function sendPerformed(Swift_Events_SendEvent $evt)
     {
         $this->_restoreMessage($evt->getMessage());

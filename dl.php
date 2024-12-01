@@ -2,9 +2,9 @@
 
 	$path = $_GET['src'];
 
-	if (preg_match('~/storage/originals/([a-z0-9]{2}/[a-z0-9]{2}/.*)$~', $path, $matches))
+	if (preg_match('~/storage/originals/([a-z0-9]{2}/[a-z0-9]{2}/.*)$~', (string) $path, $matches))
 	{
-		$base = dirname(__FILE__) . '/storage/originals/';
+		$base = __DIR__ . '/storage/originals/';
 		$full_path = $base . $matches[1];
 
 		if (!file_exists($full_path))
@@ -16,31 +16,23 @@
 		$realbase = realpath($base);
 		$realfile = realpath($full_path);
 
-		if (!$realfile || strpos($realfile, $realbase) !== 0)
+		if (!$realfile || !str_starts_with($realfile, $realbase))
 		{
 			header('HTTP/1.1 403 Forbidden');
 			exit;
 		}
 
-		$name = basename($path);
+		$name = basename((string) $path);
 		$info = pathinfo($name);
 		$ext = $info['extension'];
 
 		header("Content-Disposition: attachment; filename=$name");
-		switch(strtolower($ext)) {
-			case 'jpg':
-				$ct = 'image/jpeg';
-				break;
-			case 'gif':
-				$ct = 'image/gif';
-				break;
-			case 'png':
-				$ct = 'image/png';
-				break;
-			default:
-				$ct = 'application/octet-stream';
-				break;
-		}
+		$ct = match (strtolower($ext)) {
+      'jpg' => 'image/jpeg',
+      'gif' => 'image/gif',
+      'png' => 'image/png',
+      default => 'application/octet-stream',
+  };
 
 		header('Content-type: ' . $ct);
 		header('Content-length: ' . filesize($full_path));

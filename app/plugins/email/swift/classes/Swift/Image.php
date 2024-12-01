@@ -38,6 +38,7 @@ class Swift_Image extends Swift_EmbeddedFile
      *
      * @return Swift_Image
      */
+    #[\Override]
     public static function newInstance($data = null, $filename = null, $contentType = null)
     {
         return new self($data, $filename, $contentType);
@@ -50,6 +51,7 @@ class Swift_Image extends Swift_EmbeddedFile
      *
      * @return Swift_Image
      */
+    #[\Override]
     public static function fromPath($path)
     {
         $image = self::newInstance()->setFile(

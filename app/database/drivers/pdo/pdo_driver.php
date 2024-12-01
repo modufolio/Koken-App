@@ -58,7 +58,7 @@ class CI_DB_pdo_driver extends CI_DB
         parent::__construct($params);
 
         // clause and character used for LIKE escape sequences
-        if (strpos($this->hostname, 'mysql') !== false) {
+        if (str_contains($this->hostname, 'mysql')) {
             $this->_like_escape_str = '';
             $this->_like_escape_chr = '';
 
@@ -69,7 +69,7 @@ class CI_DB_pdo_driver extends CI_DB
 
             //Set the charset with the connection options
             $this->options['PDO::MYSQL_ATTR_INIT_COMMAND'] = "SET NAMES {$this->char_set}";
-        } elseif (strpos($this->hostname, 'odbc') !== false) {
+        } elseif (str_contains($this->hostname, 'odbc')) {
             $this->_like_escape_str = " {escape '%s'} ";
             $this->_like_escape_chr = '!';
         } else {
@@ -316,15 +316,15 @@ class CI_DB_pdo_driver extends CI_DB
         $str = $this->conn_id->quote($str);
 
         //If there are duplicated quotes, trim them away
-        if (strpos($str, "'") === 0) {
-            $str = substr($str, 1, -1);
+        if (str_starts_with((string) $str, "'")) {
+            $str = substr((string) $str, 1, -1);
         }
 
         // escape LIKE condition wildcards
         if ($like === true) {
             $str = str_replace(
-                array('%', '_', $this->_like_escape_chr),
-                array($this->_like_escape_chr.'%', $this->_like_escape_chr.'_', $this->_like_escape_chr.$this->_like_escape_chr),
+                ['%', '_', $this->_like_escape_chr],
+                [$this->_like_escape_chr.'%', $this->_like_escape_chr.'_', $this->_like_escape_chr.$this->_like_escape_chr],
                 $str
             );
         }
@@ -356,7 +356,7 @@ class CI_DB_pdo_driver extends CI_DB
     public function insert_id($name=null)
     {
         //Convenience method for postgres insertid
-        if (strpos($this->hostname, 'pgsql') !== false) {
+        if (str_contains($this->hostname, 'pgsql')) {
             $v = $this->_version();
 
             $table	= func_num_args() > 0 ? func_get_arg(0) : null;
@@ -501,22 +501,22 @@ class CI_DB_pdo_driver extends CI_DB
         }
 
         foreach ($this->_reserved_identifiers as $id) {
-            if (strpos($item, '.'.$id) !== false) {
+            if (str_contains((string) $item, '.'.$id)) {
                 $str = $this->_escape_char. str_replace('.', $this->_escape_char.'.', $item);
 
                 // remove duplicates if the user already included the escape
-                return preg_replace('/['.$this->_escape_char.']+/', $this->_escape_char, $str);
+                return preg_replace('/['.$this->_escape_char.']+/', (string) $this->_escape_char, $str);
             }
         }
 
-        if (strpos($item, '.') !== false) {
+        if (str_contains((string) $item, '.')) {
             $str = $this->_escape_char.str_replace('.', $this->_escape_char.'.'.$this->_escape_char, $item).$this->_escape_char;
         } else {
             $str = $this->_escape_char.$item.$this->_escape_char;
         }
 
         // remove duplicates if the user already included the escape
-        return preg_replace('/['.$this->_escape_char.']+/', $this->_escape_char, $str);
+        return preg_replace('/['.$this->_escape_char.']+/', (string) $this->_escape_char, $str);
     }
 
     // --------------------------------------------------------------------
@@ -534,7 +534,7 @@ class CI_DB_pdo_driver extends CI_DB
     public function _from_tables($tables)
     {
         if (! is_array($tables)) {
-            $tables = array($tables);
+            $tables = [$tables];
         }
 
         return (count($tables) == 1) ? $tables[0] : '('.implode(', ', $tables).')';
@@ -591,7 +591,7 @@ class CI_DB_pdo_driver extends CI_DB
      * @param	array	the limit clause
      * @return	string
      */
-    public function _update($table, $values, $where, $orderby = array(), $limit = false)
+    public function _update($table, $values, $where, $orderby = [], $limit = false)
     {
         foreach ($values as $key => $val) {
             $valstr[] = $key." = ".$val;
@@ -689,7 +689,7 @@ class CI_DB_pdo_driver extends CI_DB
      * @param	string	the limit clause
      * @return	string
      */
-    public function _delete($table, $where = array(), $like = array(), $limit = false)
+    public function _delete($table, $where = [], $like = [], $limit = false)
     {
         $conditions = '';
 
@@ -723,7 +723,7 @@ class CI_DB_pdo_driver extends CI_DB
      */
     public function _limit($sql, $limit, $offset)
     {
-        if (strpos($this->hostname, 'cubrid') !== false || strpos($this->hostname, 'sqlite') !== false) {
+        if (str_contains($this->hostname, 'cubrid') || str_contains($this->hostname, 'sqlite')) {
             if ($offset == 0) {
                 $offset = '';
             } else {

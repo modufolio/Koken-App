@@ -157,11 +157,10 @@ class Swift_DependencyContainer
      *
      * {@link register()} must be called before this will work.
      *
-     * @param mixed $value
      *
      * @return Swift_DependencyContainer
      */
-    public function asValue($value)
+    public function asValue(mixed $value)
     {
         $endPoint = & $this->_getEndPoint();
         $endPoint['lookupType'] = self::TYPE_VALUE;
@@ -254,17 +253,16 @@ class Swift_DependencyContainer
      *
      * @see withDependencies(), addConstructorLookup()
      *
-     * @param mixed $value
      *
      * @return Swift_DependencyContainer
      */
-    public function addConstructorValue($value)
+    public function addConstructorValue(mixed $value)
     {
         $endPoint = & $this->_getEndPoint();
         if (!isset($endPoint['args'])) {
             $endPoint['args'] = [];
         }
-        $endPoint['args'][] = array('type' => 'value', 'item' => $value);
+        $endPoint['args'][] = ['type' => 'value', 'item' => $value];
 
         return $this;
     }
@@ -285,7 +283,7 @@ class Swift_DependencyContainer
         if (!isset($this->_endPoint['args'])) {
             $endPoint['args'] = [];
         }
-        $endPoint['args'][] = array('type' => 'lookup', 'item' => $lookup);
+        $endPoint['args'][] = ['type' => 'lookup', 'item' => $lookup];
 
         return $this;
     }

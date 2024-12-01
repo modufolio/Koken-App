@@ -64,7 +64,7 @@ class CI_User_agent
     public function __construct()
     {
         if (isset($_SERVER['HTTP_USER_AGENT'])) {
-            $this->agent = trim($_SERVER['HTTP_USER_AGENT']);
+            $this->agent = trim((string) $_SERVER['HTTP_USER_AGENT']);
         }
 
         if (! is_null($this->agent)) {
@@ -135,7 +135,7 @@ class CI_User_agent
     {
         $this->_set_platform();
 
-        foreach (array('_set_robot', '_set_browser', '_set_mobile') as $function) {
+        foreach (['_set_robot', '_set_browser', '_set_mobile'] as $function) {
             if ($this->$function() === true) {
                 break;
             }
@@ -154,7 +154,7 @@ class CI_User_agent
     {
         if (is_array($this->platforms) and count($this->platforms) > 0) {
             foreach ($this->platforms as $key => $val) {
-                if (preg_match("|".preg_quote($key)."|i", $this->agent)) {
+                if (preg_match("|".preg_quote($key)."|i", (string) $this->agent)) {
                     $this->platform = $val;
                     return true;
                 }
@@ -175,7 +175,7 @@ class CI_User_agent
     {
         if (is_array($this->browsers) and count($this->browsers) > 0) {
             foreach ($this->browsers as $key => $val) {
-                if (preg_match("|".preg_quote($key).".*?([0-9\.]+)|i", $this->agent, $match)) {
+                if (preg_match("|".preg_quote($key).".*?([0-9\.]+)|i", (string) $this->agent, $match)) {
                     $this->is_browser = true;
                     $this->version = $match[1];
                     $this->browser = $val;
@@ -199,7 +199,7 @@ class CI_User_agent
     {
         if (is_array($this->robots) and count($this->robots) > 0) {
             foreach ($this->robots as $key => $val) {
-                if (preg_match("|".preg_quote($key)."|i", $this->agent)) {
+                if (preg_match("|".preg_quote($key)."|i", (string) $this->agent)) {
                     $this->is_robot = true;
                     $this->robot = $val;
                     return true;
@@ -221,7 +221,7 @@ class CI_User_agent
     {
         if (is_array($this->mobiles) and count($this->mobiles) > 0) {
             foreach ($this->mobiles as $key => $val) {
-                if (false !== (strpos(strtolower($this->agent), $key))) {
+                if (str_contains(strtolower((string) $this->agent), $key)) {
                     $this->is_mobile = true;
                     $this->mobile = $val;
                     return true;
@@ -242,13 +242,13 @@ class CI_User_agent
     private function _set_languages()
     {
         if ((count($this->languages) == 0) and isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) and $_SERVER['HTTP_ACCEPT_LANGUAGE'] != '') {
-            $languages = preg_replace('/(;q=[0-9\.]+)/i', '', strtolower(trim($_SERVER['HTTP_ACCEPT_LANGUAGE'])));
+            $languages = preg_replace('/(;q=[0-9\.]+)/i', '', strtolower(trim((string) $_SERVER['HTTP_ACCEPT_LANGUAGE'])));
 
-            $this->languages = explode(',', $languages);
+            $this->languages = explode(',', (string) $languages);
         }
 
         if (count($this->languages) == 0) {
-            $this->languages = array('Undefined');
+            $this->languages = ['Undefined'];
         }
     }
 
@@ -263,13 +263,13 @@ class CI_User_agent
     private function _set_charsets()
     {
         if ((count($this->charsets) == 0) and isset($_SERVER['HTTP_ACCEPT_CHARSET']) and $_SERVER['HTTP_ACCEPT_CHARSET'] != '') {
-            $charsets = preg_replace('/(;q=.+)/i', '', strtolower(trim($_SERVER['HTTP_ACCEPT_CHARSET'])));
+            $charsets = preg_replace('/(;q=.+)/i', '', strtolower(trim((string) $_SERVER['HTTP_ACCEPT_CHARSET'])));
 
-            $this->charsets = explode(',', $charsets);
+            $this->charsets = explode(',', (string) $charsets);
         }
 
         if (count($this->charsets) == 0) {
-            $this->charsets = array('Undefined');
+            $this->charsets = ['Undefined'];
         }
     }
 
@@ -445,7 +445,7 @@ class CI_User_agent
      */
     public function referrer()
     {
-        return (! isset($_SERVER['HTTP_REFERER']) or $_SERVER['HTTP_REFERER'] == '') ? '' : trim($_SERVER['HTTP_REFERER']);
+        return (! isset($_SERVER['HTTP_REFERER']) or $_SERVER['HTTP_REFERER'] == '') ? '' : trim((string) $_SERVER['HTTP_REFERER']);
     }
 
     // --------------------------------------------------------------------
@@ -492,7 +492,7 @@ class CI_User_agent
      */
     public function accept_lang($lang = 'en')
     {
-        return (in_array(strtolower($lang), $this->languages(), true));
+        return (in_array(strtolower((string) $lang), $this->languages(), true));
     }
 
     // --------------------------------------------------------------------
@@ -505,7 +505,7 @@ class CI_User_agent
      */
     public function accept_charset($charset = 'utf-8')
     {
-        return (in_array(strtolower($charset), $this->charsets(), true));
+        return (in_array(strtolower((string) $charset), $this->charsets(), true));
     }
 }
 

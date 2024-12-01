@@ -66,8 +66,6 @@ abstract class AbstractZipArchive extends AbstractZipWriter
     protected $offset = 0;
     protected $isFinalized = false;
     protected $addExtraField = true;
-
-    protected $streamChunkSize = 0;
     protected $streamFilePath = null;
     protected $streamTimestamp = null;
     protected $streamFileComment = null;
@@ -83,9 +81,7 @@ abstract class AbstractZipArchive extends AbstractZipWriter
     public static $temp = null;
 
     private $_listeners = [];
-    private $_phpConfigurationWatch = array(
-        // 'mbstring.func_overload' => '0' // throw an exception if setting in php.ini is not '0'
-    );
+    private $_phpConfigurationWatch = [];
 
     /**
      * Constructor.
@@ -97,18 +93,13 @@ abstract class AbstractZipArchive extends AbstractZipWriter
      *
      * @throws \PHPZip\Zip\Exception\InvalidPhpConfiguration In case of errors
      */
-    protected function __construct($streamChunkSize)
+    protected function __construct(protected $streamChunkSize)
     {
-        $this->streamChunkSize = $streamChunkSize;
-
         if (count($this->_phpConfigurationWatch) > 0) {
             foreach ($this->_phpConfigurationWatch as $k => $v) {
                 $s = (string)$v;
                 if (@ini_get($k) !== $s) {
-                    $this->_throwException(new InvalidPhpConfigurationException(array(
-                        'setting' => $k,
-                        'expected' => $s,
-                    )));
+                    $this->_throwException(new InvalidPhpConfigurationException(['setting' => $k, 'expected' => $s]));
                     break; // technically not needed.
                 }
             }
@@ -240,19 +231,13 @@ abstract class AbstractZipArchive extends AbstractZipWriter
             $gpFlags = self::DEFAULT_GP_FLAGS_STORED;
         }
 
-        $this->onBeginAddFile(array(
-            'gzLength' => $gzLength,
-        ));
+        $this->onBeginAddFile(['gzLength' => $gzLength]);
 
         $this->buildZipEntry($filePath, $fileComment, $gpFlags, $gzType, $timestamp, $fileCRC32, $gzLength, $dataLength, $extFileAttr);
 
-        $this->onEndAddFile(array(
-            'gzData' => $gzData,
-        ));
+        $this->onEndAddFile(['gzData' => $gzData]);
 
-        $this->_notifyListeners(null, array(
-            'data' => $data,
-        ));
+        $this->_notifyListeners(null, ['data' => $data]);
 
         return true;
     }
@@ -280,7 +265,7 @@ abstract class AbstractZipArchive extends AbstractZipWriter
         $zipPath,
         $recursive = true,
         $followSymlinks = true,
-        &$addedFiles = array(),
+        &$addedFiles = [],
         $overrideFilePermissions = false,
         $extDirAttr = self::EXT_FILE_ATTR_DIR,
         $extFileAttr = self::EXT_FILE_ATTR_FILE
@@ -398,10 +383,7 @@ abstract class AbstractZipArchive extends AbstractZipWriter
             $result = true;
         }
 
-        $this->_notifyListeners(null, array(
-            'file' => $dataFile,
-            'result' => $result,
-        ));
+        $this->_notifyListeners(null, ['file' => $dataFile, 'result' => $result]);
 
         return $result;
     }
@@ -426,11 +408,7 @@ abstract class AbstractZipArchive extends AbstractZipWriter
         $result = false;
 
         if (!function_exists('sys_get_temp_dir')) {
-            $this->_throwException(new IncompatiblePhpVersionException(array(
-                'appName' => self::APP_NAME,
-                'appVersion' => self::VERSION,
-                'minVersion' => self::MIN_PHP_VERSION,
-            )));
+            $this->_throwException(new IncompatiblePhpVersionException(['appName' => self::APP_NAME, 'appVersion' => self::VERSION, 'minVersion' => self::MIN_PHP_VERSION]));
         }
 
         if (!$this->isFinalized) {
@@ -451,10 +429,7 @@ abstract class AbstractZipArchive extends AbstractZipWriter
             $result = true;
         }
 
-        $this->_notifyListeners(null, array(
-            'file' => $this->streamFile,
-            'result' => $result,
-        ));
+        $this->_notifyListeners(null, ['file' => $this->streamFile, 'result' => $result]);
 
         return $result;
     }
@@ -481,10 +456,7 @@ abstract class AbstractZipArchive extends AbstractZipWriter
         $length = fwrite($this->streamData, $data, $dataLength);
 
         if ($length != $dataLength) {
-            $this->_throwException(new LengthMismatchException(array(
-                'expected' => BinStringStatic::_strlen($data),
-                'written' => (!$length ? 'NONE!' : $length),
-            )));
+            $this->_throwException(new LengthMismatchException(['expected' => BinStringStatic::_strlen($data), 'written' => (!$length ? 'NONE!' : $length)]));
         }
 
         $this->streamFileLength += $length;
@@ -597,17 +569,13 @@ abstract class AbstractZipArchive extends AbstractZipWriter
             $data = fread($handle, $len);
             $pos += $len;
 
-            $this->onProcessFile(array(
-                'data' => $data,
-            ));
+            $this->onProcessFile(['data' => $data]);
         }
 
         fclose($handle);
         unlink($tempZip);
 
-        $this->_notifyListeners(null, array(
-            'file' => $dataFile,
-        ));
+        $this->_notifyListeners(null, ['file' => $dataFile]);
 
         return true;
     }
@@ -694,9 +662,7 @@ abstract class AbstractZipArchive extends AbstractZipWriter
             . $filePath // FileName
             . $locExField; // Extra fields
 
-        $this->onBuildZipEntry(array(
-            'zipEntry' => $zipEntry,
-        ));
+        $this->onBuildZipEntry(['zipEntry' => $zipEntry]);
 
         $cdEntry  = self::ZIP_CENTRAL_FILE_HEADER
             . self::ATTR_MADE_BY_VERSION
@@ -718,9 +684,7 @@ abstract class AbstractZipArchive extends AbstractZipWriter
         $this->cdRec[] = $cdEntry;
         $this->offset += BinStringStatic::_strlen($zipEntry) + $gzLength;
 
-        $this->_notifyListeners(null, array(
-            'file' => $zipEntry,
-        ));
+        $this->_notifyListeners(null, ['file' => $zipEntry]);
     }
 
     /**
@@ -748,27 +712,16 @@ abstract class AbstractZipArchive extends AbstractZipWriter
         $this->onBeginBuildResponseHeader();
 
         if (!function_exists('sys_get_temp_dir')) {
-            $this->_throwException(new IncompatiblePhpVersionException(array(
-                'appName' => self::APP_NAME,
-                'appVersion' => self::VERSION,
-                'minVersion' => self::MIN_PHP_VERSION,
-            )));
+            $this->_throwException(new IncompatiblePhpVersionException(['appName' => self::APP_NAME, 'appVersion' => self::VERSION, 'minVersion' => self::MIN_PHP_VERSION]));
         }
 
         $ob = ob_get_contents();
         if ($ob !== false && BinStringStatic::_strlen($ob)) {
-            $this->_throwException(new BufferNotEmptyException(array(
-                'outputBuffer' => $ob,
-                'fileName' => $fileName,
-            )));
+            $this->_throwException(new BufferNotEmptyException(['outputBuffer' => $ob, 'fileName' => $fileName]));
         }
 
         if (headers_sent($headerFile, $headerLine)) {
-            $this->_throwException(new HeadersSentException(array(
-                'headerFile' => $headerFile,
-                'headerLine' => $headerLine,
-                'fileName' => $fileName,
-            )));
+            $this->_throwException(new HeadersSentException(['headerFile' => $headerFile, 'headerLine' => $headerLine, 'fileName' => $fileName]));
         }
 
         if (@ini_get($zlibConfig)) {
@@ -794,11 +747,7 @@ abstract class AbstractZipArchive extends AbstractZipWriter
 
         $this->onEndBuildResponseHeader();
 
-        $this->_notifyListeners(null, array(
-            'file' => $fileName,
-            'utf8FileName' => $utf8FileName,
-            'contentType' => $contentType,
-        ));
+        $this->_notifyListeners(null, ['file' => $fileName, 'utf8FileName' => $utf8FileName, 'contentType' => $contentType]);
 
         return true;
     }
@@ -1010,7 +959,7 @@ abstract class AbstractZipArchive extends AbstractZipWriter
      * @param string|null $method (Optional) The name of the event to fire. If this is null, then the calling method is used.
      * @param array       $data Method parameters passed as an array.
      */
-    private function _notifyListeners($method = null, array $data = array())
+    private function _notifyListeners($method = null, array $data = [])
     {
         if (is_null($method)) {
             $backtrace = debug_backtrace();
@@ -1038,11 +987,9 @@ abstract class AbstractZipArchive extends AbstractZipWriter
      *
      * @throws AbstractException $exception
      */
-    private function _throwException(AbstractException $exception)
+    private function _throwException(AbstractException $exception): never
     {
-        $this->_notifyListeners('onException', array(
-            'exception' => $exception,
-        ));
+        $this->_notifyListeners('onException', ['exception' => $exception]);
 
         throw $exception;
     }

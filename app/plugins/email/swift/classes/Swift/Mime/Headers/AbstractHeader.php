@@ -13,7 +13,7 @@
  *
  * @author     Chris Corbyn
  */
-abstract class Swift_Mime_Headers_AbstractHeader implements Swift_Mime_Header
+abstract class Swift_Mime_Headers_AbstractHeader implements Swift_Mime_Header, \Stringable
 {
     /**
      * The name of this Header.
@@ -79,6 +79,7 @@ abstract class Swift_Mime_Headers_AbstractHeader implements Swift_Mime_Header
      *
      * @param string $charset
      */
+    #[\Override]
     public function setCharset($charset)
     {
         $this->clearCachedValueIf($charset != $this->_charset);
@@ -169,6 +170,7 @@ abstract class Swift_Mime_Headers_AbstractHeader implements Swift_Mime_Header
      *
      * @return string
      */
+    #[\Override]
     public function getFieldName()
     {
         return $this->_name;
@@ -202,6 +204,7 @@ abstract class Swift_Mime_Headers_AbstractHeader implements Swift_Mime_Header
      *
      * @throws Swift_RfcComplianceException
      */
+    #[\Override]
     public function toString()
     {
         return $this->_tokensToString($this->toTokens());
@@ -214,7 +217,8 @@ abstract class Swift_Mime_Headers_AbstractHeader implements Swift_Mime_Header
      *
      * @see toString()
      */
-    public function __toString()
+    #[\Override]
+    public function __toString(): string
     {
         return $this->toString();
     }
@@ -253,7 +257,7 @@ abstract class Swift_Mime_Headers_AbstractHeader implements Swift_Mime_Header
             if (preg_match('/^'.$this->getGrammar()->getDefinition('text').'*$/D', $phraseStr)) {
                 $phraseStr = $this->getGrammar()->escapeSpecials(
                     $phraseStr,
-                    array('"'),
+                    ['"'],
                     $this->getGrammar()->getSpecials()
                 );
                 $phraseStr = '"'.$phraseStr.'"';

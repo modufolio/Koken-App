@@ -23,13 +23,6 @@ class Swift_Mime_Headers_ParameterizedHeader extends Swift_Mime_Headers_Unstruct
     public const TOKEN_REGEX = '(?:[\x21\x23-\x27\x2A\x2B\x2D\x2E\x30-\x39\x41-\x5A\x5E-\x7E]+)';
 
     /**
-     * The Encoder used to encode the parameters.
-     *
-     * @var Swift_Encoder
-     */
-    private $_paramEncoder;
-
-    /**
      * The parameters as an associative array.
      *
      * @var string[]
@@ -41,13 +34,16 @@ class Swift_Mime_Headers_ParameterizedHeader extends Swift_Mime_Headers_Unstruct
      *
      * @param string                   $name
      * @param Swift_Mime_HeaderEncoder $encoder
-     * @param Swift_Encoder            $paramEncoder, optional
+     * @param Swift_Encoder $_paramEncoder , optional
      * @param Swift_Mime_Grammar       $grammar
      */
-    public function __construct($name, Swift_Mime_HeaderEncoder $encoder, Swift_Encoder $paramEncoder = null, Swift_Mime_Grammar $grammar)
+    public function __construct($name, Swift_Mime_HeaderEncoder $encoder, Swift_Mime_Grammar $grammar,
+    /**
+     * The Encoder used to encode the parameters.
+     */
+    private readonly ?\Swift_Encoder $_paramEncoder = null)
     {
         parent::__construct($name, $encoder, $grammar);
-        $this->_paramEncoder = $paramEncoder;
     }
 
     /**
@@ -58,6 +54,7 @@ class Swift_Mime_Headers_ParameterizedHeader extends Swift_Mime_Headers_Unstruct
      *
      * @return int
      */
+    #[\Override]
     public function getFieldType()
     {
         return self::TYPE_PARAMETERIZED;
@@ -68,6 +65,7 @@ class Swift_Mime_Headers_ParameterizedHeader extends Swift_Mime_Headers_Unstruct
      *
      * @param string $charset
      */
+    #[\Override]
     public function setCharset($charset)
     {
         parent::setCharset($charset);
@@ -82,9 +80,10 @@ class Swift_Mime_Headers_ParameterizedHeader extends Swift_Mime_Headers_Unstruct
      * @param string $parameter
      * @param string $value
      */
+    #[\Override]
     public function setParameter($parameter, $value)
     {
-        $this->setParameters(array_merge($this->getParameters(), array($parameter => $value)));
+        $this->setParameters(array_merge($this->getParameters(), [$parameter => $value]));
     }
 
     /**
@@ -94,6 +93,7 @@ class Swift_Mime_Headers_ParameterizedHeader extends Swift_Mime_Headers_Unstruct
      *
      * @return string
      */
+    #[\Override]
     public function getParameter($parameter)
     {
         $params = $this->getParameters();
@@ -129,6 +129,7 @@ class Swift_Mime_Headers_ParameterizedHeader extends Swift_Mime_Headers_Unstruct
      *
      * @return string
      */
+    #[\Override]
     public function getFieldBody() //TODO: Check caching here
     {
         $body = parent::getFieldBody();
@@ -152,6 +153,7 @@ class Swift_Mime_Headers_ParameterizedHeader extends Swift_Mime_Headers_Unstruct
      *
      * @return array An array of tokens as strings
      */
+    #[\Override]
     protected function toTokens($string = null)
     {
         $tokens = parent::toTokens(parent::getFieldBody());
@@ -217,7 +219,7 @@ class Swift_Mime_Headers_ParameterizedHeader extends Swift_Mime_Headers_Unstruct
             }
         }
 
-        $valueLines = isset($this->_paramEncoder) ? explode("\r\n", $value) : array($value);
+        $valueLines = isset($this->_paramEncoder) ? explode("\r\n", $value) : [$value];
 
         // Need to add indices
         if (count($valueLines) > 1) {

@@ -51,12 +51,12 @@ if (! function_exists('force_download')) {
 
         // Try to determine if the filename includes a file extension.
         // We need it in order to set the MIME type
-        if (false === strpos($filename, '.')) {
+        if (!str_contains((string) $filename, '.')) {
             return false;
         }
 
         // Grab the file extension
-        $x = explode('.', $filename);
+        $x = explode('.', (string) $filename);
         $extension = end($x);
 
         // Load the mime types
@@ -74,21 +74,21 @@ if (! function_exists('force_download')) {
         }
 
         // Generate the server headers
-        if (strpos($_SERVER['HTTP_USER_AGENT'], "MSIE") !== false) {
+        if (str_contains((string) $_SERVER['HTTP_USER_AGENT'], "MSIE")) {
             header('Content-Type: '.$mime);
             header('Content-Disposition: attachment; filename="'.$filename.'"');
             header('Expires: 0');
             header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
             header("Content-Transfer-Encoding: binary");
             header('Pragma: public');
-            header("Content-Length: ".strlen($data));
+            header("Content-Length: ".strlen((string) $data));
         } else {
             header('Content-Type: '.$mime);
             header('Content-Disposition: attachment; filename="'.$filename.'"');
             header("Content-Transfer-Encoding: binary");
             header('Expires: 0');
             header('Pragma: no-cache');
-            header("Content-Length: ".strlen($data));
+            header("Content-Length: ".strlen((string) $data));
         }
 
         exit($data);

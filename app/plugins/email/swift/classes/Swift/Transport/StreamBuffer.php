@@ -27,20 +27,16 @@ class Swift_Transport_StreamBuffer extends Swift_ByteStream_AbstractFilterableIn
     /** Buffer initialization parameters */
     private $_params = [];
 
-    /** The ReplacementFilterFactory */
-    private $_replacementFactory;
-
     /** Translations performed on data being streamed into the buffer */
     private $_translations = [];
 
     /**
      * Create a new StreamBuffer using $replacementFactory for transformations.
      *
-     * @param Swift_ReplacementFilterFactory $replacementFactory
+     * @param Swift_ReplacementFilterFactory $_replacementFactory
      */
-    public function __construct(Swift_ReplacementFilterFactory $replacementFactory)
+    public function __construct(private readonly Swift_ReplacementFilterFactory $_replacementFactory)
     {
-        $this->_replacementFactory = $replacementFactory;
     }
 
     /**
@@ -50,18 +46,14 @@ class Swift_Transport_StreamBuffer extends Swift_ByteStream_AbstractFilterableIn
      *
      * @param array $params
      */
+    #[\Override]
     public function initialize(array $params)
     {
         $this->_params = $params;
-        switch ($params['type']) {
-            case self::TYPE_PROCESS:
-                $this->_establishProcessConnection();
-                break;
-            case self::TYPE_SOCKET:
-            default:
-                $this->_establishSocketConnection();
-                break;
-        }
+        match ($params['type']) {
+            self::TYPE_PROCESS => $this->_establishProcessConnection(),
+            default => $this->_establishSocketConnection(),
+        };
     }
 
     /**
@@ -70,6 +62,7 @@ class Swift_Transport_StreamBuffer extends Swift_ByteStream_AbstractFilterableIn
      * @param string $param
      * @param mixed  $value
      */
+    #[\Override]
     public function setParam($param, $value)
     {
         if (isset($this->_stream)) {
@@ -98,6 +91,7 @@ class Swift_Transport_StreamBuffer extends Swift_ByteStream_AbstractFilterableIn
     /**
      * Perform any shutdown logic needed.
      */
+    #[\Override]
     public function terminate()
     {
         if (isset($this->_stream)) {
@@ -126,6 +120,7 @@ class Swift_Transport_StreamBuffer extends Swift_ByteStream_AbstractFilterableIn
      *
      * @param string[] $replacements
      */
+    #[\Override]
     public function setWriteTranslations(array $replacements)
     {
         foreach ($this->_translations as $search => $replace) {
@@ -158,6 +153,7 @@ class Swift_Transport_StreamBuffer extends Swift_ByteStream_AbstractFilterableIn
      *
      * @throws Swift_IoException
      */
+    #[\Override]
     public function readLine($sequence)
     {
         if (isset($this->_out) && !feof($this->_out)) {
@@ -190,6 +186,7 @@ class Swift_Transport_StreamBuffer extends Swift_ByteStream_AbstractFilterableIn
      *
      * @throws Swift_IoException
      */
+    #[\Override]
     public function read($length)
     {
         if (isset($this->_out) && !feof($this->_out)) {
@@ -210,11 +207,13 @@ class Swift_Transport_StreamBuffer extends Swift_ByteStream_AbstractFilterableIn
     }
 
     /** Not implemented */
+    #[\Override]
     public function setReadPointer($byteOffset)
     {
     }
 
     /** Flush the stream contents */
+    #[\Override]
     protected function _flush()
     {
         if (isset($this->_in)) {
@@ -223,6 +222,7 @@ class Swift_Transport_StreamBuffer extends Swift_ByteStream_AbstractFilterableIn
     }
 
     /** Write this bytes to the stream */
+    #[\Override]
     protected function _commit($bytes)
     {
         if (isset($this->_in)) {
@@ -284,11 +284,7 @@ class Swift_Transport_StreamBuffer extends Swift_ByteStream_AbstractFilterableIn
     private function _establishProcessConnection()
     {
         $command = $this->_params['command'];
-        $descriptorSpec = array(
-            0 => array('pipe', 'r'),
-            1 => array('pipe', 'w'),
-            2 => array('pipe', 'w'),
-            );
+        $descriptorSpec = [0 => ['pipe', 'r'], 1 => ['pipe', 'w'], 2 => ['pipe', 'w']];
         $this->_stream = proc_open($command, $descriptorSpec, $pipes);
         stream_set_blocking($pipes[2], 0);
         if ($err = stream_get_contents($pipes[2])) {

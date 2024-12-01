@@ -26,7 +26,7 @@ class Koken_Controller extends CI_Controller
 
     public function _clear_system_caches()
     {
-        Shutter::clear_cache(array('api', 'core', 'site', 'locks'));
+        Shutter::clear_cache(['api', 'core', 'site', 'locks']);
         delete_files(FCPATH . 'app' . DIRECTORY_SEPARATOR . 'application' . DIRECTORY_SEPARATOR . 'datamapper' . DIRECTORY_SEPARATOR . 'cache', true, 1);
 
         $this->_compile_plugins();
@@ -35,14 +35,14 @@ class Koken_Controller extends CI_Controller
         $a->repair_tree();
 
         $s = new Setting();
-        $s->where('name', 'site_url')->get();
+        $s->where('name', 'site_url')->get();var_dump($s->value);
 
         if ($this->check_for_rewrite()) {
             if ($s->value === 'default') {
                 $htaccess = create_htaccess();
                 $root_htaccess = FCPATH . '.htaccess';
                 $current = file_get_contents($root_htaccess);
-                preg_match('/#MARK#.*/s', $htaccess, $match);
+                preg_match('/#MARK#.*/s', (string) $htaccess, $match);
                 $htaccess = preg_replace('/#MARK#.*/s', str_replace('$', '\\$', $match[0]), $current);
                 file_put_contents($root_htaccess, $htaccess);
             } else {
@@ -61,8 +61,8 @@ class Koken_Controller extends CI_Controller
 
                 if (file_exists($file)) {
                     $existing = file_get_contents($file);
-                    if (strpos($existing, '#MARK#') !== false) {
-                        preg_match('/#MARK#.*/s', $htaccess, $match);
+                    if (str_contains($existing, '#MARK#')) {
+                        preg_match('/#MARK#.*/s', (string) $htaccess, $match);
                         $htaccess = preg_replace('/#MARK#.*/s', str_replace('$', '\\$', $match[0]), $existing);
                     } else {
                         $htaccess = $existing . "\n\n" . $htaccess;
@@ -76,8 +76,8 @@ class Koken_Controller extends CI_Controller
                     if (file_exists($root_htaccess)) {
                         $current = file_get_contents($root_htaccess);
                         $redirect = create_htaccess($s->value, true);
-                        if (strpos($current, '#MARK#') !== false) {
-                            preg_match('/#MARK#.*/s', $redirect, $match);
+                        if (str_contains($current, '#MARK#')) {
+                            preg_match('/#MARK#.*/s', (string) $redirect, $match);
                             $redirect = preg_replace('/#MARK#.*/s', str_replace('$', '\\$', $match[0]), $current);
                         } else {
                             $redirect = $current . "\n\n" . $redirect;
@@ -105,13 +105,11 @@ class Koken_Controller extends CI_Controller
                 curl_close($cp);
                 return false;
             } else {
-                if (strpos($f, 'https://') === 0) {
+                if (str_starts_with((string) $f, 'https://')) {
                     curl_setopt($cp, CURLOPT_SSL_VERIFYHOST, 2);
                     curl_setopt($cp, CURLOPT_SSL_VERIFYPEER, false);
                 } elseif (!$force_content_mimes) {
-                    curl_setopt($cp, CURLOPT_HTTPHEADER, array(
-                        'Accept: application/octet-stream'
-                    ));
+                    curl_setopt($cp, CURLOPT_HTTPHEADER, ['Accept: application/octet-stream']);
                 }
                 curl_setopt($cp, CURLOPT_FILE, $fp);
                 curl_setopt($cp, CURLOPT_CONNECTTIMEOUT, 15);
@@ -134,7 +132,7 @@ class Koken_Controller extends CI_Controller
             }
         }
 
-        if ((!file_exists($to) || filesize($to) === 0) && preg_match('/^https:/', $f)) {
+        if ((!file_exists($to) || filesize($to) === 0) && preg_match('/^https:/', (string) $f)) {
             // Some hosts fail on the DNS for store.koken.me, so fallback to the AWS domain name over regular HTTP
             $f = str_replace('https://store.koken.me', 'http://production-rh4cavismp.elasticbeanstalk.com', $f);
             return $this->_download(str_replace('https://', 'http://', $f), $to, $force_content_mimes);
@@ -154,7 +152,7 @@ class Koken_Controller extends CI_Controller
             $this->error(500, 'Database connection failed. Make sure the database server is running and the information in storage / configuration / database.php is still correct.', true);
         }
 
-        if (strlen($this->config->item('encryption_key')) !== 32) {
+        if (strlen((string) $this->config->item('encryption_key')) !== 32) {
             $key = md5($_SERVER['HTTP_HOST'] . uniqid('', true));
             $this->config->set_item('encryption_key', $key);
             Shutter::write_encryption_key($key);
@@ -173,7 +171,7 @@ class Koken_Controller extends CI_Controller
         if ($this->input->is_cli_request()) {
             $this->method = 'get';
         } else {
-            $this->method = strtolower($_SERVER['REQUEST_METHOD']);
+            $this->method = strtolower((string) $_SERVER['REQUEST_METHOD']);
         }
 
         if ($this->auto_authenticate && is_array($this->auto_authenticate)) {
@@ -188,8 +186,8 @@ class Koken_Controller extends CI_Controller
             $auth = $this->authenticate();
             if ($auth) {
                 $this->auth = true;
-                list($this->auth_user_id, $this->auth_token, $this->auth_role) = $auth;
-                if (strpos($this->cache_path, '/token:') === false && isset($this->auth_token)) {
+                [$this->auth_user_id, $this->auth_token, $this->auth_role] = $auth;
+                if (!str_contains($this->cache_path, '/token:') && isset($this->auth_token)) {
                     $this->cache_path .= '/token:' . $this->auth_token;
                 }
             }
@@ -202,7 +200,7 @@ class Koken_Controller extends CI_Controller
         $user_setup = FCPATH . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'configuration' . DIRECTORY_SEPARATOR . 'user_setup.php';
         if ($this->uri->uri_string() === '/system' && file_exists($user_setup)) {
             $this->cache_path .= '/' . filemtime($user_setup);
-        } elseif (preg_match('~/(js|css)$~', $this->uri->uri_string(), $content_type_match)) {
+        } elseif (preg_match('~/(js|css)$~', (string) $this->uri->uri_string(), $content_type_match)) {
             if ($content_type_match[1] === 'js') {
                 $content_type = 'text/javascript';
             } else {
@@ -219,7 +217,7 @@ class Koken_Controller extends CI_Controller
                     exit;
                 }
 
-                if ($content_type !== 'application/json' || (!empty($cache['data']) && json_decode($cache['data']))) {
+                if ($content_type !== 'application/json' || (!empty($cache['data']) && json_decode((string) $cache['data']))) {
                     header('Content-type: ' . $content_type);
                     header('Cache-control: must-revalidate');
                     header('Last-Modified: ' . gmdate('D, d M Y H:i:s', $cache['modified']) . ' GMT');
@@ -233,13 +231,13 @@ class Koken_Controller extends CI_Controller
             }
 
             if ($this->purges_cache && ENVIRONMENT === 'production') {
-                Shutter::clear_cache(array('api', 'site'));
+                Shutter::clear_cache(['api', 'site']);
             }
 
             if (isset($_POST) && isset($_POST['_method'])) {
-                $this->method = strtolower($_POST['_method']);
+                $this->method = strtolower((string) $_POST['_method']);
                 if (isset($_POST['model'])) {
-                    $_POST = json_decode($_POST['model']);
+                    $_POST = json_decode((string) $_POST['model']);
                 }
             }
         }
@@ -286,7 +284,7 @@ class Koken_Controller extends CI_Controller
         } elseif (isset($_COOKIE['koken_session']) && !$this->strict_cookie_auth) {
             $cookie = unserialize($_COOKIE['koken_session']);
             $token = $cookie['token'];
-        } elseif ($this->method == 'get' && preg_match("/token:([a-zA-Z0-9]{32})/", $this->uri->uri_string(), $matches)) {
+        } elseif ($this->method == 'get' && preg_match("/token:([a-zA-Z0-9]{32})/", (string) $this->uri->uri_string(), $matches)) {
             // TODO: deprecate this in favor of X-KOKEN-TOKEN
             $token = $matches[1];
         } elseif (isset($_REQUEST['token'])) {
@@ -296,7 +294,7 @@ class Koken_Controller extends CI_Controller
         }
 
         if ($token && $token ===  $this->config->item('encryption_key')) {
-            return array(null, $token, null);
+            return [null, $token, null];
         } elseif ($token) {
             $a = new Application();
             $a->where('token', $token)->limit(1)->get();
@@ -311,7 +309,7 @@ class Koken_Controller extends CI_Controller
                         $a->delete();
                     }
                 }
-                return array($a->user_id, $token, $a->role);
+                return [$a->user_id, $token, $a->role];
             }
         } elseif ($cookie_auth && get_cookie('remember_me')) {
             $remember_token = get_cookie('remember_me');
@@ -319,7 +317,7 @@ class Koken_Controller extends CI_Controller
             $u->where('remember_me', $remember_token)->get();
             if ($u->exists()) {
                 $token = $u->create_session($this->session, true);
-                return array($u->id, $token, 'god');
+                return [$u->id, $token, 'god'];
             }
         }
 
@@ -377,7 +375,7 @@ class Koken_Controller extends CI_Controller
                 continue;
             }
 
-            $map[$active->path] = array('id' => $active->id, 'setup' => $active->setup == 1, 'data' => unserialize($active->data));
+            $map[$active->path] = ['id' => $active->id, 'setup' => $active->setup == 1, 'data' => unserialize((string) $active->data)];
         }
 
         return Shutter::all($map);
@@ -389,11 +387,11 @@ class Koken_Controller extends CI_Controller
 
         $plugins = $this->parse_plugins();
 
-        $to_compile = array('info' => array('email_handler' => 'DDI_Email'), 'plugins' => array());
+        $to_compile = ['info' => ['email_handler' => 'DDI_Email'], 'plugins' => []];
 
         foreach ($plugins as $plugin) {
             if (!$plugin['internal'] && $plugin['activated'] && $plugin['setup']) {
-                $_arr = array('path' => $plugin['path']);
+                $_arr = ['path' => $plugin['path']];
 
                 if (isset($plugin['data'])) {
                     $data = [];
@@ -428,11 +426,7 @@ class Koken_Controller extends CI_Controller
 
     public function error($code, $message = 'Error message not available.', $instant = false)
     {
-        $this->response_data = array(
-            'request' => $_SERVER['REQUEST_URI'],
-            'error' => $message,
-            'http' => $code
-        );
+        $this->response_data = ['request' => $_SERVER['REQUEST_URI'], 'error' => $message, 'http' => $code];
 
         if ($instant) {
             $this->_output('', $code);
@@ -446,7 +440,7 @@ class Koken_Controller extends CI_Controller
             return KOKEN_REWRITE;
         }
 
-        if (!file_exists(FCPATH . '.htaccess') && strpos($_SERVER['SERVER_SOFTWARE'], 'Apache') === 0) {
+        if (!file_exists(FCPATH . '.htaccess') && str_starts_with((string) $_SERVER['SERVER_SOFTWARE'], 'Apache')) {
             define('KOKEN_REWRITE', false);
             return false;
         }
@@ -456,7 +450,7 @@ class Koken_Controller extends CI_Controller
         $cache = Shutter::get_cache($cache_key, false);
 
         if ($cache !== false) {
-            define('KOKEN_REWRITE', trim($cache['data']) === 'on');
+            define('KOKEN_REWRITE', trim((string) $cache['data']) === 'on');
             return KOKEN_REWRITE;
         }
 
@@ -467,15 +461,13 @@ class Koken_Controller extends CI_Controller
             $koken_url_info = $this->config->item('koken_url_info');
             $url = $koken_url_info->base . '__rewrite_test/';
         } else {
-            $protocol = (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) !== 'off') ||
+            $protocol = (!empty($_SERVER['HTTPS']) && strtolower((string) $_SERVER['HTTPS']) !== 'off') ||
                 $_SERVER['SERVER_PORT'] == 443 ||
                 (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') ? 'https' : 'http';
             $url = $protocol . '://' . $_SERVER['HTTP_HOST'] . rtrim($s->value, '/') . '/__rewrite_test/';
         }
 
-        $headers = array(
-            'Cache-Control: must-revalidate'
-        );
+        $headers = ['Cache-Control: must-revalidate'];
 
         if (LOOPBACK_HOST_HEADER) {
             $host = $_SERVER['SERVER_ADDR'] . ':' . $_SERVER['SERVER_PORT'];
@@ -488,7 +480,7 @@ class Koken_Controller extends CI_Controller
         curl_setopt($curl, CURLOPT_HEADER, 0);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
 
-        if (strpos($url, 'https://') === 0) {
+        if (str_starts_with($url, 'https://')) {
             curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2);
             curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
         }
@@ -511,13 +503,13 @@ class Koken_Controller extends CI_Controller
     public function parse_params($args)
     {
         $params = $id = [];
-        $allowed_string_ids = array('trash');
+        $allowed_string_ids = ['trash'];
 
         if (count($args)) {
             foreach ($args as $index => $arg) {
-                if (strpos($arg, ':') !== false) {
-                    $bits = explode(':', $arg);
-                    if (strpos($bits[1], '&') !== false) {
+                if (str_contains((string) $arg, ':')) {
+                    $bits = explode(':', (string) $arg);
+                    if (str_contains($bits[1], '&')) {
                         // Upload URLs have extra query string, remove it here
                         $bits[1] = substr($bits[1], 0, strpos($bits[1], '&'));
                     }
@@ -541,7 +533,7 @@ class Koken_Controller extends CI_Controller
                             $params[$bits[0]] = $bits[1];
                             break;
                     }
-                } elseif (is_numeric($arg) || strpos($arg, ',') !== false || strlen($arg) == 32 || preg_match('/\d{4}\-\d{1,2}\-\d{1,2}/', $arg) || in_array($arg, $allowed_string_ids)) {
+                } elseif (is_numeric($arg) || str_contains((string) $arg, ',') || strlen((string) $arg) == 32 || preg_match('/\d{4}\-\d{1,2}\-\d{1,2}/', (string) $arg) || in_array($arg, $allowed_string_ids)) {
                     $id[] = $arg;
                 }
             }
@@ -565,12 +557,12 @@ class Koken_Controller extends CI_Controller
         if (isset($params['draft_context'])) {
             define('DRAFT_CONTEXT', $params['draft_context']);
         }
-        return array($params, $id, $slug);
+        return [$params, $id, $slug];
     }
 
-    public function aggregate($type, $options = array())
+    public function aggregate($type, $options = [])
     {
-        $options = array_merge(array('featured' => false), $options);
+        $options = array_merge(['featured' => false], $options);
 
         $shared_params = [];
 
@@ -627,7 +619,7 @@ class Koken_Controller extends CI_Controller
 
         foreach ($t as $essay) {
             $essay_ids[$essay->id] = $essay->published_on;
-            $aggregate[] = array('type' => 'essay', 'id' => $essay->id, 'date' => $essay->published_on, 'featured' => $essay->featured);
+            $aggregate[] = ['type' => 'essay', 'id' => $essay->id, 'date' => $essay->published_on, 'featured' => $essay->featured];
 
             if ($essay->album_id) {
                 $exclude_albums[] = $essay->album_id;
@@ -668,7 +660,7 @@ class Koken_Controller extends CI_Controller
 
             if (!array_key_exists($album->id, $album_ids) && !in_array($album->id, $exclude_albums)) {
                 $album_ids[$album->id] = $album->published_on;
-                $aggregate[] = array('type' => 'album', 'id' => $album->id, 'date' => $album->published_on, 'featured' => $album->featured);
+                $aggregate[] = ['type' => 'album', 'id' => $album->id, 'date' => $album->published_on, 'featured' => $album->featured];
             }
 
             if ($album->level < 2) {
@@ -725,23 +717,19 @@ class Koken_Controller extends CI_Controller
         foreach ($c as $content) {
             if ($content->album_id && $content->album_visibility < 1 && $content->album_published_on <= $date_marker) {
                 if (!isset($updated_album_ids[$content->album_id])) {
-                    $updated_album_ids[$content->album_id] = array(
-                        'items' => array($content->id),
-                        'date' => $content->published_on,
-                        'featured' => $content->album_featured
-                    );
+                    $updated_album_ids[$content->album_id] = ['items' => [$content->id], 'date' => $content->published_on, 'featured' => $content->album_featured];
                 } else {
                     $updated_album_ids[$content->album_id]['items'][] = $content->id;
                     $updated_album_ids[$content->album_id]['date'] = max($content->published_on, $updated_album_ids[$content->album_id]['date']);
                 }
             } elseif (!$content->album_id) {
                 $content_ids[$content->id] = $content->published_on;
-                $aggregate[] = array('type' => 'content', 'id' => $content->id, 'date' => $content->published_on, 'featured' => $content->featured);
+                $aggregate[] = ['type' => 'content', 'id' => $content->id, 'date' => $content->published_on, 'featured' => $content->featured];
             }
         }
 
         foreach ($updated_album_ids as $id => $a) {
-            $aggregate[] = array('type' => 'updated_album', 'id' => $id, 'date' => $a['date'], 'featured' => $a['featured']);
+            $aggregate[] = ['type' => 'updated_album', 'id' => $id, 'date' => $a['date'], 'featured' => $a['featured']];
         }
 
         $total = count($aggregate);
@@ -760,20 +748,11 @@ class Koken_Controller extends CI_Controller
 
         usort($aggregate, '_sort');
 
-        $stream = array(
-            'page' => (int) isset($options['page']) ? (int) $options['page'] : 1,
-            'pages' => (int) ceil($total/$options['limit']),
-            'per_page' => (int) min($options['limit'], $total),
-            'total' => (int) $total
-        );
+        $stream = ['page' => (int) isset($options['page']) ? (int) $options['page'] : 1, 'pages' => (int) ceil($total/$options['limit']), 'per_page' => (int) min($options['limit'], $total), 'total' => (int) $total];
 
         $load = array_slice($aggregate, ($stream['page']-1)*$options['limit'], $options['limit']);
 
-        $counts = array(
-            'essays' => count($essay_ids),
-            'albums' => count($album_ids),
-            'content' => count($content_ids)
-        );
+        $counts = ['essays' => count($essay_ids), 'albums' => count($album_ids), 'content' => count($content_ids)];
 
         $counts['total'] = $counts['essays'] + $counts['albums'] + $counts['content'];
 
@@ -809,7 +788,7 @@ class Koken_Controller extends CI_Controller
 
             foreach ($c as $content) {
                 $final[ $index['content-' . $content->id] ] = $content->to_array(
-                    array_merge($shared_params, array('order_by' => 'published_on'))
+                    array_merge($shared_params, ['order_by' => 'published_on'])
                 );
             }
         }
@@ -828,7 +807,7 @@ class Koken_Controller extends CI_Controller
                 $c->where_in('id', $info['items'])->order_by('published_on DESC')->get_iterated();
 
                 foreach ($c as $i => $content) {
-                    $carr = $content->to_array(array('order_by' => 'published_on', 'in_album' => $album));
+                    $carr = $content->to_array(['order_by' => 'published_on', 'in_album' => $album]);
                     if ($i === 0) {
                         $arr['date'] = $carr['date'];
                     }
@@ -843,6 +822,6 @@ class Koken_Controller extends CI_Controller
 
         $stream['items'] = array_values($final);
 
-        return array( $stream, $counts );
+        return [$stream, $counts];
     }
 }

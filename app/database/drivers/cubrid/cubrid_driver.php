@@ -318,12 +318,12 @@ class CI_DB_cubrid_driver extends CI_DB
         if (function_exists('cubrid_real_escape_string') and is_resource($this->conn_id)) {
             $str = cubrid_real_escape_string($str, $this->conn_id);
         } else {
-            $str = addslashes($str);
+            $str = addslashes((string) $str);
         }
 
         // escape LIKE condition wildcards
         if ($like === true) {
-            $str = str_replace(array('%', '_'), array('\\%', '\\_'), $str);
+            $str = str_replace(['%', '_'], ['\\%', '\\_'], $str);
         }
 
         return $str;
@@ -482,22 +482,22 @@ class CI_DB_cubrid_driver extends CI_DB
         }
 
         foreach ($this->_reserved_identifiers as $id) {
-            if (strpos($item, '.'.$id) !== false) {
+            if (str_contains((string) $item, '.'.$id)) {
                 $str = $this->_escape_char. str_replace('.', $this->_escape_char.'.', $item);
 
                 // remove duplicates if the user already included the escape
-                return preg_replace('/['.$this->_escape_char.']+/', $this->_escape_char, $str);
+                return preg_replace('/['.$this->_escape_char.']+/', (string) $this->_escape_char, $str);
             }
         }
 
-        if (strpos($item, '.') !== false) {
+        if (str_contains((string) $item, '.')) {
             $str = $this->_escape_char.str_replace('.', $this->_escape_char.'.'.$this->_escape_char, $item).$this->_escape_char;
         } else {
             $str = $this->_escape_char.$item.$this->_escape_char;
         }
 
         // remove duplicates if the user already included the escape
-        return preg_replace('/['.$this->_escape_char.']+/', $this->_escape_char, $str);
+        return preg_replace('/['.$this->_escape_char.']+/', (string) $this->_escape_char, $str);
     }
 
     // --------------------------------------------------------------------
@@ -515,7 +515,7 @@ class CI_DB_cubrid_driver extends CI_DB
     public function _from_tables($tables)
     {
         if (! is_array($tables)) {
-            $tables = array($tables);
+            $tables = [$tables];
         }
 
         return '('.implode(', ', $tables).')';
@@ -592,7 +592,7 @@ class CI_DB_cubrid_driver extends CI_DB
      * @param	array	the limit clause
      * @return	string
      */
-    public function _update($table, $values, $where, $orderby = array(), $limit = false)
+    public function _update($table, $values, $where, $orderby = [], $limit = false)
     {
         foreach ($values as $key => $val) {
             $valstr[] = sprintf('"%s" = %s', $key, $val);
@@ -691,7 +691,7 @@ class CI_DB_cubrid_driver extends CI_DB
      * @param	string	the limit clause
      * @return	string
      */
-    public function _delete($table, $where = array(), $like = array(), $limit = false)
+    public function _delete($table, $where = [], $like = [], $limit = false)
     {
         $conditions = '';
 

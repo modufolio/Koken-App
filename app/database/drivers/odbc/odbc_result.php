@@ -37,6 +37,7 @@ class CI_DB_odbc_result extends CI_DB_result
      * @access	public
      * @return	integer
      */
+    #[\Override]
     public function num_rows()
     {
         return @odbc_num_rows($this->result_id);
@@ -50,6 +51,7 @@ class CI_DB_odbc_result extends CI_DB_result
      * @access	public
      * @return	integer
      */
+    #[\Override]
     public function num_fields()
     {
         return @odbc_num_fields($this->result_id);
@@ -65,6 +67,7 @@ class CI_DB_odbc_result extends CI_DB_result
      * @access	public
      * @return	array
      */
+    #[\Override]
     public function list_fields()
     {
         $field_names = [];
@@ -85,6 +88,7 @@ class CI_DB_odbc_result extends CI_DB_result
      * @access	public
      * @return	array
      */
+    #[\Override]
     public function field_data()
     {
         $retval = [];
@@ -109,6 +113,7 @@ class CI_DB_odbc_result extends CI_DB_result
      *
      * @return	null
      */
+    #[\Override]
     public function free_result()
     {
         if (is_resource($this->result_id)) {
@@ -129,6 +134,7 @@ class CI_DB_odbc_result extends CI_DB_result
      * @access	private
      * @return	array
      */
+    #[\Override]
     public function _data_seek($n = 0)
     {
         return false;
@@ -144,6 +150,7 @@ class CI_DB_odbc_result extends CI_DB_result
      * @access	private
      * @return	array
      */
+    #[\Override]
     public function _fetch_assoc()
     {
         if (function_exists('odbc_fetch_object')) {
@@ -163,6 +170,7 @@ class CI_DB_odbc_result extends CI_DB_result
      * @access	private
      * @return	object
      */
+    #[\Override]
     public function _fetch_object()
     {
         if (function_exists('odbc_fetch_object')) {
@@ -210,7 +218,7 @@ class CI_DB_odbc_result extends CI_DB_result
         $rs = [];
         $rs_assoc = false;
         if (odbc_fetch_into($odbc_result, $rs)) {
-            $rs_assoc=array();
+            $rs_assoc=[];
             foreach ($rs as $k=>$v) {
                 $field_name= odbc_field_name($odbc_result, $k+1);
                 $rs_assoc[$field_name] = $v;

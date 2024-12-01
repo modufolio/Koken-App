@@ -7,7 +7,7 @@
 
 	set_time_limit(30);
 
-	$root = dirname(__FILE__);
+	$root = __DIR__;
 
 	@include $root . '/storage/configuration/user_setup.php';
 	require_once $root . '/app/koken/Shutter/Shutter.php';
@@ -27,7 +27,7 @@
 	}
 	else if (isset($_SERVER['QUERY_STRING']))
 	{
-		$path = urldecode($_SERVER['QUERY_STRING']);
+		$path = urldecode((string) $_SERVER['QUERY_STRING']);
 	}
 	else if (isset($_SERVER['PATH_INFO']))
 	{
@@ -35,25 +35,25 @@
 	}
 	else if (isset($_SERVER['REQUEST_URI']))
 	{
-		$path = preg_replace('/.*\/i.php/', '', $_SERVER['REQUEST_URI']);
+		$path = preg_replace('/.*\/i.php/', '', (string) $_SERVER['REQUEST_URI']);
 	}
 
 	$ds = DIRECTORY_SEPARATOR;
 
 	$dl = $base64 = false;
-	if (preg_match('/\.dl$/', $path))
+	if (preg_match('/\.dl$/', (string) $path))
 	{
-		$path = preg_replace('/\.dl$/', '', $path);
+		$path = preg_replace('/\.dl$/', '', (string) $path);
 		$dl = true;
 	}
-	else if (preg_match('/\.64$/', $path))
+	else if (preg_match('/\.64$/', (string) $path))
 	{
-		$path = preg_replace('/\.64$/', '', $path);
+		$path = preg_replace('/\.64$/', '', (string) $path);
 		$base64 = true;
 	}
 
 	$cache_key = 'images' . $path;
-	$lock = 'locks/' . str_replace('/', '_', substr($path, 1));
+	$lock = 'locks/' . str_replace('/', '_', substr((string) $path, 1));
 
 	if (is_callable('register_shutdown_function'))
 	{
@@ -91,12 +91,12 @@
 
 		$new = $preset = true;
 
-		preg_match('/^\/((?:[0-9]{3}\/[0-9]{3})|custom)\/(.*)[,\/](tiny|small|medium|medium_large|large|xlarge|huge)\.(crop\.)?(2x\.)?(?:\d{9,10}\.)?(?P<ext>jpe?g|gif|png|svg)(\.dl|.64)?$/i', $path, $matches);
+		preg_match('/^\/((?:[0-9]{3}\/[0-9]{3})|custom)\/(.*)[,\/](tiny|small|medium|medium_large|large|xlarge|huge)\.(crop\.)?(2x\.)?(?:\d{9,10}\.)?(?P<ext>jpe?g|gif|png|svg)(\.dl|.64)?$/i', (string) $path, $matches);
 
 		// If $matches is empty, they are requesting a custom size
 		if (empty($matches))
 		{
-			preg_match('/^\/((?:[0-9]{3}\/[0-9]{3})|custom)\/(.*)[,\/]([0-9]+)\.([0-9]+)\.([0-9]{1,3})\.([0-9]{1,3})\.(crop\.)?(2x\.)?(?:\d{9,10}\.)?(?P<ext>jpe?g|gif|png|svg)(\.dl|.64)?$/i', $path, $matches);
+			preg_match('/^\/((?:[0-9]{3}\/[0-9]{3})|custom)\/(.*)[,\/]([0-9]+)\.([0-9]+)\.([0-9]{1,3})\.([0-9]{1,3})\.(crop\.)?(2x\.)?(?:\d{9,10}\.)?(?P<ext>jpe?g|gif|png|svg)(\.dl|.64)?$/i', (string) $path, $matches);
 			$preset = false;
 		}
 
@@ -121,14 +121,14 @@
 		if ($custom)
 		{
 			$original = $root . $ds . 'storage' . $ds . 'custom' . $ds . preg_replace('/\-(jpe?g|gif|png)$/i', '.$1', $matches[2]);
-			list($source_width, $source_height) = getimagesize($original);
+			[$source_width, $source_height] = getimagesize($original);
 		}
 		else
 		{
 			$id = (int) str_replace('/', '', $matches[1]);
 			$content = $KokenAPI->get('/content/' . $id);
 
-			$original_info = pathinfo($content['filename']);
+			$original_info = pathinfo((string) $content['filename']);
 
 			if (!isset($content['html']) && strtolower($original_info['filename']) !== strtolower($matches[2]))
 			{
@@ -167,7 +167,7 @@
 			}
 		}
 
-		$remoteSource = preg_match('~^https?://~', $original);
+		$remoteSource = preg_match('~^https?://~', (string) $original);
 
 		$KokenAPI->clear();
 
@@ -177,7 +177,7 @@
 			{
 				define('MAGICK_PATH_FINAL', 'convert');
 			}
-			else if (strpos(strtolower(MAGICK_PATH), 'c:\\') !== false)
+			else if (str_contains(strtolower((string) MAGICK_PATH), 'c:\\'))
 			{
 				define('MAGICK_PATH_FINAL', '"' . MAGICK_PATH . '"');
 			}
@@ -200,7 +200,7 @@
 			}
 			else
 			{
-				list(,,,$w,$h,$q,$sh,$crop) = $matches;
+				[, , , $w, $h, $q, $sh, $crop] = $matches;
 				$crop = (bool) $crop;
 				$hires = !empty($matches[8]);
 				$sh /= 100;
@@ -211,18 +211,18 @@
 			// TODO: Fix these create_function calls once we go 5.3
 			if ($settings['image_processing_library'] === 'imagick')
 			{
-				$d->beforeRender(function($imObject, $options, $content) { return Shutter::filter('darkroom.render.imagick', array($imObject, $options, $content));}, $content);
+				$d->beforeRender(fn($imObject, $options, $content) => Shutter::filter('darkroom.render.imagick', [$imObject, $options, $content]), $content);
 			}
-			else if (strpos($settings['image_processing_library'], 'convert') !== false)
+			else if (str_contains((string) $settings['image_processing_library'], 'convert'))
 			{
-				$d->beforeRender(function($cmd, $options, $content) {return Shutter::filter('darkroom.render.imagemagick', array($cmd, $options, $content));}, $content);
+				$d->beforeRender(fn($cmd, $options, $content) => Shutter::filter('darkroom.render.imagemagick', [$cmd, $options, $content]), $content);
 			}
 			else
 			{
-				$d->beforeRender(function($gdObject, $options, $content) { return Shutter::filter('darkroom.render.gd', array($gdObject, $options, $content));}, $content);
+				$d->beforeRender(fn($gdObject, $options, $content) => Shutter::filter('darkroom.render.gd', [$gdObject, $options, $content]), $content);
 			}
 
-			$midsize = preg_replace('/\.' . $info['extension'] . '$/', '.1600.' . $info['extension'], $original);
+			$midsize = preg_replace('/\.' . $info['extension'] . '$/', '.1600.' . $info['extension'], (string) $original);
 
 			$d->read($original, $source_width, $source_height)
 			  ->resize($w, $h, $crop)
@@ -258,7 +258,7 @@
 				require($root . $ds . 'app' . $ds . 'koken' . $ds . 'icc.php');
 				$icc = new JPEG_ICC;
 
-				preg_match('~^(/\d{3}/\d{3}/)~', $path, $match);
+				preg_match('~^(/\d{3}/\d{3}/)~', (string) $path, $match);
 
 				$icc_cache_key = 'icc' . $match[1] . 'profile.icc';
 				$icc_cache = Shutter::get_cache($icc_cache_key);
@@ -283,7 +283,7 @@
 			}
 
 
-			Shutter::hook('darkroom.render.complete', array($blob));
+			Shutter::hook('darkroom.render.complete', [$blob]);
 		}
 		else
 		{
@@ -322,9 +322,9 @@
 	if ($cache) {
 		if ($cache['status'] === 304)
 		{
-			$server_protocol = (isset($_SERVER['SERVER_PROTOCOL'])) ? $_SERVER['SERVER_PROTOCOL'] : false;
+			$server_protocol = $_SERVER['SERVER_PROTOCOL'] ?? false;
 
-			if (substr(php_sapi_name(), 0, 3) === 'cgi')
+			if (str_starts_with(php_sapi_name(), 'cgi'))
 			{
 				header('Status: 304 Not Modified', true, 304);
 			}
@@ -352,18 +352,18 @@
 	{
 		header("Content-Disposition: attachment; filename=\"" . basename($cache_key) . "\"");
 		header('Content-type: image/' . $ext);
-		header('Content-length: ' . strlen($blob));
+		header('Content-length: ' . strlen((string) $blob));
 
 		die($blob);
 	}
 	else if ($base64)
 	{
-		$string = base64_encode($blob);
+		$string = base64_encode((string) $blob);
 		die("data:image/$ext;base64,$string");
 	}
 
 	header('Content-type: image/' . $ext);
-	header('Content-length: ' . strlen($blob));
+	header('Content-length: ' . strlen((string) $blob));
 	header('Cache-Control: public');
 	header('Expires: ' . gmdate('D, d M Y H:i:s', strtotime('+1 year')) . ' GMT');
 	header('Last-Modified: ' . gmdate('D, d M Y H:i:s', $mtime) . ' GMT');

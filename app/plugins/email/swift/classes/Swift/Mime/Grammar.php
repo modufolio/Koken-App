@@ -49,10 +49,7 @@ class Swift_Mime_Grammar
             return;
         }
 
-        self::$_specials = array(
-            '(', ')', '<', '>', '[', ']',
-            ':', ';', '@', ',', '.', '"',
-            );
+        self::$_specials = ['(', ')', '<', '>', '[', ']', ':', ';', '@', ',', '.', '"'];
 
         /*** Refer to RFC 2822 for ABNF grammar ***/
 
@@ -165,9 +162,9 @@ class Swift_Mime_Grammar
      *
      * @return string
      */
-    public function escapeSpecials($token, $include = array(), $exclude = array())
+    public function escapeSpecials($token, $include = [], $exclude = [])
     {
-        foreach (array_merge(array('\\'), array_diff(self::$_specials, $exclude), $include) as $char) {
+        foreach (array_merge(['\\'], array_diff(self::$_specials, $exclude), $include) as $char) {
             $token = str_replace($char, '\\'.$char, $token);
         }
 

@@ -15,17 +15,13 @@
  */
 class Swift_Mailer
 {
-    /** The Transport used to send messages */
-    private $_transport;
-
     /**
      * Create a new Mailer using $transport for delivery.
      *
-     * @param Swift_Transport $transport
+     * @param Swift_Transport $_transport
      */
-    public function __construct(Swift_Transport $transport)
+    public function __construct(private readonly Swift_Transport $_transport)
     {
-        $this->_transport = $transport;
     }
 
     /**
@@ -83,7 +79,7 @@ class Swift_Mailer
 
         try {
             $sent = $this->_transport->send($message, $failedRecipients);
-        } catch (Swift_RfcComplianceException $e) {
+        } catch (Swift_RfcComplianceException) {
             foreach ($message->getTo() as $address => $name) {
                 $failedRecipients[] = $address;
             }

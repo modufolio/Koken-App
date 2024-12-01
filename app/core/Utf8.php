@@ -84,7 +84,7 @@ class CI_Utf8
     public function clean_string($str)
     {
         if ($this->_is_ascii($str) === false) {
-            $str = @iconv('UTF-8', 'UTF-8//IGNORE', $str);
+            $str = @iconv('UTF-8', 'UTF-8//IGNORE', (string) $str);
         }
 
         return $str;
@@ -123,7 +123,7 @@ class CI_Utf8
     public function convert_to_utf8($str, $encoding)
     {
         if (function_exists('iconv')) {
-            $str = @iconv($encoding, 'UTF-8', $str);
+            $str = @iconv((string) $encoding, 'UTF-8', (string) $str);
         } elseif (function_exists('mb_convert_encoding')) {
             $str = @mb_convert_encoding($str, 'UTF-8', $encoding);
         } else {
@@ -146,7 +146,7 @@ class CI_Utf8
      */
     public function _is_ascii($str)
     {
-        return (preg_match('/[^\x00-\x7F]/S', $str) == 0);
+        return (preg_match('/[^\x00-\x7F]/S', (string) $str) == 0);
     }
 
     // --------------------------------------------------------------------

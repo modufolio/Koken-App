@@ -32,18 +32,6 @@ namespace ReCaptcha;
 class Response
 {
     /**
-     * Success or failure.
-     * @var boolean
-     */
-    private $success = false;
-
-    /**
-     * Error code strings.
-     * @var array
-     */
-    private $errorCodes = [];
-
-    /**
      * Build the response from the expected JSON returned by the service.
      *
      * @param string $json
@@ -54,7 +42,7 @@ class Response
         $responseData = json_decode($json, true);
 
         if (!$responseData) {
-            return new Response(false, array('invalid-json'));
+            return new Response(false, ['invalid-json']);
         }
 
         if (isset($responseData['success']) && $responseData['success'] == true) {
@@ -74,10 +62,17 @@ class Response
      * @param boolean $success
      * @param array $errorCodes
      */
-    public function __construct($success, array $errorCodes = array())
+    public function __construct(
+        /**
+         * Success or failure.
+         */
+        private $success,
+        /**
+         * Error code strings.
+         */
+        private readonly array $errorCodes = []
+    )
     {
-        $this->success = $success;
-        $this->errorCodes = $errorCodes;
     }
 
     /**

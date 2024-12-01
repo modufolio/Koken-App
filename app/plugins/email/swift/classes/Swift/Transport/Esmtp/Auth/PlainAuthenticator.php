@@ -20,6 +20,7 @@ class Swift_Transport_Esmtp_Auth_PlainAuthenticator implements Swift_Transport_E
      *
      * @return string
      */
+    #[\Override]
     public function getAuthKeyword()
     {
         return 'PLAIN';
@@ -34,15 +35,16 @@ class Swift_Transport_Esmtp_Auth_PlainAuthenticator implements Swift_Transport_E
      *
      * @return bool
      */
+    #[\Override]
     public function authenticate(Swift_Transport_SmtpAgent $agent, $username, $password)
     {
         try {
             $message = base64_encode($username.chr(0).$username.chr(0).$password);
-            $agent->executeCommand(sprintf("AUTH PLAIN %s\r\n", $message), array(235));
+            $agent->executeCommand(sprintf("AUTH PLAIN %s\r\n", $message), [235]);
 
             return true;
-        } catch (Swift_TransportException $e) {
-            $agent->executeCommand("RSET\r\n", array(250));
+        } catch (Swift_TransportException) {
+            $agent->executeCommand("RSET\r\n", [250]);
 
             return false;
         }

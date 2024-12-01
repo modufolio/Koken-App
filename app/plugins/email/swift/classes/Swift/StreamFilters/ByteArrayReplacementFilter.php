@@ -17,9 +17,6 @@
  */
 class Swift_StreamFilters_ByteArrayReplacementFilter implements Swift_StreamFilter
 {
-    /** The needle(s) to search for */
-    private $_search;
-
     /** The replacement(s) to make */
     private $_replace;
 
@@ -37,12 +34,11 @@ class Swift_StreamFilters_ByteArrayReplacementFilter implements Swift_StreamFilt
     /**
      * Create a new ByteArrayReplacementFilter with $search and $replace.
      *
-     * @param array $search
+     * @param array $_search
      * @param array $replace
      */
-    public function __construct($search, $replace)
+    public function __construct(private $_search, $replace)
     {
-        $this->_search = $search;
         $this->_index = [];
         $this->_tree = [];
         $this->_replace = [];
@@ -51,7 +47,7 @@ class Swift_StreamFilters_ByteArrayReplacementFilter implements Swift_StreamFilt
         $tree = null;
         $i = null;
         $last_size = $size = 0;
-        foreach ($search as $i => $search_element) {
+        foreach ($this->_search as $i => $search_element) {
             if ($tree !== null) {
                 $tree[-1] = min(count($replace) - 1, $i - 1);
                 $tree[-2] = $last_size;
@@ -84,7 +80,7 @@ class Swift_StreamFilters_ByteArrayReplacementFilter implements Swift_StreamFilt
         }
         foreach ($replace as $rep) {
             if (!is_array($rep)) {
-                $rep = array($rep);
+                $rep = [$rep];
             }
             $this->_replace[] = $rep;
         }
@@ -101,6 +97,7 @@ class Swift_StreamFilters_ByteArrayReplacementFilter implements Swift_StreamFilt
      *
      * @return bool
      */
+    #[\Override]
     public function shouldBuffer($buffer)
     {
         $endOfBuffer = end($buffer);
@@ -116,6 +113,7 @@ class Swift_StreamFilters_ByteArrayReplacementFilter implements Swift_StreamFilt
      *
      * @return array
      */
+    #[\Override]
     public function filter($buffer, $_minReplaces = -1)
     {
         if ($this->_treeMaxLen == 0) {

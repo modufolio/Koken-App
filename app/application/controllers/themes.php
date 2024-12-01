@@ -15,7 +15,7 @@ class Themes extends Koken_Controller
         $t = new Theme();
         $final = $t->read();
 
-        $final = Shutter::filter('api.themes', array($final));
+        $final = Shutter::filter('api.themes', [$final]);
 
         $this->set_response_data($final);
     }

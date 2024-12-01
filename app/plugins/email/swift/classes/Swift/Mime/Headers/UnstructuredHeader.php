@@ -44,6 +44,7 @@ class Swift_Mime_Headers_UnstructuredHeader extends Swift_Mime_Headers_AbstractH
      *
      * @return int
      */
+    #[\Override]
     public function getFieldType()
     {
         return self::TYPE_TEXT;
@@ -56,6 +57,7 @@ class Swift_Mime_Headers_UnstructuredHeader extends Swift_Mime_Headers_AbstractH
      *
      * @param string $model
      */
+    #[\Override]
     public function setFieldBodyModel($model)
     {
         $this->setValue($model);
@@ -68,6 +70,7 @@ class Swift_Mime_Headers_UnstructuredHeader extends Swift_Mime_Headers_AbstractH
      *
      * @return string
      */
+    #[\Override]
     public function getFieldBodyModel()
     {
         return $this->getValue();
@@ -99,6 +102,7 @@ class Swift_Mime_Headers_UnstructuredHeader extends Swift_Mime_Headers_AbstractH
      *
      * @return string
      */
+    #[\Override]
     public function getFieldBody()
     {
         if (!$this->getCachedValue()) {

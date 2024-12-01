@@ -78,10 +78,9 @@ interface Swift_Mime_Message extends Swift_Mime_MimeEntity
      * If the second parameter is provided and the first is a string, then $name
      * is associated with the address.
      *
-     * @param mixed  $address
      * @param string $name    optional
      */
-    public function setSender($address, $name = null);
+    public function setSender(mixed $address, $name = null);
 
     /**
      * Get the sender address for this message.
@@ -106,10 +105,9 @@ interface Swift_Mime_Message extends Swift_Mime_MimeEntity
      * If the second parameter is provided and the first is a string, then $name
      * is associated with the address.
      *
-     * @param mixed  $addresses
      * @param string $name      optional
      */
-    public function setFrom($addresses, $name = null);
+    public function setFrom(mixed $addresses, $name = null);
 
     /**
      * Get the From address(es) of this message.
@@ -133,10 +131,9 @@ interface Swift_Mime_Message extends Swift_Mime_MimeEntity
      * If the second parameter is provided and the first is a string, then $name
      * is associated with the address.
      *
-     * @param mixed  $addresses
      * @param string $name      optional
      */
-    public function setReplyTo($addresses, $name = null);
+    public function setReplyTo(mixed $addresses, $name = null);
 
     /**
      * Get the Reply-To addresses for this message.
@@ -158,10 +155,9 @@ interface Swift_Mime_Message extends Swift_Mime_MimeEntity
      * If the second parameter is provided and the first is a string, then $name
      * is associated with the address.
      *
-     * @param mixed  $addresses
      * @param string $name      optional
      */
-    public function setTo($addresses, $name = null);
+    public function setTo(mixed $addresses, $name = null);
 
     /**
      * Get the To addresses for this message.
@@ -180,10 +176,9 @@ interface Swift_Mime_Message extends Swift_Mime_MimeEntity
      *
      * This method has the same synopsis as {@link setFrom()} and {@link setTo()}.
      *
-     * @param mixed  $addresses
      * @param string $name      optional
      */
-    public function setCc($addresses, $name = null);
+    public function setCc(mixed $addresses, $name = null);
 
     /**
      * Get the Cc addresses for this message.
@@ -206,10 +201,9 @@ interface Swift_Mime_Message extends Swift_Mime_MimeEntity
      *
      * This method has the same synopsis as {@link setFrom()} and {@link setTo()}.
      *
-     * @param mixed  $addresses
      * @param string $name      optional
      */
-    public function setBcc($addresses, $name = null);
+    public function setBcc(mixed $addresses, $name = null);
 
     /**
      * Get the Bcc addresses for this message.

@@ -43,15 +43,7 @@ class CI_Unit_test
     public function __construct()
     {
         // These are the default items visible when a test is run.
-        $this->_test_items_visible = array(
-                            'test_name',
-                            'test_datatype',
-                            'res_datatype',
-                            'result',
-                            'file',
-                            'line',
-                            'notes'
-                        );
+        $this->_test_items_visible = ['test_name', 'test_datatype', 'res_datatype', 'result', 'file', 'line', 'notes'];
 
         log_message('debug', "Unit Testing Class Initialized");
     }
@@ -67,7 +59,7 @@ class CI_Unit_test
      * @param	array
      * @return	void
      */
-    public function set_test_items($items = array())
+    public function set_test_items($items = [])
     {
         if (! empty($items) and is_array($items)) {
             $this->_test_items_visible = $items;
@@ -93,10 +85,10 @@ class CI_Unit_test
             return false;
         }
 
-        if (in_array($expected, array('is_object', 'is_string', 'is_bool', 'is_true', 'is_false', 'is_int', 'is_numeric', 'is_float', 'is_double', 'is_array', 'is_null'), true)) {
+        if (in_array($expected, ['is_object', 'is_string', 'is_bool', 'is_true', 'is_false', 'is_int', 'is_numeric', 'is_float', 'is_double', 'is_array', 'is_null'], true)) {
             $expected = str_replace('is_float', 'is_double', $expected);
             $result = ($expected($test)) ? true : false;
-            $extype = str_replace(array('true', 'false'), 'bool', str_replace('is_', '', $expected));
+            $extype = str_replace(['true', 'false'], 'bool', str_replace('is_', '', $expected));
         } else {
             if ($this->strict == true) {
                 $result = ($test === $expected) ? true : false;
@@ -109,15 +101,7 @@ class CI_Unit_test
 
         $back = $this->_backtrace();
 
-        $report[] = array(
-                            'test_name'			=> $test_name,
-                            'test_datatype'		=> gettype($test),
-                            'res_datatype'		=> $extype,
-                            'result'			=> ($result === true) ? 'passed' : 'failed',
-                            'file'				=> $back['file'],
-                            'line'				=> $back['line'],
-                            'notes'				=> $notes
-                        );
+        $report[] = ['test_name'			=> $test_name, 'test_datatype'		=> gettype($test), 'res_datatype'		=> $extype, 'result'			=> ($result === true) ? 'passed' : 'failed', 'file'				=> $back['file'], 'line'				=> $back['line'], 'notes'				=> $notes];
 
         $this->results[] = $report;
 
@@ -134,7 +118,7 @@ class CI_Unit_test
      * @access	public
      * @return	string
      */
-    public function report($result = array())
+    public function report($result = [])
     {
         if (count($result) == 0) {
             $result = $this->result();
@@ -212,7 +196,7 @@ class CI_Unit_test
      * @access	public
      * @return	array
      */
-    public function result($results = array())
+    public function result($results = [])
     {
         $CI =& get_instance();
         $CI->load->language('unit_test');
@@ -284,9 +268,9 @@ class CI_Unit_test
             $file = (! isset($back['1']['file'])) ? '' : $back['1']['file'];
             $line = (! isset($back['1']['line'])) ? '' : $back['1']['line'];
 
-            return array('file' => $file, 'line' => $line);
+            return ['file' => $file, 'line' => $line];
         }
-        return array('file' => 'Unknown', 'line' => 'Unknown');
+        return ['file' => 'Unknown', 'line' => 'Unknown'];
     }
 
     // --------------------------------------------------------------------
@@ -330,7 +314,7 @@ class CI_Unit_test
             return;
         }
 
-        if (! preg_match("/\{rows\}(.*?)\{\/rows\}/si", $this->_template, $match)) {
+        if (! preg_match("/\{rows\}(.*?)\{\/rows\}/si", (string) $this->_template, $match)) {
             $this->_default_template();
             return;
         }

@@ -36,13 +36,13 @@ class Koken
     public static $main_load_token = false;
     public static $custom_page_title = false;
     public static $tokens = [];
-    public static $max_neighbors = array(2);
+    public static $max_neighbors = [2];
     public static $the_title_separator = false;
     public static $page_title_set = false;
     public static $load_history = [];
     public static $timers = [];
     public static $curl_handle = false;
-    public static $dynamic_location_parts = array('here', 'parameters', 'page_class');
+    public static $dynamic_location_parts = ['here', 'parameters', 'page_class'];
     public static $has_video = false;
     public static $link_tail = '';
     public static $public = true;
@@ -67,8 +67,8 @@ META;
 
     public static function get_setting($name)
     {
-        if (strpos($name, '.') !== false) {
-            $parts = explode('.', $name);
+        if (str_contains((string) $name, '.')) {
+            $parts = explode('.', (string) $name);
             if ($parts[0] === 'language') {
                 return Koken::$language[$parts[1]];
             } else {
@@ -117,7 +117,7 @@ META;
     private static function to_date_field_symbol($f)
     {
         $dfs = '';
-        $chars = str_split($f);
+        $chars = str_split((string) $f);
 
         foreach ($chars as $c) {
             switch ($c) {
@@ -182,7 +182,7 @@ META;
         return $dfs;
     }
 
-    public static function breadcrumbs($options = array())
+    public static function breadcrumbs($options = [])
     {
         $front_path = '/';
 
@@ -193,7 +193,7 @@ META;
             }
         }
 
-        $defaults = array('separator' => '>', 'show_if_single' => 'true', 'show_home' => 'true', 'link_current' => 'true');
+        $defaults = ['separator' => '>', 'show_if_single' => 'true', 'show_home' => 'true', 'link_current' => 'true'];
 
         $options = array_merge($defaults, $options);
 
@@ -209,7 +209,7 @@ META;
         $crumbs = [];
 
         if ($options['show_home']) {
-            $crumbs[] =	array('link' => '/', 'label' => self::$site['url_data']['home']);
+            $crumbs[] =	['link' => '/', 'label' => self::$site['url_data']['home']];
         }
 
         if (isset(self::$current_token['__koken__']) && self::$current_token['__koken__'] !== 'category') {
@@ -227,19 +227,19 @@ META;
         if (isset($single['context']['type'])) {
             if (isset(self::$site['urls'][$single['context']['type'] === 'category' ? 'categories' : $single['context']['type'] . 's'])) {
                 $section = self::$site['urls'][$single['context']['type'] === 'category' ? 'categories' : $single['context']['type'] . 's'];
-                $crumbs[] = array('link' => $section, 'label' => self::$site['url_data'][ $single['context']['type'] ]['plural']);
+                $crumbs[] = ['link' => $section, 'label' => self::$site['url_data'][ $single['context']['type'] ]['plural']];
             }
             if ($single['context']['type'] === 'album') {
                 $section = str_replace(':slug', $single['context']['album']['slug'], self::$site['urls'][$single['context']['type']]);
-                $crumbs[] = array('link' => $single['context']['album']['__koken_url'], 'label' => $single['context']['title']);
+                $crumbs[] = ['link' => $single['context']['album']['__koken_url'], 'label' => $single['context']['title']];
             } elseif ($single['context']['type'] !== 'favorite' && $single['context']['type'] !== 'feature' && isset(self::$site['urls'][$single['context']['type']])) {
                 $section = str_replace(':slug', $single['context']['slug'], self::$site['urls'][$single['context']['type']]);
-                $crumbs[] = array('link' => $section, 'label' => $single['context']['title']);
+                $crumbs[] = ['link' => $section, 'label' => $single['context']['title']];
             }
-            if (!in_array($single['context']['type'], array('favorite', 'feature', 'album'))) {
-                $crumbs[] = array('link' => $single['context']['__koken_url'], 'label' => self::$site['url_data'][$single['__koken__']]['plural']);
+            if (!in_array($single['context']['type'], ['favorite', 'feature', 'album'])) {
+                $crumbs[] = ['link' => $single['context']['__koken_url'], 'label' => self::$site['url_data'][$single['__koken__']]['plural']];
             }
-            $crumbs[] = array('link' => $single['__koken_url'], 'label' => empty($single['title']) ? $single['filename'] : $single['title']);
+            $crumbs[] = ['link' => $single['__koken_url'], 'label' => empty($single['title']) ? $single['filename'] : $single['title']];
             $single = false;
         } elseif (isset($single['context']['album'])) {
             $content = $single;
@@ -251,16 +251,16 @@ META;
         if ($single && $source === 'event') {
             $data = self::$site['url_data']['timeline'];
             $url = self::$site['urls']['timeline'];
-            $single['month'] = str_pad($single['month'], 2, '0', STR_PAD_LEFT);
-            $single['day'] = str_pad($single['day'], 2, '0', STR_PAD_LEFT);
+            $single['month'] = str_pad((string) $single['month'], 2, '0', STR_PAD_LEFT);
+            $single['day'] = str_pad((string) $single['day'], 2, '0', STR_PAD_LEFT);
 
-            $crumbs[] = array('link' => $url, 'label' => $data['plural']);
+            $crumbs[] = ['link' => $url, 'label' => $data['plural']];
             $url .= $single['year'] . '/';
-            $crumbs[] = array('link' => $url, 'label' => $single['year']);
+            $crumbs[] = ['link' => $url, 'label' => $single['year']];
             $url .= $single['month'] . '/';
-            $crumbs[] = array('link' => $url, 'label' => self::to_month($single['month']));
+            $crumbs[] = ['link' => $url, 'label' => self::to_month($single['month'])];
             $url .= $single['day'] . '/';
-            $crumbs[] = array('link' => $url, 'label' => $single['day']);
+            $crumbs[] = ['link' => $url, 'label' => $single['day']];
         } elseif ($single) {
             $set = $single['__koken__'] === 'album' && $single['album_type'] === 'set';
             $ident = $set ? 'set' : $single['__koken__'];
@@ -272,36 +272,36 @@ META;
 
             if (isset(self::$site['urls'][$plural])) {
                 $section = self::$site['urls'][$plural];
-                $crumbs[] = array('link' => $section, 'label' => self::$site['url_data'][ $set ? 'set' : $single['__koken__'] ]['plural']);
+                $crumbs[] = ['link' => $section, 'label' => self::$site['url_data'][ $set ? 'set' : $single['__koken__'] ]['plural']];
             }
 
-            if (isset($data['url']) && strpos($data['url'], 'date') !== false && isset(self::$site['urls'][ 'archive_' . $single['__koken__'] . 's' ])) {
-                $date = isset($single['published_on']) ? $single['published_on'] : ($single['captured_on'] ? $single['captured_on'] : $single['created_on']);
+            if (isset($data['url']) && str_contains((string) $data['url'], 'date') && isset(self::$site['urls'][ 'archive_' . $single['__koken__'] . 's' ])) {
+                $date = $single['published_on'] ?? ($single['captured_on'] ?: $single['created_on']);
                 $year = date('Y', $date['timestamp']);
                 $month = date('m', $date['timestamp']);
 
-                $crumbs[] = array('link' => $section . $year, 'label' => $year);
-                $crumbs[] = array('link' => $section . $year . '/' . $month, 'label' => self::to_month($month));
+                $crumbs[] = ['link' => $section . $year, 'label' => $year];
+                $crumbs[] = ['link' => $section . $year . '/' . $month, 'label' => self::to_month($month)];
             }
 
-            $crumbs[] = array('link' => $single['__koken_url'], 'label' => empty($single['title']) ? $single['filename'] : $single['title']);
+            $crumbs[] = ['link' => $single['__koken_url'], 'label' => empty($single['title']) ? $single['filename'] : $single['title']];
 
             if ($content) {
-                $crumbs[] = array('link' => $content['__koken_url'], 'label' => empty($content['title']) ? $content['filename'] : $content['title']);
+                $crumbs[] = ['link' => $content['__koken_url'], 'label' => empty($content['title']) ? $content['filename'] : $content['title']];
             }
-        } elseif (substr(strrev($source), 0, 1) === 's') {
-            $data_type = $source === 'categories' ? 'category' : rtrim($source, 's');
+        } elseif (str_starts_with(strrev((string) $source), 's')) {
+            $data_type = $source === 'categories' ? 'category' : rtrim((string) $source, 's');
             $data_type = $data_type === 'event' ? 'timeline' : $data_type;
             $data = self::$site['url_data'][$data_type];
             $url = self::$site['urls'][ $data_type === 'timeline' ? 'timeline' : $source ];
-            $crumbs[] = array('link' => $url, 'label' => $data['plural']);
+            $crumbs[] = ['link' => $url, 'label' => $data['plural']];
 
             if ($data_type === 'timeline' && isset(self::$routed_variables['year'])) {
                 $url .= self::$routed_variables['year'] . '/';
-                $crumbs[] = array('link' => $url, 'label' => self::$routed_variables['year']);
+                $crumbs[] = ['link' => $url, 'label' => self::$routed_variables['year']];
 
                 if (isset(self::$routed_variables['month'])) {
-                    $crumbs[] = array('link' => $url . self::$routed_variables['month'] . '/', 'label' => self::to_month(self::$routed_variables['month']));
+                    $crumbs[] = ['link' => $url . self::$routed_variables['month'] . '/', 'label' => self::to_month(self::$routed_variables['month'])];
                 }
             }
         } elseif ($source === 'tag' || $source === 'category' || $source === 'archive') {
@@ -309,52 +309,52 @@ META;
             $section = empty($type) ? false : self::$site['urls'][ $type ];
 
             if ($source === 'archive') {
-                $crumbs[] = array('link' => '/' . $section, 'label' => self::$site['url_data'][ rtrim($type, 's') ]['plural']);
+                $crumbs[] = ['link' => '/' . $section, 'label' => self::$site['url_data'][ rtrim($type, 's') ]['plural']];
 
                 $year = self::$current_token['archive']['year'];
                 $url = $section . $year . '/';
-                $crumbs[] = array('link' => $url, 'label' => $year);
+                $crumbs[] = ['link' => $url, 'label' => $year];
 
                 if (isset(self::$current_token['archive']['month']) && self::$current_token['archive']['month']) {
                     $month = self::$current_token['archive']['month'];
                     $url .= $month . '/';
-                    $crumbs[] = array('link' => $url, 'label' => self::to_month($month));
+                    $crumbs[] = ['link' => $url, 'label' => self::to_month($month)];
 
                     if (isset(self::$current_token['archive']['day']) && self::$current_token['archive']['day']) {
                         $day = self::$current_token['archive']['day'];
                         $url .= $day . '/';
-                        $crumbs[] = array('link' => $url, 'label' => $day);
+                        $crumbs[] = ['link' => $url, 'label' => $day];
                     }
                 }
             } else {
                 $section = false;
                 if (isset(self::$site['urls'][$source === 'category' ? 'categories' : $source . 's'])) {
                     $section = self::$site['urls'][$source === 'category' ? 'categories' : $source . 's'];
-                    $crumbs[] = array('link' => $section, 'label' => self::$site['url_data'][ $source ]['plural']);
+                    $crumbs[] = ['link' => $section, 'label' => self::$site['url_data'][ $source ]['plural']];
                 }
                 if (isset(self::$site['urls'][$source])) {
                     $obj = isset(self::$current_token['__koken__']) ? self::$current_token[self::$current_token['__koken__']] : self::$current_token['archive'];
-                    $section = str_replace(':slug', isset($obj['slug']) ? $obj['slug'] : $obj['title'], self::$site['urls'][$source]);
-                    $crumbs[] = array('link' => $section, 'label' => $obj['title']);
+                    $section = str_replace(':slug', $obj['slug'] ?? $obj['title'], self::$site['urls'][$source]);
+                    $crumbs[] = ['link' => $section, 'label' => $obj['title']];
                 }
                 if (!empty($type)) {
                     $data = self::$site['url_data'][ rtrim($type, 's') ];
                     $obj = isset(self::$current_token['__koken__']) ? self::$current_token[self::$current_token['__koken__']] : self::$current_token['archive'];
                     if ($section) {
-                        $crumbs[] = array('link' => self::$location['here'], 'label' => $data['plural']);
+                        $crumbs[] = ['link' => self::$location['here'], 'label' => $data['plural']];
                     } else {
-                        $crumbs[] = array('link' => '/' . strtolower($data['plural']) . '/', 'label' => $data['plural']);
-                        $crumbs[] = array('link' => self::$location['here'], 'label' => $obj['title']);
+                        $crumbs[] = ['link' => '/' . strtolower((string) $data['plural']) . '/', 'label' => $data['plural']];
+                        $crumbs[] = ['link' => self::$location['here'], 'label' => $obj['title']];
                     }
                 }
             }
         } elseif (self::$custom_page_title) {
-            $crumbs[] = array('link' => self::$location['here'], 'label' => self::$custom_page_title);
+            $crumbs[] = ['link' => self::$location['here'], 'label' => self::$custom_page_title];
         }
 
         if (count(self::$location['parameters']['__overrides_display'])) {
             foreach (self::$location['parameters']['__overrides_display'] as $filter) {
-                $crumbs[] = array('link' => self::$location['here'], 'label' => self::case_convert($filter['title'], 'sentence') . ': ' . ($filter['title'] === 'tags' ? $filter['value'] : self::case_convert($filter['value'], 'sentence')));
+                $crumbs[] = ['link' => self::$location['here'], 'label' => self::case_convert($filter['title'], 'sentence') . ': ' . ($filter['title'] === 'tags' ? $filter['value'] : self::case_convert($filter['value'], 'sentence'))];
             }
         }
 
@@ -363,7 +363,7 @@ META;
         } else {
             $crumb_links = [];
             foreach ($crumbs as $index => $c) {
-                $path = $c['link'] === '/' ? '/' : '/' . trim($c['link'], '/') . '/';
+                $path = $c['link'] === '/' ? '/' : '/' . trim((string) $c['link'], '/') . '/';
                 if ($path === $front_path) {
                     $path = '/';
                 }
@@ -384,17 +384,17 @@ META;
 
     public static function parse($template)
     {
-        $output = preg_replace_callback('/(<|\s)(\/)?koken\:([a-z_\-]+)([\=|\s][^\/].+?")?(\s*\/)?>/', array('Koken', 'callback'), $template);
-        $output = preg_replace('/\{\{\s*discussion\s*\}\}/', '<?php Shutter::hook(\'discussion\', array(Koken::$current_token)); ?>', $output);
-        $output = preg_replace('/\{\{\s*discussion_count\s*\}\}/', '<?php Shutter::hook(\'discussion_count\', array(Koken::$current_token)); ?>', $output);
-        $output = preg_replace('/\{\{\s*rating\s*\}\}/', '<?php Shutter::hook(\'rating\', array(Koken::$current_token)); ?>', $output);
-        $output = preg_replace_callback('/\{\{\s*([^\}]+)\s*\}\}/', array('Koken', 'out_callback'), $output);
+        $output = preg_replace_callback('/(<|\s)(\/)?koken\:([a-z_\-]+)([\=|\s][^\/].+?")?(\s*\/)?>/', ['Koken', 'callback'], (string) $template);
+        $output = preg_replace('/\{\{\s*discussion\s*\}\}/', '<?php Shutter::hook(\'discussion\', array(Koken::$current_token)); ?>', (string) $output);
+        $output = preg_replace('/\{\{\s*discussion_count\s*\}\}/', '<?php Shutter::hook(\'discussion_count\', array(Koken::$current_token)); ?>', (string) $output);
+        $output = preg_replace('/\{\{\s*rating\s*\}\}/', '<?php Shutter::hook(\'rating\', array(Koken::$current_token)); ?>', (string) $output);
+        $output = preg_replace_callback('/\{\{\s*([^\}]+)\s*\}\}/', ['Koken', 'out_callback'], (string) $output);
         return $output;
     }
 
     public static function find_protocol()
     {
-        $protocol = (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) !== 'off') ||
+        $protocol = (!empty($_SERVER['HTTPS']) && strtolower((string) $_SERVER['HTTPS']) !== 'off') ||
             $_SERVER['SERVER_PORT'] == 443 ||
             (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') ? 'https' : 'http';
 
@@ -405,8 +405,8 @@ META;
     {
         $name = $matches[1];
 
-        $value = preg_replace_callback("/{([a-z._\(\)\,\|\s\'\/\[\]0-9]+)([\s\*\-\+0-9]+)?}/", array('Koken', 'attr_replace'), $matches[2]);
-        $value = trim($value, '" . ');
+        $value = preg_replace_callback("/{([a-z._\(\)\,\|\s\'\/\[\]0-9]+)([\s\*\-\+0-9]+)?}/", ['Koken', 'attr_replace'], (string) $matches[2]);
+        $value = trim((string) $value, '" . ');
         $value = str_replace('"str_replace(', 'str_replace(', $value);
 
         if (!preg_match('/^(\((Koken::)?\$|str_replace\(|\(?empty\()/', $value)) {
@@ -428,30 +428,30 @@ META;
     {
         $t = new Tag();
 
-        if (strpos($matches[1], '.replace(') !== false) {
-            preg_match('/(.*)\.replace\((.*)\)/', $matches[1], $r_matches);
+        if (str_contains((string) $matches[1], '.replace(')) {
+            preg_match('/(.*)\.replace\((.*)\)/', (string) $matches[1], $r_matches);
             $data = $t->field_to_keys($r_matches[1]);
             return 'str_replace(' . $r_matches[2] . ', ' . $data . ')';
         }
 
-        $modifier = isset($matches[2]) ? $matches[2] : '';
+        $modifier = $matches[2] ?? '';
         return '" . (' . $t->field_to_keys($matches[1]) . $modifier . ') . "';
     }
 
     private static function callback($matches)
     {
         $out = '';
-        list($full, $start, $closing, $action) = $matches;
+        [$full, $start, $closing, $action] = $matches;
         $closing = $closing === '/';
         $attr = $start !== '<';
 
         if (isset($matches[4])) {
-            preg_match_all('/([:a-z_\-]+)="([^"]+?)?"/', $matches[4], $param_matches);
+            preg_match_all('/([:a-z_\-]+)="([^"]+?)?"/', (string) $matches[4], $param_matches);
             $parameters = [];
             $parameters['api'] = [];
 
             foreach ($param_matches[1] as $index => $key) {
-                if (strpos($key, 'api:') === 0) {
+                if (str_starts_with($key, 'api:')) {
                     $key = str_replace('api:', '', $key);
                     $parameters['api'][$key] = $param_matches[2][$index];
                 } else {
@@ -467,13 +467,13 @@ META;
         }
 
         if (isset($matches[5])) {
-            $self_closing = trim($matches[5]) === '/';
+            $self_closing = trim((string) $matches[5]) === '/';
         } else {
             $self_closing = false;
         }
 
         if ($attr) {
-            $out = preg_replace_callback('/koken:([a-z\-]+)="([^"]+?)"/', array('Koken', 'attr_callback'), $full);
+            $out = preg_replace_callback('/koken:([a-z\-]+)="([^"]+?)"/', ['Koken', 'attr_callback'], (string) $full);
         } elseif ($action === 'else') {
             $else_tag = self::$last[self::$level-1];
             $out .= $else_tag->do_else();
@@ -484,10 +484,8 @@ META;
         } else {
             $action = preg_replace_callback(
                 '/_([a-zA-Z])/',
-                function ($matches) {
-                    return strtoupper($matches[1]);
-                },
-                $action
+                fn($matches) => strtoupper((string) $matches[1]),
+                (string) $action
             );
 
             if ($action === 'not') {
@@ -502,12 +500,12 @@ META;
             } elseif ($action === 'previous') {
                 $action = 'next';
                 $parameters['_prev'] = true;
-            } elseif (in_array($action, array('content', 'essays', 'albums', 'categories', 'topics'))) {
+            } elseif (in_array($action, ['content', 'essays', 'albums', 'categories', 'topics'])) {
                 $parameters['_obj'] = $action;
                 $action = 'loader';
             }
 
-            $klass = 'Tag' . ucwords($action);
+            $klass = 'Tag' . ucwords((string) $action);
             $t = new $klass($parameters);
 
             if (!$closing) {
@@ -575,8 +573,8 @@ META;
 
     private static function prep_api($url, $cache = true)
     {
-        if (strpos($url, 'api.php?') !== false) {
-            $bits = explode('api.php?', $url);
+        if (str_contains((string) $url, 'api.php?')) {
+            $bits = explode('api.php?', (string) $url);
             $url = $bits[1];
         }
 
@@ -595,23 +593,19 @@ META;
         }
 
         if ($cache) {
-            return json_decode($cache['data'], true);
+            return json_decode((string) $cache['data'], true);
         } else {
             return $url;
         }
     }
 
-    private static function curl_setup($url, $curl = false, $method = 'GET', $params = array())
+    private static function curl_setup($url, $curl = false, $method = 'GET', $params = [])
     {
         if (!$curl) {
             $curl = curl_init();
         }
 
-        $headers = array(
-            'Connection: Keep-Alive',
-            'Keep-Alive: 2',
-            'Cache-Control: must-revalidate'
-        );
+        $headers = ['Connection: Keep-Alive', 'Keep-Alive: 2', 'Cache-Control: must-revalidate'];
 
         if (LOOPBACK_HOST_HEADER) {
             $host = $_SERVER['SERVER_ADDR'] . ':' . $_SERVER['SERVER_PORT'];
@@ -630,7 +624,7 @@ META;
 
         curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
 
-        $method = strtoupper($method);
+        $method = strtoupper((string) $method);
         if ($method === 'POST') {
             // If its an array (instead of a query string) then format it correctly
             if (is_array($params)) {
@@ -664,7 +658,7 @@ META;
         }
 
         if (!is_array($functions)) {
-            $functions = array($functions);
+            $functions = [$functions];
         }
 
 
@@ -677,14 +671,14 @@ META;
         return true;
     }
 
-    public static function api($url, $method = 'GET', $params = array())
+    public static function api($url, $method = 'GET', $params = [])
     {
         if (is_array($url)) {
             // Shared hosts are crazy, so let's really make sure curl_multi works
             if (
                 MAX_PARALLEL_REQUESTS_SITE >= count($url) &&
                 self::is_really_callable(
-                    array('curl_multi_init', 'curl_multi_add_handle', 'curl_multi_getcontent', 'curl_multi_remove_handle', 'curl_multi_close', 'curl_multi_exec')
+                    ['curl_multi_init', 'curl_multi_add_handle', 'curl_multi_getcontent', 'curl_multi_remove_handle', 'curl_multi_close', 'curl_multi_exec']
                 )
             ) {
                 $return = [];
@@ -699,10 +693,7 @@ META;
                         if (is_array($data)) {
                             $return[$index] = $data;
                         } else {
-                            $curls[] = array(
-                                'index' => $index,
-                                'url' => $data
-                            );
+                            $curls[] = ['index' => $index, 'url' => $data];
                         }
                     }
                 }
@@ -733,7 +724,7 @@ META;
 
                         foreach ($curls as $c) {
                             $timer_urls[] = $c['url'];
-                            $return[$c['index']] = json_decode(curl_multi_getcontent($c['curl']), true);
+                            $return[$c['index']] = json_decode((string) curl_multi_getcontent($c['curl']), true);
                             curl_multi_remove_handle($mh, $c['curl']);
                         }
 
@@ -785,9 +776,9 @@ META;
     public static function get_path($relative_path, $relative = false)
     {
         $folders = array_merge(
-            array(self::$template_path),
+            [self::$template_path],
             Shutter::get_template_folders(),
-            array(self::$fallback_path)
+            [self::$fallback_path]
         );
 
         foreach ($folders as $folder) {
@@ -814,9 +805,7 @@ META;
         $url = self::$location['root'] . $url;
 
         if (!empty($parameters)) {
-            $parameters = implode('&', array_map(function ($key, $val) {
-                return "$key=" . urlencode($val);
-            }, array_keys($parameters), $parameters));
+            $parameters = implode('&', array_map(fn($key, $val) => "$key=" . urlencode((string) $val), array_keys($parameters), $parameters));
 
             $url .= (self::$rewrite ? '?' : '&') . $parameters;
         }
@@ -847,23 +836,13 @@ META;
 
     private static function case_convert($str, $case)
     {
-        switch ($case) {
-            case 'lower':
-                $str = function_exists('mb_strtolower') ? mb_strtolower($str) : strtolower($str);
-                break;
-
-            case 'upper':
-                $str = function_exists('mb_strtoupper') ? mb_strtoupper($str) : strtoupper($str);
-                break;
-
-            case 'title':
-                $str = function_exists('mb_convert_case') ? mb_convert_case($str, MB_CASE_TITLE) : ucwords($str);
-                break;
-
-            case 'sentence':
-                $str = function_exists('mb_substr') ? mb_strtoupper(mb_substr($str, 0, 1)) . mb_strtolower(mb_substr($str, 1)) : ucfirst($str);
-                break;
-        }
+        $str = match ($case) {
+            'lower' => function_exists('mb_strtolower') ? mb_strtolower((string) $str) : strtolower((string) $str),
+            'upper' => function_exists('mb_strtoupper') ? mb_strtoupper((string) $str) : strtoupper((string) $str),
+            'title' => function_exists('mb_convert_case') ? mb_convert_case((string) $str, MB_CASE_TITLE) : ucwords((string) $str),
+            'sentence' => function_exists('mb_substr') ? mb_strtoupper(mb_substr((string) $str, 0, 1)) . mb_strtolower(mb_substr((string) $str, 1)) : ucfirst((string) $str),
+            default => $str,
+        };
         return $str;
     }
     public static function out($key)
@@ -872,23 +851,21 @@ META;
             return count(self::$current_token['__loop__']);
         }
 
-        $parameters = array( 'separator' => ' ', 'utc' => true, 'autolink' => null );
-        preg_match_all('/([a-z_]+)=["\']([^"\']+)["|\']/', $key, $matches);
+        $parameters = ['separator' => ' ', 'utc' => true, 'autolink' => null];
+        preg_match_all('/([a-z_]+)=["\']([^"\']+)["|\']/', (string) $key, $matches);
         foreach ($matches[1] as $i => $name) {
             $key = str_replace($matches[0][$i], '', $key);
             $parameters[$name] = $matches[2][$i];
         }
 
-        $is_archive = strpos($key, 'archive.type') !== false;
+        $is_archive = str_contains((string) $key, 'archive.type');
 
         $key = str_replace(' ', '', $key);
         $count = $plural = $singular = $math = $to_json = false;
-        if (strpos($key, '|') === false) {
-            $globals = array(
-                'site', 'location', '_parent', 'rss', 'profile', 'source', 'settings', 'routed_variables', 'page_variables', 'pjax', 'labels', 'messages', 'language'
-            );
+        if (!str_contains($key, '|')) {
+            $globals = ['site', 'location', '_parent', 'rss', 'profile', 'source', 'settings', 'routed_variables', 'page_variables', 'pjax', 'labels', 'messages', 'language'];
 
-            if (strpos($key, '.length') !== false) {
+            if (str_contains($key, '.length')) {
                 $key = str_replace('.length', '', $key);
                 $count = true;
             }
@@ -907,7 +884,7 @@ META;
             }
 
             if (preg_match('~\s*([+\-/\*])\s*(([0-9]+)|([a-z_\.]+))\s*?~', $key, $maths)) {
-                $math = array('operator' => $maths[1], 'num' => is_numeric($maths[2]) ? $maths[2] : self::out($maths[2]));
+                $math = ['operator' => $maths[1], 'num' => is_numeric($maths[2]) ? $maths[2] : self::out($maths[2])];
                 $key = str_replace($maths[0], '', $key);
             }
 
@@ -962,7 +939,7 @@ META;
                         $parameters['clean'] = true;
                     } elseif (!isset($return[$index]) && $index === 'title' && isset($return['year'])) {
                         if (isset($return['month'])) {
-                            $return = self::title_from_archive($return, isset($parameters['date_format']) ? $parameters['date_format'] : false);
+                            $return = self::title_from_archive($return, $parameters['date_format'] ?? false);
                         } else {
                             $return = $return['year'];
                         }
@@ -984,7 +961,7 @@ META;
                             } elseif ($index === 'singular' && (!is_array($return) || !isset($return['singular']))) {
                                 $singular = true;
                             } else {
-                                $return = isset($return[$index]) ? $return[$index] : '';
+                                $return = $return[$index] ?? '';
 
                                 if (is_string($return)) {
                                     $parts = explode('.', $return);
@@ -1009,8 +986,8 @@ META;
             $return = count($return);
 
             if (isset($parameters['plural']) && isset($parameters['singular']) && is_numeric($return)) {
-                $pparts = explode('.', $parameters['plural']);
-                $sparts = explode('.', $parameters['singular']);
+                $pparts = explode('.', (string) $parameters['plural']);
+                $sparts = explode('.', (string) $parameters['singular']);
 
                 if (in_array($pparts[0], $globals)) {
                     $parameters['plural'] = self::out($parameters['plural']);
@@ -1026,7 +1003,7 @@ META;
             }
         } else {
             if (isset($parameters['truncate'])) {
-                $return = self::truncate(strip_tags($return), $parameters['truncate'], isset($parameters['after_truncate']) ? $parameters['after_truncate'] : '…');
+                $return = self::truncate();
             }
 
             if (isset($parameters['case'])) {
@@ -1055,7 +1032,7 @@ META;
             }
 
             if (isset($parameters['strip_html'])) {
-                $return = preg_replace('/\s+/', ' ', preg_replace('/\n+/', ' ', strip_tags($return)));
+                $return = preg_replace('/\s+/', ' ', (string) preg_replace('/\n+/', ' ', strip_tags((string) $return)));
                 $parameters['html_encode'] = true;
             }
 
@@ -1075,11 +1052,11 @@ META;
             }
 
             if (isset($parameters['url_encode'])) {
-                $return = urlencode($return);
+                $return = urlencode((string) $return);
             }
 
             if (isset($parameters['html_encode'])) {
-                $return = htmlspecialchars($return);
+                $return = htmlspecialchars((string) $return);
             }
 
             if (isset($parameters['if_true'])) {
@@ -1087,12 +1064,12 @@ META;
             }
 
             if (isset($parameters['clean'])) {
-                $return = preg_replace('/\s+/', ' ', preg_replace('/[^\-_A-Za-z0-9]+/', ' ', preg_replace('/\.[a-z]+$/', '', $return)));
+                $return = preg_replace('/\s+/', ' ', (string) preg_replace('/[^\-_A-Za-z0-9]+/', ' ', (string) preg_replace('/\.[a-z]+$/', '', (string) $return)));
             }
 
             if (isset($parameters['plural']) && isset($parameters['singular']) && is_numeric($return)) {
-                $pparts = explode('.', $parameters['plural']);
-                $sparts = explode('.', $parameters['singular']);
+                $pparts = explode('.', (string) $parameters['plural']);
+                $sparts = explode('.', (string) $parameters['singular']);
 
                 if (in_array($pparts, $globals)) {
                     $parameters['plural'] = self::out($parameters['plural']);
@@ -1180,9 +1157,7 @@ META;
                         }
 
                         if (isset($parameters['field']) && isset($return[0][$parameters['field']])) {
-                            $return = array_map(function ($arr) use ($parameters) {
-                                return $arr[$parameters['field']];
-                            }, $return);
+                            $return = array_map(fn($arr) => $arr[$parameters['field']], $return);
                         } else {
                             $return = [];
                         }
@@ -1202,35 +1177,7 @@ META;
     {
         $result = strval($str);
 
-        $singular_rules = array(
-            '/(matr)ices$/'         => '\1ix',
-            '/(vert|ind)ices$/'     => '\1ex',
-            '/^(ox)en/'             => '\1',
-            '/(alias)es$/'          => '\1',
-            '/([octop|vir])i$/'     => '\1us',
-            '/(cris|ax|test)es$/'   => '\1is',
-            '/(shoe)s$/'            => '\1',
-            '/(o)es$/'              => '\1',
-            '/(bus|campus)es$/'     => '\1',
-            '/([m|l])ice$/'         => '\1ouse',
-            '/(x|ch|ss|sh)es$/'     => '\1',
-            '/(m)ovies$/'           => '\1\2ovie',
-            '/(s)eries$/'           => '\1\2eries',
-            '/([^aeiouy]|qu)ies$/'  => '\1y',
-            '/([lr])ves$/'          => '\1f',
-            '/(tive)s$/'            => '\1',
-            '/(hive)s$/'            => '\1',
-            '/([^f])ves$/'          => '\1fe',
-            '/(^analy)ses$/'        => '\1sis',
-            '/((a)naly|(b)a|(d)iagno|(p)arenthe|(p)rogno|(s)ynop|(t)he)ses$/' => '\1\2sis',
-            '/([ti])a$/'            => '\1um',
-            '/(p)eople$/'           => '\1\2erson',
-            '/(m)en$/'              => '\1an',
-            '/(s)tatuses$/'         => '\1\2tatus',
-            '/(c)hildren$/'         => '\1\2hild',
-            '/(n)ews$/'             => '\1\2ews',
-            '/([^u])s$/'            => '\1',
-        );
+        $singular_rules = ['/(matr)ices$/'         => '\1ix', '/(vert|ind)ices$/'     => '\1ex', '/^(ox)en/'             => '\1', '/(alias)es$/'          => '\1', '/([octop|vir])i$/'     => '\1us', '/(cris|ax|test)es$/'   => '\1is', '/(shoe)s$/'            => '\1', '/(o)es$/'              => '\1', '/(bus|campus)es$/'     => '\1', '/([m|l])ice$/'         => '\1ouse', '/(x|ch|ss|sh)es$/'     => '\1', '/(m)ovies$/'           => '\1\2ovie', '/(s)eries$/'           => '\1\2eries', '/([^aeiouy]|qu)ies$/'  => '\1y', '/([lr])ves$/'          => '\1f', '/(tive)s$/'            => '\1', '/(hive)s$/'            => '\1', '/([^f])ves$/'          => '\1fe', '/(^analy)ses$/'        => '\1sis', '/((a)naly|(b)a|(d)iagno|(p)arenthe|(p)rogno|(s)ynop|(t)he)ses$/' => '\1\2sis', '/([ti])a$/'            => '\1um', '/(p)eople$/'           => '\1\2erson', '/(m)en$/'              => '\1an', '/(s)tatuses$/'         => '\1\2tatus', '/(c)hildren$/'         => '\1\2hild', '/(n)ews$/'             => '\1\2ews', '/([^u])s$/'            => '\1'];
 
         foreach ($singular_rules as $rule => $replacement) {
             if (preg_match($rule, $result)) {
@@ -1246,27 +1193,45 @@ META;
     {
         $result = strval($str);
 
-        $plural_rules = array(
-            '/^(ox)$/'                 => '\1\2en',     // ox
-            '/([m|l])ouse$/'           => '\1ice',      // mouse, louse
-            '/(matr|vert|ind)ix|ex$/'  => '\1ices',     // matrix, vertex, index
-            '/(x|ch|ss|sh)$/'          => '\1es',       // search, switch, fix, box, process, address
-            '/([^aeiouy]|qu)y$/'       => '\1ies',      // query, ability, agency
-            '/(hive)$/'                => '\1s',        // archive, hive
-            '/(?:([^f])fe|([lr])f)$/'  => '\1\2ves',    // half, safe, wife
-            '/sis$/'                   => 'ses',        // basis, diagnosis
-            '/([ti])um$/'              => '\1a',        // datum, medium
-            '/(p)erson$/'              => '\1eople',    // person, salesperson
-            '/(m)an$/'                 => '\1en',       // man, woman, spokesman
-            '/(c)hild$/'               => '\1hildren',  // child
-            '/(buffal|tomat)o$/'       => '\1\2oes',    // buffalo, tomato
-            '/(bu|campu)s$/'           => '\1\2ses',    // bus, campus
-            '/(alias|status|virus)/'   => '\1es',       // alias
-            '/(octop)us$/'             => '\1i',        // octopus
-            '/(ax|cris|test)is$/'      => '\1es',       // axis, crisis
-            '/s$/'                     => 's',          // no change (compatibility)
+        $plural_rules = [
+            '/^(ox)$/'                 => '\1\2en',
+            // ox
+            '/([m|l])ouse$/'           => '\1ice',
+            // mouse, louse
+            '/(matr|vert|ind)ix|ex$/'  => '\1ices',
+            // matrix, vertex, index
+            '/(x|ch|ss|sh)$/'          => '\1es',
+            // search, switch, fix, box, process, address
+            '/([^aeiouy]|qu)y$/'       => '\1ies',
+            // query, ability, agency
+            '/(hive)$/'                => '\1s',
+            // archive, hive
+            '/(?:([^f])fe|([lr])f)$/'  => '\1\2ves',
+            // half, safe, wife
+            '/sis$/'                   => 'ses',
+            // basis, diagnosis
+            '/([ti])um$/'              => '\1a',
+            // datum, medium
+            '/(p)erson$/'              => '\1eople',
+            // person, salesperson
+            '/(m)an$/'                 => '\1en',
+            // man, woman, spokesman
+            '/(c)hild$/'               => '\1hildren',
+            // child
+            '/(buffal|tomat)o$/'       => '\1\2oes',
+            // buffalo, tomato
+            '/(bu|campu)s$/'           => '\1\2ses',
+            // bus, campus
+            '/(alias|status|virus)/'   => '\1es',
+            // alias
+            '/(octop)us$/'             => '\1i',
+            // octopus
+            '/(ax|cris|test)is$/'      => '\1es',
+            // axis, crisis
+            '/s$/'                     => 's',
+            // no change (compatibility)
             '/$/'                      => 's',
-        );
+        ];
 
         foreach ($plural_rules as $rule => $replacement) {
             if (preg_match($rule, $result)) {
@@ -1280,28 +1245,19 @@ META;
 
     public static function get_default_link($name)
     {
-        $name = rtrim($name, 's');
+        $name = rtrim((string) $name, 's');
         $template = self::$location['urls'][$name];
-        preg_match('~^/([^/]+)~', $template, $matches);
+        preg_match('~^/([^/]+)~', (string) $template, $matches);
         return $matches[0];
     }
 
     public static function link($parameters)
     {
-        $defaults = array(
-            'to' => false,
-            'bind_to_key' => false,
-            'url' => false,
-            'data' => false,
-            'filter:id' => false,
-            'echo' => false,
-            'lightbox' => false,
-            'share' => false,
-        );
+        $defaults = ['to' => false, 'bind_to_key' => false, 'url' => false, 'data' => false, 'filter:id' => false, 'echo' => false, 'lightbox' => false, 'share' => false];
 
         $options = array_merge($defaults, $parameters);
 
-        $attributes = array('class' => '');
+        $attributes = ['class' => ''];
         $tail = '';
         $type = $token = $context = false;
         $url = '';
@@ -1314,7 +1270,7 @@ META;
             $attributes['data-koken-share'] = $options['share'];
             $share_parameters = [];
 
-            $label = ucwords($options['share']);
+            $label = ucwords((string) $options['share']);
 
             $token = self::$current_token;
 
@@ -1345,7 +1301,7 @@ META;
             }
 
             if ($image) {
-                if (strpos($image, 'http') !== 0) {
+                if (!str_starts_with((string) $image, 'http')) {
                     $image = Koken::$location['site_url'] . $image;
                 }
 
@@ -1427,7 +1383,7 @@ META;
             }
 
             foreach ($parameters as $key => $val) {
-                if (strpos($key, 'filter:') === 0) {
+                if (str_starts_with((string) $key, 'filter:')) {
                     continue;
                 }
 
@@ -1438,9 +1394,9 @@ META;
         } else {
             if ($options['to'] === 'date') {
                 $type = 'event_timeline';
-            } elseif (in_array($options['to'], array('archive', 'tag', 'category', 'tag_contents', 'tag_albums', 'tag_essays', 'category_contents', 'category_albums', 'category_essays'))) {
+            } elseif (in_array($options['to'], ['archive', 'tag', 'category', 'tag_contents', 'tag_albums', 'tag_essays', 'category_contents', 'category_albums', 'category_essays'])) {
                 $type = $options['to'];
-            } elseif ($options['to'] && strpos($options['to'], 'archive_')) {
+            } elseif ($options['to'] && strpos((string) $options['to'], 'archive_')) {
                 $type = str_replace('archive_', '', $options['to']);
             }
 
@@ -1469,7 +1425,7 @@ META;
                 $token = $options['data'];
             } else {
                 $token = self::$current_token;
-                $check_token = self::$_parent ? self::$_parent : $token;
+                $check_token = self::$_parent ?: $token;
 
                 if (isset($check_token['context']) && isset($check_token['context']['album'])) {
                     $context = $check_token['context']['album'];
@@ -1479,7 +1435,7 @@ META;
             }
 
             if ($token && $type) {
-                if (in_array($type, array('event_timeline', 'tag', 'category', 'tag_contents', 'tag_albums', 'tag_essays', 'category_contents', 'category_albums', 'category_essays'))) {
+                if (in_array($type, ['event_timeline', 'tag', 'category', 'tag_contents', 'tag_albums', 'tag_essays', 'category_contents', 'category_albums', 'category_essays'])) {
                     $token['__koken__override'] = $type;
                 } elseif ($type === 'archive') {
                     $token['__koken__override'] = 'archive_' . (isset($token['__koken__']) ? $token['__koken__'] . 's' : (isset($token['album']) ? 'albums' : ''));
@@ -1492,7 +1448,7 @@ META;
                 if ($key === 'filter:id') {
                     continue;
                 }
-                if (strpos($key, 'filter:') === 0) {
+                if (str_starts_with((string) $key, 'filter:')) {
                     $tail .= str_replace('filter:', '', $key) . ':' . $val . '/';
                     if ($key === 'filter:order_by' && $token) {
                         $token['__koken__override_date'] = $val;
@@ -1511,7 +1467,7 @@ META;
             }
 
             // Checking for is_current here prevents issues with pagination links as described in https://github.com/koken/koken/issues/1210
-            if (($url === '/' && self::$location['here'] === '/') || ($token && !isset($token['is_current']) && preg_match('/^' . str_replace('/', '\\/', urldecode($url)) . '(\\/.*)?$/', self::$location['here']))) {
+            if (($url === '/' && self::$location['here'] === '/') || ($token && !isset($token['is_current']) && preg_match('/^' . str_replace('/', '\\/', urldecode((string) $url)) . '(\\/.*)?$/', (string) self::$location['here']))) {
                 $attributes['class'] .= ' k-nav-current';
             }
 
@@ -1519,13 +1475,13 @@ META;
                 $attributes['class'] .= ' k-link-lightbox';
             }
 
-            if (preg_match('~\.rss$~', $url)) {
+            if (preg_match('~\.rss$~', (string) $url)) {
                 $attributes['target'] = '_blank';
-            } elseif (strpos($url, '/') === 0 && !preg_match('~/lightbox/$~', $url)) {
+            } elseif (str_starts_with((string) $url, '/') && !preg_match('~/lightbox/$~', (string) $url)) {
                 $attributes['data-koken-internal'] = true;
             }
 
-            if (strpos($url, '/') === 0) {
+            if (str_starts_with((string) $url, '/')) {
                 $url = self::$location['root'] . $url . $tail;
                 if (self::$preview) {
                     $url .= '&amp;preview=' . self::$preview;
@@ -1543,7 +1499,7 @@ META;
                 if ($val === true) {
                     $att[] = $key;
                 } elseif (!empty($val)) {
-                    $att[] = "$key=\"" . trim($val) . '"';
+                    $att[] = "$key=\"" . trim((string) $val) . '"';
                 }
             }
             $att = implode(' ', $att);
@@ -1571,7 +1527,7 @@ META;
                     $obj = $obj['album'];
                 }
 
-                if ((!self::$source || strpos(self::$source['type'], 'event') !== 0) && $type === 'event_timeline' && in_array($obj['__koken__'], array('content', 'album', 'essay')) && isset($defaults['event_timeline'])) {
+                if ((!self::$source || !str_starts_with((string) self::$source['type'], 'event')) && $type === 'event_timeline' && in_array($obj['__koken__'], ['content', 'album', 'essay']) && isset($defaults['event_timeline'])) {
                     $type = 'event_timeline';
                 }
             } elseif (!isset($obj['__koken__']) && isset($obj['items']) && isset($obj['year'])) {
@@ -1600,7 +1556,7 @@ META;
                 }
 
                 if ($defaults[$type]) {
-                    if (strpos($type, 'tag') === 0) {
+                    if (str_starts_with((string) $type, 'tag')) {
                         $obj['id'] = $obj['title'];
                         if (is_numeric($obj['id'])) {
                             $obj['id'] = 'tag-' . $obj['id'];
@@ -1644,13 +1600,13 @@ META;
                         }
                     }
 
-                    preg_match_all('/:([a-z_]+)/', $url, $matches);
+                    preg_match_all('/:([a-z_]+)/', (string) $url, $matches);
 
                     foreach ($matches[1] as $magic) {
                         if (!isset($obj[$magic])) {
                             $obj[$magic] = '';
                         }
-                        $url = str_replace(':' . $magic, urlencode($obj[$magic]), $url);
+                        $url = str_replace(':' . $magic, urlencode((string) $obj[$magic]), $url);
                     }
 
                     $url = str_replace('(?:', '', $url);
@@ -1659,7 +1615,7 @@ META;
             }
         }
 
-        $url = rtrim($url, '/');
+        $url = rtrim((string) $url, '/');
 
         if ($lightbox && (!isset($obj['album_type']) || $obj['album_type'] !== 'set')) {
             $url = preg_replace('~/?lightbox$~', '', $url) . '/lightbox';
@@ -1687,44 +1643,44 @@ META;
         if ($type === 'content') {
             $params = '/context:';
             if (isset(Koken::$routed_variables['album_id']) || isset(Koken::$routed_variables['album_slug'])) {
-                $params .= isset(Koken::$routed_variables['album_id']) ? Koken::$routed_variables['album_id'] : 'slug-' . Koken::$routed_variables['album_slug'];
+                $params .= Koken::$routed_variables['album_id'] ?? 'slug-' . Koken::$routed_variables['album_slug'];
             } elseif (isset(Koken::$routed_variables['tag_slug'])) {
-                $params .= 'tag-' . urlencode(Koken::$routed_variables['tag_slug']);
-                $order = explode(' ', self::$site['url_data']['content']['order']);
+                $params .= 'tag-' . urlencode((string) Koken::$routed_variables['tag_slug']);
+                $order = explode(' ', (string) self::$site['url_data']['content']['order']);
                 $params .= '/context_order:' . $order[0] . '/context_order_direction:' . strtolower($order[1]);
             } elseif (isset(Koken::$routed_variables['category_slug'])) {
-                $params .= 'category-' . urlencode(Koken::$routed_variables['category_slug']);
-                $order = explode(' ', self::$site['url_data']['content']['order']);
+                $params .= 'category-' . urlencode((string) Koken::$routed_variables['category_slug']);
+                $order = explode(' ', (string) self::$site['url_data']['content']['order']);
                 $params .= '/context_order:' . $order[0] . '/context_order_direction:' . strtolower($order[1]);
             } else {
-                $featured_regex = isset(self::$site['urls']['feature']) ? preg_replace('/:([a-z_]+)/', '[^/]+', self::$site['urls']['feature']) : false;
-                if (isset(self::$site['urls']['favorites']) && strpos(self::$location['here'], self::$site['urls']['favorites']) === 0) {
-                    $order = explode(' ', self::$site['url_data']['favorite']['order']);
+                $featured_regex = isset(self::$site['urls']['feature']) ? preg_replace('/:([a-z_]+)/', '[^/]+', (string) self::$site['urls']['feature']) : false;
+                if (isset(self::$site['urls']['favorites']) && str_starts_with((string) self::$location['here'], (string) self::$site['urls']['favorites'])) {
+                    $order = explode(' ', (string) self::$site['url_data']['favorite']['order']);
                     $params .= 'favorites';
-                } elseif ($featured_regex && preg_match('~' . $featured_regex . '~', self::$location['here'])) {
+                } elseif ($featured_regex && preg_match('~' . $featured_regex . '~', (string) self::$location['here'])) {
                     if (isset(self::$site['url_data']['feature']['order'])) {
-                        $order = explode(' ', self::$site['url_data']['feature']['order']);
+                        $order = explode(' ', (string) self::$site['url_data']['feature']['order']);
                     } else {
-                        $order = array('manual', 'ASC');
+                        $order = ['manual', 'ASC'];
                     }
                     $params .= 'features';
                 } else {
-                    $order = explode(' ', self::$site['url_data']['content']['order']);
+                    $order = explode(' ', (string) self::$site['url_data']['content']['order']);
                     $params .= 'stream';
                 }
                 $params .= '/context_order:' . $order[0] . '/context_order_direction:' . strtolower($order[1]);
             }
         } else {
             if (isset(Koken::$routed_variables['tag_slug'])) {
-                $params = '/context:tag-' . urlencode(Koken::$routed_variables['tag_slug']);
-                $order = explode(' ', self::$site['url_data'][$type]['order']);
+                $params = '/context:tag-' . urlencode((string) Koken::$routed_variables['tag_slug']);
+                $order = explode(' ', (string) self::$site['url_data'][$type]['order']);
                 $params .= '/context_order:' . $order[0] . '/context_order_direction:' . strtolower($order[1]);
             } elseif (isset(Koken::$routed_variables['category_slug'])) {
-                $params = '/context:category-' . urlencode(Koken::$routed_variables['category_slug']);
-                $order = explode(' ', self::$site['url_data'][$type]['order']);
+                $params = '/context:category-' . urlencode((string) Koken::$routed_variables['category_slug']);
+                $order = explode(' ', (string) self::$site['url_data'][$type]['order']);
                 $params .= '/context_order:' . $order[0] . '/context_order_direction:' . strtolower($order[1]);
             } else {
-                $order = explode(' ', self::$site['url_data'][$type]['order']);
+                $order = explode(' ', (string) self::$site['url_data'][$type]['order']);
                 $params = '/context_set:1/context_order:' . $order[0] . '/context_order_direction:' . strtolower($order[1]);
             }
         }
@@ -1749,8 +1705,8 @@ META;
                 continue;
             }
 
-            if (strlen($value['path']) && $value['path'][0] === '/' && !preg_match('/\.rss$/', $value['path'])) {
-                $value['path'] = rtrim($value['path'], '/') . '/';
+            if (strlen((string) $value['path']) && $value['path'][0] === '/' && !preg_match('/\.rss$/', (string) $value['path'])) {
+                $value['path'] = rtrim((string) $value['path'], '/') . '/';
             }
             if ($value['path'] === self::$navigation_home_path) {
                 $value['path'] = '/';
@@ -1758,10 +1714,10 @@ META;
             if ($value['path'] == '/') {
                 $current = self::$location['here'] === '/';
             } else {
-                $current = preg_match('~^' . $value['path'] . '(.*)?$~', self::$location['here']) && strlen($value['path']) > $current_match_len;
+                $current = preg_match('~^' . $value['path'] . '(.*)?$~', (string) self::$location['here']) && strlen((string) $value['path']) > $current_match_len;
 
                 if ($current) {
-                    $current_match_len = strlen($value['path']);
+                    $current_match_len = strlen((string) $value['path']);
                     $o = str_replace('class="k-nav-current"', '', $o);
                     $o = str_replace('class="k-nav-current ', 'class="', $o);
                 }
@@ -1781,14 +1737,14 @@ META;
                 $o .= ' class="' . join(' ', $classes) . '"';
             }
 
-            if (preg_match('~\.rss$~', $value['path'])) {
+            if (preg_match('~\.rss$~', (string) $value['path'])) {
                 $o .= ' target="_blank"';
-            } elseif (strpos($value['path'], 'http') === false && strpos($value['path'], 'mailto:') !== 0 && !preg_match('~/lightbox/$~', $value['path'])) {
+            } elseif (!str_contains((string) $value['path'], 'http') && !str_starts_with((string) $value['path'], 'mailto:') && !preg_match('~/lightbox/$~', (string) $value['path'])) {
                 $o .= ' data-koken-internal';
             }
 
-            $root = $value['path'] === '/' ? preg_replace('/\/index.php$/', '', self::$location['root']) : self::$location['root'];
-            $is_native = !preg_match('/^(https?|mailto)/', $value['path']);
+            $root = $value['path'] === '/' ? preg_replace('/\/index.php$/', '', (string) self::$location['root']) : self::$location['root'];
+            $is_native = !preg_match('/^(https?|mailto)/', (string) $value['path']);
             $o .= ' title="' . $value['label'] . '" href="' . ($is_native ? $root : '') . $value['path'] . (self::$preview && $is_native ? '&amp;preview=' . self::$preview : '') . '">' . $value['label'] . '</a>';
 
             if (isset($value['items']) && !empty($value['items'])) {
@@ -1799,21 +1755,13 @@ META;
         return $o . $wrap_post;
     }
 
-    public static function output_img($content, $options = array(), $params = '')
+    public static function output_img($content, $options = [], $params = '')
     {
-        $defaults = array(
-            'width' => 0,
-            'height' => 0,
-            'crop' => false,
-            'hidpi' => self::$site['hidpi'] && !self::$rss
-        );
+        $defaults = ['width' => 0, 'height' => 0, 'crop' => false, 'hidpi' => self::$site['hidpi'] && !self::$rss];
 
         $options = array_merge($defaults, $options);
 
-        $attr = array(
-            $options['width'],
-            $options['height']
-        );
+        $attr = [$options['width'], $options['height']];
 
         $w = $options['width'];
         $h = $options['height'];
@@ -1856,15 +1804,7 @@ META;
             } else {
                 $longest = max($w, $h);
 
-                $breakpoints = array(
-                    'tiny' => 60,
-                    'small' => 100,
-                    'medium' => 480,
-                    'medium_large' => 800,
-                    'large' => 1024,
-                    'xlarge' => 1600,
-                    'huge' => 2048
-                );
+                $breakpoints = ['tiny' => 60, 'small' => 100, 'medium' => 480, 'medium_large' => 800, 'large' => 1024, 'xlarge' => 1600, 'huge' => 2048];
 
                 $preset_base = '';
                 $last_len = false;
@@ -1911,7 +1851,7 @@ META;
         }
 
 
-        if ((isset($params['class']) && strpos($params['class'], 'k-lazy-load') !== false) || $options['hidpi']) {
+        if ((isset($params['class']) && str_contains((string) $params['class'], 'k-lazy-load')) || $options['hidpi']) {
             $params['data-src'] = $url;
             $noscript = true;
             $params['src'] = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
@@ -1942,7 +1882,7 @@ META;
 
     public static function form($params)
     {
-        $options = array_merge(array('method' => 'post', 'class' => false, 'id' => false), $params);
+        $options = array_merge(['method' => 'post', 'class' => false, 'id' => false], $params);
         $out = '<form method="' . $options['method'] . '"';
         if (isset($options['url'])) {
             $out .=  ' action="' . self::$location['root'] . $options['url'] . '"';
@@ -1967,10 +1907,10 @@ META;
 
     public static function truncate($str, $limit, $after = '…')
     {
-        $len = function_exists('mb_strlen') ? mb_strlen($str) : strlen($str);
+        $len = function_exists('mb_strlen') ? mb_strlen((string) $str) : strlen((string) $str);
 
         if ($len > $limit) {
-            $str = trim(function_exists('mb_substr') ? mb_substr($str, 0, $limit) : substr($str, 0, $limit)) . $after;
+            $str = trim(function_exists('mb_substr') ? mb_substr((string) $str, 0, $limit) : substr((string) $str, 0, $limit)) . $after;
         }
 
         return $str;
@@ -1978,23 +1918,23 @@ META;
 
     public static function format_paragraphs($pee, $br = 1)
     {
-        if (trim($pee) === '') {
+        if (trim((string) $pee) === '') {
             return '';
         }
         $pee = $pee . "\n"; // just to make things a little easier, pad the end
         $pee = preg_replace('|<br />\s*<br />|', "\n\n", $pee);
         // Space things out a little
         $allblocks = '(?:table|thead|tfoot|caption|col|colgroup|tbody|tr|td|th|div|dl|dd|dt|ul|ol|li|pre|select|option|form|map|area|blockquote|address|math|style|input|p|h[1-6]|hr|fieldset|legend|section|article|aside|hgroup|header|footer|nav|figure|figcaption|details|menu|summary)';
-        $pee = preg_replace('!(<' . $allblocks . '[^>]*>)!', "\n$1", $pee);
-        $pee = preg_replace('!(</' . $allblocks . '>)!', "$1\n\n", $pee);
-        $pee = str_replace(array("\r\n", "\r"), "\n", $pee); // cross-platform newlines
-        if (strpos($pee, '<object') !== false) {
+        $pee = preg_replace('!(<' . $allblocks . '[^>]*>)!', "\n$1", (string) $pee);
+        $pee = preg_replace('!(</' . $allblocks . '>)!', "$1\n\n", (string) $pee);
+        $pee = str_replace(["\r\n", "\r"], "\n", $pee); // cross-platform newlines
+        if (str_contains($pee, '<object')) {
             $pee = preg_replace('|\s*<param([^>]*)>\s*|', "<param$1>", $pee); // no pee inside object/embed
-            $pee = preg_replace('|\s*</embed>\s*|', '</embed>', $pee);
+            $pee = preg_replace('|\s*</embed>\s*|', '</embed>', (string) $pee);
         }
-        $pee = preg_replace("/\n\n+/", "\n\n", $pee); // take care of duplicates
+        $pee = preg_replace("/\n\n+/", "\n\n", (string) $pee); // take care of duplicates
         // make paragraphs, including one at the end
-        $pees = preg_split('/\n\s*\n/', $pee, -1, PREG_SPLIT_NO_EMPTY);
+        $pees = preg_split('/\n\s*\n/', (string) $pee, -1, PREG_SPLIT_NO_EMPTY);
         $pee = '';
         foreach ($pees as $tinkle) {
             $pee .= '<p>' . trim($tinkle, "\n") . "</p>\n";
@@ -2007,7 +1947,7 @@ META;
     public static function covers($data, $min, $max)
     {
         if (!isset($data['album']['covers'])) {
-            return array();
+            return [];
         }
 
         $covers = $data['album']['covers'];
@@ -2033,7 +1973,7 @@ META;
             } else {
                 $pool = [];
             }
-
+if ($pool === null) throw new Exception('pool is null' . print_r($content, true));
             if (count($pool) && $min - count($covers) > 0) {
                 $ids = [];
                 foreach ($covers as $c) {
@@ -2061,45 +2001,23 @@ META;
 
     private static function parse_source_aliases($source)
     {
-        $aliases = array(
-            'date' => 'events',
-            'archives' => 'events',
-            'timeline' => 'events'
-        );
+        $aliases = ['date' => 'events', 'archives' => 'events', 'timeline' => 'events'];
 
-        if (isset($aliases[$source])) {
-            return $aliases[$source];
-        }
-
-        return $source;
+        return $aliases[$source] ?? $source;
     }
 
     public static function load($params)
     {
-        $defaults = array(
-            'model' 			=> 'content',
-            'list'				=> false,
-            'filters'			=> array(),
-            'id_from_url' 		=> false,
-            'paginate_from_url' => false,
-            'api'				=> array(),
-            'load_content'		=> false,
-            'id'				=> false,
-            'id_prefix'			=> '',
-            'tree' 				=> false,
-            'type' 				=> false,
-            'source'			=> false,
-            'archive'			=> false
-        );
+        $defaults = ['model' 			=> 'content', 'list'				=> false, 'filters'			=> [], 'id_from_url' 		=> false, 'paginate_from_url' => false, 'api'				=> [], 'load_content'		=> false, 'id'				=> false, 'id_prefix'			=> '', 'tree' 				=> false, 'type' 				=> false, 'source'			=> false, 'archive'			=> false];
 
         $featured = false;
 
         $params['filters'] = [];
 
         foreach ($params as $key => $val) {
-            if (strpos($key, 'filter:') === 0) {
+            if (str_starts_with((string) $key, 'filter:')) {
                 $left = str_replace('filter:', '', $key);
-                if (strpos($left, ':not') === false) {
+                if (!str_contains($left, ':not')) {
                     $right = '';
                 } else {
                     $right = '!';
@@ -2115,10 +2033,10 @@ META;
 
         if (isset($params['source'])) {
             $params['source'] = self::parse_source_aliases($params['source']);
-            $source = array('type' => $params['source']);
-            $defaults['list'] = substr(strrev($params['source']), 0, 1) === 's';
-            $defaults['model'] = rtrim($params['source'], 's') . 's';
-            $defaults['filters'] = isset($params['filters']) ? $params['filters'] : array();
+            $source = ['type' => $params['source']];
+            $defaults['list'] = str_starts_with(strrev((string) $params['source']), 's');
+            $defaults['model'] = rtrim((string) $params['source'], 's') . 's';
+            $defaults['filters'] = $params['filters'] ?? [];
             $custom = true;
             if (isset($params['tree'])) {
                 $defaults['tree'] = true;
@@ -2126,9 +2044,9 @@ META;
         } elseif (Koken::$source) {
             Koken::$source['type'] = self::parse_source_aliases(Koken::$source['type']);
             $source = Koken::$source;
-            $defaults['list'] = substr(strrev(Koken::$source['type']), 0, 1) === 's';
-            $defaults['model'] = rtrim(Koken::$source['type'], 's') . 's';
-            $defaults['filters'] = is_array(Koken::$source['filters']) ? Koken::$source['filters'] : array();
+            $defaults['list'] = str_starts_with(strrev((string) Koken::$source['type']), 's');
+            $defaults['model'] = rtrim((string) Koken::$source['type'], 's') . 's';
+            $defaults['filters'] = is_array(Koken::$source['filters']) ? Koken::$source['filters'] : [];
         }
 
         if ($defaults['model'] === 'events' && $defaults['list']) {
@@ -2140,7 +2058,7 @@ META;
             $defaults['api']['types'] = 'set';
         }
 
-        if (strpos($defaults['model'], 'featured_') === 0) {
+        if (str_starts_with($defaults['model'], 'featured_')) {
             $bits = explode('_', $defaults['model']);
             $defaults['model'] = 'features';
             $defaults['id'] = rtrim($bits[1], 's');
@@ -2179,24 +2097,24 @@ META;
             $defaults['filters'] = array_merge($defaults['filters'], $customs);
 
             foreach ($defaults['filters'] as $filter) {
-                if (strpos($filter, '=') !== false) {
-                    $bits = explode('=', $filter);
+                if (str_contains((string) $filter, '=')) {
+                    $bits = explode('=', (string) $filter);
                     if ($bits[0] === 'id' && $bits[1][0] !== '!') {
-                        $__id = substr($bits[1], 0, 1) === '"' ? $bits[1] : urlencode($bits[1]);
+                        $__id = str_starts_with($bits[1], '"') ? $bits[1] : urlencode($bits[1]);
                     } elseif ($bits[0] === 'members') {
                         $params['type'] = $bits[1];
                     } else {
-                        if (strpos($bits[1], '!') === 0 || strpos($bits[0], '!') !== false) {
+                        if (str_starts_with($bits[1], '!') || str_contains($bits[0], '!')) {
                             $bits[1] = str_replace('!', '', $bits[1]);
                             $bits[0] = str_replace('!', '', $bits[0]) . '_not';
                         }
-                        if (strpos($bits[0], 'category') === 0 && (!is_numeric($bits[1]) && strpos($bits[1], '" . Koken') !== 0)) {
+                        if (str_starts_with($bits[0], 'category') && (!is_numeric($bits[1]) && !str_starts_with($bits[1], '" . Koken'))) {
                             $bits[1] = Koken::$categories[strtolower($bits[1])];
                         }
                         $defaults['api'][$bits[0]] = $bits[1];
                     }
                 } else {
-                    if (substr($filter, 0, 1) === '!') {
+                    if (str_starts_with((string) $filter, '!')) {
                         $filter = str_replace('!', '', $filter);
                         $val = 0;
                     } else {
@@ -2215,7 +2133,7 @@ META;
         if ($source['type'] === 'tags' && isset($__id)) {
             $defaults['id'] = $__id;
         } elseif ($source['type'] === 'event' && isset(Koken::$routed_variables['year'])) {
-            $__id = implode('-', array(Koken::$routed_variables['year'], Koken::$routed_variables['month'], Koken::$routed_variables['day']));
+            $__id = implode('-', [Koken::$routed_variables['year'], Koken::$routed_variables['month'], Koken::$routed_variables['day']]);
         } elseif ($source['type'] === 'tag' && isset($defaults['api']['tag'])) {
             $__id = $defaults['api']['tag'];
             unset($defaults['api']['tag']);
@@ -2271,7 +2189,7 @@ META;
                 if ($params['type'] === 'essays') {
                     $defaults['api']['type'] = 'essay';
                     $defaults['model'] = 'text';
-                    $defaults['api'] = array_merge(array('order_by' => 'published_on', 'state' => 'published'), $defaults['api']);
+                    $defaults['api'] = array_merge(['order_by' => 'published_on', 'state' => 'published'], $defaults['api']);
                 } else {
                     $defaults['model'] = $params['type'] === 'contents' ? 'content' : $params['type'];
                 }
@@ -2294,7 +2212,7 @@ META;
                 $defaults['id_from_url'] = true;
             }
 
-            if (in_array($defaults['model'], array('albums', 'events', 'tags', 'categories'))) {
+            if (in_array($defaults['model'], ['albums', 'events', 'tags', 'categories'])) {
                 $defaults['list'] = true;
                 $defaults['paginate_from_url'] = true;
             }
@@ -2302,9 +2220,9 @@ META;
 
         if ($defaults['list']) {
             if ($defaults['model'] === 'albums' || $defaults['model'] === 'categories') {
-                $defaults['api'] = array_merge(array('include_empty' => '0'), $defaults['api']);
+                $defaults['api'] = array_merge(['include_empty' => '0'], $defaults['api']);
             } elseif ($defaults['model'] === 'text') {
-                $defaults['api'] = array_merge(array('order_by' => 'published_on', 'state' => 'published'), $defaults['api']);
+                $defaults['api'] = array_merge(['order_by' => 'published_on', 'state' => 'published'], $defaults['api']);
             }
 
             $defaults['paginate_from_url'] = true;
@@ -2326,8 +2244,8 @@ META;
         }
 
         if ($options['list'] && isset($__id) && !$options['id']) {
-            $url .= '/' . urldecode($__id);
-            if (strpos(urldecode($__id), ',') === false) {
+            $url .= '/' . urldecode((string) $__id);
+            if (!str_contains(urldecode((string) $__id), ',')) {
                 $options['list'] = false;
             }
         }
@@ -2340,12 +2258,12 @@ META;
                     } else {
                         $slug_prefix = '';
                     }
-                    if (($options['id_prefix'] === 'tags:' || $options['model'] === 'tags') && preg_match('/tag\-\d+/', self::$routed_variables['slug'])) {
+                    if (($options['id_prefix'] === 'tags:' || $options['model'] === 'tags') && preg_match('/tag\-\d+/', (string) self::$routed_variables['slug'])) {
                         self::$routed_variables['slug'] = str_replace('tag-', '', self::$routed_variables['slug']);
                     }
-                    $url .= "/{$options['id_prefix']}" . (isset(self::$routed_variables['id']) ? urlencode(self::$routed_variables['id']) : $slug_prefix . urlencode(self::$routed_variables['slug']));
+                    $url .= "/{$options['id_prefix']}" . (isset(self::$routed_variables['id']) ? urlencode((string) self::$routed_variables['id']) : $slug_prefix . urlencode((string) self::$routed_variables['slug']));
                 } elseif ($options['id']) {
-                    $url .= "/{$options['id_prefix']}" . urlencode($options['id']);
+                    $url .= "/{$options['id_prefix']}" . urlencode((string) $options['id']);
                 }
 
                 if (!isset($defaults['api']['context'])) {
@@ -2366,11 +2284,11 @@ META;
             $paginate = !$custom;
             $options['archive'] = 'category';
             if ($params['type'] === 'essays') {
-                $options['api'] = array_merge(array('order_by' => 'published_on', 'state' => 'published'), $defaults['api']);
+                $options['api'] = array_merge(['order_by' => 'published_on', 'state' => 'published'], $defaults['api']);
             }
         }
 
-        if (in_array($options['model'], array('content', 'text', 'albums'))) {
+        if (in_array($options['model'], ['content', 'text', 'albums'])) {
             if (!isset($options['api']['neighbors'])) {
                 $options['api']['neighbors'] = 2;
             }
@@ -2378,7 +2296,7 @@ META;
             $max_n = 2;
             foreach (self::$max_neighbors as $max) {
                 if (!is_numeric($max)) {
-                    preg_match('/settings\.([a-z_]+)/', $max, $match);
+                    preg_match('/settings\.([a-z_]+)/', (string) $max, $match);
                     if ($match) {
                         $max = self::$settings[$match[1]];
                     }
@@ -2390,7 +2308,7 @@ META;
 
         if (!$custom) {
             $overrides = Koken::$location['parameters']['__overrides'];
-            if (isset($overrides['order_by']) && strpos($overrides['order_by'], '_on') !== false && !isset($overrides['order_direction'])) {
+            if (isset($overrides['order_by']) && str_contains((string) $overrides['order_by'], '_on') && !isset($overrides['order_direction'])) {
                 $overrides['order_direction'] = 'desc';
             }
             $options['api'] = array_merge($options['api'], $overrides);
@@ -2402,16 +2320,14 @@ META;
             } elseif (!is_numeric($value) && $value == 'false') {
                 $value = 0;
             } else {
-                $value = urlencode($value);
+                $value = urlencode((string) $value);
             }
             $url .= "/$key:$value";
         }
 
         $collection_name = $options['model'] === 'contents' || ($options['model'] === 'albums' && ($options['id_from_url'] || $options['id']) && $options['list']) ? 'content' : $options['model'];
 
-        return array(
-            $url, $options, $collection_name, $paginate
-        );
+        return [$url, $options, $collection_name, $paginate];
     }
 
     public static function time($token, $options, $attr)
@@ -2421,17 +2337,14 @@ META;
         $options['rss'] = $options['rss'] !== 'false';
 
         if (!$token) {
-            $token = array(
-                'timestamp' => time(),
-                'utc' => true,
-            );
+            $token = ['timestamp' => time(), 'utc' => true];
         } elseif (!isset($token['timestamp'])) {
             if (isset($token['album'])) {
                 $token = $token['album']['date'];
             } elseif (isset($token['date']) && isset($token['date']['timestamp'])) {
                 $token = $token['date'];
             } elseif (isset($token['event']) || (isset($token['__koken__']) && $token['__koken__'] === 'event') || isset($token['year'])) {
-                $obj = isset($token['event']) ? $token['event'] : $token;
+                $obj = $token['event'] ?? $token;
                 $str = $obj['year'] . '-';
                 $format = 'Y';
 
@@ -2448,18 +2361,12 @@ META;
                 } else {
                     $str .= '01-01';
                 }
-                $token = array(
-                    'timestamp' => strtotime($str),
-                    'utc' => true,
-                );
+                $token = ['timestamp' => strtotime($str), 'utc' => true];
                 $options['show'] = $format;
             } elseif (isset($token['year'])) {
-                $m = isset($token['month']) ? $token['month'] : 1;
-                $d = isset($token['day']) ? $token['day'] : 1;
-                $token = array(
-                    'timestamp' => strtotime($token['year'] . '-' . $m . '-' . $d),
-                    'utc' => true,
-                );
+                $m = $token['month'] ?? 1;
+                $d = $token['day'] ?? 1;
+                $token = ['timestamp' => strtotime($token['year'] . '-' . $m . '-' . $d), 'utc' => true];
                 $options['show'] = 'F Y';
             }
         }
@@ -2488,23 +2395,12 @@ META;
                 $klass = ' class="' . $klass . '"';
             }
 
-            switch ($options['show']) {
-                case 'both':
-                    $f = self::$site['date_format'] . ' ' . self::$site['time_format'];
-                    break;
-
-                case 'date':
-                    $f = self::$site['date_format'];
-                    break;
-
-                case 'time':
-                    $f = self::$site['time_format'];
-                    break;
-
-                default:
-                    $f = $options['show'];
-                    break;
-            }
+            $f = match ($options['show']) {
+                'both' => self::$site['date_format'] . ' ' . self::$site['time_format'],
+                'date' => self::$site['date_format'],
+                'time' => self::$site['time_format'],
+                default => $options['show'],
+            };
 
             $dt = date('c', $timestamp);
 
@@ -2589,7 +2485,7 @@ OUT;
     private static function fallback_load($base, $params)
     {
         foreach ($params as $key => $val) {
-            if ($key === 'limit_to' || $key === 'order_by' || strpos($key, 'filter:') === 0) {
+            if ($key === 'limit_to' || $key === 'order_by' || str_starts_with((string) $key, 'filter:')) {
                 $base .= '/' . str_replace('filter:', '', $key) . ':' . $val;
             }
         }
@@ -2615,7 +2511,7 @@ OUT;
 
     public static function albums($params)
     {
-        $params = array_merge(array('filter:include_empty' => 0), $params);
+        $params = array_merge(['filter:include_empty' => 0], $params);
         return self::fallback_load('/albums', $params);
     }
 
@@ -2636,7 +2532,7 @@ OUT;
 
     public static function categories($params)
     {
-        $params = array_merge(array('filter:include_empty' => 0), $params);
+        $params = array_merge(['filter:include_empty' => 0], $params);
         return self::fallback_load('/categories', $params);
     }
 

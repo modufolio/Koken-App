@@ -25,18 +25,8 @@ class Contents extends Koken_Controller
             $contents = $c->get_paged_iterated($page, 1);
 
             if (extension_loaded('curl')) {
-                $presets = array('medium', 'medium_large', 'large', 'xlarge');
-                $options = array(
-                        CURLOPT_HTTPHEADER => array(
-                            'Connection: Close',
-                            'Keep-Alive: 0',
-                        ),
-                        CURLOPT_HEADER => 0,
-                        CURLOPT_CONNECTTIMEOUT => 10,
-                        CURLOPT_RETURNTRANSFER => 1,
-                        CURLOPT_SSL_VERIFYHOST => 2,
-                        CURLOPT_SSL_VERIFYPEER => false,
-                    );
+                $presets = ['medium', 'medium_large', 'large', 'xlarge'];
+                $options = [CURLOPT_HTTPHEADER => ['Connection: Close', 'Keep-Alive: 0'], CURLOPT_HEADER => 0, CURLOPT_CONNECTTIMEOUT => 10, CURLOPT_RETURNTRANSFER => 1, CURLOPT_SSL_VERIFYHOST => 2, CURLOPT_SSL_VERIFYPEER => false];
 
                 foreach ($contents as $c) {
                     $content = $c->to_array();
@@ -58,10 +48,7 @@ class Contents extends Koken_Controller
                     }
                 }
 
-                die(json_encode(array(
-                        'total_pages' => $contents->paged->total_pages,
-                        'next_page' => $contents->paged->has_next ? $contents->paged->next_page : false,
-                    )));
+                die(json_encode(['total_pages' => $contents->paged->total_pages, 'next_page' => $contents->paged->has_next ? $contents->paged->next_page : false]));
             }
         }
 
@@ -92,10 +79,10 @@ class Contents extends Koken_Controller
         $params['auth'] = $this->auth;
         $params['limit_to'] = 'content';
 
-        if (strpos($id, ',') === false) {
+        if (!str_contains((string) $id, ',')) {
             $final = $c->where_related('content', 'id', $id)->listing($params);
         } else {
-            $final = $c->get_grouped_status(explode(',', $id), 'Content');
+            $final = $c->get_grouped_status(explode(',', (string) $id), 'Content');
         }
 
         $this->set_response_data($final);
@@ -103,7 +90,7 @@ class Contents extends Koken_Controller
 
     public function index()
     {
-        list($params, $id, $slug) = $this->parse_params(func_get_args());
+        [$params, $id, $slug] = $this->parse_params(func_get_args());
 
         // Create or update
         if ($this->method != 'get') {
@@ -139,8 +126,8 @@ class Contents extends Koken_Controller
 
                         $file_name = $c->clean_filename($_REQUEST['name']);
 
-                        $chunk = isset($_REQUEST["chunk"]) ? $_REQUEST["chunk"] : 0;
-                        $chunks = isset($_REQUEST["chunks"]) ? $_REQUEST["chunks"] : 0;
+                        $chunk = $_REQUEST["chunk"] ?? 0;
+                        $chunks = $_REQUEST["chunks"] ?? 0;
 
                         $tmp_dir = FCPATH . 'storage' . DIRECTORY_SEPARATOR . 'tmp';
                         $tmp_path = $tmp_dir . DIRECTORY_SEPARATOR . $file_name;
@@ -154,7 +141,7 @@ class Contents extends Koken_Controller
                                         DIRECTORY_SEPARATOR;
                                 $internal_id = false;
                             } elseif (isset($_REQUEST['plugin'])) {
-                                $info = pathinfo($_REQUEST['name']);
+                                $info = pathinfo((string) $_REQUEST['name']);
                                 $path = FCPATH . 'storage' .
                                         DIRECTORY_SEPARATOR . 'plugins' .
                                         DIRECTORY_SEPARATOR . $_REQUEST['plugin'] .
@@ -162,7 +149,7 @@ class Contents extends Koken_Controller
                                 $file_name = $_REQUEST['basename'] . '.' . $info['extension'];
                                 $internal_id = false;
                             } else {
-                                list($internal_id, $path) = $c->generate_internal_id();
+                                [$internal_id, $path] = $c->generate_internal_id();
                             }
                             if ($path) {
                                 $path .= $file_name;
@@ -184,7 +171,7 @@ class Contents extends Koken_Controller
                             $contentType = '';
                         }
 
-                        if (strpos($contentType, "multipart") !== false) {
+                        if (str_contains((string) $contentType, "multipart")) {
                             if (isset($_FILES['file']['tmp_name']) && is_uploaded_file($_FILES['file']['tmp_name'])) {
                                 $out = fopen($tmp_path, $chunk == 0 ? "wb" : "ab");
                                 if ($out) {
@@ -241,7 +228,7 @@ class Contents extends Koken_Controller
 
                         if (!$internal_id) {
                             // Custom text uploads can stop here
-                            die(json_encode(array( 'filename' => $file_name )));
+                            die(json_encode(['filename' => $file_name]));
                         }
 
                         $from = [];
@@ -249,8 +236,8 @@ class Contents extends Koken_Controller
                         $from['internal_id'] = $internal_id;
                         $from['file_modified_on'] = time();
                     } elseif (isset($_POST['localfile'])) {
-                        $filename = basename($_REQUEST['localfile']);
-                        list($internal_id, $path) = $c->generate_internal_id();
+                        $filename = basename((string) $_REQUEST['localfile']);
+                        [$internal_id, $path] = $c->generate_internal_id();
                         if (!file_exists($_REQUEST['localfile'])) {
                             $this->error('500', '"localfile" does not exist.');
                             return;
@@ -267,15 +254,15 @@ class Contents extends Koken_Controller
                         $from['internal_id'] = $internal_id;
                         $from['file_modified_on'] = time();
                     } elseif (isset($_POST['from_url'])) {
-                        $filename = basename($_POST['from_url']);
-                        list($internal_id, $path) = $c->generate_internal_id();
+                        $filename = basename((string) $_POST['from_url']);
+                        [$internal_id, $path] = $c->generate_internal_id();
                         if ($path) {
                             $path .= $filename;
                         } else {
                             $this->error('500', 'Unable to create directory for upload.');
                             return;
                         }
-                        if ($this->_download(urldecode($_POST['from_url']), $path, true) && file_exists($path)) {
+                        if ($this->_download(urldecode((string) $_POST['from_url']), $path, true) && file_exists($path)) {
                             $from = [];
                             $from['filename'] = $filename;
                             $from['internal_id'] = $internal_id;
@@ -307,8 +294,8 @@ class Contents extends Koken_Controller
                         if (empty($c->storage_url)) {
                             $path = $c->path_to_original();
 
-                            $info = pathinfo($path);
-                            $midsize_path = preg_replace('/\.' . $info['extension'] . '$/', '.1600.' . $info['extension'], $path);
+                            $info = pathinfo((string) $path);
+                            $midsize_path = preg_replace('/\.' . $info['extension'] . '$/', '.1600.' . $info['extension'], (string) $path);
                             if (file_exists($midsize_path)) {
                                 $midsize = $midsize_path;
                             }
@@ -357,7 +344,7 @@ class Contents extends Koken_Controller
                     if (isset($_REQUEST['reset_internal_id']) &&
                         $_REQUEST['reset_internal_id'] &&
                         $c->exists()) {
-                        list($from['internal_id'], ) = $c->generate_internal_id(true);
+                        [$from['internal_id'], ] = $c->generate_internal_id(true);
                     }
 
                     $hook = 'content.' . ($id ? 'update' : 'create');
@@ -373,18 +360,16 @@ class Contents extends Koken_Controller
                         $albums = $a->where_related('content', 'id', $id)->get_iterated();
                         $start = strtotime(gmdate("M d Y H:i:s", time()));
                         foreach ($albums as $a) {
-                            $a->update(array(
-                                'modified_on' => $start
-                            ), false);
+                            $a->update(['modified_on' => $start], false);
                         }
                     }
 
-                    $from = Shutter::filter("api.$hook", array_merge($from, array('id' => $id, 'file' => isset($path) ? $path : $c->path_to_original() )));
+                    $from = Shutter::filter("api.$hook", array_merge($from, ['id' => $id, 'file' => $path ?? $c->path_to_original()]));
 
                     unset($from['file']);
 
                     try {
-                        $c->from_array($from, array(), true);
+                        $c->from_array($from, [], true);
                     } catch (Exception $e) {
                         $this->error('400', $e->getMessage());
                         return;
@@ -398,7 +383,7 @@ class Contents extends Koken_Controller
 
                     $c->_readify();
 
-                    $content = $c->to_array(array('auth' => true));
+                    $content = $c->to_array(['auth' => true]);
 
                     if (($hook === 'content.create' || $hook === 'content.update_with_upload')) {
                         $external_storage_url = Shutter::store_original($c->path_to_original(), str_replace('/storage/originals/', '', $content['original']['relative_url']));
@@ -408,9 +393,7 @@ class Contents extends Koken_Controller
 
                             $o = new Content();
                             $o->where('id', $content['id'])
-                                ->update(array(
-                                    'storage_url' => $external_storage_url,
-                                ));
+                                ->update(['storage_url' => $external_storage_url]);
 
                             $content['storage_url'] = $external_storage_url;
                         }
@@ -454,7 +437,7 @@ class Contents extends Koken_Controller
                                     $id[] = (int) $item->actual_id;
                                 }
                             } else {
-                                $id = explode(',', $id);
+                                $id = explode(',', (string) $id);
                             }
 
                             /*
@@ -479,16 +462,13 @@ class Contents extends Koken_Controller
             }
         }
         $c = new Content();
-        if ($slug || (isset($id) && strpos($id, ',') === false)) {
-            $options = array(
-                'context' => false,
-                'neighbors' => false
-            );
+        if ($slug || (isset($id) && !str_contains((string) $id, ','))) {
+            $options = ['context' => false, 'neighbors' => false];
             $options = array_merge($options, $params);
 
             $original_context = $options['context'];
 
-            if ($options['context'] && !in_array($options['context'], array('stream', 'favorites', 'features')) && strpos($options['context'], 'tag-') !== 0 && strpos($options['context'], 'category-') !== 0) {
+            if ($options['context'] && !in_array($options['context'], ['stream', 'favorites', 'features']) && !str_starts_with((string) $options['context'], 'tag-') && !str_starts_with((string) $options['context'], 'category-')) {
                 if (is_numeric($options['context'])) {
                     $context_field = 'id';
                 } else {
@@ -554,7 +534,7 @@ class Contents extends Koken_Controller
                     $single_neighbors = true;
                 }
 
-                if ($options['context'] && !in_array($original_context, array('stream', 'favorites', 'features')) && strpos($original_context, 'tag-') !== 0 && strpos($original_context, 'category-') !== 0) {
+                if ($options['context'] && !in_array($original_context, ['stream', 'favorites', 'features']) && !str_starts_with((string) $original_context, 'tag-') && !str_starts_with((string) $original_context, 'category-')) {
                     $options['in_album'] = $a;
                 }
 
@@ -569,14 +549,14 @@ class Contents extends Koken_Controller
                     $next->where('deleted', 0);
                     $prev->where('deleted', 0);
 
-                    $options['context'] = urldecode($options['context']);
+                    $options['context'] = urldecode((string) $options['context']);
 
-                    if (!in_array($original_context, array('stream', 'favorites', 'features')) && strpos($original_context, 'tag-') !== 0 && strpos($original_context, 'category-') !== 0) {
+                    if (!in_array($original_context, ['stream', 'favorites', 'features']) && !str_starts_with((string) $original_context, 'tag-') && !str_starts_with((string) $original_context, 'category-')) {
                         if (!isset($options['context_order'])) {
-                            list($options['context_order'], $options['context_order_direction']) = explode(' ', $a->sort);
+                            [$options['context_order'], $options['context_order_direction']] = explode(' ', $a->sort);
                         }
 
-                        $final['context']['album'] = $a->to_array(array('auth' => $this->auth || $options['context'] === $a->internal_id));
+                        $final['context']['album'] = $a->to_array(['auth' => $this->auth || $options['context'] === $a->internal_id]);
 
                         $in_a->where("$context_field !=", $options['context']);
 
@@ -602,7 +582,7 @@ class Contents extends Koken_Controller
                                     ->group_end()
                                 ->group_end();
                         } else {
-                            $next_operator = strtolower($options['context_order_direction']) === 'desc' ? '<' : '>';
+                            $next_operator = strtolower((string) $options['context_order_direction']) === 'desc' ? '<' : '>';
                             $prev_operator = $next_operator === '<' ? '>' : '<';
                             $val = $options['context_order'] === 'title' && is_null($content->{$options['context_order']}) ? '' : $content->{$options['context_order']};
 
@@ -648,7 +628,7 @@ class Contents extends Koken_Controller
                             $options['context_order_direction'] = 'ASC';
                         }
 
-                        $next_operator = strtolower($options['context_order_direction']) === 'desc' ? '<' : '>';
+                        $next_operator = strtolower((string) $options['context_order_direction']) === 'desc' ? '<' : '>';
                         $prev_operator = $next_operator === '<' ? '>' : '<';
 
                         $next
@@ -669,8 +649,8 @@ class Contents extends Koken_Controller
                                 ->group_end()
                             ->group_end();
 
-                        if (strpos($original_context, 'tag-') === 0) {
-                            $tag = str_replace('tag-', '', urldecode($original_context));
+                        if (str_starts_with((string) $original_context, 'tag-')) {
+                            $tag = str_replace('tag-', '', urldecode((string) $original_context));
                             $t = new Tag();
                             $t->where('name', $tag)->get();
                             if ($t->exists()) {
@@ -685,10 +665,10 @@ class Contents extends Koken_Controller
                                 $url = $t->url();
 
                                 if ($url) {
-                                    list($final['context']['__koken_url'], $final['context']['url']) = $url;
+                                    [$final['context']['__koken_url'], $final['context']['url']] = $url;
                                 }
                             }
-                        } elseif (strpos($original_context, 'category-') === 0) {
+                        } elseif (str_starts_with((string) $original_context, 'category-')) {
                             $category = str_replace('category-', '', $original_context);
                             $cat = new Category();
                             $cat->where('slug', $category)->get();
@@ -703,7 +683,7 @@ class Contents extends Koken_Controller
                                 $url = $cat->url();
 
                                 if ($url) {
-                                    list($final['context']['__koken_url'], $final['context']['url']) = $url;
+                                    [$final['context']['__koken_url'], $final['context']['url']] = $url;
                                 }
                             }
                         } elseif ($original_context === 'favorites') {
@@ -725,7 +705,7 @@ class Contents extends Koken_Controller
                             $prev->where('featured', 1);
                             $final['context']['type'] = 'feature';
                             $final['context']['title'] = 'language.features';
-                            $final['context']['__koken_url'] = isset($urls['features']) ? $urls['features'] : false;
+                            $final['context']['__koken_url'] = $urls['features'] ?? false;
 
                             if ($final['context']['__koken_url']) {
                                 $final['context']['url'] = $prev->get_base() . $final['context']['__koken_url'] . (defined('DRAFT_CONTEXT') && !is_numeric(DRAFT_CONTEXT) ? '&preview=' . DRAFT_CONTEXT : '');
@@ -766,20 +746,20 @@ class Contents extends Koken_Controller
                         $next->limit($next_limit)->get_iterated();
 
                         foreach ($next as $c) {
-                            $final['context']['next'][] = $c->to_array(array('auth' => $this->auth, 'in_album' => $in_album, 'context' => $original_context));
+                            $final['context']['next'][] = $c->to_array(['auth' => $this->auth, 'in_album' => $in_album, 'context' => $original_context]);
                         }
                     }
 
                     if ($pre_limit > 0) {
                         if ($options['context_order'] !== 'manual') {
-                            $dir = strtolower($options['context_order_direction']) === 'desc' ? 'asc' : 'desc';
+                            $dir = strtolower((string) $options['context_order_direction']) === 'desc' ? 'asc' : 'desc';
                             $prev->order_by($options['context_order'] . ' ' . $dir . ', id ' . $dir);
                         }
 
                         $prev->limit($pre_limit)->get_iterated();
 
                         foreach ($prev as $c) {
-                            $final['context']['previous'][] = $c->to_array(array('auth' => $this->auth, 'in_album' => $in_album, 'context' => $original_context));
+                            $final['context']['previous'][] = $c->to_array(['auth' => $this->auth, 'in_album' => $in_album, 'context' => $original_context]);
                         }
                         $final['context']['previous'] = array_reverse($final['context']['previous']);
                     }

@@ -68,7 +68,7 @@ class CI_Zip
     public function add_dir($directory)
     {
         foreach ((array)$directory as $dir) {
-            if (! preg_match("|.+/$|", $dir)) {
+            if (! preg_match("|.+/$|", (string) $dir)) {
                 $dir .= '/';
             }
 
@@ -190,10 +190,10 @@ class CI_Zip
     {
         $filepath = str_replace("\\", "/", $filepath);
 
-        $uncompressed_size = strlen($data);
-        $crc32  = crc32($data);
+        $uncompressed_size = strlen((string) $data);
+        $crc32  = crc32((string) $data);
 
-        $gzdata = gzcompress($data);
+        $gzdata = gzcompress((string) $data);
         $gzdata = substr($gzdata, 2, -4);
         $compressed_size = strlen($gzdata);
 
@@ -278,11 +278,11 @@ class CI_Zip
 
         // Set the original directory root for child dir's to use as relative
         if ($root_path === null) {
-            $root_path = dirname($path).'/';
+            $root_path = dirname((string) $path).'/';
         }
 
         while (false !== ($file = readdir($fp))) {
-            if (substr($file, 0, 1) == '.') {
+            if (str_starts_with($file, '.')) {
                 continue;
             }
 
@@ -323,8 +323,8 @@ class CI_Zip
         $zip_data .= $this->directory."\x50\x4b\x05\x06\x00\x00\x00\x00";
         $zip_data .= pack('v', $this->entries); // total # of entries "on this disk"
         $zip_data .= pack('v', $this->entries); // total # of entries overall
-        $zip_data .= pack('V', strlen($this->directory)); // size of central dir
-        $zip_data .= pack('V', strlen($this->zipdata)); // offset to start of central dir
+        $zip_data .= pack('V', strlen((string) $this->directory)); // size of central dir
+        $zip_data .= pack('V', strlen((string) $this->zipdata)); // offset to start of central dir
         $zip_data .= "\x00\x00"; // .zip file comment length
 
         return $zip_data;
@@ -367,7 +367,7 @@ class CI_Zip
      */
     public function download($filename = 'backup.zip')
     {
-        if (! preg_match("|.+?\.zip$|", $filename)) {
+        if (! preg_match("|.+?\.zip$|", (string) $filename)) {
             $filename .= '.zip';
         }
 

@@ -23,7 +23,7 @@ class Auth extends Koken_Controller
         if ($this->method === 'post') {
             $_POST['token'] = koken_rand();
             $a = new Application();
-            $a->from_array($_POST, array(), true);
+            $a->from_array($_POST, [], true);
             $this->redirect('/auth/token:' . $auth[1]);
         }
 
@@ -45,7 +45,7 @@ class Auth extends Koken_Controller
         foreach ($a as $app) {
             $apps[] = $app->to_array();
         }
-        $this->set_response_data(array( 'applications' => $apps ));
+        $this->set_response_data(['applications' => $apps]);
     }
 
     public function grant()
@@ -60,7 +60,7 @@ class Auth extends Koken_Controller
             return;
         }
 
-        $roles = array('read', 'read-write');
+        $roles = ['read', 'read-write'];
 
         if (!in_array($_POST['role'], $roles)) {
             $this->_error(400, "Incorrect role request. Valid values are \"read\" and \"read-write\"", 'html');
@@ -69,7 +69,7 @@ class Auth extends Koken_Controller
         $_POST['token'] = koken_rand();
 
         $a = new Application();
-        $a->from_array($_POST, array(), true);
+        $a->from_array($_POST, [], true);
         $this->redirect('/auth/token:' . $auth[1]);
         exit;
     }
@@ -81,13 +81,7 @@ class Auth extends Koken_Controller
         $application = $a->where('nonce', $nonce)->get();
         if ($application->exists()) {
             $application->user->get();
-            $data = array(
-                'token' => $application->token,
-                'role' => $application->role,
-                'user' => $application->user->first_name . ' ' . $application->user->last_name,
-                'host' => $_SERVER['HTTP_HOST'],
-                'ssl' => (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) !== 'off') || $_SERVER['SERVER_PORT'] == 443 || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https'),
-            );
+            $data = ['token' => $application->token, 'role' => $application->role, 'user' => $application->user->first_name . ' ' . $application->user->last_name, 'host' => $_SERVER['HTTP_HOST'], 'ssl' => (!empty($_SERVER['HTTPS']) && strtolower((string) $_SERVER['HTTPS']) !== 'off') || $_SERVER['SERVER_PORT'] == 443 || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')];
         } else {
             $this->error(404, "Token not found.");
             return;

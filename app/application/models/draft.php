@@ -16,17 +16,14 @@ class Draft extends DataMapper
             if ($level === 1) {
                 $array[] = $item;
             } else {
-                $array[] = array(
-                    'path' => $item['path'],
-                    'template' => "redirect:$type"
-                );
+                $array[] = ['path' => $item['path'], 'template' => "redirect:$type"];
             }
         }
     }
 
     public function setup_urls($template_path)
     {
-        $this->load->helper(array('url', 'text', 'inflector'));
+        $this->load->helper(['url', 'text', 'inflector']);
         $url = new Url();
         $url_list = $url->order_by('id DESC')->get_iterated();
         $urls = $data = $routes = [];
@@ -43,9 +40,9 @@ class Draft extends DataMapper
                 if ($u['data'] === 'Home') {
                     continue;
                 }
-                $valid = strlen($u['data']['singular']) > 0 &&
-                         strlen($u['data']['plural']) > 0 &&
-                         (!in_array($u['type'], array('content', 'favorite', 'feature', 'album', 'set', 'essay')) || isset($u['data']['order']) && strlen($u['data']['order']) > 0);
+                $valid = strlen((string) $u['data']['singular']) > 0 &&
+                         strlen((string) $u['data']['plural']) > 0 &&
+                         (!in_array($u['type'], ['content', 'favorite', 'feature', 'album', 'set', 'essay']) || isset($u['data']['order']) && strlen((string) $u['data']['order']) > 0);
             }
 
             if (!$valid) {
@@ -71,7 +68,7 @@ class Draft extends DataMapper
 
                 if (!isset($segments[$u['type']]) && isset($d['plural'])) {
                     $segment = strtolower(
-                        url_title(
+                        (string) url_title(
                                         convert_accented_characters($d['plural']),
                                         'dash'
                                     )
@@ -85,36 +82,30 @@ class Draft extends DataMapper
                 }
 
                 if ($u['type'] === 'content' && !$content_regex && isset($d['url'])) {
-                    $content_regex = strpos($d['url'], 'slug') === false ? ':content_id' : ':content_slug';
+                    $content_regex = !str_contains((string) $d['url'], 'slug') ? ':content_id' : ':content_slug';
                 }
             }
 
             if (!isset($_data['timeline'])) {
-                $_data['timeline'] = array(
-                    'singular' => 'Timeline',
-                    'plural' => 'Timeline'
-                );
+                $_data['timeline'] = ['singular' => 'Timeline', 'plural' => 'Timeline'];
 
                 if ($level === 1) {
                     $data['timeline'] = $_data['timeline'];
                 }
 
-                array_push($config, array('type' => 'timeline', 'data' => $data['timeline']));
+                array_push($config, ['type' => 'timeline', 'data' => $data['timeline']]);
 
                 $segments['timeline'] = 'timeline';
             }
 
             if (!isset($_data['feature'])) {
-                $_data['feature'] = array(
-                    'singular' => 'Feature',
-                    'plural' => 'Features'
-                );
+                $_data['feature'] = ['singular' => 'Feature', 'plural' => 'Features'];
 
                 if ($level === 1) {
                     $data['feature'] = $_data['feature'];
                 }
 
-                array_push($config, array('type' => 'feature', 'data' => $data['feature']));
+                array_push($config, ['type' => 'feature', 'data' => $data['feature']]);
 
                 $segments['feature'] = 'features';
             }
@@ -154,16 +145,16 @@ class Draft extends DataMapper
                 $template = '/' . $segments[$type];
                 $type_data = $_data[$type === 'set' ? 'album' : $type];
 
-                if (!isset($type_data['url']) && in_array($type, array('category', 'tag'))) {
+                if (!isset($type_data['url']) && in_array($type, ['category', 'tag'])) {
                     $type_data['url'] = 'slug';
                 }
 
                 if ($has_detail && isset($type_data['url'])) {
                     $url = $type_data['url'];
-                    if (strpos($url, 'date') !== false) {
+                    if (str_contains((string) $url, 'date')) {
                         $template .= '/:year/:month';
                     }
-                    if (strpos($url, 'slug') !== false) {
+                    if (str_contains((string) $url, 'slug')) {
                         $template .= '/:slug';
                     } else {
                         $template .= '/:id';
@@ -185,13 +176,7 @@ class Draft extends DataMapper
                         $template .= '/';
                     }
 
-                    $arr = array(
-                        'path' => $template,
-                        'template' => $type,
-                        'source' => $source,
-                        'vars' => false,
-                        'section' => true
-                    );
+                    $arr = ['path' => $template, 'template' => $type, 'source' => $source, 'vars' => false, 'section' => true];
 
                     if ($u['type'] === 'album') {
                         if (file_exists($template_path . 'content.lens')) {
@@ -217,7 +202,7 @@ class Draft extends DataMapper
 
                     $this->_push($arr, $routes, $u['type'], $level);
 
-                    if (in_array($u['type'], array('content', 'album', 'essay'))) {
+                    if (in_array($u['type'], ['content', 'album', 'essay'])) {
                         if ($u['type'] === 'content' || $u['type'] === 'album') {
                             $lbox = '(?P<lightbox>/lightbox)?/';
                         } else {
@@ -229,7 +214,7 @@ class Draft extends DataMapper
                         } else {
                             $arr['path'] = '/' . $segments[$u['type']] . '/' . $segments['tag'] . '/:tag_slug/';
                         }
-                        $arr['path'] .= (strpos($type_data['url'], 'slug') === false ? ':id' : ':slug') . $lbox;
+                        $arr['path'] .= (!str_contains((string) $type_data['url'], 'slug') ? ':id' : ':slug') . $lbox;
                         $this->_push($arr, $routes, 'tag_' . $u['type'], $level);
 
                         if ($level === 1) {
@@ -242,7 +227,7 @@ class Draft extends DataMapper
                             $arr['path'] = '/' . $segments[$u['type']] . '/' . $segments['category'] . '/:category_slug/';
                         }
 
-                        $arr['path'] .= (strpos($type_data['url'], 'slug') === false ? ':id' : ':slug') . $lbox;
+                        $arr['path'] .= (!str_contains((string) $type_data['url'], 'slug') ? ':id' : ':slug') . $lbox;
                         $this->_push($arr, $routes, 'category_' . $u['type'], $level);
 
                         if ($level === 1) {
@@ -266,36 +251,23 @@ class Draft extends DataMapper
                         }
                     }
                 } elseif ($u['type'] === 'content') {
-                    $arr = array(
-                        'path' => '/' . $segments['content'] . '/:slug/(?P<lightbox>lightbox)/',
-                        'template' => 'content',
-                        'source' => 'content',
-                        'vars' => false,
-                        'section' => true
-                    );
+                    $arr = ['path' => '/' . $segments['content'] . '/:slug/(?P<lightbox>lightbox)/', 'template' => 'content', 'source' => 'content', 'vars' => false, 'section' => true];
 
                     $this->_push($arr, $routes, $u['type'], $level);
                 }
 
-                if (in_array($u['type'], array('content', 'album', 'essay')) && in_array($type_plural, $supported_raw)) {
+                if (in_array($u['type'], ['content', 'album', 'essay']) && in_array($type_plural, $supported_raw)) {
                     $archive_template = '/' . $segments[$type] . '/:year(?:/:month(?:/:day)?)?/';
 
                     if ($level === 1) {
                         $urls['archive_' . $type_plural] = $archive_template;
                     }
 
-                    $parts = explode(' ', strtolower($data[$u['type']]['order']));
+                    $parts = explode(' ', strtolower((string) $data[$u['type']]['order']));
 
-                    $filters = array("members=$type_plural", "order_by={$parts[0]}", "order_direction={$parts[1]}");
+                    $filters = ["members=$type_plural", "order_by={$parts[0]}", "order_direction={$parts[1]}"];
 
-                    $this->_push(array(
-                        'path' => $archive_template,
-                        'template' => 'archive.' . $type_plural,
-                        'source' => 'archive',
-                        'filters' => $filters,
-                        'vars' => false,
-                        'section' => true
-                    ), $routes, 'archive_' . $type_plural, $level);
+                    $this->_push(['path' => $archive_template, 'template' => 'archive.' . $type_plural, 'source' => 'archive', 'filters' => $filters, 'vars' => false, 'section' => true], $routes, 'archive_' . $type_plural, $level);
 
                     if (file_exists($template_path . 'tag.lens')) {
                         $tag_template = '/' . $segments['tag'] . '/:slug/' . $segments[$type] . '/';
@@ -307,14 +279,7 @@ class Draft extends DataMapper
                         $urls['tag_' . $type_plural] = $tag_template;
                     }
 
-                    $this->_push(array(
-                        'path' => $tag_template,
-                        'template' => 'archive.' . $type_plural,
-                        'source' => 'tag',
-                        'filters' => $filters,
-                        'vars' => false,
-                        'section' => true
-                    ), $routes, 'tag_' . $type_plural, $level);
+                    $this->_push(['path' => $tag_template, 'template' => 'archive.' . $type_plural, 'source' => 'tag', 'filters' => $filters, 'vars' => false, 'section' => true], $routes, 'tag_' . $type_plural, $level);
 
                     if (file_exists($template_path . 'category.lens')) {
                         $category_template = '/' . $segments['category'] . '/:slug/' . $segments[$type] . '/';
@@ -326,29 +291,16 @@ class Draft extends DataMapper
                         $urls['category_' . $type_plural] = $category_template;
                     }
 
-                    $this->_push(array(
-                        'path' => $category_template,
-                        'template' => 'archive.' . $type_plural,
-                        'source' => 'category',
-                        'filters' => $filters,
-                        'vars' => false,
-                        'section' => true
-                    ), $routes, 'category_' . $type_plural, $level);
+                    $this->_push(['path' => $category_template, 'template' => 'archive.' . $type_plural, 'source' => 'category', 'filters' => $filters, 'vars' => false, 'section' => true], $routes, 'category_' . $type_plural, $level);
 
                     if ($level === 1) {
-                        $routes[] = array(
-                            'path' => '/' . $segments[$type] . '/' . $segments['tag'] . '/:slug/',
-                            'template' => 'redirect:' . $tag_template
-                        );
+                        $routes[] = ['path' => '/' . $segments[$type] . '/' . $segments['tag'] . '/:slug/', 'template' => 'redirect:' . $tag_template];
 
-                        $routes[] = array(
-                            'path' => '/' . $segments[$type] . '/' . $segments['category'] . '/:slug/',
-                            'template' => 'redirect:' . $category_template
-                        );
+                        $routes[] = ['path' => '/' . $segments[$type] . '/' . $segments['category'] . '/:slug/', 'template' => 'redirect:' . $category_template];
                     }
                 }
 
-                if (in_array($u['type'], array('category', 'favorite', 'feature', 'tag', 'content', 'album', 'set', 'essay', 'timeline'))) {
+                if (in_array($u['type'], ['category', 'favorite', 'feature', 'tag', 'content', 'album', 'set', 'essay', 'timeline'])) {
                     $type = $u['type'] === 'category' ? 'categories' : ($u['type'] === 'timeline' ? 'timeline' : $type_plural);
 
                     $has_index = file_exists($template_path . $type . '.lens');
@@ -360,13 +312,7 @@ class Draft extends DataMapper
                             $index_path = rtrim($index_path, '/') . '(?:/:year(?:/:month)?)?/';
                         }
 
-                        $arr = array(
-                            'path' => $index_path,
-                            'template' => $type,
-                            'source' => in_array($type, array('archives', 'tags', 'categories')) ? $type : false,
-                            'vars' => false,
-                            'section' => true
-                        );
+                        $arr = ['path' => $index_path, 'template' => $type, 'source' => in_array($type, ['archives', 'tags', 'categories']) ? $type : false, 'vars' => false, 'section' => true];
 
                         if ($type === 'timeline') {
                             $archive_timeline_template = $index_path . ':year(?:/:month)?/';
@@ -375,23 +321,11 @@ class Draft extends DataMapper
                                 $urls['archive_timeline'] = $archive_timeline_template;
                             }
 
-                            $archive = array(
-                                'path' => $index_path . ':year(?:/:month)?/',
-                                'template' => file_exists($template_path . 'date.lens') ? 'date' : 'timeline',
-                                'source' => 'timeline',
-                                'vars' => false,
-                                'section' => true
-                            );
+                            $archive = ['path' => $index_path . ':year(?:/:month)?/', 'template' => file_exists($template_path . 'date.lens') ? 'date' : 'timeline', 'source' => 'timeline', 'vars' => false, 'section' => true];
 
                             $this->_push($archive, $routes, $type, $level);
 
-                            $detail = array(
-                                'path' => '/' . $segments['timeline'] . '/:year/:month/:day/',
-                                'template' => file_exists($template_path . 'date.lens') ? 'date' : 'timeline',
-                                'source' => 'event',
-                                'vars' => false,
-                                'section' => true
-                            );
+                            $detail = ['path' => '/' . $segments['timeline'] . '/:year/:month/:day/', 'template' => file_exists($template_path . 'date.lens') ? 'date' : 'timeline', 'source' => 'event', 'vars' => false, 'section' => true];
 
                             $this->_push($detail, $routes, $type, $level);
 
@@ -401,11 +335,8 @@ class Draft extends DataMapper
                         }
 
                         if (isset($data[$u['type']]['order'])) {
-                            $parts = explode(' ', strtolower($data[$u['type'] === 'set' ? 'album' : $u['type']]['order']));
-                            $arr['filters'] = array(
-                                "order_by={$parts[0]}",
-                                "order_direction={$parts[1]}"
-                            );
+                            $parts = explode(' ', strtolower((string) $data[$u['type'] === 'set' ? 'album' : $u['type']]['order']));
+                            $arr['filters'] = ["order_by={$parts[0]}", "order_direction={$parts[1]}"];
                         } else {
                             $arr['filters'] = false;
                         }
@@ -420,25 +351,13 @@ class Draft extends DataMapper
             }
         }
 
-        $routes[] = array(
-            'path' => '/content/:id/in_album/:album_id(?P<lightbox>/lightbox)?/',
-            'template' => 'redirect:content'
-        );
+        $routes[] = ['path' => '/content/:id/in_album/:album_id(?P<lightbox>/lightbox)?/', 'template' => 'redirect:content'];
 
-        $routes[] = array(
-            'path' => '/archives(?:/:year(?:/:month)?)?/',
-            'template' => 'redirect:timeline'
-        );
+        $routes[] = ['path' => '/archives(?:/:year(?:/:month)?)?/', 'template' => 'redirect:timeline'];
 
-        $routes[] = array(
-            'path' => '/' . $top_segments['set'] . '/',
-            'template' => 'redirect:soft:albums'
-        );
+        $routes[] = ['path' => '/' . $top_segments['set'] . '/', 'template' => 'redirect:soft:albums'];
 
-        $routes[] = array(
-            'path' => '/' . $top_segments['page'] . '/:id/',
-            'template' => 'redirect:page'
-        );
+        $routes[] = ['path' => '/' . $top_segments['page'] . '/:id/', 'template' => 'redirect:page'];
 
         if (!isset($data['home'])) {
             $data['home'] = 'Home';
@@ -452,24 +371,14 @@ class Draft extends DataMapper
             $data['category']['order'] = 'title ASC';
         }
 
-        if (strpos($data['album']['order'], 'captured_on') === 0) {
+        if (str_starts_with((string) $data['album']['order'], 'captured_on')) {
             $data['album']['order'] = 'published_on DESC';
         }
 
         $data['page']['url'] = 'sssslug';
 
         // Define fallback aliases here. First in, first out.
-        $aliases = array(
-            'tag_contents' => 'tag',
-            'tag_albums' => 'tag',
-            'tag_essays' => 'tag',
-            'category_contents' => 'category',
-            'category_albums' => 'category',
-            'category_essays' => 'category',
-            'archive_contents' => 'event_timeline',
-            'archive_essays' => 'event_timeline',
-            'archive_albums' => 'event_timeline',
-        );
+        $aliases = ['tag_contents' => 'tag', 'tag_albums' => 'tag', 'tag_essays' => 'tag', 'category_contents' => 'category', 'category_albums' => 'category', 'category_essays' => 'category', 'archive_contents' => 'event_timeline', 'archive_essays' => 'event_timeline', 'archive_albums' => 'event_timeline'];
 
         foreach ($aliases as $check => $fallback) {
             if (isset($urls[$check])) {
@@ -477,7 +386,7 @@ class Draft extends DataMapper
             }
 
             if (!is_array($fallback)) {
-                $fallback = array($fallback);
+                $fallback = [$fallback];
             }
 
             foreach ($fallback as $f) {
@@ -488,7 +397,7 @@ class Draft extends DataMapper
             }
         }
 
-        return array($urls, $data, $routes, $top_segments);
+        return [$urls, $data, $routes, $top_segments];
     }
 
     public function init_draft_nav($refresh = true)
@@ -504,24 +413,22 @@ class Draft extends DataMapper
         $theme_root = $template_path . $this->path . $ds;
         $template_info = json_decode(file_get_contents($theme_root . 'info.json'), true);
 
-        list($urls, $data, $routes) = $this->setup_urls($theme_root);
+        [$urls, $data, $routes] = $this->setup_urls($theme_root);
 
-        $this->data['navigation'] = array('items' => array());
+        $this->data['navigation'] = ['items' => []];
         $this->data['navigation']['groups'] = $groups = [];
 
-        $defaults = array('timeline', 'albums', 'contents', 'essays');
+        $defaults = ['timeline', 'albums', 'contents', 'essays'];
 
         $used_autos = [];
 
         $user = new User();
         $user->get();
 
-        $front = array(
-            'auto' => 'home', 'front' => true
-        );
+        $front = ['auto' => 'home', 'front' => true];
 
-        if (isset($template_info['default_front_page']) && in_array($template_info['default_front_page'], array('timeline', 'albums', 'contents', 'essays', 'archives')) && isset($urls[$template_info['default_front_page']])) {
-            $defaults = array_diff($defaults, array($template_info['default_front_page']));
+        if (isset($template_info['default_front_page']) && in_array($template_info['default_front_page'], ['timeline', 'albums', 'contents', 'essays', 'archives']) && isset($urls[$template_info['default_front_page']])) {
+            $defaults = array_diff($defaults, [$template_info['default_front_page']]);
             $front['path'] = $urls[$template_info['default_front_page']];
             $front['auto'] = $template_info['default_front_page'];
             $used_autos[] = $template_info['default_front_page'];
@@ -534,9 +441,7 @@ class Draft extends DataMapper
         foreach ($defaults as $default) {
             if (file_exists($theme_root . $default . '.lens')) {
                 $used_autos[] = $default;
-                $this->data['navigation']['items'][] = array(
-                    'auto' => $default
-                );
+                $this->data['navigation']['items'][] = ['auto' => $default];
             }
         }
 
@@ -553,29 +458,20 @@ class Draft extends DataMapper
                             if ($def === 'front') {
                                 $items[] = $front;
                             } else {
-                                if (in_array($def, array('twitter', 'facebook', 'gplus'))) {
+                                if (in_array($def, ['twitter', 'facebook', 'gplus'])) {
                                     $def = $def === 'gplus' ? 'google' : $def;
                                     if (!empty($user->{$def})) {
-                                        $items[] = array(
-                                            'auto' => 'profile',
-                                            'id' => $def
-                                        );
+                                        $items[] = ['auto' => 'profile', 'id' => $def];
                                     }
                                 } elseif (file_exists($theme_root . $def . '.lens')) {
-                                    $items[] = array(
-                                        'auto' => $def
-                                    );
+                                    $items[] = ['auto' => $def];
                                 }
                             }
                         }
                     }
                 }
 
-                $this->data['navigation']['groups'][] = array(
-                    'key' => $key,
-                    'label' => $info['label'],
-                    'items' => $items
-                );
+                $this->data['navigation']['groups'][] = ['key' => $key, 'label' => $info['label'], 'items' => $items];
             }
         }
 

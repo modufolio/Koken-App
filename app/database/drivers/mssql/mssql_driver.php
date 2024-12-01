@@ -262,8 +262,8 @@ class CI_DB_mssql_driver extends CI_DB
         // escape LIKE condition wildcards
         if ($like === true) {
             $str = str_replace(
-                array($this->_like_escape_chr, '%', '_'),
-                array($this->_like_escape_chr.$this->_like_escape_chr, $this->_like_escape_chr.'%', $this->_like_escape_chr.'_'),
+                [$this->_like_escape_chr, '%', '_'],
+                [$this->_like_escape_chr.$this->_like_escape_chr, $this->_like_escape_chr.'%', $this->_like_escape_chr.'_'],
                 $str
             );
         }
@@ -464,22 +464,22 @@ class CI_DB_mssql_driver extends CI_DB
         }
 
         foreach ($this->_reserved_identifiers as $id) {
-            if (strpos($item, '.'.$id) !== false) {
+            if (str_contains((string) $item, '.'.$id)) {
                 $str = $this->_escape_char. str_replace('.', $this->_escape_char.'.', $item);
 
                 // remove duplicates if the user already included the escape
-                return preg_replace('/['.$this->_escape_char.']+/', $this->_escape_char, $str);
+                return preg_replace('/['.$this->_escape_char.']+/', (string) $this->_escape_char, $str);
             }
         }
 
-        if (strpos($item, '.') !== false) {
+        if (str_contains((string) $item, '.')) {
             $str = $this->_escape_char.str_replace('.', $this->_escape_char.'.'.$this->_escape_char, $item).$this->_escape_char;
         } else {
             $str = $this->_escape_char.$item.$this->_escape_char;
         }
 
         // remove duplicates if the user already included the escape
-        return preg_replace('/['.$this->_escape_char.']+/', $this->_escape_char, $str);
+        return preg_replace('/['.$this->_escape_char.']+/', (string) $this->_escape_char, $str);
     }
 
     // --------------------------------------------------------------------
@@ -497,7 +497,7 @@ class CI_DB_mssql_driver extends CI_DB
     public function _from_tables($tables)
     {
         if (! is_array($tables)) {
-            $tables = array($tables);
+            $tables = [$tables];
         }
 
         return implode(', ', $tables);
@@ -536,7 +536,7 @@ class CI_DB_mssql_driver extends CI_DB
      * @param	array	the limit clause
      * @return	string
      */
-    public function _update($table, $values, $where, $orderby = array(), $limit = false)
+    public function _update($table, $values, $where, $orderby = [], $limit = false)
     {
         foreach ($values as $key => $val) {
             $valstr[] = $key." = ".$val;
@@ -587,7 +587,7 @@ class CI_DB_mssql_driver extends CI_DB
      * @param	string	the limit clause
      * @return	string
      */
-    public function _delete($table, $where = array(), $like = array(), $limit = false)
+    public function _delete($table, $where = [], $like = [], $limit = false)
     {
         $conditions = '';
 
@@ -623,7 +623,7 @@ class CI_DB_mssql_driver extends CI_DB
     {
         $i = $limit + $offset;
 
-        return preg_replace('/(^\SELECT (DISTINCT)?)/i', '\\1 TOP '.$i.' ', $sql);
+        return preg_replace('/(^\SELECT (DISTINCT)?)/i', '\\1 TOP '.$i.' ', (string) $sql);
     }
 
     // --------------------------------------------------------------------

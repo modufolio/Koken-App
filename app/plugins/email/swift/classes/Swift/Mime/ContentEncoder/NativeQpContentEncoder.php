@@ -25,7 +25,7 @@ class Swift_Mime_ContentEncoder_NativeQpContentEncoder implements Swift_Mime_Con
      */
     public function __construct($charset = null)
     {
-        $this->charset = $charset ? $charset : 'utf-8';
+        $this->charset = $charset ?: 'utf-8';
     }
 
     /**
@@ -33,6 +33,7 @@ class Swift_Mime_ContentEncoder_NativeQpContentEncoder implements Swift_Mime_Con
      *
      * @param string $charset
      */
+    #[\Override]
     public function charsetChanged($charset)
     {
         $this->charset = $charset;
@@ -48,6 +49,7 @@ class Swift_Mime_ContentEncoder_NativeQpContentEncoder implements Swift_Mime_Con
      *
      * @throws RuntimeException
      */
+    #[\Override]
     public function encodeByteStream(Swift_OutputByteStream $os, Swift_InputByteStream $is, $firstLineOffset = 0, $maxLineLength = 0)
     {
         if ($this->charset !== 'utf-8') {
@@ -70,6 +72,7 @@ class Swift_Mime_ContentEncoder_NativeQpContentEncoder implements Swift_Mime_Con
      *
      * @return string
      */
+    #[\Override]
     public function getName()
     {
         return 'quoted-printable';
@@ -86,6 +89,7 @@ class Swift_Mime_ContentEncoder_NativeQpContentEncoder implements Swift_Mime_Con
      *
      * @throws RuntimeException
      */
+    #[\Override]
     public function encodeString($string, $firstLineOffset = 0, $maxLineLength = 0)
     {
         if ($this->charset !== 'utf-8') {
@@ -109,16 +113,13 @@ class Swift_Mime_ContentEncoder_NativeQpContentEncoder implements Swift_Mime_Con
         // transform CR or LF to CRLF
         $string = preg_replace('~=0D(?!=0A)|(?<!=0D)=0A~', '=0D=0A', $string);
         // transform =0D=0A to CRLF
-        $string = str_replace(array("\t=0D=0A", " =0D=0A", "=0D=0A"), array("=09\r\n", "=20\r\n", "\r\n"), $string);
+        $string = str_replace(["\t=0D=0A", " =0D=0A", "=0D=0A"], ["=09\r\n", "=20\r\n", "\r\n"], $string);
 
-        switch ($end = ord(substr($string, -1))) {
-            case 0x09:
-                $string = substr_replace($string, '=09', -1);
-                break;
-            case 0x20:
-                $string = substr_replace($string, '=20', -1);
-                break;
-        }
+        $string = match ($end = ord(substr($string, -1))) {
+            0x09 => substr_replace($string, '=09', -1),
+            0x20 => substr_replace($string, '=20', -1),
+            default => $string,
+        };
 
         return $string;
     }

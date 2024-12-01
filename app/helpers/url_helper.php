@@ -142,7 +142,7 @@ if (! function_exists('anchor')) {
         $title = (string) $title;
 
         if (! is_array($uri)) {
-            $site_url = (! preg_match('!^\w+://! i', $uri)) ? site_url($uri) : $uri;
+            $site_url = (! preg_match('!^\w+://! i', (string) $uri)) ? site_url($uri) : $uri;
         } else {
             $site_url = site_url($uri);
         }
@@ -178,7 +178,7 @@ if (! function_exists('anchor_popup')) {
     {
         $title = (string) $title;
 
-        $site_url = (! preg_match('!^\w+://! i', $uri)) ? site_url($uri) : $uri;
+        $site_url = (! preg_match('!^\w+://! i', (string) $uri)) ? site_url($uri) : $uri;
 
         if ($title == '') {
             $title = $site_url;
@@ -192,7 +192,7 @@ if (! function_exists('anchor_popup')) {
             $attributes = [];
         }
 
-        foreach (array('width' => '800', 'height' => '600', 'scrollbars' => 'yes', 'status' => 'yes', 'resizable' => 'yes', 'screenx' => '0', 'screeny' => '0', ) as $key => $val) {
+        foreach (['width' => '800', 'height' => '600', 'scrollbars' => 'yes', 'status' => 'yes', 'resizable' => 'yes', 'screenx' => '0', 'screeny' => '0'] as $key => $val) {
             $atts[$key] = (! isset($attributes[$key])) ? $val : $attributes[$key];
             unset($attributes[$key]);
         }
@@ -257,8 +257,8 @@ if (! function_exists('safe_mailto')) {
             $x[] = substr('<a href="mailto:', $i, 1);
         }
 
-        for ($i = 0; $i < strlen($email); $i++) {
-            $x[] = "|".ord(substr($email, $i, 1));
+        for ($i = 0; $i < strlen((string) $email); $i++) {
+            $x[] = "|".ord(substr((string) $email, $i, 1));
         }
 
         $x[] = '"';
@@ -267,14 +267,14 @@ if (! function_exists('safe_mailto')) {
             if (is_array($attributes)) {
                 foreach ($attributes as $key => $val) {
                     $x[] =  ' '.$key.'="';
-                    for ($i = 0; $i < strlen($val); $i++) {
-                        $x[] = "|".ord(substr($val, $i, 1));
+                    for ($i = 0; $i < strlen((string) $val); $i++) {
+                        $x[] = "|".ord(substr((string) $val, $i, 1));
                     }
                     $x[] = '"';
                 }
             } else {
-                for ($i = 0; $i < strlen($attributes); $i++) {
-                    $x[] = substr($attributes, $i, 1);
+                for ($i = 0; $i < strlen((string) $attributes); $i++) {
+                    $x[] = substr((string) $attributes, $i, 1);
                 }
             }
         }
@@ -282,7 +282,7 @@ if (! function_exists('safe_mailto')) {
         $x[] = '>';
 
         $temp = [];
-        for ($i = 0; $i < strlen($title); $i++) {
+        for ($i = 0; $i < strlen((string) $title); $i++) {
             $ordinal = ord($title[$i]);
 
             if ($ordinal < 128) {
@@ -347,7 +347,7 @@ if (! function_exists('auto_link')) {
     function auto_link($str, $type = 'both', $popup = false)
     {
         if ($type != 'email') {
-            if (preg_match_all("#(^|\s|\()((http(s?)://)|(www\.))(\w+[^\s\)\<]+)#i", $str, $matches)) {
+            if (preg_match_all("#(^|\s|\()((http(s?)://)|(www\.))(\w+[^\s\)\<]+)#i", (string) $str, $matches)) {
                 $pop = ($popup == true) ? " target=\"_blank\" " : "";
 
                 for ($i = 0; $i < count($matches['0']); $i++) {
@@ -374,7 +374,7 @@ if (! function_exists('auto_link')) {
         }
 
         if ($type != 'url') {
-            if (preg_match_all("/([a-zA-Z0-9_\.\-\+]+)@([a-zA-Z0-9\-]+)\.([a-zA-Z0-9\-\.]*)/i", $str, $matches)) {
+            if (preg_match_all("/([a-zA-Z0-9_\.\-\+]+)@([a-zA-Z0-9\-]+)\.([a-zA-Z0-9\-\.]*)/i", (string) $str, $matches)) {
                 for ($i = 0; $i < count($matches['0']); $i++) {
                     $period = '';
                     if (preg_match("|\.$|", $matches['3'][$i])) {
@@ -409,7 +409,7 @@ if (! function_exists('prep_url')) {
             return '';
         }
 
-        $url = parse_url($str);
+        $url = parse_url((string) $str);
 
         if (! $url or ! isset($url['scheme'])) {
             $str = 'http://'.$str;
@@ -442,26 +442,21 @@ if (! function_exists('url_title')) {
             $separator = '_';
         }
 
-        $q_separator = preg_quote($separator);
+        $q_separator = preg_quote((string) $separator);
 
-        $trans = array(
-            '&.+?;'                 => '',
-            '[^a-z0-9 _-]'          => '',
-            '\s+'                   => $separator,
-            '('.$q_separator.')+'   => $separator
-        );
+        $trans = ['&.+?;'                 => '', '[^a-z0-9 _-]'          => '', '\s+'                   => $separator, '('.$q_separator.')+'   => $separator];
 
-        $str = strip_tags($str);
+        $str = strip_tags((string) $str);
 
         foreach ($trans as $key => $val) {
-            $str = preg_replace("#".$key."#i", $val, $str);
+            $str = preg_replace("#".$key."#i", (string) $val, (string) $str);
         }
 
         if ($lowercase === true) {
-            $str = strtolower($str);
+            $str = strtolower((string) $str);
         }
 
-        return trim($str, $separator);
+        return trim((string) $str, $separator);
     }
 }
 
@@ -482,16 +477,14 @@ if (! function_exists('url_title')) {
 if (! function_exists('redirect')) {
     function redirect($uri = '', $method = 'location', $http_response_code = 302)
     {
-        if (! preg_match('#^https?://#i', $uri)) {
+        if (! preg_match('#^https?://#i', (string) $uri)) {
             $uri = site_url($uri);
         }
 
-        switch ($method) {
-            case 'refresh': header("Refresh:0;url=".$uri);
-                break;
-            default: header("Location: ".$uri, true, $http_response_code);
-                break;
-        }
+        match ($method) {
+            'refresh' => header("Refresh:0;url=".$uri),
+            default => header("Location: ".$uri, true, $http_response_code),
+        };
         exit;
     }
 }

@@ -114,17 +114,17 @@ class CI_Router extends stdClass
         $segments = [];
         if ($this->config->item('enable_query_strings') === true and isset($_GET[$this->config->item('controller_trigger')])) {
             if (isset($_GET[$this->config->item('directory_trigger')])) {
-                $this->set_directory(trim($this->uri->_filter_uri($_GET[$this->config->item('directory_trigger')])));
+                $this->set_directory(trim((string) $this->uri->_filter_uri($_GET[$this->config->item('directory_trigger')])));
                 $segments[] = $this->fetch_directory();
             }
 
             if (isset($_GET[$this->config->item('controller_trigger')])) {
-                $this->set_class(trim($this->uri->_filter_uri($_GET[$this->config->item('controller_trigger')])));
+                $this->set_class(trim((string) $this->uri->_filter_uri($_GET[$this->config->item('controller_trigger')])));
                 $segments[] = $this->fetch_class();
             }
 
             if (isset($_GET[$this->config->item('function_trigger')])) {
-                $this->set_method(trim($this->uri->_filter_uri($_GET[$this->config->item('function_trigger')])));
+                $this->set_method(trim((string) $this->uri->_filter_uri($_GET[$this->config->item('function_trigger')])));
                 $segments[] = $this->fetch_method();
             }
         }
@@ -136,7 +136,7 @@ class CI_Router extends stdClass
             include(APPPATH.'config/routes.php');
         }
 
-        $this->routes = (! isset($route) or ! is_array($route)) ? array() : $route;
+        $this->routes = (! isset($route) or ! is_array($route)) ? [] : $route;
         unset($route);
 
         // Set the default controller so we can display it in the event
@@ -183,7 +183,7 @@ class CI_Router extends stdClass
             show_error("Unable to determine what should be displayed. A default route has not been specified in the routing file.");
         }
         // Is the method being specified?
-        if (strpos($this->default_controller, '/') !== false) {
+        if (str_contains($this->default_controller, '/')) {
             $x = explode('/', $this->default_controller);
 
             $this->set_class($x[0]);
@@ -192,7 +192,7 @@ class CI_Router extends stdClass
         } else {
             $this->set_class($this->default_controller);
             $this->set_method('index');
-            $this->_set_request(array($this->default_controller, 'index'));
+            $this->_set_request([$this->default_controller, 'index']);
         }
 
         // re-index the routed segments array so it starts with 1 rather than 0
@@ -214,7 +214,7 @@ class CI_Router extends stdClass
      * @param	bool
      * @return	void
      */
-    public function _set_request($segments = array())
+    public function _set_request($segments = [])
     {
         $segments = $this->_validate_request($segments);
 
@@ -270,11 +270,11 @@ class CI_Router extends stdClass
                 // Does the requested controller exist in the sub-folder?
                 if (! file_exists(APPPATH.'controllers/'.$this->fetch_directory().$segments[0].'.php')) {
                     if (! empty($this->routes['404_override'])) {
-                        $x = explode('/', $this->routes['404_override']);
+                        $x = explode('/', (string) $this->routes['404_override']);
 
                         $this->set_directory('');
                         $this->set_class($x[0]);
-                        $this->set_method(isset($x[1]) ? $x[1] : 'index');
+                        $this->set_method($x[1] ?? 'index');
 
                         return $x;
                     } else {
@@ -283,7 +283,7 @@ class CI_Router extends stdClass
                 }
             } else {
                 // Is the method being specified in the route?
-                if (strpos($this->default_controller, '/') !== false) {
+                if (str_contains($this->default_controller, '/')) {
                     $x = explode('/', $this->default_controller);
 
                     $this->set_class($x[0]);
@@ -296,7 +296,7 @@ class CI_Router extends stdClass
                 // Does the default controller exist in the sub-folder?
                 if (! file_exists(APPPATH.'controllers/'.$this->fetch_directory().$this->default_controller.'.php')) {
                     $this->directory = '';
-                    return array();
+                    return [];
                 }
             }
 
@@ -307,10 +307,10 @@ class CI_Router extends stdClass
         // If we've gotten this far it means that the URI does not correlate to a valid
         // controller class.  We will now see if there is an override
         if (! empty($this->routes['404_override'])) {
-            $x = explode('/', $this->routes['404_override']);
+            $x = explode('/', (string) $this->routes['404_override']);
 
             $this->set_class($x[0]);
-            $this->set_method(isset($x[1]) ? $x[1] : 'index');
+            $this->set_method($x[1] ?? 'index');
 
             return $x;
         }
@@ -339,7 +339,7 @@ class CI_Router extends stdClass
 
         // Is there a literal match?  If so we're done
         if (isset($this->routes[$uri])) {
-            return $this->_set_request(explode('/', $this->routes[$uri]));
+            return $this->_set_request(explode('/', (string) $this->routes[$uri]));
         }
 
         // Loop through the route array looking for wild-cards
@@ -350,11 +350,11 @@ class CI_Router extends stdClass
             // Does the RegEx match?
             if (preg_match('#^'.$key.'$#', $uri)) {
                 // Do we have a back-reference?
-                if (strpos($val, '$') !== false and strpos($key, '(') !== false) {
-                    $val = preg_replace('#^'.$key.'$#', $val, $uri);
+                if (str_contains((string) $val, '$') and str_contains($key, '(')) {
+                    $val = preg_replace('#^'.$key.'$#', (string) $val, $uri);
                 }
 
-                return $this->_set_request(explode('/', $val));
+                return $this->_set_request(explode('/', (string) $val));
             }
         }
 
@@ -374,7 +374,7 @@ class CI_Router extends stdClass
      */
     public function set_class($class)
     {
-        $this->class = str_replace(array('/', '.'), '', $class);
+        $this->class = str_replace(['/', '.'], '', $class);
     }
 
     // --------------------------------------------------------------------
@@ -432,7 +432,7 @@ class CI_Router extends stdClass
      */
     public function set_directory($dir)
     {
-        $this->directory = str_replace(array('/', '.'), '', $dir).'/';
+        $this->directory = str_replace(['/', '.'], '', $dir).'/';
     }
 
     // --------------------------------------------------------------------

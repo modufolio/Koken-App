@@ -50,7 +50,7 @@ class CI_Config
      *
      * @var array
      */
-    public $_config_paths = array(APPPATH);
+    public $_config_paths = [APPPATH];
 
     /**
      * Constructor
@@ -71,11 +71,11 @@ class CI_Config
         // Set the base_url automatically if none was provided
         if ($this->config['base_url'] == '') {
             if (isset($_SERVER['SERVER_ADDR'])) {
-                $base_url = (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) !== 'off') ||
+                $base_url = (!empty($_SERVER['HTTPS']) && strtolower((string) $_SERVER['HTTPS']) !== 'off') ||
                     $_SERVER['SERVER_PORT'] == 443 ||
                     (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') ? 'https' : 'http';
                 $base_url .= '://'.$_SERVER['SERVER_ADDR'];
-                $base_url .= substr($_SERVER['SCRIPT_NAME'], 0, strpos($_SERVER['SCRIPT_NAME'], basename($_SERVER['SCRIPT_FILENAME'])));
+                $base_url .= substr((string) $_SERVER['SCRIPT_NAME'], 0, strpos((string) $_SERVER['SCRIPT_NAME'], basename((string) $_SERVER['SCRIPT_FILENAME'])));
             } else {
                 $base_url = 'http://localhost/';
             }
@@ -102,8 +102,8 @@ class CI_Config
         $loaded = false;
 
         $check_locations = defined('ENVIRONMENT')
-            ? array(ENVIRONMENT.'/'.$file, $file)
-            : array($file);
+            ? [ENVIRONMENT.'/'.$file, $file]
+            : [$file];
 
         foreach ($this->_config_paths as $path) {
             foreach ($check_locations as $location) {
@@ -211,11 +211,11 @@ class CI_Config
         if (! isset($this->config[$item])) {
             return false;
         }
-        if (trim($this->config[$item]) == '') {
+        if (trim((string) $this->config[$item]) == '') {
             return '';
         }
 
-        return rtrim($this->config[$item], '/').'/';
+        return rtrim((string) $this->config[$item], '/').'/';
     }
 
     // --------------------------------------------------------------------
@@ -272,7 +272,7 @@ class CI_Config
             if (is_array($uri)) {
                 $uri = implode('/', $uri);
             }
-            $uri = trim($uri, '/');
+            $uri = trim((string) $uri, '/');
         } else {
             if (is_array($uri)) {
                 $i = 0;
@@ -298,7 +298,7 @@ class CI_Config
      */
     public function system_url()
     {
-        $x = explode("/", preg_replace("|/*(.+?)/*$|", "\\1", BASEPATH));
+        $x = explode("/", (string) preg_replace("|/*(.+?)/*$|", "\\1", BASEPATH));
         return $this->slash_item('base_url').end($x).'/';
     }
 
@@ -330,7 +330,7 @@ class CI_Config
      * @param	array
      * @return	void
      */
-    public function _assign_to_config($items = array())
+    public function _assign_to_config($items = [])
     {
         if (is_array($items)) {
             foreach ($items as $key => $val) {

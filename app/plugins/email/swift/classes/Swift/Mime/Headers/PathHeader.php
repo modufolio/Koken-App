@@ -42,6 +42,7 @@ class Swift_Mime_Headers_PathHeader extends Swift_Mime_Headers_AbstractHeader
      *
      * @return int
      */
+    #[\Override]
     public function getFieldType()
     {
         return self::TYPE_PATH;
@@ -55,6 +56,7 @@ class Swift_Mime_Headers_PathHeader extends Swift_Mime_Headers_AbstractHeader
      *
      * @throws Swift_RfcComplianceException
      */
+    #[\Override]
     public function setFieldBodyModel($model)
     {
         $this->setAddress($model);
@@ -66,6 +68,7 @@ class Swift_Mime_Headers_PathHeader extends Swift_Mime_Headers_AbstractHeader
      *
      * @return mixed
      */
+    #[\Override]
     public function getFieldBodyModel()
     {
         return $this->getAddress();
@@ -113,6 +116,7 @@ class Swift_Mime_Headers_PathHeader extends Swift_Mime_Headers_AbstractHeader
      *
      * @return string
      */
+    #[\Override]
     public function getFieldBody()
     {
         if (!$this->getCachedValue()) {

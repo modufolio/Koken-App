@@ -51,20 +51,7 @@ class CI_Exceptions
      * @var array
      * @access public
      */
-    public $levels = array(
-                        E_ERROR				=>	'Error',
-                        E_WARNING			=>	'Warning',
-                        E_PARSE				=>	'Parsing Error',
-                        E_NOTICE			=>	'Notice',
-                        E_CORE_ERROR		=>	'Core Error',
-                        E_CORE_WARNING		=>	'Core Warning',
-                        E_COMPILE_ERROR		=>	'Compile Error',
-                        E_COMPILE_WARNING	=>	'Compile Warning',
-                        E_USER_ERROR		=>	'User Error',
-                        E_USER_WARNING		=>	'User Warning',
-                        E_USER_NOTICE		=>	'User Notice',
-                        E_STRICT			=>	'Runtime Notice'
-                    );
+    public $levels = [E_ERROR				=>	'Error', E_WARNING			=>	'Warning', E_PARSE				=>	'Parsing Error', E_NOTICE			=>	'Notice', E_CORE_ERROR		=>	'Core Error', E_CORE_WARNING		=>	'Core Warning', E_COMPILE_ERROR		=>	'Compile Error', E_COMPILE_WARNING	=>	'Compile Warning', E_USER_ERROR		=>	'User Error', E_USER_WARNING		=>	'User Warning', E_USER_NOTICE		=>	'User Notice', E_STRICT			=>	'Runtime Notice'];
 
 
     /**
@@ -141,7 +128,7 @@ class CI_Exceptions
     {
         set_status_header($status_code);
 
-        $message = '<p>'.implode('</p><p>', (! is_array($message)) ? array($message) : $message).'</p>';
+        $message = '<p>'.implode('</p><p>', (! is_array($message)) ? [$message] : $message).'</p>';
 
         if (ob_get_level() > $this->ob_level + 1) {
             ob_end_flush();
@@ -172,7 +159,7 @@ class CI_Exceptions
         $filepath = str_replace("\\", "/", $filepath);
 
         // For safety reasons we do not show the full file path
-        if (false !== strpos($filepath, '/')) {
+        if (str_contains($filepath, '/')) {
             $x = explode('/', $filepath);
             $filepath = $x[count($x)-2].'/'.end($x);
         }

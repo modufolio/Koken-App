@@ -50,7 +50,7 @@ class RelativePath
     public static function getRelativePath($path)
     {
         $path = preg_replace("#/+\.?/+#", "/", str_replace("\\", "/", $path));
-        $dirs = explode("/", rtrim(preg_replace('#^(\./)+#', '', $path), '/'));
+        $dirs = explode("/", rtrim((string) preg_replace('#^(\./)+#', '', (string) $path), '/'));
 
         $offset = 0;
         $sub = 0;

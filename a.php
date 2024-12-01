@@ -10,7 +10,7 @@ error_reporting(1);
 
 set_time_limit(600);
 
-$root = dirname(__FILE__);
+$root = __DIR__;
 
 @include $root . '/storage/configuration/user_setup.php';
 require_once $root . '/app/koken/Shutter/Shutter.php';
@@ -27,11 +27,11 @@ Shutter::hook('image.boot');
 if (isset($_GET['path'])) {
     $path = $_GET['path'];
 } else if (isset($_SERVER['QUERY_STRING'])) {
-    $path = urldecode($_SERVER['QUERY_STRING']);
+    $path = urldecode((string) $_SERVER['QUERY_STRING']);
 } else if (isset($_SERVER['PATH_INFO'])) {
     $path = $_SERVER['PATH_INFO'];
 } else if (isset($_SERVER['REQUEST_URI'])) {
-    $path = preg_replace('/.*\/a.php/', '', $_SERVER['REQUEST_URI']);
+    $path = preg_replace('/.*\/a.php/', '', (string) $_SERVER['REQUEST_URI']);
 }
 
 $ds = DIRECTORY_SEPARATOR;
@@ -58,7 +58,7 @@ if (file_exists($root . '/storage/cache/albums' . $path)) {
     }
 }
 
-preg_match('/^\/([0-9]{3}\/[0-9]{3})\/[0-9]+\/.+$/i', $path, $matches);
+preg_match('/^\/([0-9]{3}\/[0-9]{3})\/[0-9]+\/.+$/i', (string) $path, $matches);
 
 if (empty($matches)) {
     // Bad request
@@ -76,12 +76,12 @@ if (!isset($result['album']) || $result['album']['album_type'] === 'set') {
     exit;
 }
 
-$visibility_values = array('public', 'unlisted', 'private');
+$visibility_values = ['public', 'unlisted', 'private'];
 $album_visibility = array_search($result['album']['visibility']['raw'], $visibility_values);
 
 $ts = $result['album']['modified_on']['timestamp'];
 $album_cache_key = 'albums/' . $matches[1];
-$cache_key = $album_cache_key . '/' . $ts . '/' . basename($path);
+$cache_key = $album_cache_key . '/' . $ts . '/' . basename((string) $path);
 
 Shutter::clear_cache($album_cache_key);
 
@@ -100,7 +100,7 @@ foreach ($result['content'] as $content) {
             $url = $root . $content['original']['relative_url'];
         } else {
             $url = $content['presets'][$md]['url'];
-            $relative_url = preg_replace('/.+?(?=\/storage\/cache\/images\/)/', $root, $url);
+            $relative_url = preg_replace('/.+?(?=\/storage\/cache\/images\/)/', $root, (string) $url);
 
             if (file_exists($relative_url)) {
                 $url = $relative_url;
@@ -125,7 +125,7 @@ foreach ($result['content'] as $content) {
 }
 
 if ($zip->getArchiveSize() !== 0) {
-    $zip->sendZip(basename($path));
+    $zip->sendZip(basename((string) $path));
 } else {
     Shutter::clear_cache($album_cache_key);
 }

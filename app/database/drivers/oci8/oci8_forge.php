@@ -131,7 +131,7 @@ class CI_DB_oci8_forge extends CI_DB_forge
                 if (is_array($key)) {
                     $key = $this->db->_protect_identifiers($key);
                 } else {
-                    $key = array($this->db->_protect_identifiers($key));
+                    $key = [$this->db->_protect_identifiers($key)];
                 }
 
                 $sql .= ",\n\tUNIQUE COLUMNS (" . implode(', ', $key) . ")";

@@ -23,21 +23,18 @@ class Swift_KeyCache_ArrayKeyCache implements Swift_KeyCache
     private $_contents = [];
 
     /**
-     * An InputStream for cloning.
-     *
-     * @var Swift_KeyCache_KeyCacheInputStream
-     */
-    private $_stream;
-
-    /**
      * Create a new ArrayKeyCache with the given $stream for cloning to make
      * InputByteStreams.
      *
-     * @param Swift_KeyCache_KeyCacheInputStream $stream
+     * @param Swift_KeyCache_KeyCacheInputStream $_stream
      */
-    public function __construct(Swift_KeyCache_KeyCacheInputStream $stream)
+    public function __construct(
+        /**
+         * An InputStream for cloning.
+         */
+        private readonly Swift_KeyCache_KeyCacheInputStream $_stream
+    )
     {
-        $this->_stream = $stream;
     }
 
     /**
@@ -50,6 +47,7 @@ class Swift_KeyCache_ArrayKeyCache implements Swift_KeyCache
      * @param string  $string
      * @param int     $mode
      */
+    #[\Override]
     public function setString($nsKey, $itemKey, $string, $mode)
     {
         $this->_prepareCache($nsKey);
@@ -81,6 +79,7 @@ class Swift_KeyCache_ArrayKeyCache implements Swift_KeyCache
      * @param Swift_OutputByteStream $os
      * @param int                    $mode
      */
+    #[\Override]
     public function importFromByteStream($nsKey, $itemKey, Swift_OutputByteStream $os, $mode)
     {
         $this->_prepareCache($nsKey);
@@ -115,6 +114,7 @@ class Swift_KeyCache_ArrayKeyCache implements Swift_KeyCache
      *
      * @return Swift_InputByteStream
      */
+    #[\Override]
     public function getInputByteStream($nsKey, $itemKey, Swift_InputByteStream $writeThrough = null)
     {
         $is = clone $this->_stream;
@@ -136,6 +136,7 @@ class Swift_KeyCache_ArrayKeyCache implements Swift_KeyCache
      *
      * @return string
      */
+    #[\Override]
     public function getString($nsKey, $itemKey)
     {
         $this->_prepareCache($nsKey);
@@ -151,6 +152,7 @@ class Swift_KeyCache_ArrayKeyCache implements Swift_KeyCache
      * @param string                $itemKey
      * @param Swift_InputByteStream $is      to write the data to
      */
+    #[\Override]
     public function exportToByteStream($nsKey, $itemKey, Swift_InputByteStream $is)
     {
         $this->_prepareCache($nsKey);
@@ -165,6 +167,7 @@ class Swift_KeyCache_ArrayKeyCache implements Swift_KeyCache
      *
      * @return bool
      */
+    #[\Override]
     public function hasKey($nsKey, $itemKey)
     {
         $this->_prepareCache($nsKey);
@@ -178,6 +181,7 @@ class Swift_KeyCache_ArrayKeyCache implements Swift_KeyCache
      * @param string $nsKey
      * @param string $itemKey
      */
+    #[\Override]
     public function clearKey($nsKey, $itemKey)
     {
         unset($this->_contents[$nsKey][$itemKey]);
@@ -188,6 +192,7 @@ class Swift_KeyCache_ArrayKeyCache implements Swift_KeyCache
      *
      * @param string $nsKey
      */
+    #[\Override]
     public function clearAll($nsKey)
     {
         unset($this->_contents[$nsKey]);

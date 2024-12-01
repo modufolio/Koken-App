@@ -2,15 +2,13 @@
 
 class FFmpeg
 {
-    public $path;
     public $ffmpeg = 'ffmpeg';
     public $info = null;
     public $duration = 0;
     public $dimensions = 0;
 
-    public function __construct($path = false)
+    public function __construct(public $path = false)
     {
-        $this->path = $path;
         $this->ffmpeg = FFMPEG_PATH_FINAL;
     }
 
@@ -21,7 +19,7 @@ class FFmpeg
             if (empty($out)) {
                 return false;
             } else {
-                if (strpos(strtolower($out[0]), 'ffmpeg') !== false && preg_match('/(\d+.\d+(.\d+)?)/', $out[0], $matches)) {
+                if (str_contains(strtolower($out[0]), 'ffmpeg') && preg_match('/(\d+.\d+(.\d+)?)/', $out[0], $matches)) {
                     return $matches[1];
                 } else {
                     return false;
@@ -43,7 +41,7 @@ class FFmpeg
 
     public function create_thumbs()
     {
-        $target_directory = dirname($this->path) . DIRECTORY_SEPARATOR . basename($this->path) . '_previews' . DIRECTORY_SEPARATOR;
+        $target_directory = dirname((string) $this->path) . DIRECTORY_SEPARATOR . basename((string) $this->path) . '_previews' . DIRECTORY_SEPARATOR;
         make_child_dir($target_directory);
         $duration = $this->duration() - 2;
         $bits = ceil($duration/12);
@@ -88,10 +86,10 @@ class FFmpeg
         }
 
         foreach ($this->info as $line) {
-            if (strpos($line, 'Video:') !== false) {
-                preg_match('/([0-9]{2,5})x([0-9]{2,5})/', $line, $matches);
-                list(, $w, $h) = $matches;
-                $this->dimensions = array($w, $h);
+            if (str_contains((string) $line, 'Video:')) {
+                preg_match('/([0-9]{2,5})x([0-9]{2,5})/', (string) $line, $matches);
+                [, $w, $h] = $matches;
+                $this->dimensions = [$w, $h];
                 return $this->dimensions;
             }
         }
@@ -108,9 +106,9 @@ class FFmpeg
         }
 
         foreach ($this->info as $line) {
-            if (strpos($line, 'Duration:') !== false) {
-                preg_match('/Duration: ([0-9]{2}):([0-9]{2}):([0-9]{2})/', $line, $matches);
-                list(, $h, $m, $s) = $matches;
+            if (str_contains((string) $line, 'Duration:')) {
+                preg_match('/Duration: ([0-9]{2}):([0-9]{2}):([0-9]{2})/', (string) $line, $matches);
+                [, $h, $m, $s] = $matches;
                 $this->duration = ($h*60*60) + ($m*60) + $s;
                 return $this->duration;
             }

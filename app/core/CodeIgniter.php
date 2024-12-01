@@ -94,7 +94,7 @@
  * hurt to load it here.
  */
     if (isset($assign_to_config['subclass_prefix']) and $assign_to_config['subclass_prefix'] != '') {
-        get_config(array('subclass_prefix' => $assign_to_config['subclass_prefix']));
+        get_config(['subclass_prefix' => $assign_to_config['subclass_prefix']]);
     }
 
 /*
@@ -258,13 +258,13 @@
     $method = $RTR->fetch_method();
 
     if (! class_exists($class)
-        or strncmp($method, '_', 1) == 0
-        or in_array(strtolower($method), array_map('strtolower', get_class_methods('CI_Controller')))
+        or str_starts_with((string) $method, '_')
+        or in_array(strtolower((string) $method), array_map('strtolower', get_class_methods('CI_Controller')))
         ) {
         if (! empty($RTR->routes['404_override'])) {
-            $x = explode('/', $RTR->routes['404_override']);
+            $x = explode('/', (string) $RTR->routes['404_override']);
             $class = $x[0];
-            $method = (isset($x[1]) ? $x[1] : 'index');
+            $method = ($x[1] ?? 'index');
             if (! class_exists($class)) {
                 if (! file_exists(APPPATH.'controllers/'.$class.'.php')) {
                     show_404("{$class}/{$method}");
@@ -312,12 +312,12 @@
     } else {
         // is_callable() returns TRUE on some versions of PHP 5 for private and protected
         // methods, so we'll use this workaround for consistent behavior
-        if (! in_array(strtolower($method), array_map('strtolower', get_class_methods($CI)))) {
+        if (! in_array(strtolower((string) $method), array_map('strtolower', get_class_methods($CI)))) {
             // Check and see if we are using a 404 override and use it.
             if (! empty($RTR->routes['404_override'])) {
-                $x = explode('/', $RTR->routes['404_override']);
+                $x = explode('/', (string) $RTR->routes['404_override']);
                 $class = $x[0];
-                $method = (isset($x[1]) ? $x[1] : 'index');
+                $method = ($x[1] ?? 'index');
                 if (! class_exists($class)) {
                     if (! file_exists(APPPATH.'controllers/'.$class.'.php')) {
                         show_404("{$class}/{$method}");
@@ -334,7 +334,7 @@
 
         // Call the requested method.
         // Any URI segments present (besides the class/function) will be passed to the method for convenience
-        call_user_func_array(array(&$CI, $method), array_slice($URI->rsegments, 2));
+        call_user_func_array([&$CI, $method], array_slice($URI->rsegments, 2));
     }
 
 

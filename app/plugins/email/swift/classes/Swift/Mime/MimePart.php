@@ -55,6 +55,7 @@ class Swift_Mime_MimePart extends Swift_Mime_SimpleMimeEntity
      *
      * @return Swift_Mime_MimePart
      */
+    #[\Override]
     public function setBody($body, $contentType = null, $charset = null)
     {
         if (isset($charset)) {
@@ -155,6 +156,7 @@ class Swift_Mime_MimePart extends Swift_Mime_SimpleMimeEntity
      *
      * @return int
      */
+    #[\Override]
     public function getNestingLevel()
     {
         return $this->_nestingLevel;
@@ -166,12 +168,14 @@ class Swift_Mime_MimePart extends Swift_Mime_SimpleMimeEntity
      *
      * @param string $charset
      */
+    #[\Override]
     public function charsetChanged($charset)
     {
         $this->setCharset($charset);
     }
 
     /** Fix the content-type and encoding of this entity */
+    #[\Override]
     protected function _fixHeaders()
     {
         parent::_fixHeaders();
@@ -196,12 +200,12 @@ class Swift_Mime_MimePart extends Swift_Mime_SimpleMimeEntity
     protected function _convertString($string)
     {
         $charset = strtolower($this->getCharset());
-        if (!in_array($charset, array('utf-8', 'iso-8859-1', ''))) {
+        if (!in_array($charset, ['utf-8', 'iso-8859-1', ''])) {
             // mb_convert_encoding must be the first one to check, since iconv cannot convert some words.
             if (function_exists('mb_convert_encoding')) {
                 $string = mb_convert_encoding($string, $charset, 'utf-8');
             } elseif (function_exists('iconv')) {
-                $string = iconv('utf-8//TRANSLIT//IGNORE', $charset, $string);
+                $string = iconv('utf-8//TRANSLIT//IGNORE', $charset, (string) $string);
             } else {
                 throw new Swift_SwiftException('No suitable convert encoding function (use UTF-8 as your charset or install the mbstring or iconv extension).');
             }

@@ -34,7 +34,7 @@ class DMZ_RowIndex
      * @param	<type> $distinct_on If TRUE, use DISTINCT ON (not all DBs support this)
      * @return	bool|int Returns the index of the item, or FALSE if none are found.
      */
-    public function row_index($object, $id, $leave_select = array(), $distinct_on = false)
+    public function row_index($object, $id, $leave_select = [], $distinct_on = false)
     {
         $this->first_only = true;
         $result = $this->get_rowindices($object, $id, $leave_select, $distinct_on);
@@ -42,8 +42,7 @@ class DMZ_RowIndex
         if (empty($result)) {
             return false;
         } else {
-            reset($result);
-            return key($result);
+            return array_key_first($result);
         }
     }
 
@@ -57,11 +56,11 @@ class DMZ_RowIndex
      * @param	bool $distinct_on If TRUE, use DISTINCT ON (not all DBs support this)
      * @return	array Returns an array of row indices.
      */
-    public function row_indices($object, $ids, $leave_select = array(), $distinct_on = false)
+    public function row_indices($object, $ids, $leave_select = [], $distinct_on = false)
     {
         $row_indices = [];
         if (!is_array($ids)) {
-            $ids = array($ids);
+            $ids = [$ids];
         }
         $new_ids = [];
         foreach ($ids as $id) {
@@ -138,19 +137,19 @@ class DMZ_RowIndex
         $list = [];
         $impt_parts_regex = '/([\w]+)([^\(]|$)/';
         foreach ($order_by as $order_by_string) {
-            $parts = explode(',', $order_by_string);
+            $parts = explode(',', (string) $order_by_string);
             foreach ($parts as $part) {
                 // remove optional order marker
                 $part = preg_replace('/\s+(ASC|DESC)$/i', '', $part);
                 // remove all functions (might not work well on recursive)
                 $replacements = 1;
                 while ($replacements > 0) {
-                    $part = preg_replace('/[a-z][\w]*\((.*)\)/i', '$1', $part, -1, $replacements);
+                    $part = preg_replace('/[a-z][\w]*\((.*)\)/i', '$1', (string) $part, -1, $replacements);
                 }
                 // now remove all fully-qualified elements (those with tables)
-                $part = preg_replace('/("[a-z][\w]*"|[a-z][\w]*)\.("[a-z][\w]*"|[a-z][\w]*)/i', '', $part);
+                $part = preg_replace('/("[a-z][\w]*"|[a-z][\w]*)\.("[a-z][\w]*"|[a-z][\w]*)/i', '', (string) $part);
                 // finally, match all whole words left behind
-                preg_match_all('/([a-z][\w]*)/i', $part, $result, PREG_SET_ORDER);
+                preg_match_all('/([a-z][\w]*)/i', (string) $part, $result, PREG_SET_ORDER);
                 foreach ($result as $column) {
                     $list[] = $column[0];
                 }

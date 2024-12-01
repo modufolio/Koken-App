@@ -31,9 +31,7 @@ if (! defined('BASEPATH')) {
  */
 class CI_Cache extends CI_Driver_Library
 {
-    protected $valid_drivers 	= array(
-        'cache_apc', 'cache_file', 'cache_memcached', 'cache_dummy'
-    );
+    protected $valid_drivers 	= ['cache_apc', 'cache_file', 'cache_memcached', 'cache_dummy'];
 
     protected $_cache_path		= null;		// Path of cache files (if file-based cache)
     protected $_adapter			= 'dummy';
@@ -46,7 +44,7 @@ class CI_Cache extends CI_Driver_Library
      *
      * @param array
      */
-    public function __construct($config = array())
+    public function __construct($config = [])
     {
         if (! empty($config)) {
             $this->_initialize($config);
@@ -148,10 +146,7 @@ class CI_Cache extends CI_Driver_Library
      */
     private function _initialize($config)
     {
-        $default_config = array(
-                'adapter',
-                'memcached'
-            );
+        $default_config = ['adapter', 'memcached'];
 
         foreach ($default_config as $key) {
             if (isset($config[$key])) {
@@ -195,6 +190,7 @@ class CI_Cache extends CI_Driver_Library
      * @param 	child
      * @return 	object
      */
+    #[\Override]
     public function __get($child)
     {
         $obj = parent::__get($child);

@@ -50,7 +50,7 @@ if (! function_exists('directory_map')) {
         if ($fp = @opendir($source_dir)) {
             $filedata	= [];
             $new_depth	= $directory_depth - 1;
-            $source_dir	= rtrim($source_dir, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
+            $source_dir	= rtrim((string) $source_dir, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
 
             while (false !== ($file = readdir($fp))) {
                 // Remove '.', '..', and hidden files [optional]

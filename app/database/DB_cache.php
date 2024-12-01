@@ -67,7 +67,7 @@ class CI_DB_Cache
         }
 
         // Add a trailing slash to the path if needed
-        $path = preg_replace("/(.+?)\/*$/", "\\1/", $path);
+        $path = preg_replace("/(.+?)\/*$/", "\\1/", (string) $path);
 
         if (! is_dir($path) or ! is_really_writable($path)) {
             // If the path is wrong we'll turn off caching
@@ -99,7 +99,7 @@ class CI_DB_Cache
 
         $segment_two = ($this->CI->uri->segment(2) == false) ? 'index' : $this->CI->uri->segment(2);
 
-        $filepath = $this->db->cachedir.$segment_one.'+'.$segment_two.'/'.md5($sql);
+        $filepath = $this->db->cachedir.$segment_one.'+'.$segment_two.'/'.md5((string) $sql);
 
         if (false === ($cachedata = read_file($filepath))) {
             return false;
@@ -128,7 +128,7 @@ class CI_DB_Cache
 
         $dir_path = $this->db->cachedir.$segment_one.'+'.$segment_two.'/';
 
-        $filename = md5($sql);
+        $filename = md5((string) $sql);
 
         if (! @is_dir($dir_path)) {
             if (! @mkdir($dir_path, DIR_WRITE_MODE)) {

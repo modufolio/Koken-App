@@ -25,6 +25,7 @@ class Swift_CharacterReader_UsAsciiReader implements Swift_CharacterReader
      *
      * @return int
      */
+    #[\Override]
     public function getCharPositions($string, $startOffset, &$currentMap, &$ignoredChars)
     {
         $strlen = strlen($string);
@@ -44,6 +45,7 @@ class Swift_CharacterReader_UsAsciiReader implements Swift_CharacterReader
      *
      * @return int     mapType
      */
+    #[\Override]
     public function getMapType()
     {
         return self::MAP_TYPE_INVALID;
@@ -62,6 +64,7 @@ class Swift_CharacterReader_UsAsciiReader implements Swift_CharacterReader
      *
      * @return int
      */
+    #[\Override]
     public function validateByteSequence($bytes, $size)
     {
         $byte = reset($bytes);
@@ -77,6 +80,7 @@ class Swift_CharacterReader_UsAsciiReader implements Swift_CharacterReader
      *
      * @return int
      */
+    #[\Override]
     public function getInitialByteSize()
     {
         return 1;

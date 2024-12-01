@@ -35,6 +35,7 @@ class Swift_Plugins_BandwidthMonitorPlugin implements Swift_Events_SendListener,
     /**
      * Not used.
      */
+    #[\Override]
     public function beforeSendPerformed(Swift_Events_SendEvent $evt)
     {
     }
@@ -44,6 +45,7 @@ class Swift_Plugins_BandwidthMonitorPlugin implements Swift_Events_SendListener,
      *
      * @param Swift_Events_SendEvent $evt
      */
+    #[\Override]
     public function sendPerformed(Swift_Events_SendEvent $evt)
     {
         $message = $evt->getMessage();
@@ -55,6 +57,7 @@ class Swift_Plugins_BandwidthMonitorPlugin implements Swift_Events_SendListener,
      *
      * @param Swift_Events_CommandEvent $evt
      */
+    #[\Override]
     public function commandSent(Swift_Events_CommandEvent $evt)
     {
         $command = $evt->getCommand();
@@ -66,6 +69,7 @@ class Swift_Plugins_BandwidthMonitorPlugin implements Swift_Events_SendListener,
      *
      * @param Swift_Events_ResponseEvent $evt
      */
+    #[\Override]
     public function responseReceived(Swift_Events_ResponseEvent $evt)
     {
         $response = $evt->getResponse();
@@ -77,6 +81,7 @@ class Swift_Plugins_BandwidthMonitorPlugin implements Swift_Events_SendListener,
      *
      * @param string $bytes
      */
+    #[\Override]
     public function write($bytes)
     {
         $this->_out += strlen($bytes);
@@ -88,6 +93,7 @@ class Swift_Plugins_BandwidthMonitorPlugin implements Swift_Events_SendListener,
     /**
      * Not used.
      */
+    #[\Override]
     public function commit()
     {
     }
@@ -100,6 +106,7 @@ class Swift_Plugins_BandwidthMonitorPlugin implements Swift_Events_SendListener,
      *
      * @param Swift_InputByteStream $is
      */
+    #[\Override]
     public function bind(Swift_InputByteStream $is)
     {
         $this->_mirrors[] = $is;
@@ -114,6 +121,7 @@ class Swift_Plugins_BandwidthMonitorPlugin implements Swift_Events_SendListener,
      *
      * @param Swift_InputByteStream $is
      */
+    #[\Override]
     public function unbind(Swift_InputByteStream $is)
     {
         foreach ($this->_mirrors as $k => $stream) {
@@ -126,6 +134,7 @@ class Swift_Plugins_BandwidthMonitorPlugin implements Swift_Events_SendListener,
     /**
      * Not used.
      */
+    #[\Override]
     public function flushBuffers()
     {
         foreach ($this->_mirrors as $stream) {

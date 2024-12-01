@@ -55,7 +55,7 @@
 |	$autoload['helper'] = array('url', 'file');
 */
 
-$autoload['helper'] = array('koken', 'file', 'directory');
+$autoload['helper'] = ['koken', 'file', 'directory'];
 
 
 /*
@@ -83,7 +83,7 @@ $autoload['plugin'] = [];
 |
 */
 
-$autoload['config'] = array('koken');
+$autoload['config'] = ['koken'];
 
 
 /*

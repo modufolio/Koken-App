@@ -37,6 +37,7 @@ class CI_DB_sqlsrv_result extends CI_DB_result
      * @access	public
      * @return	integer
      */
+    #[\Override]
     public function num_rows()
     {
         return @sqlsrv_num_rows($this->result_id);
@@ -50,6 +51,7 @@ class CI_DB_sqlsrv_result extends CI_DB_result
      * @access	public
      * @return	integer
      */
+    #[\Override]
     public function num_fields()
     {
         return @sqlsrv_num_fields($this->result_id);
@@ -65,6 +67,7 @@ class CI_DB_sqlsrv_result extends CI_DB_result
      * @access	public
      * @return	array
      */
+    #[\Override]
     public function list_fields()
     {
         $field_names = [];
@@ -85,6 +88,7 @@ class CI_DB_sqlsrv_result extends CI_DB_result
      * @access	public
      * @return	array
      */
+    #[\Override]
     public function field_data()
     {
         $retval = [];
@@ -109,6 +113,7 @@ class CI_DB_sqlsrv_result extends CI_DB_result
      *
      * @return	null
      */
+    #[\Override]
     public function free_result()
     {
         if (is_resource($this->result_id)) {
@@ -129,6 +134,7 @@ class CI_DB_sqlsrv_result extends CI_DB_result
      * @access	private
      * @return	array
      */
+    #[\Override]
     public function _data_seek($n = 0)
     {
         // Not implemented
@@ -144,6 +150,7 @@ class CI_DB_sqlsrv_result extends CI_DB_result
      * @access	private
      * @return	array
      */
+    #[\Override]
     public function _fetch_assoc()
     {
         return sqlsrv_fetch_array($this->result_id, SQLSRV_FETCH_ASSOC);
@@ -159,6 +166,7 @@ class CI_DB_sqlsrv_result extends CI_DB_result
      * @access	private
      * @return	object
      */
+    #[\Override]
     public function _fetch_object()
     {
         return sqlsrv_fetch_object($this->result_id);

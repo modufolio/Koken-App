@@ -95,7 +95,7 @@ class CI_Table
      * @param	int
      * @return	void
      */
-    public function make_columns($array = array(), $col_limit = 0)
+    public function make_columns($array = [], $col_limit = 0)
     {
         if (! is_array($array) or count($array) == 0) {
             return false;
@@ -181,14 +181,14 @@ class CI_Table
                     if (is_array($val) && isset($val['data'])) {
                         $args[$key] = $val;
                     } else {
-                        $args[$key] = array('data' => $val);
+                        $args[$key] = ['data' => $val];
                     }
                 }
             }
         } else {
             foreach ($args as $key => $val) {
                 if (! is_array($val)) {
-                    $args[$key] = array('data' => $val);
+                    $args[$key] = ['data' => $val];
                 }
             }
         }
@@ -272,7 +272,7 @@ class CI_Table
                 }
 
                 $out .= $temp;
-                $out .= isset($heading['data']) ? $heading['data'] : '';
+                $out .= $heading['data'] ?? '';
                 $out .= $this->template['heading_cell_end'];
             }
 
@@ -308,7 +308,7 @@ class CI_Table
                         }
                     }
 
-                    $cell = isset($cell['data']) ? $cell['data'] : '';
+                    $cell = $cell['data'] ?? '';
                     $out .= $temp;
 
                     if ($cell === "" or $cell === null) {
@@ -432,7 +432,7 @@ class CI_Table
         }
 
         $this->temp = $this->_default_template();
-        foreach (array('table_open', 'thead_open', 'thead_close', 'heading_row_start', 'heading_row_end', 'heading_cell_start', 'heading_cell_end', 'tbody_open', 'tbody_close', 'row_start', 'row_end', 'cell_start', 'cell_end', 'row_alt_start', 'row_alt_end', 'cell_alt_start', 'cell_alt_end', 'table_close') as $val) {
+        foreach (['table_open', 'thead_open', 'thead_close', 'heading_row_start', 'heading_row_end', 'heading_cell_start', 'heading_cell_end', 'tbody_open', 'tbody_close', 'row_start', 'row_end', 'cell_start', 'cell_end', 'row_alt_start', 'row_alt_end', 'cell_alt_start', 'cell_alt_end', 'table_close'] as $val) {
             if (! isset($this->template[$val])) {
                 $this->template[$val] = $this->temp[$val];
             }
@@ -449,32 +449,7 @@ class CI_Table
      */
     public function _default_template()
     {
-        return  array(
-                        'table_open'			=> '<table border="0" cellpadding="4" cellspacing="0">',
-
-                        'thead_open'			=> '<thead>',
-                        'thead_close'			=> '</thead>',
-
-                        'heading_row_start'		=> '<tr>',
-                        'heading_row_end'		=> '</tr>',
-                        'heading_cell_start'	=> '<th>',
-                        'heading_cell_end'		=> '</th>',
-
-                        'tbody_open'			=> '<tbody>',
-                        'tbody_close'			=> '</tbody>',
-
-                        'row_start'				=> '<tr>',
-                        'row_end'				=> '</tr>',
-                        'cell_start'			=> '<td>',
-                        'cell_end'				=> '</td>',
-
-                        'row_alt_start'		=> '<tr>',
-                        'row_alt_end'			=> '</tr>',
-                        'cell_alt_start'		=> '<td>',
-                        'cell_alt_end'			=> '</td>',
-
-                        'table_close'			=> '</table>'
-                    );
+        return  ['table_open'			=> '<table border="0" cellpadding="4" cellspacing="0">', 'thead_open'			=> '<thead>', 'thead_close'			=> '</thead>', 'heading_row_start'		=> '<tr>', 'heading_row_end'		=> '</tr>', 'heading_cell_start'	=> '<th>', 'heading_cell_end'		=> '</th>', 'tbody_open'			=> '<tbody>', 'tbody_close'			=> '</tbody>', 'row_start'				=> '<tr>', 'row_end'				=> '</tr>', 'cell_start'			=> '<td>', 'cell_end'				=> '</td>', 'row_alt_start'		=> '<tr>', 'row_alt_end'			=> '</tr>', 'cell_alt_start'		=> '<td>', 'cell_alt_end'			=> '</td>', 'table_close'			=> '</table>'];
     }
 }
 

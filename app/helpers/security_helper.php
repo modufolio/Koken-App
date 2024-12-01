@@ -78,9 +78,9 @@ if (! function_exists('do_hash')) {
     function do_hash($str, $type = 'sha1')
     {
         if ($type == 'sha1') {
-            return sha1($str);
+            return sha1((string) $str);
         } else {
-            return md5($str);
+            return md5((string) $str);
         }
     }
 }
@@ -97,8 +97,8 @@ if (! function_exists('do_hash')) {
 if (! function_exists('strip_image_tags')) {
     function strip_image_tags($str)
     {
-        $str = preg_replace("#<img\s+.*?src\s*=\s*[\"'](.+?)[\"'].*?\>#", "\\1", $str);
-        $str = preg_replace("#<img\s+.*?src\s*=\s*(.+?).*?\>#", "\\1", $str);
+        $str = preg_replace("#<img\s+.*?src\s*=\s*[\"'](.+?)[\"'].*?\>#", "\\1", (string) $str);
+        $str = preg_replace("#<img\s+.*?src\s*=\s*(.+?).*?\>#", "\\1", (string) $str);
 
         return $str;
     }
@@ -116,7 +116,7 @@ if (! function_exists('strip_image_tags')) {
 if (! function_exists('encode_php_tags')) {
     function encode_php_tags($str)
     {
-        return str_replace(array('<?php', '<?PHP', '<?', '?>'), array('&lt;?php', '&lt;?PHP', '&lt;?', '?&gt;'), $str);
+        return str_replace(['<?php', '<?PHP', '<?', '?>'], ['&lt;?php', '&lt;?PHP', '&lt;?', '?&gt;'], $str);
     }
 }
 

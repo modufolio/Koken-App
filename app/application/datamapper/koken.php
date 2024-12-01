@@ -28,7 +28,7 @@ class DMZ_Koken
                 $this->base = 'http://' . $_SERVER['HTTP_HOST'] . $s->value;
             }
         }
-        return rtrim($this->base, '/') . (defined('DRAFT_CONTEXT') ? '/preview.php?' : (KOKEN_REWRITE ? '' : '/index.php?'));
+        return rtrim((string) $this->base, '/') . (defined('DRAFT_CONTEXT') ? '/preview.php?' : (KOKEN_REWRITE ? '' : '/index.php?'));
     }
 
     private function get_tz()
@@ -36,7 +36,7 @@ class DMZ_Koken
         if (!$this->tz) {
             $s = new Setting();
             $s->where('name', 'site_timezone')->get();
-            $this->tz = $s->value;
+            $this->tz = $s->value ?? 'UTC';
         }
         return $this->tz;
     }
@@ -61,7 +61,7 @@ class DMZ_Koken
             $path = DRAFT_CONTEXT;
         }
 
-        list($this->urls, $this->url_data, , $this->segments) = $d->setup_urls(FCPATH . 'storage' . DIRECTORY_SEPARATOR . 'themes' . DIRECTORY_SEPARATOR . $path . DIRECTORY_SEPARATOR);
+        [$this->urls, $this->url_data, , $this->segments] = $d->setup_urls(FCPATH . 'storage' . DIRECTORY_SEPARATOR . 'themes' . DIRECTORY_SEPARATOR . $path . DIRECTORY_SEPARATOR);
         return $this->urls;
     }
 
@@ -71,10 +71,10 @@ class DMZ_Koken
             $this->form_urls();
         }
 
-        return isset($this->urls[$model]) ? $this->urls[$model] : false;
+        return $this->urls[$model] ?? false;
     }
 
-    public function url($object, $options = array())
+    public function url($object, $options = [])
     {
         $model = $object->model;
         $tail = '';
@@ -107,7 +107,7 @@ class DMZ_Koken
             $model = 'album';
             $content_template = $this->get_url('content');
             $content_url = $this->url_data['content']['url'];
-            $tail = $this->segments['content'] . '/' . (strpos($content_url, 'slug') === false ? ':content_id' : ':content_slug') . '/';
+            $tail = $this->segments['content'] . '/' . (!str_contains((string) $content_url, 'slug') ? ':content_id' : ':content_slug') . '/';
             if (!$content_template) {
                 $tail .= 'lightbox/';
             }
@@ -118,7 +118,7 @@ class DMZ_Koken
             $date = $options['date']['timestamp'];
         }
 
-        if (isset($options['tag']) && $options['tag'] && strpos($options['tag'], ',') === false && $model !== 'set' && $this->get_url("tag_$model")) {
+        if (isset($options['tag']) && $options['tag'] && !str_contains((string) $options['tag'], ',') && $model !== 'set' && $this->get_url("tag_$model")) {
             $content_template = $this->get_url($model);
             $content_url = $this->url_data[$model]['url'];
             if (is_numeric($options['tag'])) {
@@ -135,7 +135,7 @@ class DMZ_Koken
             $template = $this->get_url('feature');
         } else {
             if (isset($options['limit_to']) && $options['limit_to']) {
-                $model .= '_' . rtrim($options['limit_to'], 's') . 's';
+                $model .= '_' . rtrim((string) $options['limit_to'], 's') . 's';
             }
             $template = $this->get_url($model);
         }
@@ -156,10 +156,7 @@ class DMZ_Koken
         if ((isset($object->visibility) && (int) $object->visibility === 1) || (isset($object->listed) && $object->listed < 1)) {
             $data['id'] = $data['slug'] = $object->internal_id;
         } else {
-            $data = array(
-                'id' => $object->id,
-                'slug' => $object->slug
-            );
+            $data = ['id' => $object->id, 'slug' => $object->slug];
 
             if ($model === 'tag' && is_numeric($data['slug'])) {
                 $data['slug'] = 'tag-' . $data['slug'];
@@ -189,13 +186,13 @@ class DMZ_Koken
             $template = str_replace(':' . $magic, urlencode($data[$magic]), $template);
         }
 
-        return array( $template, $this->get_base() . $template . (defined('DRAFT_CONTEXT') && !is_numeric(DRAFT_CONTEXT) ? '&preview=' . DRAFT_CONTEXT : '') );
+        return [$template, $this->get_base() . $template . (defined('DRAFT_CONTEXT') && !is_numeric(DRAFT_CONTEXT) ? '&preview=' . DRAFT_CONTEXT : '')];
     }
 
-    public function prepare_for_output($object, $options, $exclude = array(), $booleans = array(), $dates = array(), $strings = array())
+    public function prepare_for_output($object, $options, $exclude = [], $booleans = [], $dates = [], $strings = [])
     {
         if (isset($options['fields'])) {
-            $fields = explode(',', $options['fields']);
+            $fields = explode(',', (string) $options['fields']);
         } else {
             $fields = $object->fields;
         }
@@ -205,15 +202,11 @@ class DMZ_Koken
 
         foreach ($public_fields as $name) {
             $val = $object->{$name};
-            if (preg_match('/_on$/', $name)) {
+            if (preg_match('/_on$/', (string) $name)) {
                 if (is_numeric($val)) {
-                    $val = array(
-                            'datetime' => date('Y/m/d G:i:s', $val),
-                            'timestamp' => (int) $val,
-                            'utc' => $name !== 'captured_on'
-                        );
+                    $val = ['datetime' => date('Y/m/d G:i:s', $val), 'timestamp' => (int) $val, 'utc' => $name !== 'captured_on'];
                 } else {
-                    $val = array('datetime' => null, 'timestamp' => null);
+                    $val = ['datetime' => null, 'timestamp' => null];
                 }
             } elseif (in_array($name, $booleans)) {
                 $val = (bool) $val;
@@ -224,7 +217,7 @@ class DMZ_Koken
             }
             $data[$name] = $val;
         }
-        return array($data, $fields);
+        return [$data, $fields];
     }
 
     public function paginate($object, $options): array
@@ -246,10 +239,7 @@ class DMZ_Koken
             }
             $object->limit($options['limit'], $start);
         } else {
-            $final = array(
-                'page' => 1,
-                'pages' => 1
-            );
+            $final = ['page' => 1, 'pages' => 1];
         }
         return $final;
     }
@@ -263,12 +253,12 @@ class DMZ_Koken
         foreach ($r->result() as $row) {
             $row = (array) $row;
             $keys = array_keys($row);
-            $permissions_str = strtolower($row[$keys[0]]);
+            $permissions_str = strtolower((string) $row[$keys[0]]);
 
             preg_match('/grant (.*) privileges/', $permissions_str, $matches);
             if ($matches) {
                 $p = $matches[1];
-                $has = $p === 'all' || strpos($p, $perm) !== -1;
+                $has = $p === 'all' || strpos($p, (string) $perm) !== -1;
             }
 
             if ($has) {

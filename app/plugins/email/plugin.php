@@ -10,6 +10,7 @@ class DDI_Email extends KokenPlugin implements KokenEmail
         $this->register_email_handler('Built-in PHP mailer');
     }
 
+    #[\Override]
     public function send($fromEmail, $fromName, $toEmail, $subject, $message)
     {
         require_once 'swift/swift_required.php';
@@ -18,9 +19,9 @@ class DDI_Email extends KokenPlugin implements KokenEmail
         $mailer = Swift_Mailer::newInstance($transport);
 
         $message = Swift_Message::newInstance($subject)
-            ->setFrom(array($toEmail))
-            ->setReplyTo(array($fromEmail => $fromName))
-            ->setTo(array($toEmail))
+            ->setFrom([$toEmail])
+            ->setReplyTo([$fromEmail => $fromName])
+            ->setTo([$toEmail])
             ->setBody($message);
 
         $result = $mailer->send($message);

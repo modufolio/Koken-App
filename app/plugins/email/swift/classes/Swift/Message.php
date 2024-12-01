@@ -43,7 +43,7 @@ class Swift_Message extends Swift_Mime_SimpleMessage
     public function __construct($subject = null, $body = null, $contentType = null, $charset = null)
     {
         call_user_func_array(
-            array($this, 'Swift_Mime_SimpleMessage::__construct'),
+            [$this, 'Swift_Mime_SimpleMessage::__construct'],
             Swift_DependencyContainer::getInstance()
                 ->createDependenciesFor('mime.message')
         );
@@ -144,6 +144,7 @@ class Swift_Message extends Swift_Mime_SimpleMessage
      *
      * @return string
      */
+    #[\Override]
     public function toString()
     {
         if (empty($this->headerSigners) && empty($this->bodySigners)) {
@@ -166,6 +167,7 @@ class Swift_Message extends Swift_Mime_SimpleMessage
      *
      * @param Swift_InputByteStream $is
      */
+    #[\Override]
     public function toByteStream(Swift_InputByteStream $is)
     {
         if (empty($this->headerSigners) && empty($this->bodySigners)) {
@@ -219,11 +221,11 @@ class Swift_Message extends Swift_Mime_SimpleMessage
      */
     protected function saveMessage()
     {
-        $this->savedMessage = array('headers' => array());
+        $this->savedMessage = ['headers' => []];
         $this->savedMessage['body'] = $this->getBody();
         $this->savedMessage['children'] = $this->getChildren();
         if (count($this->savedMessage['children']) > 0 && $this->getBody() != '') {
-            $this->setChildren(array_merge(array($this->_becomeMimePart()), $this->savedMessage['children']));
+            $this->setChildren(array_merge([$this->_becomeMimePart()], $this->savedMessage['children']));
             $this->setBody('');
         }
     }
@@ -235,7 +237,7 @@ class Swift_Message extends Swift_Mime_SimpleMessage
     protected function saveHeaders(array $altered)
     {
         foreach ($altered as $head) {
-            $lc = strtolower($head);
+            $lc = strtolower((string) $head);
 
             if (!isset($this->savedMessage['headers'][$lc])) {
                 $this->savedMessage['headers'][$lc] = $this->getHeaders()->getAll($head);
@@ -275,6 +277,7 @@ class Swift_Message extends Swift_Mime_SimpleMessage
      * Clone Message Signers
      * @see Swift_Mime_SimpleMimeEntity::__clone()
      */
+    #[\Override]
     public function __clone()
     {
         parent::__clone();

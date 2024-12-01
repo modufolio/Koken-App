@@ -50,7 +50,7 @@
 if (! function_exists('trim_slashes')) {
     function trim_slashes($str)
     {
-        return trim($str, '/');
+        return trim((string) $str, '/');
     }
 }
 
@@ -73,7 +73,7 @@ if (! function_exists('strip_slashes')) {
                 $str[$key] = strip_slashes($val);
             }
         } else {
-            $str = stripslashes($str);
+            $str = stripslashes((string) $str);
         }
 
         return $str;
@@ -94,7 +94,7 @@ if (! function_exists('strip_slashes')) {
 if (! function_exists('strip_quotes')) {
     function strip_quotes($str)
     {
-        return str_replace(array('"', "'"), '', $str);
+        return str_replace(['"', "'"], '', $str);
     }
 }
 
@@ -112,7 +112,7 @@ if (! function_exists('strip_quotes')) {
 if (! function_exists('quotes_to_entities')) {
     function quotes_to_entities($str)
     {
-        return str_replace(array("\'","\"","'",'"'), array("&#39;","&quot;","&#39;","&quot;"), $str);
+        return str_replace(["\'", "\"", "'", '"'], ["&#39;", "&quot;", "&#39;", "&quot;"], $str);
     }
 }
 
@@ -137,7 +137,7 @@ if (! function_exists('quotes_to_entities')) {
 if (! function_exists('reduce_double_slashes')) {
     function reduce_double_slashes($str)
     {
-        return preg_replace("#(^|[^:])//+#", "\\1/", $str);
+        return preg_replace("#(^|[^:])//+#", "\\1/", (string) $str);
     }
 }
 
@@ -163,10 +163,10 @@ if (! function_exists('reduce_double_slashes')) {
 if (! function_exists('reduce_multiples')) {
     function reduce_multiples($str, $character = ',', $trim = false)
     {
-        $str = preg_replace('#'.preg_quote($character, '#').'{2,}#', $character, $str);
+        $str = preg_replace('#'.preg_quote((string) $character, '#').'{2,}#', (string) $character, (string) $str);
 
         if ($trim === true) {
-            $str = trim($str, $character);
+            $str = trim((string) $str, $character);
         }
 
         return $str;
@@ -285,7 +285,7 @@ if (! function_exists('alternator')) {
 if (! function_exists('repeater')) {
     function repeater($data, $num = 1)
     {
-        return (($num > 0) ? str_repeat($data, $num) : '');
+        return (($num > 0) ? str_repeat((string) $data, $num) : '');
     }
 }
 

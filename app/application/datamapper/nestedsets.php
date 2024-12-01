@@ -89,7 +89,7 @@ class DMZ_Nestedsets
      * @return	void
      * @access	public
      */
-    public function __construct($options = array(), $object = null)
+    public function __construct($options = [], $object = null)
     {
         // do we have the datamapper object
         if (! is_null($object)) {
@@ -108,7 +108,7 @@ class DMZ_Nestedsets
      * @return	object	the updated DataMapper object
      * @access	public
      */
-    public function tree_config($object, $options = array())
+    public function tree_config($object, $options = [])
     {
         // make sure the load-time options parameter is an array
         if (! is_array($options)) {
@@ -121,7 +121,7 @@ class DMZ_Nestedsets
         }
 
         // loop through all options
-        foreach (array( $object->nestedsets, $options ) as $optarray) {
+        foreach ([$object->nestedsets, $options] as $optarray) {
             foreach ($optarray as $key => $value) {
                 switch ($key) {
                     case 'name':
@@ -1016,7 +1016,7 @@ class DMZ_Nestedsets
             // do we need a sub-selection of attributes?
             if (is_array($attributes)) {
                 // make sure required fields are present
-                $fields = array_merge($attributes, array('id', $this->_leftindex, $this->_rightindex));
+                $fields = array_merge($attributes, ['id', $this->_leftindex, $this->_rightindex]);
                 if (! empty($this->_nodename) && ! isset($fields[$this->_nodename])) {
                     $fields[] = $this->_nodename;
                 }
@@ -1051,7 +1051,7 @@ class DMZ_Nestedsets
 
             // create the path
             if (! empty($this->_nodename)) {
-                $path = array( $object->{$this->_nodename} );
+                $path = [$object->{$this->_nodename}];
             } else {
                 $path = [];
             }
@@ -1077,7 +1077,7 @@ class DMZ_Nestedsets
             }
 
             // convert the result to output
-            if (in_array($type, array('tab', 'csv', 'html'))) {
+            if (in_array($type, ['tab', 'csv', 'html'])) {
                 // storage for the result
                 $convert = '';
 
@@ -1164,7 +1164,7 @@ class DMZ_Nestedsets
 
             // select the range
             $object->where($this->_leftindex.' >=', $first);
-            $object->update(array($this->_leftindex => $this->_leftindex.$delta), false);
+            $object->update([$this->_leftindex => $this->_leftindex.$delta], false);
 
             // if we have multiple roots
             if (in_array($this->_rootfield, $object->fields) && ! is_null($this->_rootindex)) {
@@ -1175,7 +1175,7 @@ class DMZ_Nestedsets
             // select the range
             $object->where($this->_rightindex.' >=', $first);
 
-            $object->update(array($this->_rightindex => $this->_rightindex.$delta), false);
+            $object->update([$this->_rightindex => $this->_rightindex.$delta], false);
         }
 
         // return the object
@@ -1213,7 +1213,7 @@ class DMZ_Nestedsets
             // set the delta
             $delta = $delta >= 0 ? (' + '.$delta) : (' - '.(abs($delta)));
 
-            $object->update(array($this->_leftindex => $this->_leftindex.$delta, $this->_rightindex => $this->_rightindex.$delta), false);
+            $object->update([$this->_leftindex => $this->_leftindex.$delta, $this->_rightindex => $this->_rightindex.$delta], false);
         }
 
         // return the object

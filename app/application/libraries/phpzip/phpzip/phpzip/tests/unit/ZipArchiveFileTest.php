@@ -101,7 +101,7 @@ class ZipArchiveFileTest /*extends \PHPUnit_Framework_TestCase*/
         if ($handle) {
             /* This is the correct way to loop over the directory. */
             while (false !== ($file = readdir($handle))) {
-                if (strpos($file, ".html") !== false) {
+                if (str_contains($file, ".html")) {
                     $pathData = pathinfo($fileDir . $file);
                     $fileName = $pathData['filename'];
 
@@ -116,7 +116,7 @@ class ZipArchiveFileTest /*extends \PHPUnit_Framework_TestCase*/
 
     public function test3()
     {
-        set_error_handler(__CLASS__ . '::_customError');
+        set_error_handler(self::class . '::_customError');
         error_reporting(E_ALL | E_STRICT);
         ini_set('error_reporting', E_ALL | E_STRICT);
         ini_set('display_errors', 1);
@@ -138,9 +138,7 @@ class ZipArchiveFileTest /*extends \PHPUnit_Framework_TestCase*/
         // Setting this to a function to create the temp files requires PHP 5.3 or newer:
         //Zip::$temp = function() { return tempnam(sys_get_temp_dir(), 'Zip');};
         //Zip::$temp = function() { return "./tempFile_" . rand(100000, 999999);};
-        ZipArchiveFile::$temp = function () {
-            return "./tempFile_" . rand(100000, 999999);
-        };
+        ZipArchiveFile::$temp = fn() => "./tempFile_" . random_int(100000, 999999);
 
         //$zip = new Zip();
         $zip = new ZipArchiveFile();
@@ -153,7 +151,7 @@ class ZipArchiveFileTest /*extends \PHPUnit_Framework_TestCase*/
         @$handle = opendir($fileDir);
         if ($handle) {
             while (false !== ($file = readdir($handle))) {
-                if (strpos($file, ".php") !== false) {
+                if (str_contains($file, ".php")) {
                     $pathData = pathinfo($fileDir . $file);
                     $fileName = $pathData['filename'];
 
@@ -251,7 +249,7 @@ class ZipArchiveFileTest /*extends \PHPUnit_Framework_TestCase*/
         @$handle = opendir($fileDir);
         if ($handle) {
             while (false !== ($file = readdir($handle))) {
-                if (strpos($file, ".php") !== false) {
+                if (str_contains($file, ".php")) {
                     $pathData = pathinfo($fileDir . $file);
                     $fileName = $pathData['filename'];
 

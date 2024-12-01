@@ -6,7 +6,7 @@
 
 function koken_rand()
 {
-    $base = function_exists('mt_rand') ? mt_rand() : rand();
+    $base = function_exists('mt_rand') ? mt_rand() : random_int(0, mt_getrandmax());
     return md5(uniqid($base, true));
 }
 
@@ -19,21 +19,21 @@ function koken_format_tags($tags)
         $pattern = '/[^\w0-9\-\._\s,]+/u';
     }
     // Strip unwanted characters
-    $tags = preg_replace($pattern, '', $tags);
+    $tags = preg_replace($pattern, '', (string) $tags);
     // Collapse multiple spaces or commas
-    $tags = preg_replace('/\s+/', ' ', $tags);
-    $tags = preg_replace('/\,+/', ',', $tags);
+    $tags = preg_replace('/\s+/', ' ', (string) $tags);
+    $tags = preg_replace('/\,+/', ',', (string) $tags);
     // Commafy tags for fast storage/searching in DB
-    $tags = ',' . trim($tags) . ',';
+    $tags = ',' . trim((string) $tags) . ',';
 
     // One last cleanup
-    $tags = preg_replace('/\,+/', ',', preg_replace($pattern, '', $tags));
+    $tags = preg_replace('/\,+/', ',', (string) preg_replace($pattern, '', $tags));
     if (function_exists('mb_strtolower')) {
         // strtolower screws up unicode, so use this if avail.
-        $tags = mb_strtolower($tags);
+        $tags = mb_strtolower((string) $tags);
     }
 
-    return array_unique(explode(',', trim($tags, ',')));
+    return array_unique(explode(',', trim((string) $tags, ',')));
 }
 
 function create_htaccess($symlink = false, $redirect = false)
@@ -44,8 +44,8 @@ function create_htaccess($symlink = false, $redirect = false)
         $doc_root = $_SERVER['DOCUMENT_ROOT'];
     }
 
-    $base = trim(preg_replace('/\/api\.php(.*)?$/', '', $_SERVER['SCRIPT_NAME']), '/');
-    $doc_base = trim(str_replace($doc_root, '', preg_replace('/\/api\.php(.*)?$/', '', $_SERVER['SCRIPT_FILENAME'])), '/');
+    $base = trim((string) preg_replace('/\/api\.php(.*)?$/', '', (string) $_SERVER['SCRIPT_NAME']), '/');
+    $doc_base = trim(str_replace($doc_root, '', preg_replace('/\/api\.php(.*)?$/', '', (string) $_SERVER['SCRIPT_FILENAME'])), '/');
     $template = file_get_contents(FCPATH . 'app' . DIRECTORY_SEPARATOR . 'application' . DIRECTORY_SEPARATOR . 'httpd' . DIRECTORY_SEPARATOR . '.htaccess' . ($redirect ? '-301' : ''));
 
     if (empty($doc_base)) {
@@ -55,7 +55,7 @@ function create_htaccess($symlink = false, $redirect = false)
     }
 
     if ($symlink) {
-        $php_base = trim($symlink, '/');
+        $php_base = trim((string) $symlink, '/');
         $base_folder_clean = $php_base === '/' ? '/' : "/$php_base";
 
         $template = preg_replace('~\?url=/(\$1)?~', '?url=/$1&base_folder=' . $base_folder_clean, $template);
@@ -84,7 +84,7 @@ function create_htaccess($symlink = false, $redirect = false)
     }
 
 
-    if (strpos(strtolower($_SERVER['SERVER_SOFTWARE']), 'ideawebserver') !== false) {
+    if (str_contains(strtolower((string) $_SERVER['SERVER_SOFTWARE']), 'ideawebserver')) {
         // IdeaWebServer. Why?
         $mime = <<<MIME
 :Location *.lens
@@ -125,7 +125,7 @@ function make_child_dir($path)
     }
 
     // Make sure parent exists
-    $parent = dirname($path);
+    $parent = dirname((string) $path);
     if (!is_dir($parent)) {
         make_child_dir($parent);
     }
@@ -164,14 +164,7 @@ function array_merge_custom($arr1, $arr2)
 
 function time_ago($date)
 {
-    $units = array(
-        31556926 => array('%s year ago', '%s years ago'),
-        2629744  => array('%s month ago', '%s months ago'),
-        604800   => array('%s week ago', '%s weeks ago'),
-        86400    => array('%s day ago',  '%s days ago'),
-        3600     => array('%s hour ago', '%s hours ago'),
-        60       => array('%s min ago',  '%s mins ago'),
-    ) ;
+    $units = [31556926 => ['%s year ago', '%s years ago'], 2629744  => ['%s month ago', '%s months ago'], 604800   => ['%s week ago', '%s weeks ago'], 86400    => ['%s day ago', '%s days ago'], 3600     => ['%s hour ago', '%s hours ago'], 60       => ['%s min ago', '%s mins ago']] ;
 
     $diff = time() - $date;
 
@@ -194,8 +187,8 @@ if (!function_exists('directory_copy')) {
     function directory_copy($srcdir, $dstdir)
     {
         //preparing the paths
-        $srcdir=rtrim($srcdir, '/');
-        $dstdir=rtrim($dstdir, '/');
+        $srcdir=rtrim((string) $srcdir, '/');
+        $dstdir=rtrim((string) $dstdir, '/');
 
         //creating the destination directory
         if (!is_dir($dstdir)) {

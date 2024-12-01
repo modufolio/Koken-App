@@ -245,7 +245,7 @@ class Str
             $string
         );
 
-        return preg_replace('/[^\x09\x0A\x0D\x20-\x7E]/', '', $string);
+        return preg_replace('/[^\x09\x0A\x0D\x20-\x7E]/', '', (string) $string);
     }
 
     /**
@@ -305,11 +305,7 @@ class Str
      */
     public static function camel(string $value): string
     {
-        if (isset(static::$camelCache[$value])) {
-            return static::$camelCache[$value];
-        }
-
-        return static::$camelCache[$value] = lcfirst(static::studly($value));
+        return static::$camelCache[$value] ?? (static::$camelCache[$value] = lcfirst(static::studly($value)));
     }
 
 
@@ -437,8 +433,8 @@ class Str
 
         for ($i = 0; $i < static::length($string); $i++) {
             $char = static::substr($string, $i, 1);
-            list(, $code) = unpack('N', mb_convert_encoding($char, 'UCS-4BE', 'UTF-8'));
-            $encoded .= rand(1, 2) === 1 ? '&#' . $code . ';' : '&#x' . dechex($code) . ';';
+            [, $code] = unpack('N', mb_convert_encoding($char, 'UCS-4BE', 'UTF-8'));
+            $encoded .= random_int(1, 2) === 1 ? '&#' . $code . ';' : '&#x' . dechex($code) . ';';
         }
 
         return $encoded;
@@ -498,7 +494,7 @@ class Str
             $string = preg_replace('#\s*<([^\/])#', ' <${1}', $string);
 
             // in strip mode, we always return plain text
-            $string = strip_tags($string);
+            $string = strip_tags((string) $string);
         }
 
         // replace line breaks with spaces
@@ -812,7 +808,7 @@ class Str
         while (($currentLength = strlen($result)) < $length) {
             $missing = $length - $currentLength;
             $bytes = random_bytes($missing);
-            $result .= substr(preg_replace($regex, '', base64_encode($bytes)), 0, $missing);
+            $result .= substr((string) preg_replace($regex, '', base64_encode($bytes)), 0, $missing);
         }
 
         return $result;
@@ -862,7 +858,7 @@ class Str
      */
     public static function reverse(string $value): string
     {
-        return implode(array_reverse(mb_str_split($value)));
+        return implode('', array_reverse(mb_str_split($value)));
     }
 
     /**
@@ -941,12 +937,12 @@ class Str
                 $position = -1;
 
                 for ($i = 0; $i < $replacement['limit']; $i++) {
-                    $position = strpos($string, $replacement['search'], $position + 1);
+                    $position = strpos($string, (string) $replacement['search'], $position + 1);
 
                     if (is_int($position) === true) {
-                        $string = substr_replace($string, $replacement['replace'], $position, strlen($replacement['search']));
+                        $string = substr_replace($string, $replacement['replace'], $position, strlen((string) $replacement['search']));
                         // adapt $pos to the now changed offset
-                        $position = $position + strlen($replacement['replace']) - strlen($replacement['search']);
+                        $position = $position + strlen((string) $replacement['replace']) - strlen((string) $replacement['search']);
                     } else {
                         // no more match in the string
                         break;
@@ -1019,19 +1015,19 @@ class Str
      */
     public static function slug(string $string = null, string $separator = null, string $allowed = null, int $maxlength = 128): string
     {
-        $separator = $separator ?? static::$defaults['slug']['separator'];
-        $allowed = $allowed ?? static::$defaults['slug']['allowed'];
+        $separator ??= static::$defaults['slug']['separator'];
+        $allowed ??= static::$defaults['slug']['allowed'];
 
-        $string = trim($string);
+        $string = trim((string) $string);
         $string = static::lower($string);
         $string = static::ascii($string);
 
         // replace spaces with simple dashes
-        $string = preg_replace('![^' . $allowed . ']!i', $separator, $string);
+        $string = preg_replace('![^' . $allowed . ']!i', (string) $separator, $string);
 
-        if (strlen($separator) > 0) {
+        if (strlen((string) $separator) > 0) {
             // remove double separators
-            $string = preg_replace('![' . preg_quote($separator) . ']{2,}!', $separator, $string);
+            $string = preg_replace('![' . preg_quote((string) $separator) . ']{2,}!', (string) $separator, (string) $string);
         }
 
         // replace slashes with dashes
@@ -1039,7 +1035,7 @@ class Str
 
         // trim leading and trailing non-word-chars
         $string = preg_replace('!^[^a-z0-9]+!', '', $string);
-        $string = preg_replace('![^a-z0-9]+$!', '', $string);
+        $string = preg_replace('![^a-z0-9]+$!', '', (string) $string);
 
         // cut the string after the given maxlength
         return static::short($string, $maxlength, '');
@@ -1126,9 +1122,9 @@ class Str
      */
     public static function snake(string $value = null, string $delimiter = '_'): string
     {
-        if (!ctype_lower($value)) {
-            $value = preg_replace('/\s+/u', '', ucwords($value));
-            $value = static::lower(preg_replace('/(.)(?=[A-Z])/u', '$1' . $delimiter, $value));
+        if (!ctype_lower((string) $value)) {
+            $value = preg_replace('/\s+/u', '', ucwords((string) $value));
+            $value = static::lower(preg_replace('/(.)(?=[A-Z])/u', '$1' . $delimiter, (string) $value));
         }
         return $value;
     }
@@ -1250,7 +1246,7 @@ class Str
             if (str_contains($query, '.')) {
                 try {
                     $result = (new Query($match[1], $data))->result();
-                } catch (Exception $e) {
+                } catch (Exception) {
                     $result = null;
                 }
             } else {
@@ -1305,10 +1301,9 @@ class Str
      * Convert the string to the given type
      *
      * @param string $string
-     * @param mixed $type
      * @return mixed
      */
-    public static function toType(string $string, $type = null)
+    public static function toType(string $string, mixed $type = null)
     {
         if ($type === null) {
             $type = self::getType($string);
@@ -1445,9 +1440,7 @@ class Str
         $string ??= '';
 
         // Replace space between last word and punctuation
-        $string = preg_replace_callback('|(\S)\s(\S?)$|u', function ($matches) {
-            return $matches[1] . '&nbsp;' . $matches[2];
-        }, $string);
+        $string = preg_replace_callback('|(\S)\s(\S?)$|u', fn($matches) => $matches[1] . '&nbsp;' . $matches[2], $string);
 
         // Replace space between last two words
         return preg_replace_callback('|(\s)(?=\S*$)(\S+)|u', function ($matches) {
@@ -1455,6 +1448,6 @@ class Str
                 $matches[2] = str_replace('-', '&#8209;', $matches[2]);
             }
             return '&nbsp;' . $matches[2];
-        }, $string);
+        }, (string) $string);
     }
 }

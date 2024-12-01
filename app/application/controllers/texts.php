@@ -10,14 +10,14 @@ class Texts extends Koken_Controller
     public function oembed_preview()
     {
         if (isset($_POST['url'])) {
-            $data = Shutter::get_oembed(urldecode($_POST['url']));
+            $data = Shutter::get_oembed(urldecode((string) $_POST['url']));
             $this->set_response_data($data);
         }
     }
 
     public function drafts()
     {
-        list($params, ) = $this->parse_params(func_get_args());
+        [$params, ] = $this->parse_params(func_get_args());
         $params['auth'] = $this->auth;
 
         if (!$this->auth) {
@@ -39,7 +39,7 @@ class Texts extends Koken_Controller
 
     public function index()
     {
-        list($params, $id, $slug) = $this->parse_params(func_get_args());
+        [$params, $id, $slug] = $this->parse_params(func_get_args());
         $params['auth'] = $this->auth;
 
         // Create or update
@@ -82,7 +82,7 @@ class Texts extends Koken_Controller
                     }
 
                     try {
-                        $t->from_array($arr, array(), true);
+                        $t->from_array($arr, [], true);
                     } catch (Exception $e) {
                         $this->error('400', $e->getMessage());
                         return;
@@ -94,7 +94,7 @@ class Texts extends Koken_Controller
                         $t->_update_tag_counts();
                     }
 
-                    $arr = $t->to_array(array('expand' => true));
+                    $arr = $t->to_array(['expand' => true]);
 
                     if ($id) {
                         Shutter::hook('text.update', $arr);
@@ -110,9 +110,9 @@ class Texts extends Koken_Controller
                         return;
                     } else {
                         if (is_numeric($id)) {
-                            $id = array($id);
+                            $id = [$id];
                         } else {
-                            $id = explode(',', $id);
+                            $id = explode(',', (string) $id);
                         }
 
                         $tags = [];
@@ -126,7 +126,7 @@ class Texts extends Koken_Controller
                                 $prefix = $text->page_type == 0 ? 'essay' : 'page';
                                 $this->db->query("DELETE FROM {$s->table} WHERE id = '$prefix.{$text->slug}'");
 
-                                Shutter::hook('text.delete', $text->to_array(array('auth' => true)));
+                                Shutter::hook('text.delete', $text->to_array(['auth' => true]));
 
                                 if (!$text->delete()) {
                                     // TODO: More info
@@ -181,10 +181,7 @@ class Texts extends Koken_Controller
             }
 
             if ($final['page_type'] === 'essay' && $page->published) {
-                $options = array(
-                    'neighbors' => false,
-                    'context' => false,
-                );
+                $options = ['neighbors' => false, 'context' => false];
                 $options = array_merge($options, $params);
 
                 if ($options['neighbors']) {
@@ -206,7 +203,7 @@ class Texts extends Koken_Controller
                     $next = new Text();
                     $prev = new Text();
 
-                    $to_arr_options = array('auth' => $this->auth);
+                    $to_arr_options = ['auth' => $this->auth];
 
                     $next
                         ->group_start()
@@ -234,8 +231,8 @@ class Texts extends Koken_Controller
                             ->group_end()
                         ->group_end();
 
-                    if (strpos($options['context'], 'tag-') === 0) {
-                        $tag = str_replace('tag-', '', urldecode($options['context']));
+                    if (str_starts_with((string) $options['context'], 'tag-')) {
+                        $tag = str_replace('tag-', '', urldecode((string) $options['context']));
                         $t = new Tag();
                         $t->where('name', $tag)->get();
                         $to_arr_options['context'] = "tag-$tag";
@@ -252,10 +249,10 @@ class Texts extends Koken_Controller
                             $url = $t->url();
 
                             if ($url) {
-                                list($final['context']['__koken_url'], $final['context']['url']) = $url;
+                                [$final['context']['__koken_url'], $final['context']['url']] = $url;
                             }
                         }
-                    } elseif (strpos($options['context'], 'category-') === 0) {
+                    } elseif (str_starts_with((string) $options['context'], 'category-')) {
                         $category = str_replace('category-', '', $options['context']);
                         $cat = new Category();
                         $cat->where('slug', $category)->get();
@@ -272,7 +269,7 @@ class Texts extends Koken_Controller
                             $url = $cat->url();
 
                             if ($url) {
-                                list($final['context']['__koken_url'], $final['context']['url']) = $url;
+                                [$final['context']['__koken_url'], $final['context']['url']] = $url;
                             }
                         }
                     }
@@ -326,10 +323,10 @@ class Texts extends Koken_Controller
 
     public function feature()
     {
-        list(, $id) = $this->parse_params(func_get_args());
+        [, $id] = $this->parse_params(func_get_args());
 
         if (is_array($id)) {
-            list($text_id, $content_id) = $id;
+            [$text_id, $content_id] = $id;
         } else {
             $text_id = $id;
         }
@@ -342,12 +339,12 @@ class Texts extends Koken_Controller
             $t = $text->get_by_id($text_id);
 
             if (isset($_POST['file'])) {
-                if (strpos($_POST['file'], 'http') === 0) {
+                if (str_starts_with((string) $_POST['file'], 'http')) {
                     if ($text->custom_featured_image) {
                         delete_files(FCPATH . 'storage' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'custom' . DIRECTORY_SEPARATOR . str_replace('.', '-', $text->custom_featured_image), true, 1);
                     }
-                    $info = pathinfo($_POST['file']);
-                    $base = 'custom_oembed_' . $text_id . '.' . (isset($info['extension']) && in_array($info['extension'], array('jpeg', 'jpg', 'gif', 'png')) ? strtolower($info['extension']) : 'jpg');
+                    $info = pathinfo((string) $_POST['file']);
+                    $base = 'custom_oembed_' . $text_id . '.' . (isset($info['extension']) && in_array($info['extension'], ['jpeg', 'jpg', 'gif', 'png']) ? strtolower($info['extension']) : 'jpg');
                     $this->_download($_POST['file'], FCPATH . 'storage' . DIRECTORY_SEPARATOR . 'custom' . DIRECTORY_SEPARATOR . $base);
                     $_POST['file'] = $base;
                 }
@@ -403,15 +400,15 @@ class Texts extends Koken_Controller
             $final = $a->where_related('text', 'id', $id)->listing($params);
             $this->set_response_data($final);
         } else {
-            list($text_id, $album_id) = $id;
+            [$text_id, $album_id] = $id;
 
             $text = new Text();
             $t = $text->get_by_id($text_id);
 
             if (is_numeric($album_id)) {
-                $album_id = array( $album_id );
+                $album_id = [$album_id];
             } else {
-                $album_id = explode(',', $album_id);
+                $album_id = explode(',', (string) $album_id);
             }
 
             $album = new Album();

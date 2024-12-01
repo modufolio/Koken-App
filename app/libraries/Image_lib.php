@@ -87,7 +87,7 @@ class CI_Image_lib
      * @param	string
      * @return	void
      */
-    public function __construct($props = array())
+    public function __construct($props = [])
     {
         if (count($props) > 0) {
             $this->initialize($props);
@@ -108,7 +108,7 @@ class CI_Image_lib
      */
     public function clear()
     {
-        $props = array('source_folder', 'dest_folder', 'source_image', 'full_src_path', 'full_dst_path', 'new_image', 'image_type', 'size_str', 'quality', 'orig_width', 'orig_height', 'width', 'height', 'rotation_angle', 'x_axis', 'y_axis', 'create_fnc', 'copy_fnc', 'wm_overlay_path', 'wm_use_truetype', 'dynamic_output', 'wm_font_size', 'wm_text', 'wm_vrt_alignment', 'wm_hor_alignment', 'wm_padding', 'wm_hor_offset', 'wm_vrt_offset', 'wm_font_color', 'wm_use_drop_shadow', 'wm_shadow_color', 'wm_shadow_distance', 'wm_opacity');
+        $props = ['source_folder', 'dest_folder', 'source_image', 'full_src_path', 'full_dst_path', 'new_image', 'image_type', 'size_str', 'quality', 'orig_width', 'orig_height', 'width', 'height', 'rotation_angle', 'x_axis', 'y_axis', 'create_fnc', 'copy_fnc', 'wm_overlay_path', 'wm_use_truetype', 'dynamic_output', 'wm_font_size', 'wm_text', 'wm_vrt_alignment', 'wm_hor_alignment', 'wm_padding', 'wm_hor_offset', 'wm_vrt_offset', 'wm_font_color', 'wm_use_drop_shadow', 'wm_shadow_color', 'wm_shadow_distance', 'wm_opacity'];
 
         foreach ($props as $val) {
             $this->$val = '';
@@ -127,7 +127,7 @@ class CI_Image_lib
      * @param	array
      * @return	bool
      */
-    public function initialize($props = array())
+    public function initialize($props = [])
     {
         /*
          * Convert array elements into class variables
@@ -162,7 +162,7 @@ class CI_Image_lib
             return false;
         }
 
-        $this->image_library = strtolower($this->image_library);
+        $this->image_library = strtolower((string) $this->image_library);
 
         /*
          * Set the full server path
@@ -178,7 +178,7 @@ class CI_Image_lib
             $full_source_path = $this->source_image;
         }
 
-        $x = explode('/', $full_source_path);
+        $x = explode('/', (string) $full_source_path);
         $this->source_image = end($x);
         $this->source_folder = str_replace($this->source_image, '', $full_source_path);
 
@@ -200,7 +200,7 @@ class CI_Image_lib
             $this->dest_image = $this->source_image;
             $this->dest_folder = $this->source_folder;
         } else {
-            if (strpos($this->new_image, '/') === false and strpos($this->new_image, '\\') === false) {
+            if (!str_contains((string) $this->new_image, '/') and !str_contains((string) $this->new_image, '\\')) {
                 $this->dest_folder = $this->source_folder;
                 $this->dest_image = $this->new_image;
             } else {
@@ -211,11 +211,11 @@ class CI_Image_lib
                 }
 
                 // Is there a file name?
-                if (! preg_match("#\.(jpg|jpeg|gif|png)$#i", $full_dest_path)) {
+                if (! preg_match("#\.(jpg|jpeg|gif|png)$#i", (string) $full_dest_path)) {
                     $this->dest_folder = $full_dest_path.'/';
                     $this->dest_image = $this->source_image;
                 } else {
-                    $x = explode('/', $full_dest_path);
+                    $x = explode('/', (string) $full_dest_path);
                     $this->dest_image = end($x);
                     $this->dest_folder = str_replace($this->dest_image, '', $full_dest_path);
                 }
@@ -285,13 +285,13 @@ class CI_Image_lib
 
         // Watermark-related Stuff...
         if ($this->wm_font_color != '') {
-            if (strlen($this->wm_font_color) == 6) {
+            if (strlen((string) $this->wm_font_color) == 6) {
                 $this->wm_font_color = '#'.$this->wm_font_color;
             }
         }
 
         if ($this->wm_shadow_color != '') {
-            if (strlen($this->wm_shadow_color) == 6) {
+            if (strlen((string) $this->wm_shadow_color) == 6) {
                 $this->wm_shadow_color = '#'.$this->wm_shadow_color;
             }
         }
@@ -369,7 +369,7 @@ class CI_Image_lib
     public function rotate()
     {
         // Allowed rotation values
-        $degs = array(90, 180, 270, 'vrt', 'hor');
+        $degs = [90, 180, 270, 'vrt', 'hor'];
 
         if ($this->rotation_angle == '' or ! in_array($this->rotation_angle, $degs)) {
             $this->set_error('imglib_rotation_angle_required');
@@ -514,8 +514,8 @@ class CI_Image_lib
             return false;
         }
 
-        if (! preg_match("/convert$/i", $this->library_path)) {
-            $this->library_path = rtrim($this->library_path, '/').'/';
+        if (! preg_match("/convert$/i", (string) $this->library_path)) {
+            $this->library_path = rtrim((string) $this->library_path, '/').'/';
 
             $this->library_path .= 'convert';
         }
@@ -526,14 +526,11 @@ class CI_Image_lib
         if ($action == 'crop') {
             $cmd .= " -crop ".$this->width."x".$this->height."+".$this->x_axis."+".$this->y_axis." \"$this->full_src_path\" \"$this->full_dst_path\" 2>&1";
         } elseif ($action == 'rotate') {
-            switch ($this->rotation_angle) {
-                case 'hor': $angle = '-flop';
-                    break;
-                case 'vrt': $angle = '-flip';
-                    break;
-                default: $angle = '-rotate '.$this->rotation_angle;
-                    break;
-            }
+            $angle = match ($this->rotation_angle) {
+                'hor' => '-flop',
+                'vrt' => '-flip',
+                default => '-rotate '.$this->rotation_angle,
+            };
 
             $cmd .= " ".$angle." \"$this->full_src_path\" \"$this->full_dst_path\" 2>&1";
         } else {  // Resize
@@ -807,8 +804,8 @@ class CI_Image_lib
         // invert the offset.  Same with the horizontal
         // offset when the image is at the right
 
-        $this->wm_vrt_alignment = strtoupper(substr($this->wm_vrt_alignment, 0, 1));
-        $this->wm_hor_alignment = strtoupper(substr($this->wm_hor_alignment, 0, 1));
+        $this->wm_vrt_alignment = strtoupper(substr((string) $this->wm_vrt_alignment, 0, 1));
+        $this->wm_hor_alignment = strtoupper(substr((string) $this->wm_hor_alignment, 0, 1));
 
         if ($this->wm_vrt_alignment == 'B') {
             $this->wm_vrt_offset = $this->wm_vrt_offset * -1;
@@ -953,8 +950,8 @@ class CI_Image_lib
             $this->wm_shadow_distance = 0;
         }
 
-        $this->wm_vrt_alignment = strtoupper(substr($this->wm_vrt_alignment, 0, 1));
-        $this->wm_hor_alignment = strtoupper(substr($this->wm_hor_alignment, 0, 1));
+        $this->wm_vrt_alignment = strtoupper(substr((string) $this->wm_vrt_alignment, 0, 1));
+        $this->wm_hor_alignment = strtoupper(substr((string) $this->wm_hor_alignment, 0, 1));
 
         switch ($this->wm_vrt_alignment) {
             case	 "T":
@@ -974,29 +971,29 @@ class CI_Image_lib
                 break;
             case "R":
                         if ($this->wm_use_drop_shadow) {
-                            $x_shad += ($this->orig_width - $fontwidth*strlen($this->wm_text));
+                            $x_shad += ($this->orig_width - $fontwidth*strlen((string) $this->wm_text));
                         }
-                            $x_axis += ($this->orig_width - $fontwidth*strlen($this->wm_text));
+                            $x_axis += ($this->orig_width - $fontwidth*strlen((string) $this->wm_text));
                 break;
             case "C":
                         if ($this->wm_use_drop_shadow) {
-                            $x_shad += floor(($this->orig_width - $fontwidth*strlen($this->wm_text))/2);
+                            $x_shad += floor(($this->orig_width - $fontwidth*strlen((string) $this->wm_text))/2);
                         }
-                            $x_axis += floor(($this->orig_width  -$fontwidth*strlen($this->wm_text))/2);
+                            $x_axis += floor(($this->orig_width  -$fontwidth*strlen((string) $this->wm_text))/2);
                 break;
         }
 
         //  Add the text to the source image
         if ($this->wm_use_truetype) {
             if ($this->wm_use_drop_shadow) {
-                imagettftext($src_img, $this->wm_font_size, 0, $x_shad, $y_shad, $drp_color, $this->wm_font_path, $this->wm_text);
+                imagettftext($src_img, $this->wm_font_size, 0, $x_shad, $y_shad, $drp_color, $this->wm_font_path, (string) $this->wm_text);
             }
-            imagettftext($src_img, $this->wm_font_size, 0, $x_axis, $y_axis, $txt_color, $this->wm_font_path, $this->wm_text);
+            imagettftext($src_img, $this->wm_font_size, 0, $x_axis, $y_axis, $txt_color, $this->wm_font_path, (string) $this->wm_text);
         } else {
             if ($this->wm_use_drop_shadow) {
-                imagestring($src_img, $this->wm_font_size, $x_shad, $y_shad, $this->wm_text, $drp_color);
+                imagestring($src_img, $this->wm_font_size, $x_shad, $y_shad, (string) $this->wm_text, $drp_color);
             }
-            imagestring($src_img, $this->wm_font_size, $x_axis, $y_axis, $this->wm_text, $txt_color);
+            imagestring($src_img, $this->wm_font_size, $x_axis, $y_axis, (string) $this->wm_text, $txt_color);
         }
 
         //  Output the final image
@@ -1037,7 +1034,7 @@ class CI_Image_lib
         switch ($image_type) {
             case	 1:
                         if (! function_exists('imagecreatefromgif')) {
-                            $this->set_error(array('imglib_unsupported_imagecreate', 'imglib_gif_not_supported'));
+                            $this->set_error(['imglib_unsupported_imagecreate', 'imglib_gif_not_supported']);
                             return false;
                         }
 
@@ -1045,7 +1042,7 @@ class CI_Image_lib
                 break;
             case 2:
                         if (! function_exists('imagecreatefromjpeg')) {
-                            $this->set_error(array('imglib_unsupported_imagecreate', 'imglib_jpg_not_supported'));
+                            $this->set_error(['imglib_unsupported_imagecreate', 'imglib_jpg_not_supported']);
                             return false;
                         }
 
@@ -1053,7 +1050,7 @@ class CI_Image_lib
                 break;
             case 3:
                         if (! function_exists('imagecreatefrompng')) {
-                            $this->set_error(array('imglib_unsupported_imagecreate', 'imglib_png_not_supported'));
+                            $this->set_error(['imglib_unsupported_imagecreate', 'imglib_png_not_supported']);
                             return false;
                         }
 
@@ -1062,7 +1059,7 @@ class CI_Image_lib
 
         }
 
-        $this->set_error(array('imglib_unsupported_imagecreate'));
+        $this->set_error(['imglib_unsupported_imagecreate']);
         return false;
     }
 
@@ -1083,7 +1080,7 @@ class CI_Image_lib
         switch ($this->image_type) {
             case 1:
                         if (! function_exists('imagegif')) {
-                            $this->set_error(array('imglib_unsupported_imagecreate', 'imglib_gif_not_supported'));
+                            $this->set_error(['imglib_unsupported_imagecreate', 'imglib_gif_not_supported']);
                             return false;
                         }
 
@@ -1094,7 +1091,7 @@ class CI_Image_lib
                 break;
             case 2:
                         if (! function_exists('imagejpeg')) {
-                            $this->set_error(array('imglib_unsupported_imagecreate', 'imglib_jpg_not_supported'));
+                            $this->set_error(['imglib_unsupported_imagecreate', 'imglib_jpg_not_supported']);
                             return false;
                         }
 
@@ -1105,7 +1102,7 @@ class CI_Image_lib
                 break;
             case 3:
                         if (! function_exists('imagepng')) {
-                            $this->set_error(array('imglib_unsupported_imagecreate', 'imglib_png_not_supported'));
+                            $this->set_error(['imglib_unsupported_imagecreate', 'imglib_png_not_supported']);
                             return false;
                         }
 
@@ -1115,7 +1112,7 @@ class CI_Image_lib
                         }
                 break;
             default:
-                            $this->set_error(array('imglib_unsupported_imagecreate'));
+                            $this->set_error(['imglib_unsupported_imagecreate']);
                             return false;
                 break;
         }
@@ -1221,7 +1218,7 @@ class CI_Image_lib
 
         $vals = @getimagesize($path);
 
-        $types = array(1 => 'gif', 2 => 'jpeg', 3 => 'png');
+        $types = [1 => 'gif', 2 => 'jpeg', 3 => 'png'];
 
         $mime = (isset($types[$vals['2']])) ? 'image/'.$types[$vals['2']] : 'image/jpg';
 
@@ -1270,7 +1267,7 @@ class CI_Image_lib
             return;
         }
 
-        $allowed = array('new_width', 'new_height', 'width', 'height');
+        $allowed = ['new_width', 'new_height', 'width', 'height'];
 
         foreach ($allowed as $item) {
             if (! isset($vals[$item]) or $vals[$item] == '') {
@@ -1309,10 +1306,10 @@ class CI_Image_lib
      */
     public function explode_name($source_image)
     {
-        $ext = strrchr($source_image, '.');
-        $name = ($ext === false) ? $source_image : substr($source_image, 0, -strlen($ext));
+        $ext = strrchr((string) $source_image, '.');
+        $name = ($ext === false) ? $source_image : substr((string) $source_image, 0, -strlen($ext));
 
-        return array('ext' => $ext, 'name' => $name);
+        return ['ext' => $ext, 'name' => $name];
     }
 
     // --------------------------------------------------------------------
@@ -1346,7 +1343,7 @@ class CI_Image_lib
     {
         if (function_exists('gd_info')) {
             $gd_version = @gd_info();
-            $gd_version = preg_replace("/\D/", "", $gd_version['GD Version']);
+            $gd_version = preg_replace("/\D/", "", (string) $gd_version['GD Version']);
 
             return $gd_version;
         }

@@ -39,7 +39,7 @@ if (! function_exists('load_class')) {
 
         // Look for the class first in the native system/libraries folder
         // thenin the local application/libraries folder
-        foreach (array(BASEPATH, APPPATH) as $path) {
+        foreach ([BASEPATH, APPPATH] as $path) {
             if (file_exists($path.$directory.'/'.$class.'.php')) {
                 $name = $prefix.$class;
 

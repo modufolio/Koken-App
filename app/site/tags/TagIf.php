@@ -30,21 +30,21 @@
 
         private function clean_parameter($parameter)
         {
-            $parameter = trim(preg_replace('/(^\{\{)|(\}\}$)/', '', $parameter));
-            if (strpos($parameter, '{{') !== false) {
-                $parameter = preg_replace_callback('/\{\{\s*([^\}]+)\s*\}\}/', array($this, 'parse_dynamic'), $parameter);
+            $parameter = trim((string) preg_replace('/(^\{\{)|(\}\}$)/', '', (string) $parameter));
+            if (str_contains($parameter, '{{')) {
+                $parameter = preg_replace_callback('/\{\{\s*([^\}]+)\s*\}\}/', [$this, 'parse_dynamic'], $parameter);
             }
             return $parameter;
         }
 
         private function tokenize_condition($parameter)
         {
-            return preg_replace_callback('/([a-z_\.]+)/', array($this, 'split_cb'), $this->clean_parameter($parameter));
+            return preg_replace_callback('/([a-z_\.]+)/', [$this, 'split_cb'], (string) $this->clean_parameter($parameter));
         }
 
         private function tokenize_js_condition($parameter)
         {
-            return preg_replace_callback('/([a-z_\.]+)/', array($this, 'split_cb_js'), $this->clean_parameter($parameter));
+            return preg_replace_callback('/([a-z_\.]+)/', [$this, 'split_cb_js'], (string) $this->clean_parameter($parameter));
         }
 
         public function generate()
@@ -91,16 +91,16 @@
                     break;
 
                 case isset($this->parameters['condition']):
-                    $condition = $js_condition = preg_replace_callback('/\{{1,2}\s*([a-z_.]+)\s*\}{1,2}/', array($this, 'condition_parse'), $this->parameters['condition']);
+                    $condition = $js_condition = preg_replace_callback('/\{{1,2}\s*([a-z_.]+)\s*\}{1,2}/', [$this, 'condition_parse'], (string) $this->parameters['condition']);
                     break;
 
             }
 
-            if (strpos($condition, 'settings') !== false && (!isset($this->parameters['live']) || $this->parameters['live'] != 'false')) {
+            if (str_contains((string) $condition, 'settings') && (!isset($this->parameters['live']) || $this->parameters['live'] != 'false')) {
                 $this->can_live_update = true;
-                $js_settings = preg_match_all('/Koken::\$settings\[\'([^\']+)\'\]/', $js_condition, $matches);
+                $js_settings = preg_match_all('/Koken::\$settings\[\'([^\']+)\'\]/', (string) $js_condition, $matches);
                 $this->data_attrs = ' data-' . join('="true" data-', $matches[1]) . '="true"';
-                $this->js_condition = str_replace("'", "\'", preg_replace('/Koken::\$settings\[\'([^\']+)\'\]/', '__setting.$1', $js_condition));
+                $this->js_condition = str_replace("'", "\'", preg_replace('/Koken::\$settings\[\'([^\']+)\'\]/', '__setting.$1', (string) $js_condition));
             } else {
                 $this->data_attrs = '';
                 $this->can_live_update = false;

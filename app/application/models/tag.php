@@ -2,34 +2,22 @@
 
 class Tag extends Koken
 {
-    public array $has_many = array(
-        'content',
-        'album',
-        'text'
-    );
+    public array $has_many = ['content', 'album', 'text'];
 
-    public function to_array($params = array())
+    public function to_array($params = [])
     {
-        $params = array_merge(array('limit_to' => false), $params);
+        $params = array_merge(['limit_to' => false], $params);
 
-        $data = array(
-            'id' => $this->id,
-            'title' => $this->name,
-            '__koken__' => 'tag',
-        );
+        $data = ['id' => $this->id, 'title' => $this->name, '__koken__' => 'tag'];
 
-        $data['counts'] = array(
-            'content' => (int) $this->content_count,
-            'albums' => (int) $this->album_count,
-            'essays' => (int) $this->text_count
-        );
+        $data['counts'] = ['content' => (int) $this->content_count, 'albums' => (int) $this->album_count, 'essays' => (int) $this->text_count];
 
         $data['counts']['total'] = $data['counts']['content'] + $data['counts']['albums'] + $data['counts']['essays'];
 
         $data['url'] = $this->url($params);
 
         if ($data['url']) {
-            list($data['__koken_url'], $data['url']) = $data['url'];
+            [$data['__koken_url'], $data['url']] = $data['url'];
         }
 
         $koken_url_info = $this->config->item('koken_url_info');
@@ -40,17 +28,9 @@ class Tag extends Koken
         return $data;
     }
 
-    public function listing($params = array())
+    public function listing($params = [])
     {
-        $defaults = array(
-            'order_by' => 'count',
-            'order_direction' => 'DESC',
-            'floor' => 1,
-            'tags' => false,
-            'limit_to' => false,
-            'page' => false,
-            'limit' => false
-        );
+        $defaults = ['order_by' => 'count', 'order_direction' => 'DESC', 'floor' => 1, 'tags' => false, 'limit_to' => false, 'page' => false, 'limit' => false];
 
         $options = array_merge($defaults, $params);
 
@@ -61,31 +41,31 @@ class Tag extends Koken
             if (!isset($params['order_direction'])) {
                 $options['order_direction'] = 'ASC';
             }
-        } elseif (strpos($options['order_by'], 'count') === false) {
+        } elseif (!str_contains((string) $options['order_by'], 'count')) {
             $options['order_by'] = 'count';
         }
 
         if ($options['limit_to']) {
-            $count_col = str_replace('essay', 'text', rtrim($options['limit_to'], 's')) . '_count';
-            if (!in_array($options['order_by'], array('last_used', 'name'))) {
+            $count_col = str_replace('essay', 'text', rtrim((string) $options['limit_to'], 's')) . '_count';
+            if (!in_array($options['order_by'], ['last_used', 'name'])) {
                 $options['order_by'] = $count_col;
             }
 
             $this->where($count_col . ' >=', $options['floor']);
         } else {
-            $this->where_func('', array('@content_count', '+', '@text_count',  '+',  '@album_count', '>=', $options['floor']), null);
+            $this->where_func('', ['@content_count', '+', '@text_count', '+', '@album_count', '>=', $options['floor']], null);
         }
 
         $final = $this->paginate($options);
 
         if ($options['order_by'] === 'count') {
-            $this->order_by_func('', array('@content_count', '+', '@text_count',  '+',  '@album_count'), $options['order_direction']);
+            $this->order_by_func('', ['@content_count', '+', '@text_count', '+', '@album_count'], $options['order_direction']);
         } else {
             $this->order_by($options['order_by'] . ' ' . $options['order_direction']);
         }
 
         // If count based order, add secondary sort to break ties
-        if (strpos($options['order_by'], 'count') !== false) {
+        if (str_contains((string) $options['order_by'], 'count')) {
             $this->order_by('name ASC');
         }
 

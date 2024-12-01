@@ -188,11 +188,11 @@ class CI_Output
         // the reduction, causing the browser to hang waiting for more data.
         // We'll just skip content-length in those cases.
 
-        if ($this->_zlib_oc && strncasecmp($header, 'content-length', 14) == 0) {
+        if ($this->_zlib_oc && strncasecmp((string) $header, 'content-length', 14) == 0) {
             return;
         }
 
-        $this->headers[] = array($header, $replace);
+        $this->headers[] = [$header, $replace];
 
         return $this;
     }
@@ -208,8 +208,8 @@ class CI_Output
      */
     public function set_content_type($mime_type)
     {
-        if (strpos($mime_type, '/') === false) {
-            $extension = ltrim($mime_type, '.');
+        if (!str_contains((string) $mime_type, '/')) {
+            $extension = ltrim((string) $mime_type, '.');
 
             // Is this extension supported?
             if (isset($this->mime_types[$extension])) {
@@ -223,7 +223,7 @@ class CI_Output
 
         $header = 'Content-Type: '.$mime_type;
 
-        $this->headers[] = array($header, true);
+        $this->headers[] = [$header, true];
 
         return $this;
     }
@@ -353,7 +353,7 @@ class CI_Output
         if ($this->parse_exec_vars === true) {
             $memory	 = (! function_exists('memory_get_usage')) ? '0' : round(memory_get_usage()/1024/1024, 2).'MB';
 
-            $output = $output ? str_replace(array('{elapsed_time}', '{memory_usage}'), array($elapsed, $memory), $output): "";
+            $output = $output ? str_replace(['{elapsed_time}', '{memory_usage}'], [$elapsed, $memory], $output): "";
         }
 
         // --------------------------------------------------------------------
@@ -361,7 +361,7 @@ class CI_Output
         // Is compression requested?
         if ($CFG->item('compress_output') === true && $this->_zlib_oc == false) {
             if (extension_loaded('zlib')) {
-                if (isset($_SERVER['HTTP_ACCEPT_ENCODING']) and strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') !== false) {
+                if (isset($_SERVER['HTTP_ACCEPT_ENCODING']) and str_contains((string) $_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip')) {
                     ob_start('ob_gzhandler');
                 }
             }
@@ -401,8 +401,8 @@ class CI_Output
 
             // If the output data contains closing </body> and </html> tags
             // we will remove them and add them back after we insert the profile data
-            if (preg_match("|</body>.*?</html>|is", $output)) {
-                $output  = preg_replace("|</body>.*?</html>|is", '', $output);
+            if (preg_match("|</body>.*?</html>|is", (string) $output)) {
+                $output  = preg_replace("|</body>.*?</html>|is", '', (string) $output);
                 $output .= $CI->profiler->run();
                 $output .= '</body></html>';
             } else {

@@ -116,11 +116,11 @@ class Update extends Koken_Controller
                     foreach ($plugin->database_fields as $table => $fields) {
                         $table = $db_config['prefix'] . $table;
                         foreach ($fields as $column => $info) {
-                            if (in_array(strtolower($info['type']), array('text', 'varchar', 'longtext'))) {
+                            if (in_array(strtolower((string) $info['type']), ['text', 'varchar', 'longtext'])) {
                                 $info['null'] = true;
                             }
 
-                            $this->dbforge->add_column($table, array( $column => $info ));
+                            $this->dbforge->add_column($table, [$column => $info]);
                         }
                     }
 
@@ -136,7 +136,7 @@ class Update extends Koken_Controller
 
         $this->_compile_plugins();
 
-        die(json_encode(array('done' => $success, 'info' => isset($json) ? $json : array() )));
+        die(json_encode(['done' => $success, 'info' => $json ?? []]));
     }
 
     public function migrate($n = false)
@@ -166,7 +166,7 @@ class Update extends Koken_Controller
 
                     foreach ($info['fields'] as $field_name => $field_info) {
                         if (array_key_exists($field_name, $existing_fields)) {
-                            $field_info['type'] = strtolower($field_info['type']);
+                            $field_info['type'] = strtolower((string) $field_info['type']);
 
                             $compare = (array) $existing_fields[$field_name];
 
@@ -178,7 +178,7 @@ class Update extends Koken_Controller
                                 unset($compare['max_length']);
                             }
 
-                            if (in_array(strtolower($field_info['type']), array('text', 'varchar', 'longtext'))) {
+                            if (in_array(strtolower($field_info['type']), ['text', 'varchar', 'longtext'])) {
                                 $field_info['null'] = true;
                             }
 
@@ -189,14 +189,14 @@ class Update extends Koken_Controller
                             }
 
                             if (!empty($diff)) {
-                                $this->dbforge->modify_column($table, array($field_name => $field_info));
+                                $this->dbforge->modify_column($table, [$field_name => $field_info]);
                             }
                         } else {
-                            if (in_array(strtolower($field_info['type']), array('text', 'varchar', 'longtext'))) {
+                            if (in_array(strtolower((string) $field_info['type']), ['text', 'varchar', 'longtext'])) {
                                 $field_info['null'] = true;
                             }
 
-                            $this->dbforge->add_column($table, array( $field_name => $field_info ));
+                            $this->dbforge->add_column($table, [$field_name => $field_info]);
                         }
                     }
 
@@ -207,7 +207,7 @@ class Update extends Koken_Controller
                                 $key = $this->db->_protect_identifiers($key);
                             } else {
                                 $key_name = $this->db->_protect_identifiers($key);
-                                $key = array($key_name);
+                                $key = [$key_name];
                             }
 
                             $sql = "ALTER TABLE $table ADD KEY {$key_name} (" . implode(', ', $key) . ")";
@@ -259,7 +259,7 @@ class Update extends Koken_Controller
 
             $uuid = $s->value;
 
-            $base_folder = trim(preg_replace('/\/api\.php(.*)?$/', '', $_SERVER['SCRIPT_NAME']), '/');
+            $base_folder = trim((string) preg_replace('/\/api\.php(.*)?$/', '', (string) $_SERVER['SCRIPT_NAME']), '/');
 
             include(FCPATH . 'app' . DIRECTORY_SEPARATOR . 'koken' . DIRECTORY_SEPARATOR . 'DarkroomUtils.php');
 
@@ -267,17 +267,7 @@ class Update extends Koken_Controller
             $libs = DarkroomUtils::libraries();
             $processing_string = $libs[$s->value]['label'];
 
-            $themes = array(
-        'axis' => '86d2f683-9f90-ca3f-d93f-a2e0a9d0a089',
-        'blueprint' => '1a355994-6217-c7ce-b67a-4241be3feae8',
-        'boulevard' => 'b30686d9-3490-9abb-1049-fe419a211502',
-        'chastain' => 'd174e766-5a5f-19eb-d735-5b46ae673a6d',
-        'elementary' => 'be1cb2d9-ed05-2d81-85b4-23282832eb84',
-        'madison' => '618e0b9f-fba0-37eb-810a-6d615d0f0e08',
-        'observatory' => '605ea246-fa37-11f0-f078-d54c8a7cbd3c',
-        'regale' => 'efde04b6-657d-33b6-767d-67af8ef15e7b',
-        'repertoire' => 'fa8a5d39-01a5-dfd6-92ff-65a22af5d5ac'
-      );
+            $themes = ['axis' => '86d2f683-9f90-ca3f-d93f-a2e0a9d0a089', 'blueprint' => '1a355994-6217-c7ce-b67a-4241be3feae8', 'boulevard' => 'b30686d9-3490-9abb-1049-fe419a211502', 'chastain' => 'd174e766-5a5f-19eb-d735-5b46ae673a6d', 'elementary' => 'be1cb2d9-ed05-2d81-85b4-23282832eb84', 'madison' => '618e0b9f-fba0-37eb-810a-6d615d0f0e08', 'observatory' => '605ea246-fa37-11f0-f078-d54c8a7cbd3c', 'regale' => 'efde04b6-657d-33b6-767d-67af8ef15e7b', 'repertoire' => 'fa8a5d39-01a5-dfd6-92ff-65a22af5d5ac'];
 
             $themes_dir = FCPATH .
               'storage' . DIRECTORY_SEPARATOR .
@@ -294,17 +284,7 @@ class Update extends Koken_Controller
                 }
             }
 
-            $plugins = array(
-        'google-analytics' => 'c4e5bc2b-be8b-3ae7-ccbe-d7e7a1a26136',
-        'font-loader' => '5b6016ae-9d1a-2336-78c4-63dbb74d39b3',
-        'koken-spotify' => 'e24a53fc-ac9a-5ab6-5777-237f6dc98496',
-        'koken-rdio' => '84eb1b9a-ea40-c204-5420-c1af5e1bcbe6',
-        'koken-html-injector' => '045cb01a-07a6-02b6-a0df-2ae377ce18af',
-        'koken-pulse-timer' => '6e5cbaa3-9fee-ca89-c989-a7969aa491f3',
-        'koken-pulse-transition-pack' => '7e958135-8e3e-3b34-5ccd-defe39db9400',
-        'koken-disqus' => '0a430465-cb52-be7d-a160-94bf73e40c03',
-        'koken-timeago' => 'bf4ceae8-b2b8-dc16-a439-46a4d915161c',
-      );
+            $plugins = ['google-analytics' => 'c4e5bc2b-be8b-3ae7-ccbe-d7e7a1a26136', 'font-loader' => '5b6016ae-9d1a-2336-78c4-63dbb74d39b3', 'koken-spotify' => 'e24a53fc-ac9a-5ab6-5777-237f6dc98496', 'koken-rdio' => '84eb1b9a-ea40-c204-5420-c1af5e1bcbe6', 'koken-html-injector' => '045cb01a-07a6-02b6-a0df-2ae377ce18af', 'koken-pulse-timer' => '6e5cbaa3-9fee-ca89-c989-a7969aa491f3', 'koken-pulse-transition-pack' => '7e958135-8e3e-3b34-5ccd-defe39db9400', 'koken-disqus' => '0a430465-cb52-be7d-a160-94bf73e40c03', 'koken-timeago' => 'bf4ceae8-b2b8-dc16-a439-46a4d915161c'];
 
             $plugins_dir = FCPATH .
               'storage' . DIRECTORY_SEPARATOR .
@@ -320,25 +300,13 @@ class Update extends Koken_Controller
 
             $this->load->library('webhostwhois');
 
-            $host = new WebhostWhois(array(
-        'useDns' => false
-      ));
+            $host = new WebhostWhois(['useDns' => false]);
 
             if ($host->key === 'unknown' && isset($_SERVER['KOKEN_HOST'])) {
                 $host->key = $_SERVER['KOKEN_HOST'];
             }
 
-            $data = array(
-        'domain' => $_SERVER['HTTP_HOST'],
-        'path' => '/' . $base_folder,
-        'uuid' => $uuid,
-        'php' => PHP_VERSION,
-        'version' => KOKEN_VERSION,
-        'ip' => $_SERVER['SERVER_ADDR'],
-        'image_processing' => urlencode($processing_string),
-        'host' => $host->key,
-        'plugins' => array(),
-      );
+            $data = ['domain' => $_SERVER['HTTP_HOST'], 'path' => '/' . $base_folder, 'uuid' => $uuid, 'php' => PHP_VERSION, 'version' => KOKEN_VERSION, 'ip' => $_SERVER['SERVER_ADDR'], 'image_processing' => urlencode((string) $processing_string), 'host' => $host->key, 'plugins' => []];
 
             $s = new Setting();
             $s->where('name', 'site_url')->get();
@@ -352,10 +320,7 @@ class Update extends Koken_Controller
 
             foreach ($themes as $theme) {
                 if (isset($theme['koken_store_guid'])) {
-                    $data['plugins'][] = array(
-            'guid' => $theme['koken_store_guid'],
-            'version' => $theme['version'],
-          );
+                    $data['plugins'][] = ['guid' => $theme['koken_store_guid'], 'version' => $theme['version']];
                 }
             }
 
@@ -363,10 +328,7 @@ class Update extends Koken_Controller
 
             foreach ($plugins as $plugin) {
                 if (isset($plugin['koken_store_guid'])) {
-                    $data['plugins'][] = array(
-            'guid' => $plugin['koken_store_guid'],
-            'version' => $plugin['version'],
-          );
+                    $data['plugins'][] = ['guid' => $plugin['koken_store_guid'], 'version' => $plugin['version']];
                 }
             }
 
@@ -407,7 +369,7 @@ class Update extends Koken_Controller
             $r = curl_exec($curl);
             curl_close($curl);
 
-            die(json_encode(array('done' => true)));
+            die(json_encode(['done' => true]));
         } elseif ($n) {
             $path = $this->migrate_path . "$n.php";
             $migrate_setting = new Setting();
@@ -422,7 +384,7 @@ class Update extends Koken_Controller
                     $migrate_setting->save();
                 }
 
-                die(json_encode(array('done' => $is_done)));
+                die(json_encode(['done' => $is_done]));
                 exit;
             }
         }
@@ -451,11 +413,11 @@ class Update extends Koken_Controller
             }
         }
 
-        function fail($msg = 'Koken does not have the necessary permissions to perform the update automatically. Try setting the permissions on the entire Koken folder to 777, then try again.')
+        function fail($msg = 'Koken does not have the necessary permissions to perform the update automatically. Try setting the permissions on the entire Koken folder to 777, then try again.'): never
         {
             @unlink(FCPATH . 'recover.php');
             delete_files(FCPATH . 'storage/tmp', true);
-            die(json_encode(array('error' => $msg)));
+            die(json_encode(['error' => $msg]));
         }
 
         $get_core = $this->input->post('url');
@@ -467,9 +429,7 @@ class Update extends Koken_Controller
                 require $manifest;
 
                 if (count($compatCheckFailures)) {
-                    die(json_encode(array(
-            'requirements' => $compatCheckFailures
-          )));
+                    die(json_encode(['requirements' => $compatCheckFailures]));
                 }
 
                 //hack
@@ -480,8 +440,7 @@ class Update extends Koken_Controller
 
                 die(
           json_encode(
-              array('migrations' => array('0001.php', '0001.php', '0001.php')
-            )
+              ['migrations' => ['0001.php', '0001.php', '0001.php']]
           )
         );
             }
@@ -508,9 +467,7 @@ class Update extends Koken_Controller
 
                     unlink(FCPATH . 'recover.php');
 
-                    die(json_encode(array(
-            'requirements' => $compatCheckFailures
-          )));
+                    die(json_encode(['requirements' => $compatCheckFailures]));
                 }
 
                 $migrations_before = scandir($this->migrate_path);
@@ -572,13 +529,12 @@ class Update extends Koken_Controller
 
                 die(
           json_encode(
-              array('migrations' => array_values(
+              ['migrations' => array_values(
                 array_diff(
                   scandir($this->migrate_path),
                   $migrations_before
               )
-            )
-            )
+            )]
           )
         );
             } else {

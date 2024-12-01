@@ -4,49 +4,11 @@ class Text extends Koken
 {
     public string $table = 'text';
 
-    public array $has_one = array(
-        'featured_image' => array(
-            'class' => 'content',
-        ),
-    );
+    public array $has_one = ['featured_image' => ['class' => 'content']];
 
-    public array $has_many = array(
-        'category',
-        'album',
-        'tag'
-    );
+    public array $has_many = ['category', 'album', 'tag'];
 
-    public array $validation = array(
-        'internal_id' => array(
-            'label' => 'Internal id',
-            'rules' => array('internalize', 'required')
-        ),
-        'page_type' => array(
-            'rules' => array('validate_type')
-        ),
-        'slug' => array(
-            'rules' => array('slug', 'required')
-        ),
-        'created_on' => array(
-            'rules' => array('validate_created_on')
-        ),
-        'title' => array(
-            'rules' => array('format_title'),
-            'get_rules' => array('readify')
-        ),
-        'draft_title' => array(
-            'rules' => array('format_title')
-        ),
-        'draft' => array(
-            'rules' => array('format_content')
-        ),
-        'content' => array(
-            'rules' => array('format_content')
-        ),
-        'published' => array(
-            'rules' => array('re_slug')
-        )
-    );
+    public array $validation = ['internal_id' => ['label' => 'Internal id', 'rules' => ['internalize', 'required']], 'page_type' => ['rules' => ['validate_type']], 'slug' => ['rules' => ['slug', 'required']], 'created_on' => ['rules' => ['validate_created_on']], 'title' => ['rules' => ['format_title'], 'get_rules' => ['readify']], 'draft_title' => ['rules' => ['format_title']], 'draft' => ['rules' => ['format_content']], 'content' => ['rules' => ['format_content']], 'published' => ['rules' => ['re_slug']]];
 
     private $ids_for_array_index = [];
 
@@ -58,7 +20,7 @@ class Text extends Koken
 
     public function _format_content($field)
     {
-        $this->{$field} = rawurldecode(trim($this->{$field}));
+        $this->{$field} = rawurldecode(trim((string) $this->{$field}));
         if ($field === 'content') {
             $this->draft = $this->content;
         }
@@ -67,7 +29,7 @@ class Text extends Koken
 
     public function _format_title($field)
     {
-        $this->{$field} = rawurldecode(trim($this->{$field}));
+        $this->{$field} = rawurldecode(trim((string) $this->{$field}));
         if ($field === 'title') {
             $this->draft_title = $this->title;
         }
@@ -76,7 +38,7 @@ class Text extends Koken
 
     public function _validate_type()
     {
-        $values = array('essay', 'page');
+        $values = ['essay', 'page'];
         if (in_array($this->page_type, $values)) {
             $this->page_type = array_search($this->page_type, $values);
         } else {
@@ -114,10 +76,10 @@ class Text extends Koken
             return true;
         }
 
-        $this->load->helper(array('url', 'text', 'string'));
+        $this->load->helper(['url', 'text', 'string']);
         $slug = reduce_multiples(
             strtolower(
-                        url_title(
+                        (string) url_title(
                             convert_accented_characters($this->title),
                             'dash'
                         )
@@ -179,34 +141,12 @@ class Text extends Koken
     {
         $sort = $this->_get_site_order('essay');
 
-        $options = array(
-            'page' => 1,
-            'order_by' => $sort['by'],
-            'order_direction' => $sort['direction'],
-            'tags' => false,
-            'tags_not' => false,
-            'match_all_tags' => false,
-            'limit' => 100,
-            'published' => 1,
-            'category' => false,
-            'category_not' => false,
-            'featured' => null,
-            'type' => false,
-            'state' => false,
-            'year' => false,
-            'year_not' => false,
-            'letter' => false,
-            'month' => false,
-            'month_not' => false,
-            'day' => false,
-            'day_not' => false,
-            'render' => true
-        );
+        $options = ['page' => 1, 'order_by' => $sort['by'], 'order_direction' => $sort['direction'], 'tags' => false, 'tags_not' => false, 'match_all_tags' => false, 'limit' => 100, 'published' => 1, 'category' => false, 'category_not' => false, 'featured' => null, 'type' => false, 'state' => false, 'year' => false, 'year_not' => false, 'letter' => false, 'month' => false, 'month_not' => false, 'day' => false, 'day_not' => false, 'render' => true];
 
         $options = array_merge($options, $params);
 
         if (isset($params['order_by']) && !isset($params['order_direction'])) {
-            $options['order_direction'] = in_array($params['order_by'], array('title')) ? 'ASC' : 'DESC';
+            $options['order_direction'] = in_array($params['order_by'], ['title']) ? 'ASC' : 'DESC';
         }
 
         if (!$options['auth']) {
@@ -277,7 +217,7 @@ class Text extends Koken
 
         $s = new Setting();
         $s->where('name', 'site_timezone')->get();
-        $tz = new DateTimeZone($s->value);
+        $tz = new DateTimeZone($s->value ?? 'UTC');
         $offset = $tz->getOffset(new DateTime('now', new DateTimeZone('UTC')));
 
         if ($offset === 0) {
@@ -302,7 +242,7 @@ class Text extends Koken
             $dates[$b->year][$b->month] = (int) $b->count;
         }
 
-        if (in_array($options['order_by'], array('created_on', 'published_on', 'modified_on'))) {
+        if (in_array($options['order_by'], ['created_on', 'published_on', 'modified_on'])) {
             $date_col = $options['order_by'];
         } else {
             $date_col = 'published_on';
@@ -352,7 +292,7 @@ class Text extends Koken
         $final['dates'] = $dates;
 
         $this->include_related('featured_image', null, true, true);
-        $this->include_related_count('albums', null, array('visibility' => 0));
+        $this->include_related_count('albums', null, ['visibility' => 0]);
         $this->include_related_count('categories');
 
         $data = $this->order_by($options['order_by'] .' ' . $options['order_direction'] . ', id ' . $options['order_direction'])->get_iterated();
@@ -362,7 +302,7 @@ class Text extends Koken
             $final['total'] = $data->result_count();
         }
 
-        $final['counts'] = array( 'total' => $final['total'] );
+        $final['counts'] = ['total' => $final['total']];
 
         $final['text'] = [];
 
@@ -371,28 +311,28 @@ class Text extends Koken
         $tag_map = $this->_eager_load_tags($data);
 
         foreach ($data as $page) {
-            $tags = isset($tag_map['c' . $page->id]) ? $tag_map['c' . $page->id] : array();
+            $tags = $tag_map['c' . $page->id] ?? [];
             $options['eager_tags'] = $tags;
             $final['text'][] = $page->to_array($options);
         }
         return $final;
     }
 
-    public function to_array($options = array())
+    public function to_array($options = [])
     {
-        $options = array_merge(array('auth' => false, 'render' => true, 'expand' => false), $options);
+        $options = array_merge(['auth' => false, 'render' => true, 'expand' => false], $options);
 
         $koken_url_info = $this->config->item('koken_url_info');
 
-        $exclude = array('deleted', 'total_count', 'video_count', 'audio_count', 'featured_image_id', 'custom_featured_image', 'tags_old', 'old_slug');
-        $dates = array('created_on', 'modified_on', 'published_on', 'featured_on');
-        $strings = array('title', 'content', 'excerpt');
-        $bools = array('published', 'featured');
+        $exclude = ['deleted', 'total_count', 'video_count', 'audio_count', 'featured_image_id', 'custom_featured_image', 'tags_old', 'old_slug'];
+        $dates = ['created_on', 'modified_on', 'published_on', 'featured_on'];
+        $strings = ['title', 'content', 'excerpt'];
+        $bools = ['published', 'featured'];
 
         if (!$this->published) {
             $this->published_on = time();
         }
-        list($data, $public_fields) = $this->prepare_for_output($options, $exclude, $bools, $dates, $strings);
+        [$data, $public_fields] = $this->prepare_for_output($options, $exclude, $bools, $dates, $strings);
 
         if (empty($data['draft'])) {
             $data['draft'] = $data['content'];
@@ -418,28 +358,19 @@ class Text extends Koken
         }
 
         if (array_key_exists('page_type', $data)) {
-            switch ($data['page_type']) {
-                case 1:
-                    $data['page_type'] = 'page';
-                    break;
-                default:
-                    $data['page_type'] = 'essay';
-            }
+            $data['page_type'] = match ($data['page_type']) {
+                1 => 'page',
+                default => 'essay',
+            };
         }
 
         $data['__koken__'] = $data['page_type'];
 
         $data['tags'] = $this->_get_tags_for_output($options);
 
-        $data['categories'] = array(
-            'count' => is_null($this->category_count) ? $this->categories->count() : (int) $this->category_count,
-            'url' => $koken_url_info->base . 'api.php?/text/' . $data['id'] . '/categories'
-        );
+        $data['categories'] = ['count' => is_null($this->category_count) ? $this->categories->count() : (int) $this->category_count, 'url' => $koken_url_info->base . 'api.php?/text/' . $data['id'] . '/categories'];
 
-        $data['topics'] = array(
-            'count' => is_null($this->album_count) ? $this->albums->count() : (int) $this->album_count,
-            'url' => $koken_url_info->base . 'api.php?/text/' . $data['id'] . '/topics'
-        );
+        $data['topics'] = ['count' => is_null($this->album_count) ? $this->albums->count() : (int) $this->album_count, 'url' => $koken_url_info->base . 'api.php?/text/' . $data['id'] . '/topics'];
 
         if (is_numeric($this->featured_image_id) && !$this->featured_image->id) {
             $this->featured_image->get();
@@ -454,17 +385,17 @@ class Text extends Koken
             $data['featured_image'] = false;
         }
 
-        $rendered = Shutter::shortcodes($data['content'], array( $this, $options ));
+        $rendered = Shutter::shortcodes($data['content'], [$this, $options]);
 
         if ($options['render']) {
             if ($options['expand']) {
-                $rendered = preg_replace('/\[read_more([^\]]+)?\]/', '<a id="more"></a>', $rendered);
+                $rendered = preg_replace('/\[read_more([^\]]+)?\]/', '<a id="more"></a>', (string) $rendered);
             } else {
-                $more = strpos($rendered, '[read_more');
+                $more = strpos((string) $rendered, '[read_more');
 
                 if ($more !== false) {
-                    preg_match('/\[read_more(?:\s*label="(.*)")?\]/', $rendered, $matches);
-                    $rendered = substr($rendered, 0, $more);
+                    preg_match('/\[read_more(?:\s*label="(.*)")?\]/', (string) $rendered, $matches);
+                    $rendered = substr((string) $rendered, 0, $more);
                     $data['read_more'] = true;
                     $data['read_more_label'] = count($matches) > 1 ? $matches[1] : 'Read more';
                 }
@@ -475,25 +406,25 @@ class Text extends Koken
             $data['read_more'] = false;
         }
 
-        preg_match_all('/<koken:load source="content" filter:id="(\d+)">/', $rendered, $loads);
+        preg_match_all('/<koken:load source="content" filter:id="(\d+)">/', (string) $rendered, $loads);
 
         if (count($loads[0]) > 1) {
             $this->ids_for_array_index = array_unique($loads[1]);
             $rendered = '<koken:load source="contents" filter:id="' . join(',', $this->ids_for_array_index) . '">' . $rendered . '</koken:load>';
-            $rendered = preg_replace_callback('/<koken:load source="content" filter:id="(\d+)">(.*)<\/koken:load>/msU', array($this, '_array_index_callback'), $rendered);
+            $rendered = preg_replace_callback('/<koken:load source="content" filter:id="(\d+)">(.*)<\/koken:load>/msU', [$this, '_array_index_callback'], $rendered);
         }
 
         if (empty($options) || (isset($options['render']) && $options['render'])) {
             $data['content'] = $rendered;
             if (isset($data['draft'])) {
-                $data['draft'] = Shutter::shortcodes($data['draft'], array( $this, $options ));
+                $data['draft'] = Shutter::shortcodes($data['draft'], [$this, $options]);
             }
         }
 
         if (empty($data['excerpt'])) {
-            $rendered = preg_replace('/<script.*>.*?<\/script>/msU', '', $rendered);
-            $rendered = preg_replace('/<figure class="k-content-embed">.*?<\/figure>/msU', '', $rendered);
-            $clean_parts = explode(' ', preg_replace('/([\.\?\!]+)([^\s]\s*[a-z][a-z\s]*)/', '$1 $2', trim(strip_tags(preg_replace('/\{\{.*\}\}/', '', html_entity_decode($rendered))))));
+            $rendered = preg_replace('/<script.*>.*?<\/script>/msU', '', (string) $rendered);
+            $rendered = preg_replace('/<figure class="k-content-embed">.*?<\/figure>/msU', '', (string) $rendered);
+            $clean_parts = explode(' ', (string) preg_replace('/([\.\?\!]+)([^\s]\s*[a-z][a-z\s]*)/', '$1 $2', trim(strip_tags((string) preg_replace('/\{\{.*\}\}/', '', html_entity_decode((string) $rendered))))));
             $excerpt = '';
             while (count($clean_parts) && ($next = array_shift($clean_parts)) && strlen(trim($excerpt) . ' ' . trim($next)) <= 254) {
                 $excerpt .= ' ' . trim($next);
@@ -509,13 +440,13 @@ class Text extends Koken
             }
         }
 
-        if (isset($options['order_by']) && in_array($options['order_by'], array( 'created_on', 'modified_on', 'published_on' ))) {
+        if (isset($options['order_by']) && in_array($options['order_by'], ['created_on', 'modified_on', 'published_on'])) {
             $data['date'] =& $data[ $options['order_by'] ];
         } elseif ($data['page_type'] === 'essay') {
             $data['date'] =& $data['published_on'];
         }
 
-        $cat = isset($options['category']) ? $options['category'] : (isset($options['context']) && strpos($options['context'], 'category-') === 0 ? str_replace('category-', '', $options['context']) : false);
+        $cat = $options['category'] ?? (isset($options['context']) && str_starts_with((string) $options['context'], 'category-') ? str_replace('category-', '', $options['context']) : false);
 
         if ($cat) {
             if (is_numeric($cat)) {
@@ -529,19 +460,15 @@ class Text extends Koken
         }
 
         $data['url'] = $this->url(
-            array(
-                'date' => $data['published_on'],
-                'tag' => isset($options['tags']) ? $options['tags'] : (isset($options['context']) && strpos($options['context'], 'tag-') === 0 ? str_replace('tag-', '', $options['context']) : false),
-                'category' => $cat,
-            )
+            ['date' => $data['published_on'], 'tag' => $options['tags'] ?? (isset($options['context']) && str_starts_with((string) $options['context'], 'tag-') ? str_replace('tag-', '', $options['context']) : false), 'category' => $cat]
         );
 
         if ($data['url']) {
-            list($data['__koken_url'], $data['url']) = $data['url'];
+            [$data['__koken_url'], $data['url']] = $data['url'];
             $data['canonical_url'] = $data['url'];
         }
 
-        return Shutter::filter('api.text', array( $data, $this, $options ));
+        return Shutter::filter('api.text', [$data, $this, $options]);
     }
 }
 

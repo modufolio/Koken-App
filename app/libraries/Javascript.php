@@ -33,9 +33,9 @@ class CI_Javascript
 {
     public $_javascript_location = 'js';
 
-    public function __construct($params = array())
+    public function __construct($params = [])
     {
-        $defaults = array('js_library_driver' => 'jquery', 'autoload' => true);
+        $defaults = ['js_library_driver' => 'jquery', 'autoload' => true];
 
         foreach ($defaults as $key => $val) {
             if (isset($params[$key]) && $params[$key] !== "") {
@@ -48,7 +48,7 @@ class CI_Javascript
         $this->CI =& get_instance();
 
         // load the requested js library
-        $this->CI->load->library('javascript/'.$js_library_driver, array('autoload' => $autoload));
+        $this->CI->load->library('javascript/'.$js_library_driver, ['autoload' => $autoload]);
         // make js to refer to current library
         $this->js =& $this->CI->$js_library_driver;
 
@@ -173,7 +173,7 @@ class CI_Javascript
      * @param	string	- Javascript code for mouse out
      * @return	string
      */
-    public function hover($element = 'this', $over, $out)
+    public function hover($over, $out, $element = 'this')
     {
         return $this->js->__hover($element, $over, $out);
     }
@@ -414,7 +414,7 @@ class CI_Javascript
      * @param	string	- Javascript callback function
      * @return	string
      */
-    public function animate($element = 'this', $params = array(), $speed = '', $extra = '')
+    public function animate($element = 'this', $params = [], $speed = '', $extra = '')
     {
         return $this->js->_animate($element, $params, $speed, $extra);
     }
@@ -644,9 +644,9 @@ class CI_Javascript
             }
         }
 
-        if ($relative === true or strncmp($external_file, 'http://', 7) == 0 or strncmp($external_file, 'https://', 8) == 0) {
+        if ($relative === true or str_starts_with((string) $external_file, 'http://') or str_starts_with((string) $external_file, 'https://')) {
             $str = $this->_open_script($external_file);
-        } elseif (strpos($this->_javascript_location, 'http://') !== false) {
+        } elseif (str_contains((string) $this->_javascript_location, 'http://')) {
             $str = $this->_open_script($this->_javascript_location.$external_file);
         } else {
             $str = $this->_open_script($this->CI->config->slash_item('base_url').$this->_javascript_location.$external_file);
@@ -690,7 +690,7 @@ class CI_Javascript
      */
     public function _open_script($src = '')
     {
-        $str = '<script type="text/javascript" charset="'.strtolower($this->CI->config->item('charset')).'"';
+        $str = '<script type="text/javascript" charset="'.strtolower((string) $this->CI->config->item('charset')).'"';
         $str .= ($src == '') ? '>' : ' src="'.$src.'">';
         return $str;
     }
@@ -823,7 +823,7 @@ class CI_Javascript
         } elseif (is_bool($result)) {
             return ($result === true) ? 'true' : 'false';
         } elseif (is_string($result) or $is_key) {
-            return '"'.str_replace(array('\\', "\t", "\n", "\r", '"', '/'), array('\\\\', '\\t', '\\n', "\\r", '\"', '\/'), $result).'"';
+            return '"'.str_replace(['\\', "\t", "\n", "\r", '"', '/'], ['\\\\', '\\t', '\\n', "\\r", '\"', '\/'], $result).'"';
         } elseif (is_scalar($result)) {
             return $result;
         }

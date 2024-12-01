@@ -98,6 +98,7 @@ class Swift_CharacterStream_NgCharacterStream implements Swift_CharacterStream
      *
      * @param string $charset
      */
+    #[\Override]
     public function setCharacterSet($charset)
     {
         $this->_charset = $charset;
@@ -110,6 +111,7 @@ class Swift_CharacterStream_NgCharacterStream implements Swift_CharacterStream
      *
      * @param Swift_CharacterReaderFactory $factory
      */
+    #[\Override]
     public function setCharacterReaderFactory(Swift_CharacterReaderFactory $factory)
     {
         $this->_charReaderFactory = $factory;
@@ -118,6 +120,7 @@ class Swift_CharacterStream_NgCharacterStream implements Swift_CharacterStream
     /**
      * @see Swift_CharacterStream::flushContents()
      */
+    #[\Override]
     public function flushContents()
     {
         $this->_datas = null;
@@ -132,6 +135,7 @@ class Swift_CharacterStream_NgCharacterStream implements Swift_CharacterStream
      *
      * @param Swift_OutputByteStream $os
      */
+    #[\Override]
     public function importByteStream(Swift_OutputByteStream $os)
     {
         $this->flushContents();
@@ -147,6 +151,7 @@ class Swift_CharacterStream_NgCharacterStream implements Swift_CharacterStream
      *
      * @param string $string
      */
+    #[\Override]
     public function importString($string)
     {
         $this->flushContents();
@@ -160,6 +165,7 @@ class Swift_CharacterStream_NgCharacterStream implements Swift_CharacterStream
      *
      * @return string
      */
+    #[\Override]
     public function read($length)
     {
         if ($this->_currentPos >= $this->_charCount) {
@@ -228,6 +234,7 @@ class Swift_CharacterStream_NgCharacterStream implements Swift_CharacterStream
      *
      * @return integer[]
      */
+    #[\Override]
     public function readBytes($length)
     {
         $read = $this->read($length);
@@ -245,6 +252,7 @@ class Swift_CharacterStream_NgCharacterStream implements Swift_CharacterStream
      *
      * @param int     $charOffset
      */
+    #[\Override]
     public function setPointer($charOffset)
     {
         if ($this->_charCount<$charOffset) {
@@ -258,6 +266,7 @@ class Swift_CharacterStream_NgCharacterStream implements Swift_CharacterStream
      *
      * @param string $chars
      */
+    #[\Override]
     public function write($chars)
     {
         if (!isset($this->_charReader)) {
@@ -271,7 +280,7 @@ class Swift_CharacterStream_NgCharacterStream implements Swift_CharacterStream
         $this->_datas .= $chars;
         $this->_charCount += $this->_charReader->getCharPositions(substr($this->_datas, $this->_datasSize), $this->_datasSize, $this->_map, $ignored);
         if ($ignored !== false) {
-            $this->_datasSize = strlen($this->_datas)-strlen($ignored);
+            $this->_datasSize = strlen($this->_datas)-strlen((string) $ignored);
         } else {
             $this->_datasSize = strlen($this->_datas);
         }

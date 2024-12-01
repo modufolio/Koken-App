@@ -84,11 +84,7 @@ class CI_Cache_file extends CI_Driver
      */
     public function save($id, $data, $ttl = 60)
     {
-        $contents = array(
-                'time'		=> time(),
-                'ttl'		=> $ttl,
-                'data'		=> $data
-            );
+        $contents = ['time'		=> time(), 'ttl'		=> $ttl, 'data'		=> $data];
 
         if (write_file($this->_cache_path.$id, serialize($contents))) {
             @chmod($this->_cache_path.$id, 0777);
@@ -162,10 +158,7 @@ class CI_Cache_file extends CI_Driver
                 return false;
             }
 
-            return array(
-                'expire'	=> $mtime + $data['ttl'],
-                'mtime'		=> $mtime
-            );
+            return ['expire'	=> $mtime + $data['ttl'], 'mtime'		=> $mtime];
         }
 
         return false;

@@ -41,7 +41,7 @@ define('DMZ_VERSION', '1.8.2');
  *
  *
  */
-class DataMapper extends stdClass implements IteratorAggregate
+class DataMapper extends stdClass implements IteratorAggregate, \Stringable
 {
     /**
      * Stores the shared configuration
@@ -52,7 +52,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      * Stores settings that are common across a specific Model
      * @var array
      */
-    public static $common = array(DMZ_CLASSNAMES_KEY => array());
+    public static $common = [DMZ_CLASSNAMES_KEY => []];
     /**
      * Stores global extensions
      * @var array
@@ -62,26 +62,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      * Used to override unset default properties.
      * @var array
      */
-    public static $_dmz_config_defaults = array(
-        'prefix' => '',
-        'join_prefix' => '',
-        'error_prefix' => '<span class="error">',
-        'error_suffix' => '</span>',
-        'created_field' => 'created',
-        'updated_field' => 'updated',
-        'local_time' => false,
-        'unix_timestamp' => false,
-        'timestamp_format' => 'Y-m-d H:i:s',
-        'lang_file_format' => 'model_${model}',
-        'field_label_lang_format' => '${model}_${field}',
-        'auto_transaction' => false,
-        'auto_populate_has_many' => false,
-        'auto_populate_has_one' => true,
-        'all_array_uses_ids' => false,
-        'db_params' => '',
-        'extensions' => array(),
-        'extensions_path' => 'datamapper',
-    );
+    public static $_dmz_config_defaults = ['prefix' => '', 'join_prefix' => '', 'error_prefix' => '<span class="error">', 'error_suffix' => '</span>', 'created_field' => 'created', 'updated_field' => 'updated', 'local_time' => false, 'unix_timestamp' => false, 'timestamp_format' => 'Y-m-d H:i:s', 'lang_file_format' => 'model_${model}', 'field_label_lang_format' => '${model}_${field}', 'auto_transaction' => false, 'auto_populate_has_many' => false, 'auto_populate_has_one' => true, 'all_array_uses_ids' => false, 'db_params' => '', 'extensions' => [], 'extensions_path' => 'datamapper'];
 
     /**
      * Contains any errors that occur during validation, saving, or other
@@ -211,7 +192,7 @@ class DataMapper extends stdClass implements IteratorAggregate
     {
         $this->_dmz_assign_libraries();
 
-        $this_class = strtolower(get_class($this));
+        $this_class = strtolower(static::class);
         $is_dmz = $this_class == 'datamapper';
 
         if ($is_dmz) {
@@ -265,7 +246,7 @@ class DataMapper extends stdClass implements IteratorAggregate
         if (! isset(DataMapper::$common[$common_key])) {
             // load language file, if requested and it exists
             if (!empty($this->lang_file_format)) {
-                $lang_file = str_replace(array('${model}', '${table}'), array($this->model, $this->table), $this->lang_file_format);
+                $lang_file = str_replace(['${model}', '${table}'], [$this->model, $this->table], $this->lang_file_format);
                 $deft_lang = $this->config->item('language');
                 $idiom = ($deft_lang == '') ? 'english' : $deft_lang;
                 if (file_exists(APPPATH.'language/'.$idiom.'/'.$lang_file.'_lang'.EXT)) {
@@ -308,17 +289,13 @@ class DataMapper extends stdClass implements IteratorAggregate
 
                 // Determine table name
                 if (empty($this->table)) {
-                    $this->table = strtolower(plural(get_class($this)));
+                    $this->table = strtolower((string) plural(static::class));
                 }
 
                 // Add prefix to table
                 $this->table = $this->prefix . $this->table;
 
-                $this->_field_tracking = array(
-                    'get_rules' => array(),
-                    'matches' => array(),
-                    'intval' => array('id')
-                );
+                $this->_field_tracking = ['get_rules' => [], 'matches' => [], 'intval' => ['id']];
 
                 // Convert validation into associative array by field name
                 $associative_validation = [];
@@ -351,10 +328,7 @@ class DataMapper extends stdClass implements IteratorAggregate
                 // set up id column, if not set
                 if (!isset($associative_validation['id'])) {
                     // label is set below, to prevent caching language-based labels
-                    $associative_validation['id'] = array(
-                        'field' => 'id',
-                        'rules' => array('integer')
-                    );
+                    $associative_validation['id'] = ['field' => 'id', 'rules' => ['integer']];
                 }
 
                 $this->validation = $associative_validation;
@@ -383,12 +357,12 @@ class DataMapper extends stdClass implements IteratorAggregate
                     // Add validation if current field has none
                     if (! isset($this->validation[$field->name])) {
                         // label is set below, to prevent caching language-based labels
-                        $this->validation[$field->name] = array('field' => $field->name, 'rules' => array());
+                        $this->validation[$field->name] = ['field' => $field->name, 'rules' => []];
                     }
                 }
 
                 // convert simple has_one and has_many arrays into more advanced ones
-                foreach (array('has_one', 'has_many') as $arr) {
+                foreach (['has_one', 'has_many'] as $arr) {
                     foreach ($this->{$arr} as $related_field => $rel_props) {
                         // process the relationship
                         $this->_relationship($arr, $rel_props, $related_field);
@@ -401,8 +375,7 @@ class DataMapper extends stdClass implements IteratorAggregate
                 }
 
                 // Store common model settings
-                foreach (array('table', 'fields', 'validation',
-                            'has_one', 'has_many', '_field_tracking') as $item) {
+                foreach (['table', 'fields', 'validation', 'has_one', 'has_many', '_field_tracking'] as $item) {
                     DataMapper::$common[$common_key][$item] = $this->{$item};
                 }
 
@@ -420,9 +393,7 @@ class DataMapper extends stdClass implements IteratorAggregate
                 // Localize label if necessary
                 $val['label'] = $this->localize_label(
                     $field,
-                    isset($val['label']) ?
-                            $val['label'] :
-                            false
+                    $val['label'] ?? false
                 );
             }
             unset($validation);
@@ -457,7 +428,7 @@ class DataMapper extends stdClass implements IteratorAggregate
             DataMapper::$common[DMZ_CLASSNAMES_KEY][$this_class] = $common_key = singular($this_class);
         }
         unset(DataMapper::$common[$common_key]);
-        $model = get_class($this);
+        $model = static::class;
         new $model(); // re-initialze
 
         // Load stored common model settings by reference
@@ -489,7 +460,7 @@ class DataMapper extends stdClass implements IteratorAggregate
         is_null($CI) and $CI =& get_instance();
 
         // Don't attempt to autoload CI_ , EE_, or custom prefixed classes
-        if (in_array(substr($class, 0, 3), array('CI_', 'EE_')) or strpos($class, $CI->config->item('subclass_prefix')) === 0) {
+        if (in_array(substr($class, 0, 3), ['CI_', 'EE_']) or str_starts_with($class, (string) $CI->config->item('subclass_prefix'))) {
             return;
         }
 
@@ -503,7 +474,7 @@ class DataMapper extends stdClass implements IteratorAggregate
             $paths = $CI->load->get_package_paths(false);
         }
 
-        foreach (array_merge(array(APPPATH), $paths, self::$model_paths) as $path) {
+        foreach (array_merge([APPPATH], $paths, self::$model_paths) as $path) {
             // Prepare file
             $file = $path . 'models/' . $class . EXT;
 
@@ -534,13 +505,13 @@ class DataMapper extends stdClass implements IteratorAggregate
      *
      * @param	mixed $paths path or array of paths to search
      */
-    public static function add_model_path($paths)
+    public static function add_model_path(mixed $paths)
     {
         // make sure paths is an array
-        is_array($paths) or $paths = array($paths);
+        is_array($paths) or $paths = [$paths];
 
         foreach ($paths as $path) {
-            $path = rtrim($path, '/') . '/';
+            $path = rtrim((string) $path, '/') . '/';
             if (is_dir($path.'models') && ! in_array($path, self::$model_paths)) {
                 self::$model_paths[] = $path;
             }
@@ -565,7 +536,7 @@ class DataMapper extends stdClass implements IteratorAggregate
             if ($handle) {
                 while (false !== ($dir = readdir($handle))) {
                     // If dir does not contain a dot
-                    if (strpos($dir, '.') === false) {
+                    if (!str_contains($dir, '.')) {
                         // Prepare recursive path
                         $recursive_path = $path . '/' . $dir;
 
@@ -606,12 +577,7 @@ class DataMapper extends stdClass implements IteratorAggregate
         // get the CI instance
         is_null($CI) and $CI =& get_instance();
 
-        $class_prefixes = array(
-            0 => 'DMZ_',
-            1 => 'DataMapper_',
-            2 => $CI->config->item('subclass_prefix'),
-            3 => 'CI_'
-        );
+        $class_prefixes = [0 => 'DMZ_', 1 => 'DataMapper_', 2 => $CI->config->item('subclass_prefix'), 3 => 'CI_'];
         foreach ($names as $name => $options) {
             if (! is_string($name)) {
                 $name = $options;
@@ -630,12 +596,12 @@ class DataMapper extends stdClass implements IteratorAggregate
             $file = DataMapper::$config['extensions_path'] . '/' . $name . EXT;
 
             if (! file_exists($file)) {
-                if (strpos($name, '/') === false) {
+                if (!str_contains((string) $name, '/')) {
                     $file = APPPATH . DataMapper::$config['extensions_path'] . '/' . $name . EXT;
                     $ext = $name;
                 } else {
                     $file = APPPATH . $name . EXT;
-                    $explode = explode('/', $name);
+                    $explode = explode('/', (string) $name);
                     $ext = array_pop($explode);
                 }
 
@@ -676,7 +642,7 @@ class DataMapper extends stdClass implements IteratorAggregate
             foreach ($methods as $m) {
                 // do not load private methods or methods already loaded.
                 if ($m[0] !== '_' &&
-                        is_callable(array($o, $m)) &&
+                        is_callable([$o, $m]) &&
                         ! isset($extensions['_methods'][$m])
                         ) {
                     // store this method.
@@ -700,7 +666,7 @@ class DataMapper extends stdClass implements IteratorAggregate
             DataMapper::_load_extensions($this->extensions, $extensions);
         } else {
             // ensure an empty array
-            $this->extensions = array('_methods' => array());
+            $this->extensions = ['_methods' => []];
         }
         // bind to the shared key, for dynamic loading
         DataMapper::$common[$common_key]['extensions'] =& $this->extensions;
@@ -718,9 +684,9 @@ class DataMapper extends stdClass implements IteratorAggregate
     {
         if (! is_array($name)) {
             if (! is_null($options)) {
-                $name = array($name => $options);
+                $name = [$name => $options];
             } else {
-                $name = array($name);
+                $name = [$name];
             }
         }
         // called individually to ensure that the array is modified directly
@@ -780,7 +746,7 @@ class DataMapper extends stdClass implements IteratorAggregate
                     }
                     // ensure the shared DB is disconnected, even if the app exits uncleanly
                     if (!isset($CI->db->_has_shutdown_hook)) {
-                        register_shutdown_function(array($CI->db, 'close'));
+                        register_shutdown_function([$CI->db, 'close']);
                         $CI->db->_has_shutdown_hook = true;
                     }
                     // clone, so we don't create additional connections to the DB
@@ -799,7 +765,7 @@ class DataMapper extends stdClass implements IteratorAggregate
             }
             // ensure the created DB is disconnected, even if the app exits uncleanly
             if (!isset($this->db->_has_shutdown_hook)) {
-                register_shutdown_function(array($this->db, 'close'));
+                register_shutdown_function([$this->db, 'close']);
                 $this->db->_has_shutdown_hook = true;
             }
             return $this->db;
@@ -828,7 +794,7 @@ class DataMapper extends stdClass implements IteratorAggregate
             $this->{$name} = new $class();
 
             // Store parent data
-            $this->{$name}->parent = array('model' => $related_properties['other_field'], 'id' => $this->id);
+            $this->{$name}->parent = ['model' => $related_properties['other_field'], 'id' => $this->id];
 
             // Check if Auto Populate for "has many" or "has one" is on
             // (but only if this object exists in the DB, and we aren't instantiating)
@@ -889,14 +855,7 @@ class DataMapper extends stdClass implements IteratorAggregate
         // List of watched method names
         // NOTE: order matters: make sure more specific items are listed before
         // less specific items
-        static $watched_methods = array(
-            'save_', 'delete_',
-            'get_by_related_', 'get_by_related', 'get_by_',
-            '_related_subquery', '_subquery',
-            '_related_', '_related',
-            '_join_field',
-            '_field_func', '_func'
-        );
+        static $watched_methods = ['save_', 'delete_', 'get_by_related_', 'get_by_related', 'get_by_', '_related_subquery', '_subquery', '_related_', '_related', '_join_field', '_field_func', '_func'];
 
         $ext = null;
 
@@ -910,14 +869,14 @@ class DataMapper extends stdClass implements IteratorAggregate
         } else {
             foreach ($watched_methods as $watched_method) {
                 // See if called method is a watched method
-                if (strpos($method, $watched_method) !== false) {
+                if (str_contains($method, (string) $watched_method)) {
                     $pieces = explode($watched_method, $method);
                     if (! empty($pieces[0]) && ! empty($pieces[1])) {
                         // Watched method is in the middle
-                        return $this->{'_' . trim($watched_method, '_')}($pieces[0], array_merge(array($pieces[1]), $arguments));
+                        return $this->{'_' . trim((string) $watched_method, '_')}($pieces[0], array_merge([$pieces[1]], $arguments));
                     } else {
                         // Watched method is a prefix or suffix
-                        return $this->{'_' . trim($watched_method, '_')}(str_replace($watched_method, '', $method), $arguments);
+                        return $this->{'_' . trim((string) $watched_method, '_')}(str_replace($watched_method, '', $method), $arguments);
                     }
                 }
             }
@@ -925,11 +884,11 @@ class DataMapper extends stdClass implements IteratorAggregate
 
         if (! is_null($ext)) {
             array_unshift($arguments, $this);
-            return call_user_func_array(array($ext, $method), $arguments);
+            return call_user_func_array([$ext, $method], $arguments);
         }
 
         // show an error, for debugging's sake.
-        throw new Exception("Unable to call the method \"$method\" on the class " . get_class($this));
+        throw new Exception("Unable to call the method \"$method\" on the class " . static::class);
     }
 
     // --------------------------------------------------------------------
@@ -981,7 +940,8 @@ class DataMapper extends stdClass implements IteratorAggregate
      *
      * @return	string
      */
-    public function __toString()
+    #[\Override]
+    public function __toString(): string
     {
         return ucfirst($this->model);
     }
@@ -994,6 +954,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      *
      * @return	Iterator An iterator for the all array
      */
+    #[\Override]
     public function getIterator(): Traversable
     {
         if (isset($this->_dm_dataset_iterator)) {
@@ -1257,7 +1218,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      * @param	string $related_field See save.
      * @return	bool Result of the save.
      */
-    public function save_as_new($object = '', $related_field = '')
+    public function save_as_new(mixed $object = '', $related_field = '')
     {
         $this->_force_save_as_new = true;
         return $this->save($object, $related_field);
@@ -1275,7 +1236,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      * @param	string $related_field Optional string to save the object as a specific relationship.
      * @return	bool Success or Failure of the validation and save.
      */
-    public function save($object = '', $related_field = '')
+    public function save(mixed $object = '', $related_field = '')
     {
         // Temporarily store the success/failure
         $result = [];
@@ -1343,7 +1304,7 @@ class DataMapper extends stdClass implements IteratorAggregate
             // as in-table foreign keys, we can save them at this step.
             if (! empty($object)) {
                 if (! is_array($object)) {
-                    $object = array($object);
+                    $object = [$object];
                 }
                 $this->_save_itfk($object, $related_field);
             }
@@ -1502,18 +1463,16 @@ class DataMapper extends stdClass implements IteratorAggregate
     }
 
     // --------------------------------------------------------------------
-
     /**
      * _Save
      *
      * Used by __call to process related saves.
      *
      * @ignore
-     * @param	mixed $related_field
      * @param	array $arguments
      * @return	bool
      */
-    private function _save($related_field, $arguments)
+    private function _save(mixed $related_field, $arguments)
     {
         return $this->save($arguments[0], $related_field);
     }
@@ -1533,7 +1492,7 @@ class DataMapper extends stdClass implements IteratorAggregate
     public function update($field, $value = null, $escape_values = true)
     {
         if (! is_array($field)) {
-            $field = array($field => $value);
+            $field = [$field => $value];
         } elseif ($value === false) {
             $escape_values = false;
         }
@@ -1614,7 +1573,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      * @param	string $related_field Can be used to specify which relationship to delete.
      * @return	bool Success or Failure of the delete.
      */
-    public function delete($object = '', $related_field = '')
+    public function delete(mixed $object = '', $related_field = '')
     {
         if (empty($object) && ! is_array($object)) {
             if (! empty($this->id)) {
@@ -1622,7 +1581,7 @@ class DataMapper extends stdClass implements IteratorAggregate
                 $this->_auto_trans_begin();
 
                 // Delete all "has many" and "has one" relations for this object first
-                foreach (array('has_many', 'has_one') as $type) {
+                foreach (['has_many', 'has_one'] as $type) {
                     foreach ($this->{$type} as $model => $properties) {
                         // do we want cascading delete's?
                         if ($properties['cascade_delete']) {
@@ -1643,13 +1602,13 @@ class DataMapper extends stdClass implements IteratorAggregate
                                      ! ($object->table == $this->table && // self-referencing has_one join
                                         in_array($other_model . '_id', $this->fields)) // where the ITFK is for the other object
                                     ) {
-                                $data = array($this_model . '_id' => null);
+                                $data = [$this_model . '_id' => null];
 
                                 // Update table to remove relationships
                                 $this->db->where($this_model . '_id', $this->id);
                                 $this->db->update($object->table, $data);
                             } elseif ($relationship_table != $this->table) {
-                                $data = array($this_model . '_id' => $this->id);
+                                $data = [$this_model . '_id' => $this->id];
 
                                 // Delete relation
                                 $this->db->delete($relationship_table, $data);
@@ -1771,7 +1730,7 @@ class DataMapper extends stdClass implements IteratorAggregate
         $this->_auto_trans_begin();
 
         // Delete all "has many" and "has one" relations for this object first
-        foreach (array('has_many', 'has_one') as $type) {
+        foreach (['has_many', 'has_one'] as $type) {
             foreach ($this->{$type} as $model => $properties) {
                 // do we want cascading delete's?
                 if ($properties['cascade_delete']) {
@@ -1792,7 +1751,7 @@ class DataMapper extends stdClass implements IteratorAggregate
                              ! ($object->table == $this->table && // self-referencing has_one join
                                 in_array($other_model . '_id', $this->fields)) // where the ITFK is for the other object
                             ) {
-                        $data = array($this_model . '_id' => null);
+                        $data = [$this_model . '_id' => null];
 
                         // Update table to remove all ITFK relations
                         $this->db->update($object->table, $data);
@@ -1858,7 +1817,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      * @param	string $related_field See save.
      * @return	DataMapper Returns $this for method chanining.
      */
-    public function validate($object = '', $related_field = '')
+    public function validate(mixed $object = '', $related_field = '')
     {
         // Return if validation has already been run
         if ($this->_validated) {
@@ -1915,7 +1874,7 @@ class DataMapper extends stdClass implements IteratorAggregate
 
                         $arg = $object;
                         if (! empty($related_field)) {
-                            $arg = array($related_field => $object);
+                            $arg = [$related_field => $object];
                         }
 
                         if (method_exists($this, '_' . $rule)) {
@@ -2256,9 +2215,9 @@ class DataMapper extends stdClass implements IteratorAggregate
      * @param	bool $return_as_string If TRUE, don't output automatically.
      * @return	string Last db query formatted as a string.
      */
-    public function check_last_query($delims = array('<pre>', '</pre>'), $return_as_string = false)
+    public function check_last_query($delims = ['<pre>', '</pre>'], $return_as_string = false)
     {
-        $q = wordwrap($this->db->last_query(), 100, "\n\t");
+        $q = wordwrap((string) $this->db->last_query(), 100, "\n\t");
         if (!empty($delims)) {
             $q = implode($q, $delims);
         }
@@ -2345,7 +2304,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      * @param	array $value Arguments to this method.
      * @return	DataMapper Returns self for method chaining.
      */
-    private function _get_by($field, $value = array())
+    private function _get_by($field, $value = [])
     {
         if (isset($value[0])) {
             $this->where($field, $value[0]);
@@ -2366,11 +2325,11 @@ class DataMapper extends stdClass implements IteratorAggregate
      * @param	array $arguments Arguments to the where method
      * @return	DataMapper Returns self for method chaining.
      */
-    private function _get_by_related($model, $arguments = array())
+    private function _get_by_related(mixed $model, $arguments = [])
     {
         if (! empty($model)) {
             // Add model to start of arguments
-            $arguments = array_merge(array($model), $arguments);
+            $arguments = array_merge([$model], $arguments);
         }
 
         $this->_related('where', $arguments);
@@ -2399,7 +2358,7 @@ class DataMapper extends stdClass implements IteratorAggregate
                 }
             } else {
                 // provide feedback on errors
-                $this_model = get_class($this);
+                $this_model = static::class;
                 show_error("DataMapper Error: '".$this->parent['model']."' is not a valid parent relationship for $this_model.  Are your relationships configured correctly?");
             }
         }
@@ -2503,19 +2462,46 @@ class DataMapper extends stdClass implements IteratorAggregate
                     $ret .= $this->_process_function_arg($formula_arg, true);
                 } else {
                     // recursively process functions within functions
-                    $func_args = array_merge(array($func), (array)$formula_arg);
-                    $ret .= call_user_func_array(array($this, 'func'), $func_args);
+                    $func_args = array_merge([$func], (array)$formula_arg);
+                    $ret .= call_user_func_array($this->func(...), $func_args);
                 }
             }
             return $ret;
         }
 
-        $operators = array(
-            'AND', 'OR', 'NOT', // binary logic
-            '<', '>', '<=', '>=', '=', '<>', '!=', // comparators
-            '+', '-', '*', '/', '%', '^', // basic maths
-            '|/', '||/', '!', '!!', '@', '&', '|', '#', '~', // advanced maths
-            '<<', '>>'); // binary operators
+        $operators = [
+            'AND',
+            'OR',
+            'NOT',
+            // binary logic
+            '<',
+            '>',
+            '<=',
+            '>=',
+            '=',
+            '<>',
+            '!=',
+            // comparators
+            '+',
+            '-',
+            '*',
+            '/',
+            '%',
+            '^',
+            // basic maths
+            '|/',
+            '||/',
+            '!',
+            '!!',
+            '@',
+            '&',
+            '|',
+            '#',
+            '~',
+            // advanced maths
+            '<<',
+            '>>',
+        ]; // binary operators
 
         if (is_string($arg)) {
             if (($is_formula && in_array($arg, $operators)) ||
@@ -2531,9 +2517,9 @@ class DataMapper extends stdClass implements IteratorAggregate
             } elseif ($arg[0] == '@') {
                 // model or sub-model property
                 $arg = substr($arg, 1);
-                if (strpos($arg, '/') !== false) {
+                if (str_contains($arg, '/')) {
                     // related property
-                    if (strpos($arg, 'parent/') === 0) {
+                    if (str_starts_with($arg, 'parent/')) {
                         // special parent property for subqueries
                         $ret .= str_replace('parent/', '${parent}.', $arg);
                     } else {
@@ -2571,7 +2557,7 @@ class DataMapper extends stdClass implements IteratorAggregate
         }
         if ($query == 'select') {
             $alias = array_pop($args);
-            $value = call_user_func_array(array($this, 'func'), $args);
+            $value = call_user_func_array($this->func(...), $args);
             $value .= " AS $alias";
 
             // we can't use the normal select method, because CI likes to breaky
@@ -2580,7 +2566,7 @@ class DataMapper extends stdClass implements IteratorAggregate
             return $this;
         } else {
             $param = array_pop($args);
-            $value = call_user_func_array(array($this, 'func'), $args);
+            $value = call_user_func_array($this->func(...), $args);
             return $this->{$query}($value, $param);
         }
     }
@@ -2601,7 +2587,7 @@ class DataMapper extends stdClass implements IteratorAggregate
             throw new Exception("Invalid number of arguments to {$query}_field_func: must be at least 2 arguments.");
         }
         $field = array_shift($args);
-        $func = call_user_func_array(array($this, 'func'), $args);
+        $func = call_user_func_array($this->func(...), $args);
         return $this->_process_special_query_clause($query, $field, $func);
     }
 
@@ -2673,10 +2659,10 @@ class DataMapper extends stdClass implements IteratorAggregate
 
         // Table Name pattern should be
         $tablename = $this->db->dm_call_method('_escape_identifiers', $this->table);
-        $table_pattern = '(?:' . preg_quote($this->table) . '|' . preg_quote($tablename) . '|\(' . preg_quote($tablename) . '\))';
+        $table_pattern = '(?:' . preg_quote($this->table) . '|' . preg_quote((string) $tablename) . '|\(' . preg_quote((string) $tablename) . '\))';
 
         $fieldname = $this->db->dm_call_method('_escape_identifiers', '__field__');
-        $field_pattern = '([-\w]+|' . str_replace('__field__', '[-\w]+', preg_quote($fieldname)) . ')';
+        $field_pattern = '([-\w]+|' . str_replace('__field__', '[-\w]+', preg_quote((string) $fieldname)) . ')';
 
         // replace all table.field references
         // pattern ends up being [^_](table|`table`).(field|`field`)
@@ -2690,12 +2676,12 @@ class DataMapper extends stdClass implements IteratorAggregate
         // important: the space at the end is required
         $pattern = "/$table_pattern $table_pattern /i";
         $replacement = $tablename . ' ' . $this->db->dm_call_method('_escape_identifiers', $this->table . '_subquery') . ' ';
-        $sql = preg_replace($pattern, $replacement, $sql);
+        $sql = preg_replace($pattern, $replacement, (string) $sql);
 
         // now replace "FROM table" for self relationships
         $pattern = "/FROM $table_pattern([,\\s])/i";
         $replacement = "FROM $tablename " . $this->db->dm_call_method('_escape_identifiers', $this->table . '_subquery') . '$1';
-        $sql = preg_replace($pattern, $replacement, $sql);
+        $sql = preg_replace($pattern, $replacement, (string) $sql);
         $sql = str_replace("\n", "\n\t", $sql);
 
         return str_replace('${parent}', $this->table, $sql);
@@ -2733,19 +2719,19 @@ class DataMapper extends stdClass implements IteratorAggregate
      * @param	mixed $extra If included, overrides the default assumption of FALSE for the third parameter to $query
      * @return	DataMapper Returns self for method chaining.
      */
-    private function _process_special_query_clause($query, $field, $value, $extra = null)
+    private function _process_special_query_clause($query, $field, mixed $value, mixed $extra = null)
     {
-        if (strpos($query, 'where_in') !== false) {
+        if (str_contains($query, 'where_in')) {
             $query = str_replace('_in', '', $query);
             $field .= ' IN ';
-        } elseif (strpos($query, 'where_not_in') !== false) {
+        } elseif (str_contains($query, 'where_not_in')) {
             $query = str_replace('_not_in', '', $query);
             $field .= ' NOT IN ';
         }
         if (is_null($extra)) {
             $extra = false;
         }
-        return $this->{$query}($field, $value, $extra);
+        return $this->{$query}($field, $value);
     }
 
     // --------------------------------------------------------------------
@@ -2759,7 +2745,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      * @param	bool $escape If FALSE, don't escape this field (Probably won't work)
      * @return	DataMapper Returns self for method chaining.
      */
-    public function select($select = '*', $escape = null)
+    public function select(mixed $select = '*', $escape = null)
     {
         if ($escape !== false) {
             if (!is_array($select)) {
@@ -2900,7 +2886,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      * @param	integer|NULL $offset Offset the results when limiting.
      * @return	DataMapper Returns self for method chaining.
      */
-    public function get_where($where = array(), $limit = null, $offset = null)
+    public function get_where(mixed $where = [], $limit = null, $offset = null)
     {
         $this->where($where);
 
@@ -3023,7 +3009,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      * @param	bool $escape If FALSE, the field is not escaped.
      * @return	DataMapper Returns self for method chaining.
      */
-    public function where($key, $value = null, $escape = true)
+    public function where(mixed $key, mixed $value = null, $escape = true)
     {
         return $this->_where($key, $value, 'AND ', $escape);
     }
@@ -3041,7 +3027,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      * @param	bool $escape If FALSE, the field is not escaped.
      * @return	DataMapper Returns self for method chaining.
      */
-    public function or_where($key, $value = null, $escape = true)
+    public function or_where(mixed $key, mixed $value = null, $escape = true)
     {
         return $this->_where($key, $value, 'OR ', $escape);
     }
@@ -3060,10 +3046,10 @@ class DataMapper extends stdClass implements IteratorAggregate
      * @param	bool $escape If FALSE, the field is not escaped.
      * @return	DataMapper Returns self for method chaining.
      */
-    protected function _where($key, $value = null, $type = 'AND ', $escape = null)
+    protected function _where(mixed $key, mixed $value = null, $type = 'AND ', $escape = null)
     {
         if (! is_array($key)) {
-            $key = array($key => $value);
+            $key = [$key => $value];
         }
         foreach ($key as $k => $v) {
             $new_k = $this->add_table_name($k);
@@ -3283,7 +3269,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      * @param	string $side One of 'both', 'before', or 'after'
      * @return	DataMapper Returns self for method chaining.
      */
-    public function like($field, $match = '', $side = 'both')
+    public function like(mixed $field, mixed $match = '', $side = 'both')
     {
         return $this->_like($field, $match, 'AND ', $side);
     }
@@ -3301,7 +3287,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      * @param	string $side One of 'both', 'before', or 'after'
      * @return	DataMapper Returns self for method chaining.
      */
-    public function not_like($field, $match = '', $side = 'both')
+    public function not_like(mixed $field, mixed $match = '', $side = 'both')
     {
         return $this->_like($field, $match, 'AND ', $side, 'NOT');
     }
@@ -3319,7 +3305,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      * @param	string $side One of 'both', 'before', or 'after'
      * @return	DataMapper Returns self for method chaining.
      */
-    public function or_like($field, $match = '', $side = 'both')
+    public function or_like(mixed $field, mixed $match = '', $side = 'both')
     {
         return $this->_like($field, $match, 'OR ', $side);
     }
@@ -3337,7 +3323,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      * @param	string $side One of 'both', 'before', or 'after'
      * @return	DataMapper Returns self for method chaining.
      */
-    public function or_not_like($field, $match = '', $side = 'both')
+    public function or_not_like(mixed $field, mixed $match = '', $side = 'both')
     {
         return $this->_like($field, $match, 'OR ', $side, 'NOT');
     }
@@ -3354,7 +3340,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      * @param	string $side One of 'both', 'before', or 'after'
      * @return	DataMapper Returns self for method chaining.
      */
-    public function ilike($field, $match = '', $side = 'both')
+    public function ilike(mixed $field, mixed $match = '', $side = 'both')
     {
         return $this->_like($field, $match, 'AND ', $side, '', true);
     }
@@ -3372,7 +3358,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      * @param	string $side One of 'both', 'before', or 'after'
      * @return	DataMapper Returns self for method chaining.
      */
-    public function not_ilike($field, $match = '', $side = 'both')
+    public function not_ilike(mixed $field, mixed $match = '', $side = 'both')
     {
         return $this->_like($field, $match, 'AND ', $side, 'NOT', true);
     }
@@ -3390,7 +3376,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      * @param	string $side One of 'both', 'before', or 'after'
      * @return	DataMapper Returns self for method chaining.
      */
-    public function or_ilike($field, $match = '', $side = 'both')
+    public function or_ilike(mixed $field, mixed $match = '', $side = 'both')
     {
         return $this->_like($field, $match, 'OR ', $side, '', true);
     }
@@ -3408,7 +3394,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      * @param	string $side One of 'both', 'before', or 'after'
      * @return	DataMapper Returns self for method chaining.
      */
-    public function or_not_ilike($field, $match = '', $side = 'both')
+    public function or_not_ilike(mixed $field, mixed $match = '', $side = 'both')
     {
         return $this->_like($field, $match, 'OR ', $side, 'NOT', true);
     }
@@ -3430,10 +3416,10 @@ class DataMapper extends stdClass implements IteratorAggregate
      * @param	bool $no_case If TRUE, configure to ignore case.
      * @return	DataMapper Returns self for method chaining.
      */
-    protected function _like($field, $match = '', $type = 'AND ', $side = 'both', $not = '', $no_case = false)
+    protected function _like(mixed $field, mixed $match = '', $type = 'AND ', $side = 'both', $not = '', $no_case = false)
     {
         if (! is_array($field)) {
-            $field = array($field => $match);
+            $field = [$field => $match];
         }
 
         foreach ($field as $k => $v) {
@@ -3450,7 +3436,7 @@ class DataMapper extends stdClass implements IteratorAggregate
         foreach ($field as $k => $v) {
             if ($no_case) {
                 $k = 'UPPER(' . $this->db->protect_identifiers($k) .')';
-                $v = strtoupper($v);
+                $v = strtoupper((string) $v);
             }
             $f = "$k $not LIKE ";
 
@@ -3876,11 +3862,11 @@ class DataMapper extends stdClass implements IteratorAggregate
      * @param	bool $try_singular If TRUE, automatically tries to look for a singular name if not found.
      * @return	array Associative array of related properties.
      */
-    public function _get_related_properties(&$related_field, $try_singular = false)
+    public function _get_related_properties(mixed &$related_field, $try_singular = false)
     {
         // Handle deep relationships
-        if (strpos($related_field, '/') !== false) {
-            $rfs = explode('/', $related_field);
+        if (str_contains((string) $related_field, '/')) {
+            $rfs = explode('/', (string) $related_field);
             $last = $this;
             $prop = null;
             foreach ($rfs as &$rf) {
@@ -3939,7 +3925,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      * @param	string $this_table  Private, do not use.
      * @return	string Name of the related table, or table.field if ID_Only
      */
-    public function _add_related_table($object, $related_field = '', $id_only = false, $db = null, &$query_related = null, $name_prepend = '', $this_table = null)
+    public function _add_related_table(mixed $object, $related_field = '', $id_only = false, $db = null, &$query_related = null, $name_prepend = '', $this_table = null)
     {
         if (is_string($object)) {
             // only a model was passed in, not an object
@@ -3950,10 +3936,10 @@ class DataMapper extends stdClass implements IteratorAggregate
             $related_field = $object->model;
         }
 
-        $related_field = strtolower($related_field);
+        $related_field = strtolower((string) $related_field);
 
         // Handle deep relationships
-        if (strpos($related_field, '/') !== false) {
+        if (str_contains($related_field, '/')) {
             $rfs = explode('/', $related_field);
             $last = $this;
             $prepend = '';
@@ -4099,7 +4085,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      * @param	mixed $extra Used to prevent escaping in special circumstances.
      * @return	DataMapper Returns self for method chaining.
      */
-    private function _related($query, $arguments = array(), $extra = null)
+    private function _related($query, $arguments = [], mixed $extra = null)
     {
         if (! empty($query) && ! empty($arguments)) {
             $object = $field = $value = null;
@@ -4112,8 +4098,8 @@ class DataMapper extends stdClass implements IteratorAggregate
                 $related_field = $object->model;
 
                 // Prepare field and value
-                $field = (isset($arguments[1])) ? $arguments[1] : 'id';
-                $value = (isset($arguments[2])) ? $arguments[2] : $object->id;
+                $field = $arguments[1] ?? 'id';
+                $value = $arguments[2] ?? $object->id;
                 $next_arg = 3;
             } else {
                 $related_field = $arguments[0];
@@ -4124,19 +4110,19 @@ class DataMapper extends stdClass implements IteratorAggregate
                 if (isset($arguments[1]) && is_object($arguments[1])) {
                     $object = $arguments[1];
                     // Prepare field and value
-                    $field = (isset($arguments[2])) ? $arguments[2] : 'id';
-                    $value = (isset($arguments[3])) ? $arguments[3] : $object->id;
+                    $field = $arguments[2] ?? 'id';
+                    $value = $arguments[3] ?? $object->id;
                     $next_arg = 4;
                 } else {
                     $object = new $class();
                     // Prepare field and value
-                    $field = (isset($arguments[1])) ? $arguments[1] : 'id';
-                    $value = (isset($arguments[2])) ? $arguments[2] : null;
+                    $field = $arguments[1] ?? 'id';
+                    $value = $arguments[2] ?? null;
                     $next_arg = 3;
                 }
             }
 
-            if (preg_replace('/[!=<> ]/ ', '', $field) == 'id') {
+            if (preg_replace('/[!=<> ]/ ', '', (string) $field) == 'id') {
                 // special case to prevent joining unecessary tables
                 $field = $this->_add_related_table($object, $related_field, true);
             } else {
@@ -4145,7 +4131,7 @@ class DataMapper extends stdClass implements IteratorAggregate
                 $field = $object_table . '.' . $field;
             }
 
-            if (is_string($value) && strpos($value, '${parent}') !== false) {
+            if (is_string($value) && str_contains($value, '${parent}')) {
                 $extra = false;
             }
 
@@ -4189,7 +4175,7 @@ class DataMapper extends stdClass implements IteratorAggregate
 
                 $this->{$query}($field, $value);
             } else {
-                $this->{$query}($field, $value, $extra);
+                $this->{$query}($field, $value);
             }
         }
 
@@ -4225,11 +4211,11 @@ class DataMapper extends stdClass implements IteratorAggregate
             // see 25_activerecord.php
             $value = $this->_parse_subquery_object($value);
         }
-        if (strpos($query, 'where_in') !== false) {
+        if (str_contains($query, 'where_in')) {
             $query = str_replace('_in', '', $query);
             $field .= ' IN ';
         }
-        return $this->_related($query, array($rel_object, $field, $value), false);
+        return $this->_related($query, [$rel_object, $field, $value], false);
     }
 
     // --------------------------------------------------------------------
@@ -4244,7 +4230,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      * @param	int $id ID to compare to if $related_field is a string
      * @return	bool TRUE or FALSE if this object is related to $related_field
      */
-    public function is_related_to($related_field, $id = null)
+    public function is_related_to(mixed $related_field, $id = null)
     {
         if (is_object($related_field)) {
             $id = $related_field->id;
@@ -4271,7 +4257,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      * @param	bool $instantiate If TRUE, the results are instantiated into objects
      * @return	DataMapper Returns self for method chaining.
      */
-    public function include_related($related_field, $fields = null, $append_name = true, $instantiate = false)
+    public function include_related(mixed $related_field, $fields = null, $append_name = true, $instantiate = false)
     {
         if (is_object($related_field)) {
             $object = $related_field;
@@ -4287,10 +4273,10 @@ class DataMapper extends stdClass implements IteratorAggregate
         if (is_null($fields) || $fields == '*') {
             $fields = $object->fields;
         } elseif (! is_array($fields)) {
-            $fields = array((string)$fields);
+            $fields = [(string)$fields];
         }
 
-        $rfs = explode('/', $related_field);
+        $rfs = explode('/', (string) $related_field);
         $last = $this;
         foreach ($rfs as $rf) {
             // prevent populating the related items.
@@ -4368,7 +4354,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      */
 
     // HACK to add where option for this
-    public function include_related_count($related_field, $alias = null, $where = null)
+    public function include_related_count(mixed $related_field, $alias = null, $where = null)
     {
         if (is_object($related_field)) {
             $object = $related_field;
@@ -4418,7 +4404,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      * @param	int $id ID of related field or object
      * @return	bool Sucess or Failure
      */
-    private function _get_relation($related_field, $id)
+    private function _get_relation(mixed $related_field, $id)
     {
         // No related items
         if (empty($related_field) || empty($id)) {
@@ -4484,7 +4470,7 @@ class DataMapper extends stdClass implements IteratorAggregate
                 $object->_remove_other_one_to_one($other_field, $this);
                 return $ret;
             } else {
-                $data = array($this_model . '_id' => $this->id, $other_model . '_id' => $object->id);
+                $data = [$this_model . '_id' => $this->id, $other_model . '_id' => $object->id];
 
                 // Check if relation already exists
                 $query = $this->db->get_where($relationship_table, $data, null, null);
@@ -4495,7 +4481,7 @@ class DataMapper extends stdClass implements IteratorAggregate
                         // If the other object has a "has one" relationship with this object
                         if (isset($object->has_one[$other_field])) {
                             // And it has an existing relation
-                            $query = $this->db->get_where($relationship_table, array($other_model . '_id' => $object->id), 1, 0);
+                            $query = $this->db->get_where($relationship_table, [$other_model . '_id' => $object->id], 1, 0);
 
                             if ($query->num_rows() > 0) {
                                 // Find and update the other objects existing relation to relate with this object
@@ -4513,7 +4499,7 @@ class DataMapper extends stdClass implements IteratorAggregate
 
                             // Self relationships can be defined as reciprocal -- save the reverse relationship at the same time
                             if ($related_properties['reciprocal']) {
-                                $data = array($this_model . '_id' => $object->id, $other_model . '_id' => $this->id);
+                                $data = [$this_model . '_id' => $object->id, $other_model . '_id' => $this->id];
                                 $this->db->insert($relationship_table, $data);
                             }
 
@@ -4523,7 +4509,7 @@ class DataMapper extends stdClass implements IteratorAggregate
                     // If this object has a "has one" relationship with the other object
                     elseif (isset($this->has_one[$related_field])) {
                         // And it has an existing relation
-                        $query = $this->db->get_where($relationship_table, array($this_model . '_id' => $this->id), 1, 0);
+                        $query = $this->db->get_where($relationship_table, [$this_model . '_id' => $this->id], 1, 0);
 
                         if ($query->num_rows() > 0) {
                             // Find and update the other objects existing relation to relate with this object
@@ -4577,7 +4563,7 @@ class DataMapper extends stdClass implements IteratorAggregate
         }
         // This should be a one-to-one relationship with an ITFK if we got this far.
         $other_column = $related_properties['join_other_as'] . '_id';
-        $c = get_class($this);
+        $c = static::class;
         $update = new $c();
 
         $update->where($other_column, $object->id);
@@ -4624,14 +4610,14 @@ class DataMapper extends stdClass implements IteratorAggregate
                 $object->{$this_model . '_id'} = null;
                 $object->save();
             } else {
-                $data = array($this_model . '_id' => $this->id, $other_model . '_id' => $object->id);
+                $data = [$this_model . '_id' => $this->id, $other_model . '_id' => $object->id];
 
                 // Delete relation
                 $this->db->delete($relationship_table, $data);
 
                 // Delete reverse direction if a reciprocal self relationship
                 if ($related_properties['reciprocal']) {
-                    $data = array($this_model . '_id' => $object->id, $other_model . '_id' => $this->id);
+                    $data = [$this_model . '_id' => $object->id, $other_model . '_id' => $this->id];
                     $this->db->delete($relationship_table, $data);
                 }
             }
@@ -4724,7 +4710,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      * @param	mixed $object Object or array to include in the count.
      * @return	int Number of related items.
      */
-    protected function _count_related($related_field, $object = '')
+    protected function _count_related($related_field, mixed $object = '')
     {
         $count = 0;
 
@@ -4749,7 +4735,7 @@ class DataMapper extends stdClass implements IteratorAggregate
                 $object = new $class();
 
                 // Store parent data
-                $object->parent = array('model' => $rel_properties['other_field'], 'id' => $this->id);
+                $object->parent = ['model' => $rel_properties['other_field'], 'id' => $this->id];
 
                 // pass in IDs to exclude from the count
 
@@ -4773,7 +4759,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      * @param	array $ids list of IDs we've already found.
      * @return	int Number of items found.
      */
-    private function _count_related_objects($compare, $object, $related_field, &$ids)
+    private function _count_related_objects($compare, mixed $object, $related_field, &$ids)
     {
         $count = 0;
         if (is_array($object)) {
@@ -4830,7 +4816,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      * @param	mixed $object Private for recursion, do not use.
      * @return	DataMapper Returns self for method chaining.
      */
-    public function set_join_field($related_field, $field, $value = null, $object = null)
+    public function set_join_field(mixed $related_field, mixed $field, mixed $value = null, mixed $object = null)
     {
         $related_ids = [];
 
@@ -4867,11 +4853,11 @@ class DataMapper extends stdClass implements IteratorAggregate
         $other_model = $related_properties['join_other_as'];
 
         if (! is_array($field)) {
-            $field = array( $field => $value );
+            $field = [$field => $value];
         }
 
         if (! is_array($object)) {
-            $object = array($object);
+            $object = [$object];
         }
 
         if (empty($object)) {
@@ -4935,7 +4921,7 @@ class DataMapper extends stdClass implements IteratorAggregate
             if (is_null($extra)) {
                 $this->{$query}($rel_table . '.' . $field, $value);
             } else {
-                $this->{$query}($rel_table . '.' . $field, $value, $extra);
+                $this->{$query}($rel_table . '.' . $field, $value);
             }
         }
 
@@ -5036,7 +5022,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      */
     protected function _alpha_dash_dot($field)
     {
-        return (! preg_match('/^([\.-a-z0-9_-])+$/i', $this->{$field})) ? false : true;
+        return (! preg_match('/^([\.-a-z0-9_-])+$/i', (string) $this->{$field})) ? false : true;
     }
 
     // --------------------------------------------------------------------
@@ -5050,7 +5036,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      */
     protected function _alpha_slash_dot($field)
     {
-        return (! preg_match('/^([\.\/-a-z0-9_-])+$/i', $this->{$field})) ? false : true;
+        return (! preg_match('/^([\.\/-a-z0-9_-])+$/i', (string) $this->{$field})) ? false : true;
     }
 
     // --------------------------------------------------------------------
@@ -5079,7 +5065,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      */
     protected function _min_date($field, $date)
     {
-        return (strtotime($this->{$field}) < strtotime($date)) ? false : true;
+        return (strtotime((string) $this->{$field}) < strtotime((string) $date)) ? false : true;
     }
 
     // --------------------------------------------------------------------
@@ -5093,7 +5079,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      */
     protected function _max_date($field, $date)
     {
-        return (strtotime($this->{$field}) > strtotime($date)) ? false : true;
+        return (strtotime((string) $this->{$field}) > strtotime((string) $date)) ? false : true;
     }
 
     // --------------------------------------------------------------------
@@ -5137,7 +5123,7 @@ class DataMapper extends stdClass implements IteratorAggregate
     protected function _unique($field)
     {
         if (! empty($this->{$field})) {
-            $query = $this->db->get_where($this->table, array($field => $this->{$field}), 1, 0);
+            $query = $this->db->get_where($this->table, [$field => $this->{$field}], 1, 0);
 
             if ($query->num_rows() > 0) {
                 $row = $query->row();
@@ -5167,7 +5153,7 @@ class DataMapper extends stdClass implements IteratorAggregate
     protected function _unique_pair($field, $other_field = '')
     {
         if (! empty($this->{$field}) && ! empty($this->{$other_field})) {
-            $query = $this->db->get_where($this->table, array($field => $this->{$field}, $other_field => $this->{$other_field}), 1, 0);
+            $query = $this->db->get_where($this->table, [$field => $this->{$field}, $other_field => $this->{$other_field}], 1, 0);
 
             if ($query->num_rows() > 0) {
                 $row = $query->row();
@@ -5214,7 +5200,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      *
      * @ignore
      */
-    protected function _valid_date_group($field, $fields = array())
+    protected function _valid_date_group($field, $fields = [])
     {
         // Ignore if empty
         if (empty($this->{$field})) {
@@ -5235,7 +5221,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      *
      * @ignore
      */
-    protected function _valid_match($field, $param = array())
+    protected function _valid_match($field, $param = [])
     {
         return in_array($this->{$field}, $param);
     }
@@ -5342,7 +5328,7 @@ class DataMapper extends stdClass implements IteratorAggregate
     protected function _trim($field)
     {
         if (! empty($this->{$field})) {
-            $this->{$field} = trim($this->{$field});
+            $this->{$field} = trim((string) $this->{$field});
         }
     }
 
@@ -5370,8 +5356,8 @@ class DataMapper extends stdClass implements IteratorAggregate
      */
     public function localize_by_model($key, $field = null)
     {
-        $s = array('${model}', '${table}');
-        $r = array($this->model, $this->table);
+        $s = ['${model}', '${table}'];
+        $r = [$this->model, $this->table];
         if (!is_null($field)) {
             $s[] = '${field}';
             $r[] = $field;
@@ -5398,7 +5384,7 @@ class DataMapper extends stdClass implements IteratorAggregate
                     $label = $field;
                 }
             }
-        } elseif (strpos($label, 'lang:') === 0) {
+        } elseif (str_starts_with($label, 'lang:')) {
             $label = $this->localize_by_model(substr($label, 5), $field);
         }
         return $label;
@@ -5459,7 +5445,7 @@ class DataMapper extends stdClass implements IteratorAggregate
                 $cache_folder = APPPATH . DataMapper::$config['production_cache'];
             }
             if (file_exists($cache_folder) && is_dir($cache_folder) && is_writeable($cache_folder)) {
-                $common_key = DataMapper::$common[DMZ_CLASSNAMES_KEY][strtolower(get_class($this))];
+                $common_key = DataMapper::$common[DMZ_CLASSNAMES_KEY][strtolower(static::class)];
                 $cache_file = $cache_folder . '/' . $common_key . EXT;
                 $cache = "<"."?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed'); \n";
 
@@ -5484,10 +5470,10 @@ class DataMapper extends stdClass implements IteratorAggregate
     /**
      * Define a new relationship for the current model
      */
-    protected function _relationship($type = '', $definition = array(), $name = 0)
+    protected function _relationship($type = '', $definition = [], $name = 0)
     {
         // check the parameters
-        if (empty($type) or ! in_array($type, array('has_one','has_many'))) {
+        if (empty($type) or ! in_array($type, ['has_one', 'has_many'])) {
             return false;
         }
 
@@ -5505,7 +5491,7 @@ class DataMapper extends stdClass implements IteratorAggregate
 
         // convert value into array if necessary
         if (! is_array($definition)) {
-            $definition = array('class' => $definition);
+            $definition = ['class' => $definition];
         } elseif (! isset($definition['class'])) {
             // if already an array, ensure that the class attribute is set
             $definition['class'] = $name;
@@ -5527,14 +5513,14 @@ class DataMapper extends stdClass implements IteratorAggregate
             $definition['join_table'] = '';
         }
         if (isset($definition['model_path'])) {
-            $definition['model_path'] = rtrim($definition['model_path'], '/') . '/';
+            $definition['model_path'] = rtrim((string) $definition['model_path'], '/') . '/';
             if (is_dir($definition['model_path'].'models') && ! in_array($definition['model_path'], self::$model_paths)) {
                 self::$model_paths[] = $definition['model_path'];
             }
         }
         if (isset($definition['reciprocal'])) {
             // only allow a reciprocal relationship to be defined if this is a has_many self relationship
-            $definition['reciprocal'] = ($definition['reciprocal'] && $type == 'has_many' && $definition['class'] == strtolower(get_class($this)));
+            $definition['reciprocal'] = ($definition['reciprocal'] && $type == 'has_many' && $definition['class'] == strtolower(static::class));
         } else {
             $definition['reciprocal'] = false;
         }
@@ -5552,7 +5538,7 @@ class DataMapper extends stdClass implements IteratorAggregate
             $label = $this->localize_label($name);
             if (!empty($label)) {
                 // label is re-set below, to prevent caching language-based labels
-                $this->validation[$name] = array('field' => $name, 'rules' => array());
+                $this->validation[$name] = ['field' => $name, 'rules' => []];
             }
         }
 
@@ -5611,7 +5597,7 @@ class DataMapper extends stdClass implements IteratorAggregate
             $this->all[$index] = $this->get_clone();
 
             if ($query->num_rows() > 1) {
-                $model = get_class($this);
+                $model = static::class;
 
                 $first = true;
 
@@ -5911,11 +5897,6 @@ class DM_Error_Object
 class DM_DatasetIterator implements Iterator, Countable
 {
     /**
-     * The parent DataMapper object that contains important info.
-     * @var DataMapper
-     */
-    protected $parent;
-    /**
      * The temporary DM object used in the loops.
      * @var DataMapper
      */
@@ -5937,16 +5918,16 @@ class DM_DatasetIterator implements Iterator, Countable
     protected $pos;
 
     /**
-     * @param DataMapper $object Should be cloned ahead of time
+     * @param DataMapper $parent Should be cloned ahead of time
      * @param DB_result $query result from a CI DB query
      */
-    public function __construct($object, $query)
+    public function __construct(/**
+     * The parent DataMapper object that contains important info.
+     */
+    protected $parent, $query)
     {
-        // store the object as a main object
-        $this->parent = $object;
-
         // clone the parent object, so it can be manipulated safely.
-        $this->object = $object->get_clone();
+        $this->object = $this->parent->get_clone();
 
         // Now get the information on the current query object
         $this->result = $query->result();
@@ -5958,12 +5939,14 @@ class DM_DatasetIterator implements Iterator, Countable
      * Gets the item at the current index $pos
      */
     #[\ReturnTypeWillChange]
+    #[\Override]
     public function current()
     {
         return $this->get($this->pos);
     }
 
     #[\ReturnTypeWillChange]
+    #[\Override]
     public function key()
     {
         return $this->pos;
@@ -5983,16 +5966,19 @@ class DM_DatasetIterator implements Iterator, Countable
         return $this->object;
     }
 
+    #[\Override]
     public function next(): void
     {
         $this->pos++;
     }
 
+    #[\Override]
     public function rewind(): void
     {
         $this->pos = 0;
     }
 
+    #[\Override]
     public function valid(): bool
     {
         return ($this->pos < $this->count);
@@ -6002,6 +5988,7 @@ class DM_DatasetIterator implements Iterator, Countable
      * Returns the number of results
      * @return int
      */
+    #[\Override]
     public function count(): int
     {
         return $this->count;

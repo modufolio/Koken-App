@@ -11,34 +11,9 @@ class User extends DataMapper
         $this->load->library('hash');
     }
 
-    public array $has_many = array(
-        'content' => array(
-            'class' => 'content',
-            'other_field' => 'created_by'
-        ),
-        'application',
-        'history'
-    );
+    public array $has_many = ['content' => ['class' => 'content', 'other_field' => 'created_by'], 'application', 'history'];
 
-    public array $validation = array(
-        'internal_id' => array(
-            'label' => 'Internal id',
-            'rules' => array('internalize', 'required')
-        ),
-        'password' => array(
-            'label' => 'password',
-            'rules' => array('hash_password', 'required')
-        ),
-        'public_first_name' => array(
-            'rules' => array('fallback')
-        ),
-        'public_last_name' => array(
-            'rules' => array('fallback'),
-        ),
-        'public_email' => array(
-            'rules' => array('fallback'),
-        ),
-    );
+    public array $validation = ['internal_id' => ['label' => 'Internal id', 'rules' => ['internalize', 'required']], 'password' => ['label' => 'password', 'rules' => ['hash_password', 'required']], 'public_first_name' => ['rules' => ['fallback']], 'public_last_name' => ['rules' => ['fallback']], 'public_email' => ['rules' => ['fallback']]];
 
     public function _fallback($field)
     {
@@ -53,7 +28,7 @@ class User extends DataMapper
      */
     public function _internalize($field)
     {
-        $backups = array('public_first_name', 'public_last_name', 'public_email');
+        $backups = ['public_first_name', 'public_last_name', 'public_email'];
         foreach ($backups as $backup) {
             $this->_fallback($backup);
         }
@@ -70,15 +45,15 @@ class User extends DataMapper
         return Hash::CheckPassword($provided_password, $this->password);
     }
 
-    public function to_array($options = array())
+    public function to_array($options = [])
     {
         $this->externals = !empty($this->externals) ? unserialize($this->externals) : null;
         if (!$this->externals) {
             $this->externals = null;
         }
-        $exclude = array('password', 'news', 'help', 'focal_point', 'theme');
+        $exclude = ['password', 'news', 'help', 'focal_point', 'theme'];
         $bools = [];
-        list($data, $public_fields) = $this->prepare_for_output($options, $exclude, $bools);
+        [$data, $public_fields] = $this->prepare_for_output($options, $exclude, $bools);
         return $data;
     }
 
@@ -90,10 +65,7 @@ class User extends DataMapper
         $a->role = 'god';
         $a->save();
 
-        $session->set_userdata(array(
-            'token' => $a->token,
-            'user' => $this->to_array(),
-        ));
+        $session->set_userdata(['token' => $a->token, 'user' => $this->to_array()]);
 
         if ($remember) {
             $token = koken_rand();
@@ -102,11 +74,7 @@ class User extends DataMapper
 
             $this->load->helper('cookie');
 
-            set_cookie(array(
-                'name' => 'remember_me',
-                'value' => $token,
-                'expire' => 1209600, // 2 weeks
-            ));
+            set_cookie(['name' => 'remember_me', 'value' => $token, 'expire' => 1209600]);
         }
 
         return $a->token;

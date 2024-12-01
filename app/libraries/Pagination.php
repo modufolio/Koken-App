@@ -71,7 +71,7 @@ class CI_Pagination
      * @access	public
      * @param	array	initialization parameters
      */
-    public function __construct($params = array())
+    public function __construct($params = [])
     {
         if (count($params) > 0) {
             $this->initialize($params);
@@ -93,7 +93,7 @@ class CI_Pagination
      * @param	array	initialization parameters
      * @return	void
      */
-    public function initialize($params = array())
+    public function initialize($params = [])
     {
         if (count($params) > 0) {
             foreach ($params as $key => $val) {
@@ -194,9 +194,9 @@ class CI_Pagination
         // Is pagination being used over GET or POST?  If get, add a per_page query
         // string. If post, add a trailing slash to the base URL if needed
         if ($CI->config->item('enable_query_strings') === true or $this->page_query_string === true) {
-            $this->base_url = rtrim($this->base_url).'&amp;'.$this->query_string_segment.'=';
+            $this->base_url = rtrim((string) $this->base_url).'&amp;'.$this->query_string_segment.'=';
         } else {
-            $this->base_url = rtrim($this->base_url, '/') .'/';
+            $this->base_url = rtrim((string) $this->base_url, '/') .'/';
         }
 
         // And here we go...

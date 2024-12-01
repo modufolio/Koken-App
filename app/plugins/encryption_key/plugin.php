@@ -10,6 +10,7 @@ class DDI_EncryptionKeyStore extends KokenPlugin implements KokenEncryptionKey
         $this->full_path = $this->get_main_storage_path() . '/configuration/key.php';
     }
 
+    #[\Override]
     public function get()
     {
         if (file_exists($this->full_path)) {
@@ -19,16 +20,13 @@ class DDI_EncryptionKeyStore extends KokenPlugin implements KokenEncryptionKey
 
             $config = include $this->full_path;
 
-            if (isset($KOKEN_ENCRYPTION_KEY)) {
-                return $KOKEN_ENCRYPTION_KEY;
-            }
-
-            return $config;
+            return $KOKEN_ENCRYPTION_KEY ?? $config;
         }
 
         return false;
     }
 
+    #[\Override]
     public function write($key)
     {
         $config = <<<FILE
@@ -51,7 +49,7 @@ FILE;
         }
 
         // Make sure parent exists
-        $parent = dirname($path);
+        $parent = dirname((string) $path);
         if (!is_dir($parent)) {
             $this->make_child_dir($parent);
         }

@@ -11,7 +11,7 @@ class Features extends Koken_Controller
     {
        [$params, $id] = $this->parse_params(func_get_args());
 
-        $model = trim($params['model'], 's');
+        $model = trim((string) $params['model'], 's');
         $c = new $model();
 
         if ($this->method != 'get') {
@@ -25,7 +25,7 @@ class Features extends Koken_Controller
             switch ($this->method) {
                 case 'put':
                     if (isset($params['order'])) {
-                        $ids = explode(',', $params['order']);
+                        $ids = explode(',', (string) $params['order']);
                         $new_order_map = [];
 
                         foreach ($ids as $key => $val) {
@@ -45,13 +45,13 @@ class Features extends Koken_Controller
                 case 'post':
                 case 'delete':
                     if (is_numeric($id)) {
-                        $id = array($id);
+                        $id = [$id];
                     } else {
-                        $id = explode(',', $id);
+                        $id = explode(',', (string) $id);
                     }
 
                     if ($this->method == 'delete') {
-                        $c->where_in('id', $id)->update(array( 'featured' => 0, 'featured_order' => null, 'featured_on' => null ));
+                        $c->where_in('id', $id)->update(['featured' => 0, 'featured_order' => null, 'featured_on' => null]);
                     } else {
                         $max = $c->select_func('max', '@featured_order', 'max_featured')->where('featured', 1)->get();
                         if (!is_numeric($max->max_featured)) {
@@ -64,7 +64,7 @@ class Features extends Koken_Controller
                             if ($model === 'text') {
                                 $c->where('page_type', 0)->where('published', 1);
                             }
-                            $c->update(array( 'featured' => 1, 'featured_order' => $max_order++, 'featured_on' => strtotime(gmdate('Y-m-d H:i:s')) ));
+                            $c->update(['featured' => 1, 'featured_order' => $max_order++, 'featured_on' => strtotime(gmdate('Y-m-d H:i:s'))]);
                         }
                     }
 
@@ -79,10 +79,7 @@ class Features extends Koken_Controller
         }
 
 
-        $options = array(
-            'order_by' => 'manual',
-            'featured' => true
-        );
+        $options = ['order_by' => 'manual', 'featured' => true];
 
         if ($model === 'content') {
             $sort = $c->_get_site_order('feature');

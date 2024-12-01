@@ -47,10 +47,8 @@ interface Swift_Mime_Header
      * Set the model for the field body.
      *
      * The actual types needed will vary depending upon the type of Header.
-     *
-     * @param mixed $model
      */
-    public function setFieldBodyModel($model);
+    public function setFieldBodyModel(mixed $model);
 
     /**
      * Set the charset used when rendering the Header.

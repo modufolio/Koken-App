@@ -95,7 +95,7 @@ class CI_DB_postgre_forge extends CI_DB_forge
                 $is_unsigned = (array_key_exists('UNSIGNED', $attributes) && $attributes['UNSIGNED'] === true);
 
                 // Convert datatypes to be PostgreSQL-compatible
-                switch (strtoupper($attributes['TYPE'])) {
+                switch (strtoupper((string) $attributes['TYPE'])) {
                     case 'TINYINT':
                         $attributes['TYPE'] = 'SMALLINT';
                         break;
@@ -134,7 +134,7 @@ class CI_DB_postgre_forge extends CI_DB_forge
                 }
 
                 // Modified to prevent constraints with integer data types
-                if (array_key_exists('CONSTRAINT', $attributes) && strpos($attributes['TYPE'], 'INT') === false) {
+                if (array_key_exists('CONSTRAINT', $attributes) && !str_contains((string) $attributes['TYPE'], 'INT')) {
                     $sql .= '('.$attributes['CONSTRAINT'].')';
                 }
 
@@ -176,11 +176,11 @@ class CI_DB_postgre_forge extends CI_DB_forge
                 if (is_array($key)) {
                     $key = $this->db->_protect_identifiers($key);
                 } else {
-                    $key = array($this->db->_protect_identifiers($key));
+                    $key = [$this->db->_protect_identifiers($key)];
                 }
 
                 foreach ($key as $field) {
-                    $sql .= "CREATE INDEX " . $table . "_" . str_replace(array('"', "'"), '', $field) . "_index ON $table ($field); ";
+                    $sql .= "CREATE INDEX " . $table . "_" . str_replace(['"', "'"], '', $field) . "_index ON $table ($field); ";
                 }
             }
         }

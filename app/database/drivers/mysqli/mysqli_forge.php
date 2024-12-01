@@ -158,7 +158,7 @@ class CI_DB_mysqli_forge extends CI_DB_forge
                     $key = $this->db->_protect_identifiers($key);
                 } else {
                     $key_name = $this->db->_protect_identifiers($key);
-                    $key = array($key_name);
+                    $key = [$key_name];
                 }
 
                 $sql .= ",\n\tKEY {$key_name} (" . implode(', ', $key) . ")";

@@ -32,30 +32,6 @@ namespace ReCaptcha;
 class RequestParameters
 {
     /**
-     * Site secret.
-     * @var string
-     */
-    private $secret;
-
-    /**
-     * Form response.
-     * @var string
-     */
-    private $response;
-
-    /**
-     * Remote user's IP address.
-     * @var string
-     */
-    private $remoteIp;
-
-    /**
-     * Client version.
-     * @var string
-     */
-    private $version;
-
-    /**
      * Initialise parameters.
      *
      * @param string $secret Site secret.
@@ -63,12 +39,25 @@ class RequestParameters
      * @param string $remoteIp User's IP address.
      * @param string $version Version of this client library.
      */
-    public function __construct($secret, $response, $remoteIp = null, $version = null)
+    public function __construct(
+        /**
+         * Site secret.
+         */
+        private $secret,
+        /**
+         * Form response.
+         */
+        private $response,
+        /**
+         * Remote user's IP address.
+         */
+        private $remoteIp = null,
+        /**
+         * Client version.
+         */
+        private $version = null
+    )
     {
-        $this->secret = $secret;
-        $this->response = $response;
-        $this->remoteIp = $remoteIp;
-        $this->version = $version;
     }
 
     /**
@@ -78,7 +67,7 @@ class RequestParameters
      */
     public function toArray()
     {
-        $params = array('secret' => $this->secret, 'response' => $this->response);
+        $params = ['secret' => $this->secret, 'response' => $this->response];
 
         if (!is_null($this->remoteIp)) {
             $params['remoteip'] = $this->remoteIp;

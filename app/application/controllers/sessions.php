@@ -26,10 +26,7 @@ class Sessions extends Koken_Controller
                 $u = new User();
                 $u->get_by_id($user_id);
                 if ($u->exists()) {
-                    $this->set_response_data(array(
-                        'token' => $auth[1],
-                        'user' => $u->to_array()
-                    ));
+                    $this->set_response_data(['token' => $auth[1], 'user' => $u->to_array()]);
                 } else {
                     $this->error('404', 'User not found.');
                     return;

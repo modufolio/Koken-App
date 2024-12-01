@@ -68,6 +68,7 @@ class UnicodeCommentExtraField extends AbstractUnicodeExtraField
     /**
      * @return string The version of the field for the Local Header.
      */
+    #[\Override]
     public function getLocalField()
     {
         return ''; // Comments are not added to the Local header.
@@ -76,6 +77,7 @@ class UnicodeCommentExtraField extends AbstractUnicodeExtraField
     /**
      * @return string The version of the field for the Central Header.
      */
+    #[\Override]
     public function getCentralField()
     {
         return parent::HEADER_UNICODE_COMMENT . pack('vV', BinStringStatic::_strlen($this->utf8Data) + 5, $this->CRC32) .  $this->version . $this->utf8Data;

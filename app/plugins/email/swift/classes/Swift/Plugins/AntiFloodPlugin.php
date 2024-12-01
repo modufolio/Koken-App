@@ -37,24 +37,19 @@ class Swift_Plugins_AntiFloodPlugin implements Swift_Events_SendListener, Swift_
     private $_counter = 0;
 
     /**
-     * The Sleeper instance for sleeping.
-     *
-     * @var Swift_Plugins_Sleeper
-     */
-    private $_sleeper;
-
-    /**
      * Create a new AntiFloodPlugin with $threshold and $sleep time.
      *
      * @param int                   $threshold
      * @param int                   $sleep     time
-     * @param Swift_Plugins_Sleeper $sleeper   (not needed really)
+     * @param Swift_Plugins_Sleeper $_sleeper (not needed really)
      */
-    public function __construct($threshold = 99, $sleep = 0, Swift_Plugins_Sleeper $sleeper = null)
+    public function __construct($threshold = 99, $sleep = 0, /**
+     * The Sleeper instance for sleeping.
+     */
+    private readonly ?\Swift_Plugins_Sleeper $_sleeper = null)
     {
         $this->setThreshold($threshold);
         $this->setSleepTime($sleep);
-        $this->_sleeper = $sleeper;
     }
 
     /**
@@ -102,6 +97,7 @@ class Swift_Plugins_AntiFloodPlugin implements Swift_Events_SendListener, Swift_
      *
      * @param Swift_Events_SendEvent $evt
      */
+    #[\Override]
     public function beforeSendPerformed(Swift_Events_SendEvent $evt)
     {
     }
@@ -111,6 +107,7 @@ class Swift_Plugins_AntiFloodPlugin implements Swift_Events_SendListener, Swift_
      *
      * @param Swift_Events_SendEvent $evt
      */
+    #[\Override]
     public function sendPerformed(Swift_Events_SendEvent $evt)
     {
         ++$this->_counter;
@@ -130,6 +127,7 @@ class Swift_Plugins_AntiFloodPlugin implements Swift_Events_SendListener, Swift_
      *
      * @param int     $seconds
      */
+    #[\Override]
     public function sleep($seconds)
     {
         if (isset($this->_sleeper)) {

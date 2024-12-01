@@ -98,7 +98,7 @@ abstract class Darkroom
             $this->alternateWidth = $width;
             $this->alternateHeight = $height;
         } else {
-            list($this->alternateWidth, $this->alternateHeight) = getimagesize($this->alternatePath);
+            [$this->alternateWidth, $this->alternateHeight] = getimagesize($this->alternatePath);
         }
 
         if (round($this->sourceAspect, 2) !== round($this->alternateWidth / $this->alternateHeight, 2)) {
@@ -116,7 +116,7 @@ abstract class Darkroom
             $this->sourceWidth = $width;
             $this->sourceHeight = $height;
         } else {
-            list($this->sourceWidth, $this->sourceHeight) = getimagesize($this->sourcePath);
+            [$this->sourceWidth, $this->sourceHeight] = getimagesize($this->sourcePath);
         }
 
         $this->sourceAspect = $this->sourceWidth / $this->sourceHeight;
@@ -178,11 +178,7 @@ abstract class Darkroom
     protected function emitBeforeRender($arg)
     {
         if ($this->beforeRender) {
-            return call_user_func_array($this->beforeRender, array($arg, array(
-                'width' => $this->width,
-                'height' => $this->height,
-                'retina' => $this->retina,
-            ), $this->beforeRenderExtraArg));
+            return call_user_func_array($this->beforeRender, [$arg, ['width' => $this->width, 'height' => $this->height, 'retina' => $this->retina], $this->beforeRenderExtraArg]);
         }
 
         return $arg;
@@ -231,9 +227,9 @@ abstract class Darkroom
 
     private function getMimeType()
     {
-        $info = pathinfo($this->sourcePath);
+        $info = pathinfo((string) $this->sourcePath);
 
-        if (substr($info['extension'], 0, 2) === 'jp') {
+        if (str_starts_with($info['extension'], 'jp')) {
             return 'image/jpeg';
         }
 

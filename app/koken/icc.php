@@ -74,7 +74,7 @@ class JPEG_ICC
         $profile_chunks = []; // tu su ulozene jednotlive casti profilu
 
         while ($pos < $len && $counter < 1000) {
-            $pos = strpos($f, "\xff", $pos);
+            $pos = strpos((string) $f, "\xff", $pos);
             if ($pos === false) {
                 break;
             } // dalsie 0xFF sa uz nenaslo - koniec vyhladavania
@@ -88,7 +88,7 @@ class JPEG_ICC
 
                     if ($this->getJPEGSegmentContainsICC($f, $pos, $size)) {
                         //echo "+ ICC Profile: YES\n";
-                        list($chunk_no, $chunk_cnt) = $this->getJPEGSegmentICCChunkInfo($f, $pos);
+                        [$chunk_no, $chunk_cnt] = $this->getJPEGSegmentICCChunkInfo($f, $pos);
                         //echo "+ ICC Profile chunk number: $chunk_no\n";
                         //echo "+ ICC Profile chunks count: $chunk_cnt\n";
 
@@ -168,7 +168,7 @@ class JPEG_ICC
 
         $f = file_get_contents($fname);
         if ($this->insertProfile($f)) {
-            $fsize = strlen($f);
+            $fsize = strlen((string) $f);
             $ret = file_put_contents($fname, $f);
             if ($ret === false || $ret < $fsize) {
                 throw new Exception("Write failed.\n");
@@ -203,7 +203,7 @@ class JPEG_ICC
     {
         // KOKEN: For our application, might as well write empty file
         // if ($this->icc_profile == '') throw new Exception("No profile loaded.\n");
-        $dir = dirname($fname);
+        $dir = dirname((string) $fname);
         if (!is_writable($dir)) {
             throw new Exception("Directory $fname isn't writeable.\n");
         }
@@ -244,7 +244,7 @@ class JPEG_ICC
 
         $f = file_get_contents($input);
         $this->removeProfile($f);
-        $fsize = strlen($f);
+        $fsize = strlen((string) $f);
         $ret = file_put_contents($output, $f);
         if ($ret === false || $ret < $fsize) {
             throw new Exception("Write failed.\n");
@@ -261,7 +261,7 @@ class JPEG_ICC
     public function SetProfile($data)
     {
         $this->icc_profile = $data;
-        $this->icc_size = strlen($data);
+        $this->icc_size = strlen((string) $data);
         $this->countChunks();
     }
 
@@ -321,7 +321,7 @@ class JPEG_ICC
      */
     private function getJPEGSegmentSize(&$f, $pos)
     {
-        $arr = unpack('nint', substr($f, $pos + 2, 2)); // segment size has offset 2 and length 2B
+        $arr = unpack('nint', substr((string) $f, $pos + 2, 2)); // segment size has offset 2 and length 2B
         return $arr['int'];
     }
 
@@ -334,7 +334,7 @@ class JPEG_ICC
      */
     private function getJPEGSegmentType(&$f, $pos)
     {
-        $arr = unpack('Cchar', substr($f, $pos + 1, 1)); // segment type has offset 1 and length 1B
+        $arr = unpack('Cchar', substr((string) $f, $pos + 1, 1)); // segment type has offset 1 and length 1B
         return $arr['char'];
     }
 
@@ -352,7 +352,7 @@ class JPEG_ICC
             return false;
         } // ICC_PROFILE 0x00 Marker_no Marker_cnt
 
-        return (bool) (substr($f, $pos + 4, self::ICC_HEADER_LEN - 2) == self::ICC_MARKER); // 4B offset in segment data = 2B segment marker + 2B segment size data
+        return (bool) (substr((string) $f, $pos + 4, self::ICC_HEADER_LEN - 2) == self::ICC_MARKER); // 4B offset in segment data = 2B segment marker + 2B segment size data
     }
 
     /**
@@ -364,7 +364,7 @@ class JPEG_ICC
      */
     private function getJPEGSegmentICCChunkInfo(&$f, $pos)
     {
-        $a = unpack('Cchunk_no/Cchunk_count', substr($f, $pos + 16, 2)); // 16B offset to data = 2B segment marker + 2B segment size + 'ICC_PROFILE' + 0x00, 1. byte chunk number, 2. byte chunks count
+        $a = unpack('Cchunk_no/Cchunk_count', substr((string) $f, $pos + 16, 2)); // 16B offset to data = 2B segment marker + 2B segment size + 'ICC_PROFILE' + 0x00, 1. byte chunk number, 2. byte chunks count
         return array_values($a);
     }
 
@@ -380,7 +380,7 @@ class JPEG_ICC
         $data_offset = $pos + 4 + self::ICC_HEADER_LEN; // 4B JPEG APP offset + 14B ICC header offset
         $size = $this->getJPEGSegmentSize($f, $pos);
         $data_size = $size - self::ICC_HEADER_LEN - 2; // 14B ICC header - 2B of size data
-        return substr($f, $data_offset, $data_size);
+        return substr((string) $f, $data_offset, $data_size);
     }
 
     /**
@@ -425,13 +425,13 @@ class JPEG_ICC
      */
     private function removeProfile(&$jpeg_data)
     {
-        $len = strlen($jpeg_data);
+        $len = strlen((string) $jpeg_data);
         $pos = 0;
         $counter = 0; // ehm...
         $chunks_to_go = -1;
 
         while ($pos < $len && $counter < 100) {
-            $pos = strpos($jpeg_data, "\xff", $pos);
+            $pos = strpos((string) $jpeg_data, "\xff", $pos);
             if ($pos === false) {
                 break;
             } // no more 0xFF - we can end up with search
@@ -444,7 +444,7 @@ class JPEG_ICC
                     $size = $this->getJPEGSegmentSize($jpeg_data, $pos);
 
                     if ($this->getJPEGSegmentContainsICC($jpeg_data, $pos, $size)) {
-                        list($chunk_no, $chunk_cnt) = $this->getJPEGSegmentICCChunkInfo($jpeg_data, $pos);
+                        [$chunk_no, $chunk_cnt] = $this->getJPEGSegmentICCChunkInfo($jpeg_data, $pos);
                         if ($chunks_to_go == -1) {
                             $chunks_to_go = $chunk_cnt;
                         } // first time save chunks count
@@ -517,13 +517,13 @@ class JPEG_ICC
      */
     private function insertProfile(&$jpeg_data)
     {
-        $len = strlen($jpeg_data);
+        $len = strlen((string) $jpeg_data);
         $pos = 0;
         $counter = 0; // ehm...
         $chunks_to_go = -1;
 
         while ($pos < $len && $counter < 100) {
-            $pos = strpos($jpeg_data, "\xff", $pos);
+            $pos = strpos((string) $jpeg_data, "\xff", $pos);
             if ($pos === false) {
                 break;
             } // no more 0xFF - we can end up with search
@@ -537,8 +537,8 @@ class JPEG_ICC
 
                     $p_data = $this->prepareJPEGProfileData();
                     if ($p_data != '') {
-                        $before = substr($jpeg_data, 0, $pos);
-                        $after = substr($jpeg_data, $pos);
+                        $before = substr((string) $jpeg_data, 0, $pos);
+                        $after = substr((string) $jpeg_data, $pos);
                         $jpeg_data = $before . $p_data . $after;
                         return true;
                     }

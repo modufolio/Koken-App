@@ -52,6 +52,7 @@ class ZipFileEntry extends AbstractZipHeader
         }
     }
 
+    #[\Override]
     public function parseHeader($handle)
     {
         $pk = fread($handle, 4);
@@ -198,7 +199,7 @@ class ZipFileEntry extends AbstractZipHeader
         if (in_array(AbstractExtraField::HEADER_UNICODE_PATH, $this->extraFieldsArray)
             && isset($this->extraFieldsArray[AbstractExtraField::HEADER_UNICODE_PATH])) {
             $ef = $this->extraFieldsArray[AbstractExtraField::HEADER_UNICODE_PATH];
-            $ef->CRC32 = crc32($this->path);
+            $ef->CRC32 = crc32((string) $this->path);
             $ef->utf8Data = AbstractZipHeader::pathJoin($path, $ef->utf8Data);
         }
     }
@@ -255,7 +256,7 @@ class ZipFileEntry extends AbstractZipHeader
         if (in_array(AbstractExtraField::HEADER_UNICODE_PATH, $this->extraFieldsArray)
             && isset($this->extraFieldsArray[AbstractExtraField::HEADER_UNICODE_PATH])) {
             $ef = $this->extraFieldsArray[AbstractExtraField::HEADER_UNICODE_PATH];
-            $ef->CRC32 = crc32($this->path);
+            $ef->CRC32 = crc32((string) $this->path);
             $ef->utf8Data = AbstractZipHeader::pathJoin($path, $ef->utf8Data);
         }
     }
@@ -266,7 +267,7 @@ class ZipFileEntry extends AbstractZipHeader
         if (in_array(AbstractExtraField::HEADER_UNICODE_COMMENT, $this->extraFieldsArray)
             && isset($this->extraFieldsArray[AbstractExtraField::HEADER_UNICODE_COMMENT])) {
             $ef = $this->extraFieldsArray[AbstractExtraField::HEADER_UNICODE_COMMENT];
-            $ef->CRC32 = crc32($this->comment);
+            $ef->CRC32 = crc32((string) $this->comment);
         }
     }
 
@@ -278,7 +279,7 @@ class ZipFileEntry extends AbstractZipHeader
             $ef->utf8Data = $comment;
         } else {
             $ef = new UnicodeCommentExtraField();
-            $ef->CRC32 = crc32($this->comment);
+            $ef->CRC32 = crc32((string) $this->comment);
             $ef->utf8Data = $comment;
             $this->extraFieldsArray[AbstractExtraField::HEADER_UNICODE_COMMENT] = $ef;
         }

@@ -4,11 +4,10 @@ class History extends DataMapper
 {
     public string $table = 'history';
 
-    public array $has_one = array(
-        'user'
-    );
+    public array $has_one = ['user'];
 
     // Override save method for delayed queries
+    #[\Override]
     public function save($object = '', $related_field = '')
     {   $user_id = $object;
         if ($user_id !== '') {

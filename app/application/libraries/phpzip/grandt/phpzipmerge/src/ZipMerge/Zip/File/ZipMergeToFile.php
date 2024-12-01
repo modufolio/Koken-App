@@ -22,7 +22,6 @@ use ZipMerge\Zip\Stream\ZipMerge;
 class ZipMergeToFile extends AbstractZipWriter
 {
     private $_zipMerge = null;
-    private $_zipFileName = null;
     private $_zipFile = null;
 
     protected $cdRec = []; // central directory
@@ -34,18 +33,16 @@ class ZipMergeToFile extends AbstractZipWriter
     /**
      * @param $fileName
      */
-    public function __construct($fileName)
+    public function __construct(private $_zipFileName)
     {
         $this->_zipMerge = new ZipMerge(null);
         $this->eocd = new EndOfCentralDirectory();
 
-        $this->_zipFileName = $fileName;
-
-        if (is_file($fileName)) {
-            unlink($fileName);
+        if (is_file($this->_zipFileName)) {
+            unlink($this->_zipFileName);
         }
 
-        $this->_zipFile = fopen($fileName, "x+b");
+        $this->_zipFile = fopen($this->_zipFileName, "x+b");
     }
 
     public function __destruct()
@@ -104,6 +101,7 @@ class ZipMergeToFile extends AbstractZipWriter
      *
      * @param string $data
      */
+    #[\Override]
     public function zipWrite($data)
     {
         fwrite($this->_zipFile, $data);

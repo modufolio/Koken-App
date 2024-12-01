@@ -15,17 +15,13 @@
  */
 class Swift_Plugins_LoggerPlugin implements Swift_Events_CommandListener, Swift_Events_ResponseListener, Swift_Events_TransportChangeListener, Swift_Events_TransportExceptionListener, Swift_Plugins_Logger
 {
-    /** The logger which is delegated to */
-    private $_logger;
-
     /**
      * Create a new LoggerPlugin using $logger.
      *
-     * @param Swift_Plugins_Logger $logger
+     * @param Swift_Plugins_Logger $_logger
      */
-    public function __construct(Swift_Plugins_Logger $logger)
+    public function __construct(private readonly Swift_Plugins_Logger $_logger)
     {
-        $this->_logger = $logger;
     }
 
     /**
@@ -33,6 +29,7 @@ class Swift_Plugins_LoggerPlugin implements Swift_Events_CommandListener, Swift_
      *
      * @param string $entry
      */
+    #[\Override]
     public function add($entry)
     {
         $this->_logger->add($entry);
@@ -41,6 +38,7 @@ class Swift_Plugins_LoggerPlugin implements Swift_Events_CommandListener, Swift_
     /**
      * Clear the log contents.
      */
+    #[\Override]
     public function clear()
     {
         $this->_logger->clear();
@@ -51,6 +49,7 @@ class Swift_Plugins_LoggerPlugin implements Swift_Events_CommandListener, Swift_
      *
      * @return string
      */
+    #[\Override]
     public function dump()
     {
         return $this->_logger->dump();
@@ -61,6 +60,7 @@ class Swift_Plugins_LoggerPlugin implements Swift_Events_CommandListener, Swift_
      *
      * @param Swift_Events_CommandEvent $evt
      */
+    #[\Override]
     public function commandSent(Swift_Events_CommandEvent $evt)
     {
         $command = $evt->getCommand();
@@ -72,6 +72,7 @@ class Swift_Plugins_LoggerPlugin implements Swift_Events_CommandListener, Swift_
      *
      * @param Swift_Events_ResponseEvent $evt
      */
+    #[\Override]
     public function responseReceived(Swift_Events_ResponseEvent $evt)
     {
         $response = $evt->getResponse();
@@ -83,9 +84,10 @@ class Swift_Plugins_LoggerPlugin implements Swift_Events_CommandListener, Swift_
      *
      * @param Swift_Events_TransportChangeEvent $evt
      */
+    #[\Override]
     public function beforeTransportStarted(Swift_Events_TransportChangeEvent $evt)
     {
-        $transportName = get_class($evt->getSource());
+        $transportName = $evt->getSource()::class;
         $this->_logger->add(sprintf("++ Starting %s", $transportName));
     }
 
@@ -94,9 +96,10 @@ class Swift_Plugins_LoggerPlugin implements Swift_Events_CommandListener, Swift_
      *
      * @param Swift_Events_TransportChangeEvent $evt
      */
+    #[\Override]
     public function transportStarted(Swift_Events_TransportChangeEvent $evt)
     {
-        $transportName = get_class($evt->getSource());
+        $transportName = $evt->getSource()::class;
         $this->_logger->add(sprintf("++ %s started", $transportName));
     }
 
@@ -105,9 +108,10 @@ class Swift_Plugins_LoggerPlugin implements Swift_Events_CommandListener, Swift_
      *
      * @param Swift_Events_TransportChangeEvent $evt
      */
+    #[\Override]
     public function beforeTransportStopped(Swift_Events_TransportChangeEvent $evt)
     {
-        $transportName = get_class($evt->getSource());
+        $transportName = $evt->getSource()::class;
         $this->_logger->add(sprintf("++ Stopping %s", $transportName));
     }
 
@@ -116,9 +120,10 @@ class Swift_Plugins_LoggerPlugin implements Swift_Events_CommandListener, Swift_
      *
      * @param Swift_Events_TransportChangeEvent $evt
      */
+    #[\Override]
     public function transportStopped(Swift_Events_TransportChangeEvent $evt)
     {
-        $transportName = get_class($evt->getSource());
+        $transportName = $evt->getSource()::class;
         $this->_logger->add(sprintf("++ %s stopped", $transportName));
     }
 
@@ -127,7 +132,8 @@ class Swift_Plugins_LoggerPlugin implements Swift_Events_CommandListener, Swift_
      *
      * @param Swift_Events_TransportExceptionEvent $evt
      */
-    public function exceptionThrown(Swift_Events_TransportExceptionEvent $evt)
+    #[\Override]
+    public function exceptionThrown(Swift_Events_TransportExceptionEvent $evt): never
     {
         $e = $evt->getException();
         $message = $e->getMessage();

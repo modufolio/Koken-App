@@ -132,6 +132,7 @@ class ExtendedTimeStampExtraField extends AbstractExtraField
     /**
      * @return string The version of the field for the Local Header.
      */
+    #[\Override]
     public function getLocalField()
     {
         $ts = ($this->isModTimeSet ? pack('V', $this->modTime) : '')
@@ -148,6 +149,7 @@ class ExtendedTimeStampExtraField extends AbstractExtraField
     /**
      * @return string The version of the field for the Central Header.
      */
+    #[\Override]
     public function getCentralField()
     {
         $ts = ($this->isModTimeSet ? pack('V', $this->modTime) : '');

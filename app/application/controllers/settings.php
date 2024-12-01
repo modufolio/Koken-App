@@ -67,8 +67,8 @@ class Settings extends Koken_Controller
         $s = new Setting();
         $settings = $s->get_iterated();
 
-        $data = array('image_processing_libraries' => array_values($libs));
-        $bools = array('has_toured', 'site_hidpi', 'retain_image_metadata', 'image_use_defaults', 'use_default_labels_links', 'uploading_publish_on_captured_date');
+        $data = ['image_processing_libraries' => array_values($libs)];
+        $bools = ['has_toured', 'site_hidpi', 'retain_image_metadata', 'image_use_defaults', 'use_default_labels_links', 'uploading_publish_on_captured_date'];
 
         foreach ($settings as $setting) {
             // Don't allow dupes to screw things up
@@ -151,7 +151,7 @@ class Settings extends Koken_Controller
                 // TODO: Make sure new path is not inside real_base
                 // TODO: Ensure that real_base is not deleted under any circumstances
                 if (isset($_POST['site_url']) && $_POST['site_url'] !== $data['site_url']) {
-                    $_POST['site_url'] = strtolower(rtrim($_POST['site_url'], '/'));
+                    $_POST['site_url'] = strtolower(rtrim((string) $_POST['site_url'], '/'));
 
                     if (empty($_POST['site_url'])) {
                         $_POST['site_url'] = '/';
@@ -159,7 +159,7 @@ class Settings extends Koken_Controller
 
                     if (isset($_SERVER['PHP_SELF']) && isset($_SERVER['SCRIPT_FILENAME'])) {
                         $php_self = str_replace('/', DIRECTORY_SEPARATOR, $_SERVER['PHP_SELF']);
-                        $doc_root = preg_replace('~' . $php_self . '$~i', '', $_SERVER['SCRIPT_FILENAME']);
+                        $doc_root = preg_replace('~' . $php_self . '$~i', '', (string) $_SERVER['SCRIPT_FILENAME']);
                     } else {
                         $doc_root = $_SERVER['DOCUMENT_ROOT'];
                     }
@@ -180,7 +180,7 @@ class Settings extends Koken_Controller
 
                     function compare_paths($one, $two)
                     {
-                        return rtrim($one, DIRECTORY_SEPARATOR) === rtrim($two, DIRECTORY_SEPARATOR);
+                        return rtrim((string) $one, DIRECTORY_SEPARATOR) === rtrim((string) $two, DIRECTORY_SEPARATOR);
                     }
 
                     if ($target_dir && compare_paths($target_dir->path, $real_base_dir->path)) {
@@ -188,12 +188,12 @@ class Settings extends Koken_Controller
                         $htaccess = create_htaccess();
                         $root_htaccess = FCPATH . '.htaccess';
                         $current = file_get_contents($root_htaccess);
-                        preg_match('/#MARK#.*/s', $htaccess, $match);
+                        preg_match('/#MARK#.*/s', (string) $htaccess, $match);
                         $htaccess = preg_replace('/#MARK#.*/s', str_replace('$', '\\$', $match[0]), $current);
                         file_put_contents($root_htaccess, $htaccess);
                     } else {
                         if ($target_dir) {
-                            $reserved = array('admin', 'app', 'storage');
+                            $reserved = ['admin', 'app', 'storage'];
                             foreach ($reserved as $dir) {
                                 $_dir = dir(rtrim($real_base_dir->path, '/') .  "/$dir");
                                 if (compare_paths($target_dir->path, $_dir->path)) {
@@ -231,7 +231,7 @@ OUT;
                                 if (file_exists($root_htaccess)) {
                                     $current = file_get_contents($root_htaccess);
                                     $redirect = create_htaccess($_POST['site_url'], true);
-                                    preg_match('/#MARK#.*/s', $redirect, $match);
+                                    preg_match('/#MARK#.*/s', (string) $redirect, $match);
                                     $redirect = preg_replace('/#MARK#.*/s', str_replace('$', '\\$', $match[0]), $current);
                                     file_put_contents($root_htaccess, $redirect);
                                 }
@@ -281,7 +281,7 @@ OUT;
                 global $raw_input_data;
 
                 if (isset($raw_input_data['url_data'])) {
-                    $url_data = json_decode($raw_input_data['url_data'], true);
+                    $url_data = json_decode((string) $raw_input_data['url_data'], true);
                     $u = new Url();
                     $u->order_by('id DESC')->get();
                     $existing_data = unserialize($u->data);
@@ -289,10 +289,7 @@ OUT;
                     $transformed = [];
 
                     foreach ($url_data as $key => $udata) {
-                        $transformed[] = array(
-                            'type' => $key,
-                            'data' => $udata
-                        );
+                        $transformed[] = ['type' => $key, 'data' => $udata];
                     }
 
                     if ($existing_data !== $transformed) {
@@ -313,7 +310,7 @@ OUT;
                         }
 
                         if ($data[$key] !== $val) {
-                            if ($key === 'retain_image_metadata' || (strpos($key, 'image_processing_library') === 0 && strpos($key, 'image_') === 0)) {
+                            if ($key === 'retain_image_metadata' || (str_starts_with($key, 'image_processing_library') && str_starts_with($key, 'image_'))) {
                                 delete_files(FCPATH . 'storage' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'images', true, 1);
                             }
                             if (!isset($save[$key])) {
@@ -330,7 +327,7 @@ OUT;
                     if ($s->exists()) {
                         $s->value = $v;
                         $s->save();
-                    } elseif (in_array($k, array('uploading_default_album_visibility', 'uploading_publish_on_captured_date', 'email_handler'))) {
+                    } elseif (in_array($k, ['uploading_default_album_visibility', 'uploading_publish_on_captured_date', 'email_handler'])) {
                         $n = new Setting();
                         $n->name = $k;
                         $n->value = $v;
@@ -382,7 +379,7 @@ OUT;
 
         unset($data['last_migration']);
 
-        $data = Shutter::filter('api.settings', array($data));
+        $data = Shutter::filter('api.settings', [$data]);
         $this->set_response_data($data);
     }
 }

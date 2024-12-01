@@ -63,19 +63,19 @@ class CI_SHA1
      */
     public function generate($str)
     {
-        $n = ((strlen($str) + 8) >> 6) + 1;
+        $n = ((strlen((string) $str) + 8) >> 6) + 1;
 
         for ($i = 0; $i < $n * 16; $i++) {
             $x[$i] = 0;
         }
 
-        for ($i = 0; $i < strlen($str); $i++) {
-            $x[$i >> 2] |= ord(substr($str, $i, 1)) << (24 - ($i % 4) * 8);
+        for ($i = 0; $i < strlen((string) $str); $i++) {
+            $x[$i >> 2] |= ord(substr((string) $str, $i, 1)) << (24 - ($i % 4) * 8);
         }
 
         $x[$i >> 2] |= 0x80 << (24 - ($i % 4) * 8);
 
-        $x[$n * 16 - 1] = strlen($str) * 8;
+        $x[$n * 16 - 1] = strlen((string) $str) * 8;
 
         $a =  1732584193;
         $b = -271733879;

@@ -13,16 +13,7 @@ class Shutter
     private static $active_plugins = [];
     private static $loaded_plugins = [];
     private static $class_map = [];
-    private static $cache_providers = array(
-        'api' => false,
-        'core' => false,
-        'site' => false,
-        'images' => false,
-        'locks' => false,
-        'plugins' => false,
-        'icc' => false,
-        'albums' => false,
-    );
+    private static $cache_providers = ['api' => false, 'core' => false, 'site' => false, 'images' => false, 'locks' => false, 'plugins' => false, 'icc' => false, 'albums' => false];
 
     private static $email_provider = false;
     private static $email_providers = [];
@@ -37,7 +28,7 @@ class Shutter
 
     private static function plugin_is_active($callback)
     {
-        return in_array(get_class($callback[0]), self::$active_plugins);
+        return in_array($callback[0]::class, self::$active_plugins);
     }
 
     public static function get_php_object($class_name)
@@ -65,36 +56,28 @@ class Shutter
     public static function get_encryption_key()
     {
         if (self::$encryption_key_provider) {
-            return call_user_func(array(
-                self::$encryption_key_provider, 'get'
-            ));
+            return call_user_func([self::$encryption_key_provider, 'get']);
         }
     }
 
     public static function write_encryption_key($key)
     {
         if (self::$encryption_key_provider) {
-            return call_user_func(array(
-                self::$encryption_key_provider, 'write'
-            ), $key);
+            return call_user_func([self::$encryption_key_provider, 'write'], $key);
         }
     }
 
     public static function get_db_configuration()
     {
         if (self::$db_config_provider) {
-            return call_user_func(array(
-                self::$db_config_provider, 'get'
-            ));
+            return call_user_func([self::$db_config_provider, 'get']);
         }
     }
 
     public static function write_db_configuration($config)
     {
         if (self::$db_config_provider) {
-            return call_user_func(array(
-                self::$db_config_provider, 'write'
-            ), $config);
+            return call_user_func([self::$db_config_provider, 'write'], $config);
         }
     }
 
@@ -111,30 +94,26 @@ class Shutter
         }
 
         if (self::$email_provider) {
-            return call_user_func(array(
-                $handler, 'send'
-            ), $from, $from_name, $to, $subject, $message);
+            return call_user_func([$handler, 'send'], $from, $from_name, $to, $subject, $message);
         }
     }
 
     private static function cache_type($path)
     {
-        $slash = strpos($path, '/');
+        $slash = strpos((string) $path, '/');
 
         if ($slash === false) {
             return $path;
         }
 
-        return substr($path, 0, strpos($path, '/'));
+        return substr((string) $path, 0, strpos((string) $path, '/'));
     }
 
     public static function get_cache($path, $allow_304 = true)
     {
         $type = self::$cache_providers[Shutter::cache_type($path)];
         if ($type) {
-            return call_user_func(array(
-                $type, 'get'
-            ), $path, $allow_304);
+            return call_user_func([$type, 'get'], $path, $allow_304);
         }
 
         return false;
@@ -144,9 +123,7 @@ class Shutter
     {
         $type = self::$cache_providers[Shutter::cache_type($path)];
         if ($type) {
-            call_user_func(array(
-                $type, 'write'
-            ), $path, $content);
+            call_user_func([$type, 'write'], $path, $content);
         }
     }
 
@@ -167,16 +144,14 @@ class Shutter
     public static function clear_cache($path)
     {
         if (!is_array($path)) {
-            $path = array($path);
+            $path = [$path];
         }
 
         foreach ($path as $p) {
             $type = self::$cache_providers[Shutter::cache_type($p)];
 
             if ($type) {
-                call_user_func(array(
-                    $type, 'clear'
-                ), $p);
+                call_user_func([$type, 'clear'], $p);
             }
         }
     }
@@ -186,7 +161,7 @@ class Shutter
         if (!defined('FCPATH')) {
             return false;
         } // Shouldn't be called outside of API context
-        $parts = parse_url($url);
+        $parts = parse_url((string) $url);
         parse_str($parts['query'], $query);
 
         $qs = [];
@@ -195,13 +170,13 @@ class Shutter
             $qs[] = $arg . '=' . urlencode($val);
         }
 
-        $parts = explode('?', $url);
+        $parts = explode('?', (string) $url);
         $url = $parts[0] . '?' . implode('&', $qs);
 
         $url = preg_replace('~^http://www\.flickr\.com~', 'https://www.flickr.com', $url);
-        $url = preg_replace('~^http://api\.instagram\.com/oembed\?~', 'https://api.instagram.com/oembed/?', $url);
+        $url = preg_replace('~^http://api\.instagram\.com/oembed\?~', 'https://api.instagram.com/oembed/?', (string) $url);
 
-        $hash = md5($url) . '.oembed.cache';
+        $hash = md5((string) $url) . '.oembed.cache';
         $cache = FCPATH . 'storage' . DIRECTORY_SEPARATOR .
                     'cache' . DIRECTORY_SEPARATOR .
                     'api' . DIRECTORY_SEPARATOR . $hash;
@@ -211,7 +186,7 @@ class Shutter
             $json = json_decode($info, true);
         } else {
             $json_string = self::get_json_api($url, false);
-            $json = json_decode($json_string, true);
+            $json = json_decode((string) $json_string, true);
             if ($json && !isset($json->error)) {
                 file_put_contents($cache, $json_string);
             }
@@ -238,7 +213,7 @@ class Shutter
         require_once 'Contracts/KokenEncryptionKey.php';
         require_once 'Contracts/KokenOriginalStore.php';
 
-        $root = dirname(dirname(dirname(dirname(__FILE__))));
+        $root = dirname(__FILE__, 4);
 
         self::scan('app/plugins', true, true);
 
@@ -248,7 +223,7 @@ class Shutter
 
         $compiled = self::get_cache('plugins/compiled.cache');
 
-        if (!$compiled && strpos($_SERVER['QUERY_STRING'], 'plugins/compile') === false) {
+        if (!$compiled && !str_contains((string) $_SERVER['QUERY_STRING'], 'plugins/compile')) {
             include dirname(__DIR__) . '/Utils/KokenAPI.php';
             $api = new KokenAPI();
             $api->get('/plugins/compile');
@@ -261,7 +236,7 @@ class Shutter
         if ($compiled) {
             $compiled_plugins = unserialize($compiled['data']);
             foreach ($compiled_plugins['plugins'] as $plugin) {
-                self::parse($root . '/storage/plugins/' . $plugin['path'], true, false, isset($plugin['data']) ? $plugin['data'] : array());
+                self::parse($root . '/storage/plugins/' . $plugin['path'], true, false, $plugin['data'] ?? []);
             }
 
             if (isset($compiled_plugins['info']['email_handler']) && isset(self::$class_map[$compiled_plugins['info']['email_handler']])) {
@@ -274,9 +249,9 @@ class Shutter
         }
     }
 
-    private static function parse($dir, $activate = false, $internal = false, $plugin_data = array())
+    private static function parse($dir, $activate = false, $internal = false, $plugin_data = [])
     {
-        $path = basename($dir);
+        $path = basename((string) $dir);
 
         if (in_array($path, self::$loaded_plugins)) {
             return;
@@ -344,10 +319,7 @@ class Shutter
             $data['ident'] = $data['id'];
 
             if ($activate) {
-                self::$active_pulse_plugins[] = array(
-                    'key' => $data['id'],
-                    'path' => $data['plugin']
-                );
+                self::$active_pulse_plugins[] = ['key' => $data['id'], 'path' => $data['plugin']];
             }
         }
 
@@ -365,9 +337,9 @@ class Shutter
 
     private static function scan($directory, $activate = false, $internal = false)
     {
-        $root = dirname(dirname(dirname(dirname(__FILE__))));
+        $root = dirname(__FILE__, 4);
 
-        if (substr($directory, 0, 1) !== '/') {
+        if (!str_starts_with((string) $directory, '/')) {
             $directory = $root . '/' . $directory;
         }
 
@@ -454,7 +426,7 @@ class Shutter
     {
         $scripts = [];
 
-        preg_match_all('/\[([a-z_]+)(\s(.*?))?\]/', $content, $matches);
+        preg_match_all('/\[([a-z_]+)(\s(.*?))?\]/', (string) $content, $matches);
 
         foreach ($matches[0] as $index => $match) {
             $tag = $match;
@@ -465,11 +437,11 @@ class Shutter
                     preg_match_all('/([a-z_]+)="([^"]+)?"/', $attr, $attrs);
                     $attr = array_combine($attrs[1], $attrs[2]);
                 }
-                $array = explode('api.php', $_SERVER['PHP_SELF']);
+                $array = explode('api.php', (string) $_SERVER['PHP_SELF']);
                 $attr['_relative_root'] = array_shift($array);
 
                 foreach ($attr as $key => &$val) {
-                    $val = str_replace(array('__quot__', '__lt__', '__gt__', '__n__', '__lb__', '__rb__', '__perc__'), array('"', '<', '>', "\n", '[', ']', '%'), $val);
+                    $val = str_replace(['__quot__', '__lt__', '__gt__', '__n__', '__lb__', '__rb__', '__perc__'], ['"', '<', '>', "\n", '[', ']', '%'], $val);
                 }
 
                 $filtered = call_user_func(self::$shortcodes[$code], $attr);
@@ -478,7 +450,7 @@ class Shutter
                     if (empty($filtered[1])) {
                         $filtered[1] = [];
                     } elseif (!is_array($filtered[1])) {
-                        $filtered[1] = array($filtered[1]);
+                        $filtered[1] = [$filtered[1]];
                     }
                     foreach ($filtered[1] as $script) {
                         if (!in_array($script, $scripts)) {
@@ -493,7 +465,7 @@ class Shutter
         }
 
         if (!empty($scripts)) {
-            $array1 = explode('/api.php', $_SERVER['REQUEST_URI']);
+            $array1 = explode('/api.php', (string) $_SERVER['REQUEST_URI']);
             $base = array_shift($array1);
             foreach ($scripts as &$script) {
                 $script = '<script src="' . $base . $script . '"></script>';
@@ -517,7 +489,7 @@ class Shutter
             foreach ($to_call as $callback) {
                 if (self::plugin_is_active($callback)) {
                     if (is_array($args)) {
-                        $data = call_user_func_array($callback, array_values(array_merge(array($data), $args)));
+                        $data = call_user_func_array($callback, array_values(array_merge([$data], $args)));
                     } else {
                         $data = call_user_func($callback, $data);
                     }
@@ -563,7 +535,7 @@ class Shutter
 
     public static function register_site_script($path, $plugin)
     {
-        $item = array('path' => $path, 'plugin' => $plugin);
+        $item = ['path' => $path, 'plugin' => $plugin];
 
         if (!in_array($item, self::$scripts)) {
             self::$scripts[] = $item;
@@ -572,13 +544,13 @@ class Shutter
 
     public static function register_cache_handler($handler, $target)
     {
-        if (in_array(get_class($handler), self::$active_plugins) && in_array('KokenCache', class_implements($handler))) {
+        if (in_array($handler::class, self::$active_plugins) && in_array('KokenCache', class_implements($handler))) {
             if ($target === 'all') {
-                $target = array('site', 'api', 'core', 'images', 'locks', 'plugins', 'icc', 'albums');
+                $target = ['site', 'api', 'core', 'images', 'locks', 'plugins', 'icc', 'albums'];
             }
 
             if (!is_array($target)) {
-                $target = array($target);
+                $target = [$target];
             }
 
             foreach ($target as $t) {
@@ -589,40 +561,35 @@ class Shutter
 
     public static function register_email_handler($handler, $label)
     {
-        $class = get_class($handler);
+        $class = $handler::class;
 
         if (in_array($class, self::$active_plugins) && in_array('KokenEmail', class_implements($handler))) {
-            self::$email_providers[get_class($handler)] = compact('class', 'label', 'handler');
+            self::$email_providers[$handler::class] = compact('class', 'label', 'handler');
         }
     }
 
     public static function get_email_handlers()
     {
-        return array_map(function ($info) {
-            return array(
-                'class' => $info['class'],
-                'label' => $info['label']
-            );
-        }, array_values(self::$email_providers));
+        return array_map(fn($info) => ['class' => $info['class'], 'label' => $info['label']], array_values(self::$email_providers));
     }
 
     public static function register_db_config_handler($handler)
     {
-        if (in_array(get_class($handler), self::$active_plugins) && in_array('KokenDatabaseConfiguration', class_implements($handler))) {
+        if (in_array($handler::class, self::$active_plugins) && in_array('KokenDatabaseConfiguration', class_implements($handler))) {
             self::$db_config_provider = $handler;
         }
     }
 
     public static function register_encryption_key_handler($handler)
     {
-        if (in_array(get_class($handler), self::$active_plugins) && in_array('KokenEncryptionKey', class_implements($handler))) {
+        if (in_array($handler::class, self::$active_plugins) && in_array('KokenEncryptionKey', class_implements($handler))) {
             self::$encryption_key_provider = $handler;
         }
     }
 
     public static function register_storage_handler($handler)
     {
-        if (in_array(get_class($handler), self::$active_plugins) && in_array('KokenOriginalStore', class_implements($handler))) {
+        if (in_array($handler::class, self::$active_plugins) && in_array('KokenOriginalStore', class_implements($handler))) {
             self::$original_storage_handler = $handler;
         }
     }
@@ -635,7 +602,7 @@ class Shutter
             }
         }
 
-        if (in_array(get_class($handler), self::$active_plugins) && is_dir($path)) {
+        if (in_array($handler::class, self::$active_plugins) && is_dir($path)) {
             self::$template_folders[] = $path;
         }
     }
@@ -662,9 +629,7 @@ class Shutter
     public static function store_original($localFile, $content)
     {
         if (self::$original_storage_handler) {
-            return call_user_func(array(
-                self::$original_storage_handler, 'send'
-            ), $localFile, $content);
+            return call_user_func([self::$original_storage_handler, 'send'], $localFile, $content);
         }
 
         return false;
@@ -673,9 +638,7 @@ class Shutter
     public static function delete_original($url)
     {
         if (self::$original_storage_handler) {
-            return call_user_func(array(
-                self::$original_storage_handler, 'delete'
-            ), $url);
+            return call_user_func([self::$original_storage_handler, 'delete'], $url);
         }
 
         return false;
@@ -686,7 +649,7 @@ class Shutter
         $scripts = [];
 
         foreach (self::$scripts as $arr) {
-            if (self::plugin_is_active(array($arr['plugin'])) && file_exists($arr['path'])) {
+            if (self::plugin_is_active([$arr['plugin']]) && file_exists($arr['path'])) {
                 $scripts[] = $arr['path'];
             }
         }

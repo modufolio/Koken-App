@@ -116,7 +116,7 @@ class F
      * @return bool
      * @throws Exception
      */
-    public static function append(string $file, $content): bool
+    public static function append(string $file, mixed $content): bool
     {
         return static::write($file, $content, true);
     }
@@ -187,7 +187,7 @@ class F
         try {
             static::realpath($file, $in);
             return true;
-        } catch (Exception $e) {
+        } catch (Exception) {
             return false;
         }
     }
@@ -207,7 +207,7 @@ class F
         }
 
         // return the current extension
-        return Str::lower(pathinfo($file, PATHINFO_EXTENSION));
+        return Str::lower(pathinfo((string) $file, PATHINFO_EXTENSION));
     }
 
     /**
@@ -301,7 +301,7 @@ class F
         }
 
         // check for the mime type
-        if (strpos($value, '/') !== false) {
+        if (str_contains($value, '/')) {
             return static::mime($file) === $value;
         }
 
@@ -357,7 +357,7 @@ class F
 
         try {
             return $method($source, $link) === true;
-        } catch (Throwable $e) {
+        } catch (Throwable) {
             return false;
         }
     }
@@ -367,11 +367,10 @@ class F
      * file to load does not exist
      *
      * @param string $file
-     * @param mixed $fallback
      * @param array $data Optional array of variables to extract in the variable scope
      * @return mixed
      */
-    public static function load(string $file, $fallback = null, array $data = [])
+    public static function load(string $file, mixed $fallback = null, array $data = [])
     {
         if (is_file($file) === false) {
             return $fallback;
@@ -533,7 +532,7 @@ class F
      *                                  `false` to disable number formatting
      * @return string
      */
-    public static function niceSize($size): string
+    public static function niceSize(mixed $size): string
     {
         // file mode
         if (is_string($size) === true && file_exists($size) === true) {
@@ -549,7 +548,7 @@ class F
         }
 
         // the math magic
-        $size = round($size / pow(1024, ($unit = floor(log($size, 1024)))), 2);
+        $size = round($size / 1024 ** ($unit = floor(log($size, 1024))), 2);
 
 
         return $size . ' ' . static::$units[$unit];
@@ -627,7 +626,7 @@ class F
                 throw new Exception(sprintf('The parent directory does not exist: "%s"', $in));
             }
 
-            if (substr($realpath, 0, strlen($parent)) !== $parent) {
+            if (!str_starts_with($realpath, $parent)) {
                 throw new Exception('The file is not within the parent directory');
             }
         }
@@ -675,7 +674,7 @@ class F
      */
     public static function remove(string $file): bool
     {
-        if (strpos($file, '*') !== false) {
+        if (str_contains($file, '*')) {
             foreach (glob($file) as $f) {
                 static::remove($f);
             }
@@ -742,7 +741,7 @@ class F
     {
         try {
             return filesize($file);
-        } catch (Throwable $e) {
+        } catch (Throwable) {
             return 0;
         }
     }
@@ -844,7 +843,7 @@ class F
      * @return bool
      * @throws Exception
      */
-    public static function write(string $file, $content, bool $append = false): bool
+    public static function write(string $file, mixed $content, bool $append = false): bool
     {
         if (is_array($content) === true || is_object($content) === true) {
             $content = serialize($content);

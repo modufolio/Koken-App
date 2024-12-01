@@ -46,7 +46,7 @@ $config['index_page'] = "api.php";
 |
 */
 
-if (isset($_SERVER['QUERY_STRING']) && strpos($_SERVER['QUERY_STRING'], '/') === 0) {
+if (isset($_SERVER['QUERY_STRING']) && str_starts_with((string) $_SERVER['QUERY_STRING'], '/')) {
     // All use QUERY_STRING since 0.6.0
     $config['uri_protocol']	= "QUERY_STRING";
 } else {
