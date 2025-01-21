@@ -924,23 +924,6 @@ class Sites extends Koken_Controller
                 $draft->live_data = $draft->data;
                 $draft->current = 1;
                 $draft->save();
-
-                $guid = FCPATH . 'storage' . DIRECTORY_SEPARATOR . 'themes' . DIRECTORY_SEPARATOR . $draft->path . DIRECTORY_SEPARATOR . 'koken.guid';
-
-                if (file_exists($guid)) {
-                    $s = new Setting();
-                    $s->where('name', 'uuid')->get();
-                    $curl = curl_init();
-                    curl_setopt($curl, CURLOPT_URL, KOKEN_STORE_URL . '/register?uuid=' . $s->value .
-                        '&theme=' . trim(file_get_contents($guid)));
-                    curl_setopt($curl, CURLOPT_HEADER, 0);
-                    curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 10);
-                    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-                    curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2);
-                    curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-                    $r = curl_exec($curl);
-                    curl_close($curl);
-                }
                 exit;
             } else {
                 $this->error('404', "Draft not found.");
