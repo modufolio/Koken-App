@@ -366,7 +366,7 @@ class Koken_Controller extends CI_Controller
         echo($data);
     }
 
-    public function parse_plugins()
+    public function parse_plugins(): array
     {
         $activated = new Plugin();
         $activated->get_iterated();
@@ -515,9 +515,9 @@ class Koken_Controller extends CI_Controller
 
         if (count($args)) {
             foreach ($args as $index => $arg) {
-                if (strpos($arg, ':') !== false) {
+                if (str_contains($arg, ':')) {
                     $bits = explode(':', $arg);
-                    if (strpos($bits[1], '&') !== false) {
+                    if (str_contains($bits[1], '&')) {
                         // Upload URLs have extra query string, remove it here
                         $bits[1] = substr($bits[1], 0, strpos($bits[1], '&'));
                     }
@@ -541,7 +541,7 @@ class Koken_Controller extends CI_Controller
                             $params[$bits[0]] = $bits[1];
                             break;
                     }
-                } elseif (is_numeric($arg) || strpos($arg, ',') !== false || strlen($arg) == 32 || preg_match('/\d{4}\-\d{1,2}\-\d{1,2}/', $arg) || in_array($arg, $allowed_string_ids)) {
+                } elseif (is_numeric($arg) || str_contains($arg, ',') || strlen($arg) == 32 || preg_match('/\d{4}\-\d{1,2}\-\d{1,2}/', $arg) || in_array($arg, $allowed_string_ids)) {
                     $id[] = $arg;
                 }
             }
@@ -568,7 +568,7 @@ class Koken_Controller extends CI_Controller
         return array($params, $id, $slug);
     }
 
-    public function aggregate($type, $options = array())
+    public function aggregate(string $type, array $options = []): array
     {
         $options = array_merge(array('featured' => false), $options);
 

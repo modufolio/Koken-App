@@ -38,9 +38,6 @@
 						<li data-bind="css: { selected: state.view() == 'photos' }">
 							<a href="#/settings/photos" class="item"><span class="in"><span class="icon16 label-photo">Image publishing</span></span></a>
 						</li>
-						<li data-bind="css: { selected: state.view() == 'email' }">
-							<a href="#/settings/email" class="item"><span class="in"><span class="icon16 label-contact">Email</span></span></a>
-						</li>
 						<li data-bind="css: { selected: state.view() == 'applications' }">
 							<a href="#/settings/applications" class="item"><span class="in"><span class="icon16 label-application">Applications</span></span></a>
 						</li>
@@ -848,7 +845,7 @@
 		<!-- /ko -->
 
 		<!-- ko ifnot: user_plugins().length -->
-		<p>No plugins installed. <a href="#/store/plugins" title="Browse plugins at the Koken Store">Download plugins from the Koken Store</a>.</p>
+		<p>No plugins installed.</p>
 		<!-- /ko -->
 
 		<!-- ko foreach: user_plugins -->
@@ -881,8 +878,6 @@
 	</div>
 
 	<br><br>
-
-	<a class="button" href="#/store/plugins" title="Download more plugins from the Koken Store">Download plugins</a>
 
 	<br><br><br><br>
 

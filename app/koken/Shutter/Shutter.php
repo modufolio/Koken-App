@@ -384,7 +384,7 @@ class Shutter
             self::parse($dir, $activate, $internal);
         }
     }
-    public static function all($map)
+    public static function all($map): array
     {
         self::scan("storage/plugins");
 

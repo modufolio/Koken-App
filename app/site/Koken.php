@@ -275,8 +275,8 @@ META;
                 $crumbs[] = array('link' => $section, 'label' => self::$site['url_data'][ $set ? 'set' : $single['__koken__'] ]['plural']);
             }
 
-            if (isset($data['url']) && strpos($data['url'], 'date') !== false && isset(self::$site['urls'][ 'archive_' . $single['__koken__'] . 's' ])) {
-                $date = isset($single['published_on']) ? $single['published_on'] : ($single['captured_on'] ? $single['captured_on'] : $single['created_on']);
+            if (isset($data['url']) && str_contains($data['url'], 'date') && isset(self::$site['urls'][ 'archive_' . $single['__koken__'] . 's' ])) {
+                $date = $single['published_on'] ?? ($single['captured_on'] ?: $single['created_on']);
                 $year = date('Y', $date['timestamp']);
                 $month = date('m', $date['timestamp']);
 
@@ -289,7 +289,7 @@ META;
             if ($content) {
                 $crumbs[] = array('link' => $content['__koken_url'], 'label' => empty($content['title']) ? $content['filename'] : $content['title']);
             }
-        } elseif (substr(strrev($source), 0, 1) === 's') {
+        } elseif (str_starts_with(strrev($source), 's')) {
             $data_type = $source === 'categories' ? 'category' : rtrim($source, 's');
             $data_type = $data_type === 'event' ? 'timeline' : $data_type;
             $data = self::$site['url_data'][$data_type];
@@ -401,7 +401,7 @@ META;
         return $protocol;
     }
 
-    private static function attr_callback($matches)
+    private static function attr_callback($matches): string
     {
         $name = $matches[1];
 
@@ -424,11 +424,11 @@ META;
         return "$name=\"$value\"";
     }
 
-    private function attr_replace($matches)
+    private function attr_replace($matches): string
     {
         $t = new Tag();
 
-        if (strpos($matches[1], '.replace(') !== false) {
+        if (str_contains($matches[1], '.replace(')) {
             preg_match('/(.*)\.replace\((.*)\)/', $matches[1], $r_matches);
             $data = $t->field_to_keys($r_matches[1]);
             return 'str_replace(' . $r_matches[2] . ', ' . $data . ')';
@@ -451,7 +451,7 @@ META;
             $parameters['api'] = [];
 
             foreach ($param_matches[1] as $index => $key) {
-                if (strpos($key, 'api:') === 0) {
+                if (str_starts_with($key, 'api:')) {
                     $key = str_replace('api:', '', $key);
                     $parameters['api'][$key] = $param_matches[2][$index];
                 } else {
@@ -575,7 +575,7 @@ META;
 
     private static function prep_api($url, $cache = true)
     {
-        if (strpos($url, 'api.php?') !== false) {
+        if (str_contains($url, 'api.php?')) {
             $bits = explode('api.php?', $url);
             $url = $bits[1];
         }
@@ -888,12 +888,12 @@ META;
                 'site', 'location', '_parent', 'rss', 'profile', 'source', 'settings', 'routed_variables', 'page_variables', 'pjax', 'labels', 'messages', 'language'
             );
 
-            if (strpos($key, '.length') !== false) {
+            if (str_contains($key, '.length')) {
                 $key = str_replace('.length', '', $key);
                 $count = true;
             }
 
-            if (preg_match('/_on$/', $key)) {
+            if (str_ends_with($key, '_on')) {
                 $key .= '.timestamp';
                 if (!isset($parameters['date_format'])) {
                     if (isset($parameters['date_only'])) {
@@ -962,7 +962,7 @@ META;
                         $parameters['clean'] = true;
                     } elseif (!isset($return[$index]) && $index === 'title' && isset($return['year'])) {
                         if (isset($return['month'])) {
-                            $return = self::title_from_archive($return, isset($parameters['date_format']) ? $parameters['date_format'] : false);
+                            $return = self::title_from_archive($return, $parameters['date_format'] ?? false);
                         } else {
                             $return = $return['year'];
                         }
@@ -984,7 +984,7 @@ META;
                             } elseif ($index === 'singular' && (!is_array($return) || !isset($return['singular']))) {
                                 $singular = true;
                             } else {
-                                $return = isset($return[$index]) ? $return[$index] : '';
+                                $return = $return[$index] ?? '';
 
                                 if (is_string($return)) {
                                     $parts = explode('.', $return);
@@ -1026,7 +1026,7 @@ META;
             }
         } else {
             if (isset($parameters['truncate'])) {
-                $return = self::truncate(strip_tags($return), $parameters['truncate'], isset($parameters['after_truncate']) ? $parameters['after_truncate'] : '…');
+                $return = self::truncate(strip_tags($return), $parameters['truncate'], $parameters['after_truncate'] ?? '…');
             }
 
             if (isset($parameters['case'])) {
@@ -1427,7 +1427,7 @@ META;
             }
 
             foreach ($parameters as $key => $val) {
-                if (strpos($key, 'filter:') === 0) {
+                if (str_starts_with($key, 'filter:')) {
                     continue;
                 }
 
@@ -1492,7 +1492,7 @@ META;
                 if ($key === 'filter:id') {
                     continue;
                 }
-                if (strpos($key, 'filter:') === 0) {
+                if (str_starts_with($key, 'filter:')) {
                     $tail .= str_replace('filter:', '', $key) . ':' . $val . '/';
                     if ($key === 'filter:order_by' && $token) {
                         $token['__koken__override_date'] = $val;
@@ -1521,11 +1521,11 @@ META;
 
             if (preg_match('~\.rss$~', $url)) {
                 $attributes['target'] = '_blank';
-            } elseif (strpos($url, '/') === 0 && !preg_match('~/lightbox/$~', $url)) {
+            } elseif (str_starts_with($url, '/') && !preg_match('~/lightbox/$~', $url)) {
                 $attributes['data-koken-internal'] = true;
             }
 
-            if (strpos($url, '/') === 0) {
+            if (str_starts_with($url, '/')) {
                 $url = self::$location['root'] . $url . $tail;
                 if (self::$preview) {
                     $url .= '&amp;preview=' . self::$preview;
@@ -1571,7 +1571,7 @@ META;
                     $obj = $obj['album'];
                 }
 
-                if ((!self::$source || strpos(self::$source['type'], 'event') !== 0) && $type === 'event_timeline' && in_array($obj['__koken__'], array('content', 'album', 'essay')) && isset($defaults['event_timeline'])) {
+                if ((!self::$source || !str_starts_with(self::$source['type'], 'event')) && $type === 'event_timeline' && in_array($obj['__koken__'], array('content', 'album', 'essay')) && isset($defaults['event_timeline'])) {
                     $type = 'event_timeline';
                 }
             } elseif (!isset($obj['__koken__']) && isset($obj['items']) && isset($obj['year'])) {
@@ -1600,7 +1600,7 @@ META;
                 }
 
                 if ($defaults[$type]) {
-                    if (strpos($type, 'tag') === 0) {
+                    if (str_starts_with($type, 'tag')) {
                         $obj['id'] = $obj['title'];
                         if (is_numeric($obj['id'])) {
                             $obj['id'] = 'tag-' . $obj['id'];
@@ -1956,7 +1956,7 @@ META;
         }
         return $out . '>';
     }
-    private static function params_to_str($params)
+    private static function params_to_str(array $params): string
     {
         $arr = [];
         foreach ($params as $key => $val) {
@@ -2097,9 +2097,9 @@ META;
         $params['filters'] = [];
 
         foreach ($params as $key => $val) {
-            if (strpos($key, 'filter:') === 0) {
+            if (str_starts_with($key, 'filter:')) {
                 $left = str_replace('filter:', '', $key);
-                if (strpos($left, ':not') === false) {
+                if (!str_contains($left, ':not')) {
                     $right = '';
                 } else {
                     $right = '!';
@@ -2116,9 +2116,9 @@ META;
         if (isset($params['source'])) {
             $params['source'] = self::parse_source_aliases($params['source']);
             $source = array('type' => $params['source']);
-            $defaults['list'] = substr(strrev($params['source']), 0, 1) === 's';
+            $defaults['list'] = str_starts_with(strrev($params['source']), 's');
             $defaults['model'] = rtrim($params['source'], 's') . 's';
-            $defaults['filters'] = isset($params['filters']) ? $params['filters'] : array();
+            $defaults['filters'] = $params['filters'] ?? [];
             $custom = true;
             if (isset($params['tree'])) {
                 $defaults['tree'] = true;
@@ -2126,7 +2126,7 @@ META;
         } elseif (Koken::$source) {
             Koken::$source['type'] = self::parse_source_aliases(Koken::$source['type']);
             $source = Koken::$source;
-            $defaults['list'] = substr(strrev(Koken::$source['type']), 0, 1) === 's';
+            $defaults['list'] = str_starts_with(strrev(Koken::$source['type']), 's');
             $defaults['model'] = rtrim(Koken::$source['type'], 's') . 's';
             $defaults['filters'] = is_array(Koken::$source['filters']) ? Koken::$source['filters'] : array();
         }
@@ -2140,7 +2140,7 @@ META;
             $defaults['api']['types'] = 'set';
         }
 
-        if (strpos($defaults['model'], 'featured_') === 0) {
+        if (str_starts_with($defaults['model'], 'featured_')) {
             $bits = explode('_', $defaults['model']);
             $defaults['model'] = 'features';
             $defaults['id'] = rtrim($bits[1], 's');
@@ -2182,21 +2182,21 @@ META;
                 if (strpos($filter, '=') !== false) {
                     $bits = explode('=', $filter);
                     if ($bits[0] === 'id' && $bits[1][0] !== '!') {
-                        $__id = substr($bits[1], 0, 1) === '"' ? $bits[1] : urlencode($bits[1]);
+                        $__id = str_starts_with($bits[1], '"') ? $bits[1] : urlencode($bits[1]);
                     } elseif ($bits[0] === 'members') {
                         $params['type'] = $bits[1];
                     } else {
-                        if (strpos($bits[1], '!') === 0 || strpos($bits[0], '!') !== false) {
+                        if (str_starts_with($bits[1], '!') || str_contains($bits[0], '!')) {
                             $bits[1] = str_replace('!', '', $bits[1]);
                             $bits[0] = str_replace('!', '', $bits[0]) . '_not';
                         }
-                        if (strpos($bits[0], 'category') === 0 && (!is_numeric($bits[1]) && strpos($bits[1], '" . Koken') !== 0)) {
+                        if (str_starts_with($bits[0], 'category') && (!is_numeric($bits[1]) && !str_starts_with($bits[1], '" . Koken'))) {
                             $bits[1] = Koken::$categories[strtolower($bits[1])];
                         }
                         $defaults['api'][$bits[0]] = $bits[1];
                     }
                 } else {
-                    if (substr($filter, 0, 1) === '!') {
+                    if (str_starts_with($filter, '!')) {
                         $filter = str_replace('!', '', $filter);
                         $val = 0;
                     } else {
@@ -2390,7 +2390,7 @@ META;
 
         if (!$custom) {
             $overrides = Koken::$location['parameters']['__overrides'];
-            if (isset($overrides['order_by']) && strpos($overrides['order_by'], '_on') !== false && !isset($overrides['order_direction'])) {
+            if (isset($overrides['order_by']) && str_contains($overrides['order_by'], '_on') && !isset($overrides['order_direction'])) {
                 $overrides['order_direction'] = 'desc';
             }
             $options['api'] = array_merge($options['api'], $overrides);
@@ -2431,7 +2431,7 @@ META;
             } elseif (isset($token['date']) && isset($token['date']['timestamp'])) {
                 $token = $token['date'];
             } elseif (isset($token['event']) || (isset($token['__koken__']) && $token['__koken__'] === 'event') || isset($token['year'])) {
-                $obj = isset($token['event']) ? $token['event'] : $token;
+                $obj = $token['event'] ?? $token;
                 $str = $obj['year'] . '-';
                 $format = 'Y';
 
@@ -2454,8 +2454,8 @@ META;
                 );
                 $options['show'] = $format;
             } elseif (isset($token['year'])) {
-                $m = isset($token['month']) ? $token['month'] : 1;
-                $d = isset($token['day']) ? $token['day'] : 1;
+                $m = $token['month'] ?? 1;
+                $d = $token['day'] ?? 1;
                 $token = array(
                     'timestamp' => strtotime($token['year'] . '-' . $m . '-' . $d),
                     'utc' => true,
@@ -2488,23 +2488,12 @@ META;
                 $klass = ' class="' . $klass . '"';
             }
 
-            switch ($options['show']) {
-                case 'both':
-                    $f = self::$site['date_format'] . ' ' . self::$site['time_format'];
-                    break;
-
-                case 'date':
-                    $f = self::$site['date_format'];
-                    break;
-
-                case 'time':
-                    $f = self::$site['time_format'];
-                    break;
-
-                default:
-                    $f = $options['show'];
-                    break;
-            }
+            $f = match ($options['show']) {
+                'both' => self::$site['date_format'] . ' ' . self::$site['time_format'],
+                'date' => self::$site['date_format'],
+                'time' => self::$site['time_format'],
+                default => $options['show'],
+            };
 
             $dt = date('c', $timestamp);
 
