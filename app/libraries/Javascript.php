@@ -173,7 +173,7 @@ class CI_Javascript
      * @param	string	- Javascript code for mouse out
      * @return	string
      */
-    public function hover($element = 'this', $over, $out)
+    public function hover($over, $out, $element = 'this')
     {
         return $this->js->__hover($element, $over, $out);
     }
@@ -644,9 +644,9 @@ class CI_Javascript
             }
         }
 
-        if ($relative === true or strncmp($external_file, 'http://', 7) == 0 or strncmp($external_file, 'https://', 8) == 0) {
+        if ($relative === true or str_starts_with($external_file, 'http://') or str_starts_with($external_file, 'https://')) {
             $str = $this->_open_script($external_file);
-        } elseif (strpos($this->_javascript_location, 'http://') !== false) {
+        } elseif (str_contains($this->_javascript_location, 'http://')) {
             $str = $this->_open_script($this->_javascript_location.$external_file);
         } else {
             $str = $this->_open_script($this->CI->config->slash_item('base_url').$this->_javascript_location.$external_file);

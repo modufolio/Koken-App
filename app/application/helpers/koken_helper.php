@@ -84,7 +84,7 @@ function create_htaccess($symlink = false, $redirect = false)
     }
 
 
-    if (strpos(strtolower($_SERVER['SERVER_SOFTWARE']), 'ideawebserver') !== false) {
+    if (str_contains(strtolower($_SERVER['SERVER_SOFTWARE']), 'ideawebserver')) {
         // IdeaWebServer. Why?
         $mime = <<<MIME
 :Location *.lens

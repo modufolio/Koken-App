@@ -96,7 +96,7 @@ class Category extends Koken
             $this->where('id', $options['category']);
         }
 
-        if ($options['order_by'] !== 'count' && strpos($options['order_by'], 'count') !== false) {
+        if ($options['order_by'] !== 'count' && str_contains($options['order_by'], 'count')) {
             if ($options['order_by'] === 'essay_count') {
                 $options['order_by'] = 'text_count';
             }
@@ -117,7 +117,7 @@ class Category extends Koken
             $options['order_by'] = 'total_count';
         }
 
-        if (strpos($options['order_by'], 'count') !== false && !isset($params['order_direction'])) {
+        if (str_contains($options['order_by'], 'count') && !isset($params['order_direction'])) {
             $options['order_direction'] = 'DESC';
         }
 

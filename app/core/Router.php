@@ -183,7 +183,7 @@ class CI_Router extends stdClass
             show_error("Unable to determine what should be displayed. A default route has not been specified in the routing file.");
         }
         // Is the method being specified?
-        if (strpos($this->default_controller, '/') !== false) {
+        if (str_contains($this->default_controller, '/')) {
             $x = explode('/', $this->default_controller);
 
             $this->set_class($x[0]);
@@ -283,7 +283,7 @@ class CI_Router extends stdClass
                 }
             } else {
                 // Is the method being specified in the route?
-                if (strpos($this->default_controller, '/') !== false) {
+                if (str_contains($this->default_controller, '/')) {
                     $x = explode('/', $this->default_controller);
 
                     $this->set_class($x[0]);
@@ -350,7 +350,7 @@ class CI_Router extends stdClass
             // Does the RegEx match?
             if (preg_match('#^'.$key.'$#', $uri)) {
                 // Do we have a back-reference?
-                if (strpos($val, '$') !== false and strpos($key, '(') !== false) {
+                if (str_contains($val, '$') and str_contains($key, '(')) {
                     $val = preg_replace('#^'.$key.'$#', $val, $uri);
                 }
 

@@ -497,7 +497,7 @@ class CI_Security
      */
     public function entity_decode($str, $charset='UTF-8')
     {
-        if (strpos($str, '&') === false) {
+        if (!str_contains($str, '&')) {
             return $str;
         }
 

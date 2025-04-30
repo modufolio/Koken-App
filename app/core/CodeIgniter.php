@@ -254,7 +254,7 @@
     $method = $RTR->fetch_method();
 
     if (! class_exists($class)
-        or strncmp($method, '_', 1) == 0
+        or str_starts_with($method, '_')
         or in_array(strtolower($method), array_map('strtolower', get_class_methods('CI_Controller')))
         ) {
         if (! empty($RTR->routes['404_override'])) {

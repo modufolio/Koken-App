@@ -1,5 +1,7 @@
 <?php
 
+use ZipMerge\Zip\Stream\ZipMerge;
+
 error_reporting(E_ALL | E_STRICT);
 ini_set('error_reporting', E_ALL | E_STRICT);
 ini_set('display_errors', 1);
@@ -8,7 +10,7 @@ include "../vendor/autoload.php";
 
 $outFile = "ZipMerge.test1.zip";
 
-$zipMerge = new \ZipMerge\Zip\Stream\ZipMerge($outFile);
+$zipMerge = new ZipMerge($outFile);
 $zipMerge->appendZip("../testData/500k.zip", "TrueCryptRandomFile/");
 $zipMerge->appendZip("../testData/test.zip", "A-book");
 /*

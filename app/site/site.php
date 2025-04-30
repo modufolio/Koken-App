@@ -28,7 +28,7 @@
         $rewrite = true;
         $raw_url = $_GET['url'];
     } else {
-        if (isset($_SERVER['QUERY_STRING']) && (strpos($_SERVER['QUERY_STRING'], '/') === 0 || strpos($_SERVER['QUERY_STRING'], '%2F') === 0)) {
+        if (isset($_SERVER['QUERY_STRING']) && (str_starts_with($_SERVER['QUERY_STRING'], '/') || str_starts_with($_SERVER['QUERY_STRING'], '%2F'))) {
             $raw_url = $_SERVER['QUERY_STRING'];
         } else {
             $raw_url = '/';
@@ -60,7 +60,7 @@
 
     $preview = $pjax = false;
 
-    if (isset($_SERVER['HTTP_X_PJAX']) || strpos($_SERVER['QUERY_STRING'], '_pjax=') !== false) {
+    if (isset($_SERVER['HTTP_X_PJAX']) || str_contains($_SERVER['QUERY_STRING'], '_pjax=')) {
         $pjax = true;
     }
 
@@ -108,7 +108,7 @@
         $url = $raw_url = '/';
     }
 
-    if ($url[strlen($url)-1] !== '/' && strpos($url, '.') === false) {
+    if ($url[strlen($url)-1] !== '/' && !str_contains($url, '.')) {
         header("HTTP/1.1 301 Moved Permanently");
         // Rewrite non-trailing slash URLs to trailing slash for SEO purposes.
         if ($rewrite) {
@@ -153,11 +153,11 @@
         $parts = explode('&', $_SERVER['QUERY_STRING']);
 
         foreach ($parts as $p) {
-            if (strpos($p, '/') === 0) {
+            if (str_starts_with($p, '/')) {
                 continue;
             }
 
-            if (strpos($p, '=') === false) {
+            if (!str_contains($p, '=')) {
                 $url_vars[$p] = true;
             } else {
                 list($key, $val) = explode('=', $p);
@@ -446,7 +446,7 @@
 
     // Create routes array
     foreach (Koken::$site['routes'] as $arr) {
-        if (strpos($arr['path'], '.') === false) {
+        if (!str_contains($arr['path'], '.')) {
             $arr['path'] = rtrim($arr['path'], '/') . '/';
         }
 
@@ -458,7 +458,7 @@
             'label' => isset($arr['label']) ? $arr['label'] : false,
         );
 
-        if (strpos($arr['template'], 'redirect:') === 0) {
+        if (str_starts_with($arr['template'], 'redirect:')) {
             $redirects[$arr['path']] = $r;
         } else {
             $routes[$arr['path']] = $r;
@@ -588,7 +588,7 @@
             }
 
             if (preg_match('~^' . $route . '$~u', $url, $matches)) {
-                if (strpos($page['template'], 'redirect:') === 0) {
+                if (str_starts_with($page['template'], 'redirect:')) {
                     $redirect = str_replace('redirect:', '', $page['template']);
                 } else {
                     $redirect = false;
@@ -623,14 +623,14 @@
                 }
 
                 if ($redirect) {
-                    if (strpos($redirect, 'soft:') !== false) {
+                    if (str_contains($redirect, 'soft:')) {
                         $redirect_type = '302 Moved Temporarily';
                         $redirect = str_replace('soft:', '', $redirect);
                     } else {
                         $redirect_type = '301 Moved Permanently';
                     }
 
-                    if (strpos($redirect, '/') === 0) {
+                    if (str_starts_with($redirect, '/')) {
                         $redirect_to = $redirect;
                     } else {
                         $redirect_to = Koken::$site['urls'][$redirect];
@@ -644,27 +644,18 @@
                     $redirect_to = str_replace(')?', '', $redirect_to);
                     $redirect_to = str_replace('/:month', '', $redirect_to);
 
-                    if (strpos($redirect_to, ':') !== false) {
+                    if (str_contains($redirect_to, ':')) {
                         if (isset($routed_variables['id'])) {
                             $id = $routed_variables['id'];
                         } else {
                             $id = 'slug:' . $routed_variables['slug'];
                         }
 
-                        switch ($redirect) {
-                            case 'album':
-                                $url = '/albums';
-                                break;
-
-                            case 'essay':
-                            case 'page':
-                                $url = '/text';
-                                break;
-
-                            default:
-                                $url = '/content';
-                                break;
-                        }
+                        $url = match ($redirect) {
+                            'album' => '/albums',
+                            'essay', 'page' => '/text',
+                            default => '/content',
+                        };
                         $url .= "/$id";
                         $data = Koken::api($url);
                         $redirect_to = $data['__koken_url'];
@@ -745,7 +736,7 @@
                 if ($load) {
                     if ($filters) {
                         foreach ($filters as &$f) {
-                            if (strpos($f, ':') !== false) {
+                            if (str_contains($f, ':')) {
                                 $f = preg_replace_callback(
                                     "/:([a-z_]+)/",
                                     function ($matches) {
@@ -900,7 +891,7 @@
                         $wrap = '';
                     }
 
-                    if (strpos($path, 'http') === 0 || strpos($path, 'data:') === 0) {
+                    if (str_starts_with($path, 'http') || str_starts_with($path, 'data:')) {
                         $path = $path;
                     } else {
                         $path = preg_replace('~^../~', '', $path);
@@ -937,7 +928,7 @@
 
                 global $final_path;
 
-                if (strpos($final_path, 'lightbox-settings.css.lens') === false) {
+                if (!str_contains($final_path, 'lightbox-settings.css.lens')) {
                     $koken_css = file_get_contents(Koken::get_path('common/css/koken.css'));
                     $contents = $contents . "\n\n" . $koken_css;
                 }
@@ -1019,7 +1010,7 @@
 
                     $info = pathinfo($file);
 
-                    if (strpos($file, 'http') === 0) {
+                    if (str_starts_with($file, 'http')) {
                         $path = $file;
                     } else {
                         if (isset($common) && $common) {
@@ -1062,7 +1053,7 @@
                 }
 
                 if (!isset($info['extension'])) {
-                    $info['extension'] = strpos($path, 'css') === false ? 'js' : 'css';
+                    $info['extension'] = !str_contains($path, 'css') ? 'js' : 'css';
                 }
 
                 if ($info['extension'] == 'css' || $info['extension'] == 'less') {
@@ -1076,7 +1067,7 @@
                 }
             }
 
-            while (strpos($tmpl, '<koken:include') !== false) {
+            while (str_contains($tmpl, '<koken:include')) {
                 $tmpl = preg_replace_callback('/<koken\:include\sfile="([^"]+?)" \/>/', 'parse_include', $tmpl);
             }
 
@@ -1132,7 +1123,7 @@
                         $stamp = '?' . KOKEN_VERSION;
                         
                         $koken_js = Koken::$location['root_folder'] . '/' . (Koken::$draft ? 'preview.php?/' : (Koken::$rewrite ? '' : 'index.php?/')) . 'koken.js' . (Koken::$preview ? '&preview=' . Koken::$preview : '');
-                        if (strpos($koken_js, '.php?') === false) {
+                        if (!str_contains($koken_js, '.php?')) {
                             $koken_js .= '?' . Shutter::get_site_scripts_timestamp();
                         }
 
@@ -1236,7 +1227,7 @@ JS;
 
                 if ($pass === 1) {
                     // Rerun parse to catch shortcode renders
-                    while (strpos($contents, '<koken:') !== false && $pass < 3) {
+                    while (str_contains($contents, '<koken:') && $pass < 3) {
                         $pass++;
                         $contents = go($contents, $pass);
                     }
@@ -1246,7 +1237,7 @@ JS;
 
                 $contents .= Koken::cleanup();
 
-                if ((strpos($contents, 'settings.css.lens"') === false && !empty(Koken::$site['custom_css'])) || Koken::$draft) {
+                if ((!str_contains($contents, 'settings.css.lens"') && !empty(Koken::$site['custom_css'])) || Koken::$draft) {
                     $js .= '<style id="koken_custom_css">' . Koken::$site['custom_css'] . '</style>';
                 }
 
@@ -1259,13 +1250,13 @@ JS;
                     $header_str .= "\t" . $header . "\n";
                 }
 
-                if (strpos($header_str, '<title>') !== false) {
+                if (str_contains($header_str, '<title>')) {
                     $contents = preg_replace('/<title>.*<\/title>/msU', '', $contents);
                     $header_str = preg_replace('/<koken_title>.*<\/koken_title>/', '', $header_str);
-                } elseif (strpos($header_str, '<koken_title>') !== false && strpos($contents, '<koken_title') !== false) {
+                } elseif (str_contains($header_str, '<koken_title>') && str_contains($contents, '<koken_title')) {
                     $contents = preg_replace('/<title>.*<\/title>/msU', '', $contents);
                     $header_str = str_replace('koken_title', 'title', $header_str);
-                } elseif (strpos($contents, '<koken_title') !== false) {
+                } elseif (str_contains($contents, '<koken_title')) {
                     $contents = str_replace('koken_title', 'title', $contents);
                 }
 
@@ -1296,7 +1287,7 @@ JS;
 
                 if (preg_match_all('/<body(?:[^>]+)?>/', $contents, $match) && !empty($final_page_classes)) {
                     foreach ($match[0] as $body) {
-                        if (strpos($body, 'class="') !== false) {
+                        if (str_contains($body, 'class="')) {
                             $new_body = preg_replace('/class="([^"]+)"/', "class=\"$1 " . $final_page_classes . "\"", $body);
                         } else {
                             $new_body = str_replace('>', ' class="' . $final_page_classes . '">', $body);
@@ -1307,7 +1298,7 @@ JS;
 
                 if (preg_match_all('/<html(?:[^>]+)?>/', $contents, $match) && !empty($final_page_classes)) {
                     foreach ($match[0] as $html) {
-                        if (strpos($html, 'class="') !== false) {
+                        if (str_contains($html, 'class="')) {
                             $new_html = preg_replace('/class="([^"]+)"/', "class=\"$1 " . $final_page_classes . "\"", $html);
                         } else {
                             $new_html = str_replace('>', ' class="' . $final_page_classes . '">', $html);

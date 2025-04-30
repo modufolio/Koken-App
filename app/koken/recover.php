@@ -13,7 +13,7 @@
             if ($filename != "." and $filename != "..") {
                 if (is_dir($path.DIRECTORY_SEPARATOR.$filename)) {
                     // Ignore empty folders
-                    if (substr($filename, 0, 1) != '.') {
+                    if (!str_starts_with($filename, '.')) {
                         delete_files($path.DIRECTORY_SEPARATOR.$filename, $del_dir, $level + 1);
                     }
                 } else {

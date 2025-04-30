@@ -221,7 +221,7 @@ class CI_User_agent
     {
         if (is_array($this->mobiles) and count($this->mobiles) > 0) {
             foreach ($this->mobiles as $key => $val) {
-                if (false !== (strpos(strtolower($this->agent), $key))) {
+                if (str_contains(strtolower($this->agent), $key)) {
                     $this->is_mobile = true;
                     $this->mobile = $val;
                     return true;

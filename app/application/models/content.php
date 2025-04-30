@@ -554,19 +554,11 @@ class Content extends Koken
         $info = pathinfo($this->filename);
         $ext = strtolower($info['extension']);
 
-        switch (true) {
-            case in_array($ext, $image_types):
-                return 0;
-                break;
-
-            case in_array($ext, $audio_types):
-                return 2;
-                break;
-
-            default:
-                return 1;
-                break;
-        }
+        return match (true) {
+            in_array($ext, $image_types) => 0,
+            in_array($ext, $audio_types) => 2,
+            default => 1,
+        };
     }
 
     public function path_to_original()
@@ -939,17 +931,11 @@ class Content extends Koken
         }
 
         if (array_key_exists('visibility', $data)) {
-            switch ($data['visibility']) {
-                case 1:
-                    $raw = 'unlisted';
-                    break;
-                case 2:
-                    $raw = 'private';
-                    break;
-                default:
-                    $raw = 'public';
-                    break;
-            }
+            $raw = match ($data['visibility']) {
+                1 => 'unlisted',
+                2 => 'private',
+                default => 'public',
+            };
 
             $data['visibility'] = array(
                 'raw' => $raw,

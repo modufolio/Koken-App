@@ -313,7 +313,7 @@ OUT;
                         }
 
                         if ($data[$key] !== $val) {
-                            if ($key === 'retain_image_metadata' || (strpos($key, 'image_processing_library') === 0 && strpos($key, 'image_') === 0)) {
+                            if ($key === 'retain_image_metadata' || (str_starts_with($key, 'image_processing_library') && str_starts_with($key, 'image_'))) {
                                 delete_files(FCPATH . 'storage' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'images', true, 1);
                             }
                             if (!isset($save[$key])) {

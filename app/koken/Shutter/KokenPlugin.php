@@ -71,7 +71,7 @@ class KokenPlugin
 
     final protected function get_key()
     {
-        $reflector = new ReflectionClass(get_class($this));
+        $reflector = new ReflectionClass(static::class);
         return basename(dirname($reflector->getFileName()));
     }
 

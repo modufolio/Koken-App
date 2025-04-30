@@ -42,7 +42,7 @@ class CI_Driver_Library
     public function __get($child)
     {
         if (! isset($this->lib_name)) {
-            $this->lib_name = get_class($this);
+            $this->lib_name = static::class;
         }
 
         // The class will be prefixed with the parent lib
@@ -127,7 +127,7 @@ class CI_Driver
         // Lock down attributes to what is defined in the class
         // and speed up references in magic methods
 
-        $class_name = get_class($parent);
+        $class_name = $parent::class;
 
         if (! isset(self::$reflections[$class_name])) {
             $r = new ReflectionObject($parent);

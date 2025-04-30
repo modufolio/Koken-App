@@ -2,11 +2,8 @@
 
 class GPS
 {
-    private $exif;
-
-    public function __construct($exif)
+    public function __construct(private $exif)
     {
-        $this->exif = $exif;
     }
 
     public function latitude()

@@ -31,7 +31,7 @@
         private function clean_parameter($parameter)
         {
             $parameter = trim(preg_replace('/(^\{\{)|(\}\}$)/', '', $parameter));
-            if (strpos($parameter, '{{') !== false) {
+            if (str_contains($parameter, '{{')) {
                 $parameter = preg_replace_callback('/\{\{\s*([^\}]+)\s*\}\}/', array($this, 'parse_dynamic'), $parameter);
             }
             return $parameter;
@@ -96,7 +96,7 @@
 
             }
 
-            if (strpos($condition, 'settings') !== false && (!isset($this->parameters['live']) || $this->parameters['live'] != 'false')) {
+            if (str_contains($condition, 'settings') && (!isset($this->parameters['live']) || $this->parameters['live'] != 'false')) {
                 $this->can_live_update = true;
                 $js_settings = preg_match_all('/Koken::\$settings\[\'([^\']+)\'\]/', $js_condition, $matches);
                 $this->data_attrs = ' data-' . join('="true" data-', $matches[1]) . '="true"';

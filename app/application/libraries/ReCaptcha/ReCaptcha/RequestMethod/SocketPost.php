@@ -66,7 +66,7 @@ class SocketPost implements RequestMethod
     /**
      * Constructor
      *
-     * @param \ReCaptcha\RequestMethod\Socket $socket optional socket, injectable for testing
+     * @param Socket $socket optional socket, injectable for testing
      */
     public function __construct(Socket $socket = null)
     {
@@ -110,7 +110,7 @@ class SocketPost implements RequestMethod
 
         $this->socket->fclose();
 
-        if (0 !== strpos($response, 'HTTP/1.1 200 OK')) {
+        if (!str_starts_with($response, 'HTTP/1.1 200 OK')) {
             return self::BAD_RESPONSE;
         }
 

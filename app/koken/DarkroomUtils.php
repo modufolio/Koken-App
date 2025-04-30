@@ -48,7 +48,7 @@ class DarkroomUtils
         if ($library === 'imagick') {
             require_once($root . 'Imagick.php');
             $d = new DarkroomImagick($limits);
-        } elseif (strpos($library, 'convert') !== false) {
+        } elseif (str_contains($library, 'convert')) {
             require_once($root . 'ImageMagick.php');
             $d = new DarkroomImageMagick($library, $limits);
         } else {

@@ -178,15 +178,15 @@ class CI_URI extends stdClass
         }
 
         $uri = $_SERVER['REQUEST_URI'];
-        if (strpos($uri, $_SERVER['SCRIPT_NAME']) === 0) {
+        if (str_starts_with($uri, $_SERVER['SCRIPT_NAME'])) {
             $uri = substr($uri, strlen($_SERVER['SCRIPT_NAME']));
-        } elseif (strpos($uri, dirname($_SERVER['SCRIPT_NAME'])) === 0) {
+        } elseif (str_starts_with($uri, dirname($_SERVER['SCRIPT_NAME']))) {
             $uri = substr($uri, strlen(dirname($_SERVER['SCRIPT_NAME'])));
         }
 
         // This section ensures that even on servers that require the URI to be in the query string (Nginx) a correct
         // URI is found, and also fixes the QUERY_STRING server var and $_GET array.
-        if (strncmp($uri, '?/', 2) === 0) {
+        if (str_starts_with($uri, '?/')) {
             $uri = substr($uri, 2);
         }
         $parts = preg_split('#\?#i', $uri, 2);
@@ -239,7 +239,7 @@ class CI_URI extends stdClass
     {
         if ($str != '' && $this->config->item('permitted_uri_chars') != '' && $this->config->item('enable_query_strings') == false) {
             // HACK
-            if (strpos($str, '%') === false) {
+            if (!str_contains($str, '%')) {
                 $parts = explode('/', $str);
                 foreach ($parts as &$part) {
                     if (strpos($part, ':')) {

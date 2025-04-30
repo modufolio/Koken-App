@@ -1,5 +1,7 @@
 <?php
 
+use PHPZip\Zip\File\Zip;
+
 //set_error_handler("customError");
 error_reporting(E_ALL | E_STRICT);
 ini_set('error_reporting', E_ALL | E_STRICT);
@@ -21,7 +23,7 @@ ob_start(); // This is only to show that ob_start can be called, however the buf
 require_once('bootstrap.php'); // include_once("Zip.php");
 $fileTime = date("D, d M Y H:i:s T");
 
-$zip = new \PHPZip\Zip\File\Zip(); // new Zip();
+$zip = new Zip(); // new Zip();
 /*
 // Archive comments don't really support utf-8. Some tools detect and read it though.
 $zip->setComment("Example Zip file.\nАрхив Комментарий\nCreated on " . date('l jS \of F Y h:i:s A'));

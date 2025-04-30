@@ -154,7 +154,7 @@ class CI_Xmlrpc
 
     public function server($url, $port=80)
     {
-        if (substr($url, 0, 4) != "http") {
+        if (!str_starts_with($url, "http")) {
             $url = "http://".$url;
         }
 
@@ -332,21 +332,14 @@ class CI_Xmlrpc
  */
 class XML_RPC_Client extends CI_Xmlrpc
 {
-    public $path			= '';
-    public $server			= '';
-    public $port			= 80;
     public $errno			= '';
     public $errstring		= '';
     public $timeout		= 5;
     public $no_multicall	= false;
 
-    public function __construct($path, $server, $port=80)
+    public function __construct(public $path, public $server, public $port=80)
     {
         parent::__construct();
-
-        $this->port = $port;
-        $this->server = $server;
-        $this->path = $path;
     }
 
     public function send($msg)
@@ -558,15 +551,12 @@ class XML_RPC_Response
 class XML_RPC_Message extends CI_Xmlrpc
 {
     public $payload;
-    public $method_name;
     public $params			= [];
     public $xh				= [];
 
-    public function __construct($method, $pars=0)
+    public function __construct(public $method_name, $pars=0)
     {
         parent::__construct();
-
-        $this->method_name = $method;
         if (is_array($pars) && count($pars) > 0) {
             for ($i=0; $i<count($pars); $i++) {
                 // $pars[$i] = XML_RPC_Values
@@ -631,7 +621,7 @@ class XML_RPC_Message extends CI_Xmlrpc
         //  Check for HTTP 200 Response
         //-------------------------------------
 
-        if (strncmp($data, 'HTTP', 4) == 0 && ! preg_match('/^HTTP\/[0-9\.]+ 200 /', $data)) {
+        if (str_starts_with($data, 'HTTP') && ! preg_match('/^HTTP\/[0-9\.]+ 200 /', $data)) {
             $errstr= substr($data, 0, strpos($data, "\n")-1);
             $r = new XML_RPC_Response(0, $this->xmlrpcerr['http_error'], $this->xmlrpcstr['http_error']. ' (' . $errstr . ')');
             return $r;
@@ -1172,19 +1162,12 @@ class XML_RPC_Values extends CI_Xmlrpc
 
     public function kindOf()
     {
-        switch ($this->mytype) {
-            case 3:
-                return 'struct';
-                break;
-            case 2:
-                return 'array';
-                break;
-            case 1:
-                return 'scalar';
-                break;
-            default:
-                return 'undef';
-        }
+        return match ($this->mytype) {
+            3 => 'struct',
+            2 => 'array',
+            1 => 'scalar',
+            default => 'undef',
+        };
     }
 
     public function serializedata($typ, $val)
@@ -1213,20 +1196,12 @@ class XML_RPC_Values extends CI_Xmlrpc
                 break;
             case 1:
                 // others
-                switch ($typ) {
-                    case $this->xmlrpcBase64:
-                        $rs .= "<{$typ}>" . base64_encode((string)$val) . "</{$typ}>\n";
-                    break;
-                    case $this->xmlrpcBoolean:
-                        $rs .= "<{$typ}>" . ((bool)$val ? '1' : '0') . "</{$typ}>\n";
-                    break;
-                    case $this->xmlrpcString:
-                        $rs .= "<{$typ}>" . htmlspecialchars((string)$val). "</{$typ}>\n";
-                    break;
-                    default:
-                        $rs .= "<{$typ}>{$val}</{$typ}>\n";
-                    break;
-                }
+                match ($typ) {
+                    $this->xmlrpcBase64 => $rs .= "<{$typ}>" . base64_encode((string)$val) . "</{$typ}>\n",
+                    $this->xmlrpcBoolean => $rs .= "<{$typ}>" . ((bool)$val ? '1' : '0') . "</{$typ}>\n",
+                    $this->xmlrpcString => $rs .= "<{$typ}>" . htmlspecialchars((string)$val). "</{$typ}>\n",
+                    default => $rs .= "<{$typ}>{$val}</{$typ}>\n",
+                };
                 // no break
             default:
             break;

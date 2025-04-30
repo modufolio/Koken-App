@@ -1,5 +1,8 @@
 <?php
 
+use PHPZip\Zip\Stream\ZipStream;
+use PHPZip\Zip\Core\ZipUtils;
+
 set_error_handler("customError");
 error_reporting(E_ALL | E_STRICT);
 ini_set('error_reporting', E_ALL | E_STRICT);
@@ -30,7 +33,7 @@ $chapter1 = "Chapter 1\n"
         . "Lorem ipsum\n"
         . "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec magna lorem, mattis sit amet porta vitae, consectetur ut eros. Nullam id mattis lacus. In eget neque magna, congue imperdiet nulla. Aenean erat lacus, imperdiet a adipiscing non, dignissim eget felis. Nulla facilisi. Vivamus sit amet lorem eget mauris dictum pharetra. In mauris nulla, placerat a accumsan ac, mollis sit amet ligula. Donec eget facilisis dui. Cras elit quam, imperdiet at malesuada vitae, luctus id orci. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Pellentesque eu libero in leo ultrices tristique. Etiam quis ornare massa. Donec in velit leo. Sed eu ante tortor.\n";
 
-$zip = new \PHPZip\Zip\Stream\ZipStream('ZipStreamExample1.zip'); // $zip = new ZipStream("ZipStreamExample1.zip");
+$zip = new ZipStream('ZipStreamExample1.zip'); // $zip = new ZipStream("ZipStreamExample1.zip");
 
 $zip->setComment("Example Zip file for Large file sets.\nCreated on " . date('l jS \of F Y h:i:s A'));
 $zip->addFile("Hello World!\r\n", "Hello.txt");
@@ -43,7 +46,7 @@ $zip->closeStream();
 
 // For this test you need to create a large text file called "big one1.txt"
 if (file_exists("big one1.txt")) {
-    $zip->addLargeFile("big one1.txt", "big one2a.txt", 0, null, \PHPZip\Zip\Core\ZipUtils::getFileExtAttr("big one1.txt"));
+    $zip->addLargeFile("big one1.txt", "big one2a.txt", 0, null, ZipUtils::getFileExtAttr("big one1.txt"));
 
     $fhandle = fopen("big one1.txt", "rb");
     $zip->addLargeFile($fhandle, "big one2b.txt");

@@ -1,4 +1,6 @@
 <?php
+use PHPZip\Zip\File\Zip;
+
 /**
  *
  * @author Greg Kappatos
@@ -25,7 +27,7 @@ class ZipArchiveWebTest extends \PHPUnit_Extensions_SeleniumTestCase
         $this->open();
         $this->assertEquals(true, true);
 
-        $ela = new \PHPZip\Zip\File\Zip();
+        $ela = new Zip();
     }
 
     //	public function testStreamArchive(){

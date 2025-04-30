@@ -87,16 +87,12 @@ abstract class AbstractExtraField
     {
         $header            = fread($handle, 2);
         fseek($handle, -2, SEEK_CUR);
-        switch ($header) {
-            case self::HEADER_UNICODE_PATH:
-                return new UnicodePathExtraField($handle);
-            case self::HEADER_UNICODE_COMMENT:
-                return new UnicodeCommentExtraField($handle);
-            case self::HEADER_EXTENDED_TIMESTAMP:
-                return new ExtendedTimeStampExtraField($handle);
-            default:
-                return new GenericExtraField($handle, $isLocalHeader);
-        }
+        return match ($header) {
+            self::HEADER_UNICODE_PATH => new UnicodePathExtraField($handle),
+            self::HEADER_UNICODE_COMMENT => new UnicodeCommentExtraField($handle),
+            self::HEADER_EXTENDED_TIMESTAMP => new ExtendedTimeStampExtraField($handle),
+            default => new GenericExtraField($handle, $isLocalHeader),
+        };
     }
 
     public static function encodeField($header, $data)

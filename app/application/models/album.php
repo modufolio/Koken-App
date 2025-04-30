@@ -452,7 +452,7 @@ Q;
         $next = new Album();
         $prev = new Album();
 
-        if (isset($params['context']) && strpos($params['context'], 'tag-') === 0) {
+        if (isset($params['context']) && str_starts_with($params['context'], 'tag-')) {
             $tag = str_replace('tag-', '', urldecode($params['context']));
             $t = new Tag();
             $t->where('name', $tag)->get();
@@ -484,7 +484,7 @@ Q;
                     list($arr['__koken_url'], $arr['url']) = $url;
                 }
             }
-        } elseif (isset($params['context']) && strpos($params['context'], 'category-') === 0) {
+        } elseif (isset($params['context']) && str_starts_with($params['context'], 'category-')) {
             $category = str_replace('category-', '', $params['context']);
             $cat = new Category();
             $cat->where('slug', $category)->get();
@@ -944,7 +944,7 @@ Q;
 
     public function manage_content($content_id, $method = 'post', $match_album_visibility = false)
     {
-        if (strpos($content_id, ',') !== false) {
+        if (str_contains($content_id, ',')) {
             $ids = explode(',', $content_id);
         } else {
             $ids = array($content_id);
@@ -1138,16 +1138,11 @@ Q;
         $data['__koken__'] = 'album';
 
         if (array_key_exists('album_type', $data)) {
-            switch ($data['album_type']) {
-                case 2:
-                    $data['album_type'] = 'set';
-                    break;
-                case 1:
-                    $data['album_type'] = 'smart';
-                    break;
-                default:
-                    $data['album_type'] = 'standard';
-            }
+            $data['album_type'] = match ($data['album_type']) {
+                2 => 'set',
+                1 => 'smart',
+                default => 'standard',
+            };
         }
 
         if ($this->album_type == 2) {
@@ -1273,7 +1268,7 @@ Q;
             $data['parent'] = false;
         }
 
-        $cat = isset($options['category']) ? $options['category'] : (isset($options['context']) && strpos($options['context'], 'category-') === 0 ? str_replace('category-', '', $options['context']) : false);
+        $cat = isset($options['category']) ? $options['category'] : (isset($options['context']) && str_starts_with($options['context'], 'category-') ? str_replace('category-', '', $options['context']) : false);
 
         if ($cat) {
             if (is_numeric($cat)) {
@@ -1289,7 +1284,7 @@ Q;
         $data['url'] = $this->url(
             array(
                 'date' => $data['published_on'],
-                'tag' => isset($options['tags']) ? $options['tags'] : (isset($options['context']) && strpos($options['context'], 'tag-') === 0 ? str_replace('tag-', '', $options['context']) : false),
+                'tag' => isset($options['tags']) ? $options['tags'] : (isset($options['context']) && str_starts_with($options['context'], 'tag-') ? str_replace('tag-', '', $options['context']) : false),
                 'category' => $cat,
             )
         );
@@ -1304,17 +1299,11 @@ Q;
         }
 
         if (array_key_exists('visibility', $data)) {
-            switch ($data['visibility']) {
-                case 1:
-                    $raw = 'unlisted';
-                    break;
-                case 2:
-                    $raw = 'private';
-                    break;
-                default:
-                    $raw = 'public';
-                    break;
-            }
+            $raw = match ($data['visibility']) {
+                1 => 'unlisted',
+                2 => 'private',
+                default => 'public',
+            };
 
             $data['visibility'] = array(
                 'raw' => $raw,

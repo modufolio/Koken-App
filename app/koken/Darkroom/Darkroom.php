@@ -233,7 +233,7 @@ abstract class Darkroom
     {
         $info = pathinfo($this->sourcePath);
 
-        if (substr($info['extension'], 0, 2) === 'jp') {
+        if (str_starts_with($info['extension'], 'jp')) {
             return 'image/jpeg';
         }
 

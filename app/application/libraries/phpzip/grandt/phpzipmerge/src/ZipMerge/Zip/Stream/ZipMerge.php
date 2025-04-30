@@ -231,7 +231,7 @@ class ZipMerge
     }
 
     /**
-     * @return null|\ZipMerge\Zip\Core\Header\EndOfCentralDirectory
+     * @return null|EndOfCentralDirectory
      */
     public function getEocd()
     {
@@ -251,7 +251,6 @@ class ZipMerge
      * protected methods.
      * ************************************************************************
      */
-
     /**
      * Build the base standard response headers, and ensure the content can be streamed.
      *
@@ -264,7 +263,7 @@ class ZipMerge
      *
      * @return bool Always returns true (for backward compatibility).
      *
-      * @throws \ZipMerge\Zip\Exception\BufferNotEmpty, HeadersSent In case of errors
+     * @throws BufferNotEmpty , HeadersSent In case of errors
      */
     protected function buildResponseHeader($fileName = null, $contentType = self::CONTENT_TYPE, $utf8FileName = null, $inline = false)
     {

@@ -61,7 +61,7 @@ class Tag extends Koken
             if (!isset($params['order_direction'])) {
                 $options['order_direction'] = 'ASC';
             }
-        } elseif (strpos($options['order_by'], 'count') === false) {
+        } elseif (!str_contains($options['order_by'], 'count')) {
             $options['order_by'] = 'count';
         }
 
@@ -85,7 +85,7 @@ class Tag extends Koken
         }
 
         // If count based order, add secondary sort to break ties
-        if (strpos($options['order_by'], 'count') !== false) {
+        if (str_contains($options['order_by'], 'count')) {
             $this->order_by('name ASC');
         }
 

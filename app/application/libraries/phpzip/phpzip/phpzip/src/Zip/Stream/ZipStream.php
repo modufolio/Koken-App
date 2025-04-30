@@ -10,6 +10,7 @@
 
 namespace PHPZip\Zip\Stream;
 
+use PHPZip\Zip\Exception\BufferNotEmpty;
 use PHPZip\Zip\Core\AbstractZipArchive;
 
 class ZipStream extends AbstractZipArchive
@@ -28,7 +29,7 @@ class ZipStream extends AbstractZipArchive
      * @param String $utf8FileName The name of the Zip archive, in UTF-8 encoding. Optional, defaults to NULL, which means that no UTF-8 encoded file name will be specified.
      * @param bool   $inline Use Content-Disposition with "inline" instead of "attached". Optional, defaults to FALSE.
      *
-     * @throws \PHPZip\Zip\Exception\BufferNotEmpty, HeadersSent, IncompatiblePhpVersion, InvalidPhpConfiguration In case of errors
+     * @throws BufferNotEmpty , HeadersSent, IncompatiblePhpVersion, InvalidPhpConfiguration In case of errors
      */
     public function __construct($fileName = '', $contentType = self::CONTENT_TYPE, $utf8FileName = null, $inline = false)
     {

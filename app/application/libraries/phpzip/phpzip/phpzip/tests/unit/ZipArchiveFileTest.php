@@ -101,7 +101,7 @@ class ZipArchiveFileTest /*extends \PHPUnit_Framework_TestCase*/
         if ($handle) {
             /* This is the correct way to loop over the directory. */
             while (false !== ($file = readdir($handle))) {
-                if (strpos($file, ".html") !== false) {
+                if (str_contains($file, ".html")) {
                     $pathData = pathinfo($fileDir . $file);
                     $fileName = $pathData['filename'];
 
@@ -153,7 +153,7 @@ class ZipArchiveFileTest /*extends \PHPUnit_Framework_TestCase*/
         @$handle = opendir($fileDir);
         if ($handle) {
             while (false !== ($file = readdir($handle))) {
-                if (strpos($file, ".php") !== false) {
+                if (str_contains($file, ".php")) {
                     $pathData = pathinfo($fileDir . $file);
                     $fileName = $pathData['filename'];
 
@@ -251,7 +251,7 @@ class ZipArchiveFileTest /*extends \PHPUnit_Framework_TestCase*/
         @$handle = opendir($fileDir);
         if ($handle) {
             while (false !== ($file = readdir($handle))) {
-                if (strpos($file, ".php") !== false) {
+                if (str_contains($file, ".php")) {
                     $pathData = pathinfo($fileDir . $file);
                     $fileName = $pathData['filename'];
 

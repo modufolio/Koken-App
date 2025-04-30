@@ -1,5 +1,7 @@
 <?php
 
+use ReCaptcha\ReCaptcha;
+
 class BD_Shortcodes extends KokenPlugin
 {
     public function __construct()
@@ -33,7 +35,7 @@ class BD_Shortcodes extends KokenPlugin
 
                 if (isset($secret_key)) {
                     require(Koken::$root_path . '/app/application/libraries/ReCaptcha/autoload.php');
-                    $recaptcha = new \ReCaptcha\ReCaptcha($secret_key);
+                    $recaptcha = new ReCaptcha($secret_key);
                     $resp = $recaptcha->verify($gRecaptchaResponse);
 
                     if (!$resp->isSuccess()) {
@@ -218,8 +220,8 @@ HTML;
 
         $endpoint = $attr['endpoint'];
 
-        if (strpos($endpoint, 'maxwidth=') === false) {
-            if (strpos($endpoint, '?') !== false) {
+        if (!str_contains($endpoint, 'maxwidth=')) {
+            if (str_contains($endpoint, '?')) {
                 $endpoint .= '&';
             } else {
                 $endpoint .= '?';
@@ -228,7 +230,7 @@ HTML;
             $endpoint .= 'maxwidth=1920&maxheight=1080';
         }
 
-        if (strpos($endpoint, '?') !== false) {
+        if (str_contains($endpoint, '?')) {
             $endpoint .= '&';
         } else {
             $endpoint .= '?';
@@ -338,7 +340,7 @@ HTML;
             $text = "<figcaption class=\"k-content-text\">$text</figcaption>";
         }
 
-        if (strpos($src, 'http://') === 0) {
+        if (str_starts_with($src, 'http://')) {
             return <<<HTML
 <figure class="k-content-embed">
 	<div class="k-content">

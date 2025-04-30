@@ -10,6 +10,7 @@
 
 namespace PHPZip\Zip\File;
 
+use PHPZip\Zip\Exception\InvalidPhpConfiguration;
 use com\grandt\BinStringStatic;
 use PHPZip\Zip\Core\AbstractZipArchive;
 
@@ -29,7 +30,7 @@ class Zip extends AbstractZipArchive
      *
      * @param boolean $useZipFile Write temp zip data to tempFile? Default FALSE
      *
-     * @throws \PHPZip\Zip\Exception\InvalidPhpConfiguration In case of errors
+     * @throws InvalidPhpConfiguration In case of errors
      */
     public function __construct($useZipFile = false)
     {

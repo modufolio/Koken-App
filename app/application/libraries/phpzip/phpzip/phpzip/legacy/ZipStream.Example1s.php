@@ -1,5 +1,7 @@
 <?php
 
+use PHPZip\Zip\Stream\ZipStream;
+
 set_error_handler("customError");
 error_reporting(E_ALL | E_STRICT);
 ini_set('error_reporting', E_ALL | E_STRICT);
@@ -33,7 +35,7 @@ $chapter1 = "Chapter 1\n"
 
 //$zip = new ZipStream("ZipStreamExample1s.zip");
 //$zip = new ZipStream("ZipStreamExample1s_€2,000.zip");
-$zip = new \PHPZip\Zip\Stream\ZipStream("ZipStreamExample1s_€2,000.zip", "application/zip", "ZipStreamExample1s_€2,000_utf8.zip");
+$zip = new ZipStream("ZipStreamExample1s_€2,000.zip", "application/zip", "ZipStreamExample1s_€2,000_utf8.zip");
     // $zip = new ZipStream("ZipStreamExample1s_€2,000.zip", "application/zip", "ZipStreamExample1s_€2,000_utf8.zip");
 
 // Archive comments don't really support utf-8. Some tools detect and read it though.

@@ -24,7 +24,7 @@ class DDI_Cache extends KokenPlugin implements KokenCache
             $path = str_replace('compiled', $this->request_read_token(), $path);
         }
 
-        if (strpos($path, 'api/') === 0) {
+        if (str_starts_with($path, 'api/')) {
             return $this->base_path . 'api/' . md5($path) . '.cache';
         }
 
@@ -33,7 +33,7 @@ class DDI_Cache extends KokenPlugin implements KokenCache
 
     public function get($path, $lastModified = false)
     {
-        $is_api = strpos($path, 'api') === 0;
+        $is_api = str_starts_with($path, 'api');
 
         $path = $this->make_full_path($path);
 
@@ -53,7 +53,7 @@ class DDI_Cache extends KokenPlugin implements KokenCache
                 $realpath = realpath($this->base_path);
                 $realpathfile = realpath($path);
 
-                if (!$realpathfile || strpos($realpathfile, $realpath) !== 0) {
+                if (!$realpathfile || !str_starts_with($realpathfile, $realpath)) {
                     return false;
                 }
 
@@ -78,7 +78,7 @@ class DDI_Cache extends KokenPlugin implements KokenCache
     public function clear($path)
     {
         $full_path = $this->make_full_path($path);
-        if (strpos($path, 'api') === 0) {
+        if (str_starts_with($path, 'api')) {
             touch($this->stamp);
         } elseif (is_dir($full_path)) {
             $this->delete_files($full_path, true, 1);
@@ -132,7 +132,7 @@ class DDI_Cache extends KokenPlugin implements KokenCache
             if ($filename != "." and $filename != "..") {
                 if (is_dir($path.DIRECTORY_SEPARATOR.$filename)) {
                     // Ignore empty folders
-                    if (substr($filename, 0, 1) != '.') {
+                    if (!str_starts_with($filename, '.')) {
                         $this->delete_files($path.DIRECTORY_SEPARATOR.$filename, $del_dir, $level + 1);
                     }
                 } else {

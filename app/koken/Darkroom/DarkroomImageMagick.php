@@ -4,15 +4,12 @@ class DarkroomImageMagick extends Darkroom
 {
     private $sourceArgs = [];
     private $destinationArgs = [];
-    private $pathToConvert;
     private $limits = [];
     private $isGmagick = false;
 
-    public function __construct($path = 'convert', $limits = array())
+    public function __construct(private $pathToConvert = 'convert', $limits = array())
     {
-        $this->pathToConvert = $path;
-
-        $this->isGmagick = strpos($this->pathToConvert, 'gm convert') !== false;
+        $this->isGmagick = str_contains($this->pathToConvert, 'gm convert');
 
         $this->limits = array_merge(array(
             'thread' => false,
@@ -41,7 +38,7 @@ class DarkroomImageMagick extends Darkroom
                     // Also not supported if it isn't listed in the idenfify output
                     // (not compiled with OpenMP)
                     $resourceOutput = shell_exec(str_replace('convert', 'identify -list resource', $this->pathToConvert));
-                    if (strpos(strtolower($resourceOutput), 'thread') === false) {
+                    if (!str_contains(strtolower($resourceOutput), 'thread')) {
                         $this->limits['thread'] = false;
                     }
 
@@ -97,7 +94,7 @@ class DarkroomImageMagick extends Darkroom
     {
         $sourcePath = $this->sourcePath;
 
-        if ($this->isGmagick && strpos($sourcePath, 'https://') === 0) {
+        if ($this->isGmagick && str_starts_with($sourcePath, 'https://')) {
             $sourcePath = str_replace('https://', 'http://', $sourcePath);
         }
 
@@ -115,7 +112,7 @@ class DarkroomImageMagick extends Darkroom
 
     public function rotate($path, $degrees)
     {
-        if ($this->isGmagick && strpos($path, 'https://') === 0) {
+        if ($this->isGmagick && str_starts_with($path, 'https://')) {
             $path = str_replace('https://', 'http://', $path);
         }
         $path = '"' . $path . '"';
@@ -159,7 +156,7 @@ class DarkroomImageMagick extends Darkroom
     {
         $sourcePath = $this->sourcePath;
 
-        if ($this->isGmagick && strpos($sourcePath, 'https://') === 0) {
+        if ($this->isGmagick && str_starts_with($sourcePath, 'https://')) {
             $sourcePath = str_replace('https://', 'http://', $sourcePath);
         }
 

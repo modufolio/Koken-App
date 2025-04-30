@@ -399,7 +399,7 @@ if (! function_exists('set_status_header')) {
 
         $server_protocol = (isset($_SERVER['SERVER_PROTOCOL'])) ? $_SERVER['SERVER_PROTOCOL'] : false;
 
-        if (substr(php_sapi_name(), 0, 3) == 'cgi') {
+        if (str_starts_with(php_sapi_name(), 'cgi')) {
             header("Status: {$code} {$text}", true);
         } elseif ($server_protocol == 'HTTP/1.1' or $server_protocol == 'HTTP/1.0') {
             header($server_protocol." {$code} {$text}", true, $code);

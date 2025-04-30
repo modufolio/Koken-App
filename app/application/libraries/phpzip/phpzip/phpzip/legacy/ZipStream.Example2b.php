@@ -1,5 +1,7 @@
 <?php
 
+use PHPZip\Zip\Stream\ZipStream;
+
 set_error_handler("customError");
 error_reporting(E_ALL | E_STRICT);
 ini_set('error_reporting', E_ALL | E_STRICT);
@@ -31,7 +33,7 @@ $errors = "";
 require_once('bootstrap.php'); // include_once("ZipStream.php");
 $f .= "\r\nbootstrapped: " . getMem();
 
-$zip = new \PHPZip\Zip\Stream\ZipStream('test2.zip'); // $zip = new ZipStream("test.zip");
+$zip = new ZipStream('test2.zip'); // $zip = new ZipStream("test.zip");
 $f .= "\r\nZip initialized: " . getMem();
 
 /*

@@ -51,7 +51,7 @@ if (! function_exists('force_download')) {
 
         // Try to determine if the filename includes a file extension.
         // We need it in order to set the MIME type
-        if (false === strpos($filename, '.')) {
+        if (!str_contains($filename, '.')) {
             return false;
         }
 
@@ -74,7 +74,7 @@ if (! function_exists('force_download')) {
         }
 
         // Generate the server headers
-        if (strpos($_SERVER['HTTP_USER_AGENT'], "MSIE") !== false) {
+        if (str_contains($_SERVER['HTTP_USER_AGENT'], "MSIE")) {
             header('Content-Type: '.$mime);
             header('Content-Disposition: attachment; filename="'.$filename.'"');
             header('Expires: 0');

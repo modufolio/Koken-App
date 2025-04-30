@@ -418,13 +418,10 @@ class Text extends Koken
         }
 
         if (array_key_exists('page_type', $data)) {
-            switch ($data['page_type']) {
-                case 1:
-                    $data['page_type'] = 'page';
-                    break;
-                default:
-                    $data['page_type'] = 'essay';
-            }
+            $data['page_type'] = match ($data['page_type']) {
+                1 => 'page',
+                default => 'essay',
+            };
         }
 
         $data['__koken__'] = $data['page_type'];
@@ -515,7 +512,7 @@ class Text extends Koken
             $data['date'] =& $data['published_on'];
         }
 
-        $cat = isset($options['category']) ? $options['category'] : (isset($options['context']) && strpos($options['context'], 'category-') === 0 ? str_replace('category-', '', $options['context']) : false);
+        $cat = isset($options['category']) ? $options['category'] : (isset($options['context']) && str_starts_with($options['context'], 'category-') ? str_replace('category-', '', $options['context']) : false);
 
         if ($cat) {
             if (is_numeric($cat)) {
@@ -531,7 +528,7 @@ class Text extends Koken
         $data['url'] = $this->url(
             array(
                 'date' => $data['published_on'],
-                'tag' => isset($options['tags']) ? $options['tags'] : (isset($options['context']) && strpos($options['context'], 'tag-') === 0 ? str_replace('tag-', '', $options['context']) : false),
+                'tag' => isset($options['tags']) ? $options['tags'] : (isset($options['context']) && str_starts_with($options['context'], 'tag-') ? str_replace('tag-', '', $options['context']) : false),
                 'category' => $cat,
             )
         );

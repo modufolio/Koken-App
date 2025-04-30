@@ -188,7 +188,7 @@ class Categories extends Koken_Controller
                 $this->error('403', 'Required content id not present.');
                 return;
             }
-            if (strpos($content_id, ',') !== false) {
+            if (str_contains($content_id, ',')) {
                 $ids = explode(',', $content_id);
             } else {
                 $ids = array($content_id);

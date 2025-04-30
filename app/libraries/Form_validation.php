@@ -33,7 +33,6 @@ class CI_Form_validation
 {
     protected $CI;
     protected $_field_data			= [];
-    protected $_config_rules		= [];
     protected $_error_array			= [];
     protected $_error_messages		= [];
     protected $_error_prefix		= '<p>';
@@ -44,12 +43,9 @@ class CI_Form_validation
     /**
      * Constructor
      */
-    public function __construct($rules = array())
+    public function __construct(protected $_config_rules = array())
     {
         $this->CI =& get_instance();
-
-        // Validation rules can be stored in a config file.
-        $this->_config_rules = $rules;
 
         // Automatically load the form helper
         $this->CI->load->helper('form');
@@ -111,7 +107,7 @@ class CI_Form_validation
         // Is the field name an array?  We test for the existence of a bracket "[" in
         // the field name to determine this.  If it is an array, we break it apart
         // into its components so that we can fetch the corresponding POST data later
-        if (strpos($field, '[') !== false and preg_match_all('/\[(.*?)\]/', $field, $matches)) {
+        if (str_contains($field, '[') and preg_match_all('/\[(.*?)\]/', $field, $matches)) {
             // Note: Due to a bug in current() that affects some versions
             // of PHP we can not pass function call directly into it
             $x = explode('[', $field);
@@ -498,7 +494,7 @@ class CI_Form_validation
 
             // Is the rule a callback?
             $callback = false;
-            if (substr($rule, 0, 9) == 'callback_') {
+            if (str_starts_with($rule, 'callback_')) {
                 $rule = substr($rule, 9);
                 $callback = true;
             }
@@ -603,7 +599,7 @@ class CI_Form_validation
     {
         // Do we need to translate the field name?
         // We look for the prefix lang: to determine this
-        if (substr($fieldname, 0, 5) == 'lang:') {
+        if (str_starts_with($fieldname, 'lang:')) {
             // Grab the variable
             $line = substr($fieldname, 5);
 
@@ -925,7 +921,7 @@ class CI_Form_validation
      */
     public function valid_emails($str)
     {
-        if (strpos($str, ',') === false) {
+        if (!str_contains($str, ',')) {
             return $this->valid_email(trim($str));
         }
 
@@ -1182,7 +1178,7 @@ class CI_Form_validation
             return '';
         }
 
-        if (substr($str, 0, 7) != 'http://' && substr($str, 0, 8) != 'https://') {
+        if (!str_starts_with($str, 'http://') && !str_starts_with($str, 'https://')) {
             $str = 'http://'.$str;
         }
 

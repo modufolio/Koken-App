@@ -156,31 +156,16 @@ class CI_Upload
         if (! is_uploaded_file($_FILES[$field]['tmp_name'])) {
             $error = (! isset($_FILES[$field]['error'])) ? 4 : $_FILES[$field]['error'];
 
-            switch ($error) {
-                case 1:	// UPLOAD_ERR_INI_SIZE
-                    $this->set_error('upload_file_exceeds_limit');
-                    break;
-                case 2: // UPLOAD_ERR_FORM_SIZE
-                    $this->set_error('upload_file_exceeds_form_limit');
-                    break;
-                case 3: // UPLOAD_ERR_PARTIAL
-                    $this->set_error('upload_file_partial');
-                    break;
-                case 4: // UPLOAD_ERR_NO_FILE
-                    $this->set_error('upload_no_file_selected');
-                    break;
-                case 6: // UPLOAD_ERR_NO_TMP_DIR
-                    $this->set_error('upload_no_temp_directory');
-                    break;
-                case 7: // UPLOAD_ERR_CANT_WRITE
-                    $this->set_error('upload_unable_to_write_file');
-                    break;
-                case 8: // UPLOAD_ERR_EXTENSION
-                    $this->set_error('upload_stopped_by_extension');
-                    break;
-                default:   $this->set_error('upload_no_file_selected');
-                    break;
-            }
+            match ($error) {
+                1 => $this->set_error('upload_file_exceeds_limit'),
+                2 => $this->set_error('upload_file_exceeds_form_limit'),
+                3 => $this->set_error('upload_file_partial'),
+                4 => $this->set_error('upload_no_file_selected'),
+                6 => $this->set_error('upload_no_temp_directory'),
+                7 => $this->set_error('upload_unable_to_write_file'),
+                8 => $this->set_error('upload_stopped_by_extension'),
+                default => $this->set_error('upload_no_file_selected'),
+            };
 
             return false;
         }
@@ -207,7 +192,7 @@ class CI_Upload
             $this->file_name = $this->_prep_filename($this->_file_name_override);
 
             // If no extension was provided in the file_name config item, use the uploaded one
-            if (strpos($this->_file_name_override, '.') === false) {
+            if (!str_contains($this->_file_name_override, '.')) {
                 $this->file_name .= $this->file_ext;
             }
 
@@ -714,7 +699,7 @@ class CI_Upload
         }
 
         $ext = '';
-        if (strpos($filename, '.') !== false) {
+        if (str_contains($filename, '.')) {
             $parts		= explode('.', $filename);
             $ext		= '.'.array_pop($parts);
             $filename	= implode('.', $parts);
@@ -877,7 +862,7 @@ class CI_Upload
      */
     protected function _prep_filename($filename)
     {
-        if (strpos($filename, '.') === false or $this->allowed_types == '*') {
+        if (!str_contains($filename, '.') or $this->allowed_types == '*') {
             return $filename;
         }
 

@@ -31,7 +31,7 @@ if ($key) {
 
 if (!defined('MAGICK_PATH')) {
     define('MAGICK_PATH_FINAL', 'convert');
-} elseif (strpos(strtolower(MAGICK_PATH), 'c:\\') !== false) {
+} elseif (str_contains(strtolower(MAGICK_PATH), 'c:\\')) {
     define('MAGICK_PATH_FINAL', '"' . MAGICK_PATH . '"');
 } else {
     define('MAGICK_PATH_FINAL', MAGICK_PATH);

@@ -473,7 +473,7 @@ class CI_DB_postgre_driver extends CI_DB
         }
 
         foreach ($this->_reserved_identifiers as $id) {
-            if (strpos($item, '.'.$id) !== false) {
+            if (str_contains($item, '.'.$id)) {
                 $str = $this->_escape_char. str_replace('.', $this->_escape_char.'.', $item);
 
                 // remove duplicates if the user already included the escape
@@ -481,7 +481,7 @@ class CI_DB_postgre_driver extends CI_DB
             }
         }
 
-        if (strpos($item, '.') !== false) {
+        if (str_contains($item, '.')) {
             $str = $this->_escape_char.str_replace('.', $this->_escape_char.'.'.$this->_escape_char, $item).$this->_escape_char;
         } else {
             $str = $this->_escape_char.$item.$this->_escape_char;

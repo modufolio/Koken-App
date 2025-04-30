@@ -61,7 +61,7 @@ class Mcurl
     }
 
     // method to add curl requests to the multi request queue
-    public function add_call($key=null, $method, $url, $params = array(), $options = array())
+    public function add_call($method, $url, $key=null, $params = array(), $options = array())
     {
         if (is_null($key)) {
             $key = count($this->calls);

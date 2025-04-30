@@ -41,7 +41,7 @@ define('DMZ_VERSION', '1.8.2');
  *
  *
  */
-class DataMapper extends stdClass implements IteratorAggregate
+class DataMapper extends stdClass implements IteratorAggregate, \Stringable
 {
     /**
      * Stores the shared configuration
@@ -211,7 +211,7 @@ class DataMapper extends stdClass implements IteratorAggregate
     {
         $this->_dmz_assign_libraries();
 
-        $this_class = strtolower(get_class($this));
+        $this_class = strtolower(static::class);
         $is_dmz = $this_class == 'datamapper';
 
         if ($is_dmz) {
@@ -308,7 +308,7 @@ class DataMapper extends stdClass implements IteratorAggregate
 
                 // Determine table name
                 if (empty($this->table)) {
-                    $this->table = strtolower(plural(get_class($this)));
+                    $this->table = strtolower(plural(static::class));
                 }
 
                 // Add prefix to table
@@ -457,7 +457,7 @@ class DataMapper extends stdClass implements IteratorAggregate
             DataMapper::$common[DMZ_CLASSNAMES_KEY][$this_class] = $common_key = singular($this_class);
         }
         unset(DataMapper::$common[$common_key]);
-        $model = get_class($this);
+        $model = static::class;
         new $model(); // re-initialze
 
         // Load stored common model settings by reference
@@ -489,7 +489,7 @@ class DataMapper extends stdClass implements IteratorAggregate
         is_null($CI) and $CI =& get_instance();
 
         // Don't attempt to autoload CI_ , EE_, or custom prefixed classes
-        if (in_array(substr($class, 0, 3), array('CI_', 'EE_')) or strpos($class, $CI->config->item('subclass_prefix')) === 0) {
+        if (in_array(substr($class, 0, 3), array('CI_', 'EE_')) or str_starts_with($class, $CI->config->item('subclass_prefix'))) {
             return;
         }
 
@@ -534,7 +534,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      *
      * @param	mixed $paths path or array of paths to search
      */
-    public static function add_model_path($paths)
+    public static function add_model_path(mixed $paths)
     {
         // make sure paths is an array
         is_array($paths) or $paths = array($paths);
@@ -565,7 +565,7 @@ class DataMapper extends stdClass implements IteratorAggregate
             if ($handle) {
                 while (false !== ($dir = readdir($handle))) {
                     // If dir does not contain a dot
-                    if (strpos($dir, '.') === false) {
+                    if (!str_contains($dir, '.')) {
                         // Prepare recursive path
                         $recursive_path = $path . '/' . $dir;
 
@@ -630,7 +630,7 @@ class DataMapper extends stdClass implements IteratorAggregate
             $file = DataMapper::$config['extensions_path'] . '/' . $name . EXT;
 
             if (! file_exists($file)) {
-                if (strpos($name, '/') === false) {
+                if (!str_contains($name, '/')) {
                     $file = APPPATH . DataMapper::$config['extensions_path'] . '/' . $name . EXT;
                     $ext = $name;
                 } else {
@@ -910,7 +910,7 @@ class DataMapper extends stdClass implements IteratorAggregate
         } else {
             foreach ($watched_methods as $watched_method) {
                 // See if called method is a watched method
-                if (strpos($method, $watched_method) !== false) {
+                if (str_contains($method, $watched_method)) {
                     $pieces = explode($watched_method, $method);
                     if (! empty($pieces[0]) && ! empty($pieces[1])) {
                         // Watched method is in the middle
@@ -929,7 +929,7 @@ class DataMapper extends stdClass implements IteratorAggregate
         }
 
         // show an error, for debugging's sake.
-        throw new Exception("Unable to call the method \"$method\" on the class " . get_class($this));
+        throw new Exception("Unable to call the method \"$method\" on the class " . static::class);
     }
 
     // --------------------------------------------------------------------
@@ -981,7 +981,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      *
      * @return	string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return ucfirst($this->model);
     }
@@ -1257,7 +1257,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      * @param	string $related_field See save.
      * @return	bool Result of the save.
      */
-    public function save_as_new($object = '', $related_field = '')
+    public function save_as_new(mixed $object = '', $related_field = '')
     {
         $this->_force_save_as_new = true;
         return $this->save($object, $related_field);
@@ -1275,7 +1275,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      * @param	string $related_field Optional string to save the object as a specific relationship.
      * @return	bool Success or Failure of the validation and save.
      */
-    public function save($object = '', $related_field = '')
+    public function save(mixed $object = '', $related_field = '')
     {
         // Temporarily store the success/failure
         $result = [];
@@ -1502,18 +1502,16 @@ class DataMapper extends stdClass implements IteratorAggregate
     }
 
     // --------------------------------------------------------------------
-
     /**
      * _Save
      *
      * Used by __call to process related saves.
      *
      * @ignore
-     * @param	mixed $related_field
      * @param	array $arguments
      * @return	bool
      */
-    private function _save($related_field, $arguments)
+    private function _save(mixed $related_field, $arguments)
     {
         return $this->save($arguments[0], $related_field);
     }
@@ -1614,7 +1612,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      * @param	string $related_field Can be used to specify which relationship to delete.
      * @return	bool Success or Failure of the delete.
      */
-    public function delete($object = '', $related_field = '')
+    public function delete(mixed $object = '', $related_field = '')
     {
         if (empty($object) && ! is_array($object)) {
             if (! empty($this->id)) {
@@ -1858,7 +1856,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      * @param	string $related_field See save.
      * @return	DataMapper Returns $this for method chanining.
      */
-    public function validate($object = '', $related_field = '')
+    public function validate(mixed $object = '', $related_field = '')
     {
         // Return if validation has already been run
         if ($this->_validated) {
@@ -2366,7 +2364,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      * @param	array $arguments Arguments to the where method
      * @return	DataMapper Returns self for method chaining.
      */
-    private function _get_by_related($model, $arguments = array())
+    private function _get_by_related(mixed $model, $arguments = array())
     {
         if (! empty($model)) {
             // Add model to start of arguments
@@ -2399,7 +2397,7 @@ class DataMapper extends stdClass implements IteratorAggregate
                 }
             } else {
                 // provide feedback on errors
-                $this_model = get_class($this);
+                $this_model = static::class;
                 show_error("DataMapper Error: '".$this->parent['model']."' is not a valid parent relationship for $this_model.  Are your relationships configured correctly?");
             }
         }
@@ -2531,9 +2529,9 @@ class DataMapper extends stdClass implements IteratorAggregate
             } elseif ($arg[0] == '@') {
                 // model or sub-model property
                 $arg = substr($arg, 1);
-                if (strpos($arg, '/') !== false) {
+                if (str_contains($arg, '/')) {
                     // related property
-                    if (strpos($arg, 'parent/') === 0) {
+                    if (str_starts_with($arg, 'parent/')) {
                         // special parent property for subqueries
                         $ret .= str_replace('parent/', '${parent}.', $arg);
                     } else {
@@ -2733,12 +2731,12 @@ class DataMapper extends stdClass implements IteratorAggregate
      * @param	mixed $extra If included, overrides the default assumption of FALSE for the third parameter to $query
      * @return	DataMapper Returns self for method chaining.
      */
-    private function _process_special_query_clause($query, $field, $value, $extra = null)
+    private function _process_special_query_clause($query, $field, mixed $value, mixed $extra = null)
     {
-        if (strpos($query, 'where_in') !== false) {
+        if (str_contains($query, 'where_in')) {
             $query = str_replace('_in', '', $query);
             $field .= ' IN ';
-        } elseif (strpos($query, 'where_not_in') !== false) {
+        } elseif (str_contains($query, 'where_not_in')) {
             $query = str_replace('_not_in', '', $query);
             $field .= ' NOT IN ';
         }
@@ -2759,7 +2757,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      * @param	bool $escape If FALSE, don't escape this field (Probably won't work)
      * @return	DataMapper Returns self for method chaining.
      */
-    public function select($select = '*', $escape = null)
+    public function select(mixed $select = '*', $escape = null)
     {
         if ($escape !== false) {
             if (!is_array($select)) {
@@ -2900,7 +2898,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      * @param	integer|NULL $offset Offset the results when limiting.
      * @return	DataMapper Returns self for method chaining.
      */
-    public function get_where($where = array(), $limit = null, $offset = null)
+    public function get_where(mixed $where = array(), $limit = null, $offset = null)
     {
         $this->where($where);
 
@@ -3023,7 +3021,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      * @param	bool $escape If FALSE, the field is not escaped.
      * @return	DataMapper Returns self for method chaining.
      */
-    public function where($key, $value = null, $escape = true)
+    public function where(mixed $key, mixed $value = null, $escape = true)
     {
         return $this->_where($key, $value, 'AND ', $escape);
     }
@@ -3041,7 +3039,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      * @param	bool $escape If FALSE, the field is not escaped.
      * @return	DataMapper Returns self for method chaining.
      */
-    public function or_where($key, $value = null, $escape = true)
+    public function or_where(mixed $key, mixed $value = null, $escape = true)
     {
         return $this->_where($key, $value, 'OR ', $escape);
     }
@@ -3060,7 +3058,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      * @param	bool $escape If FALSE, the field is not escaped.
      * @return	DataMapper Returns self for method chaining.
      */
-    protected function _where($key, $value = null, $type = 'AND ', $escape = null)
+    protected function _where(mixed $key, mixed $value = null, $type = 'AND ', $escape = null)
     {
         if (! is_array($key)) {
             $key = array($key => $value);
@@ -3283,7 +3281,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      * @param	string $side One of 'both', 'before', or 'after'
      * @return	DataMapper Returns self for method chaining.
      */
-    public function like($field, $match = '', $side = 'both')
+    public function like(mixed $field, mixed $match = '', $side = 'both')
     {
         return $this->_like($field, $match, 'AND ', $side);
     }
@@ -3301,7 +3299,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      * @param	string $side One of 'both', 'before', or 'after'
      * @return	DataMapper Returns self for method chaining.
      */
-    public function not_like($field, $match = '', $side = 'both')
+    public function not_like(mixed $field, mixed $match = '', $side = 'both')
     {
         return $this->_like($field, $match, 'AND ', $side, 'NOT');
     }
@@ -3319,7 +3317,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      * @param	string $side One of 'both', 'before', or 'after'
      * @return	DataMapper Returns self for method chaining.
      */
-    public function or_like($field, $match = '', $side = 'both')
+    public function or_like(mixed $field, mixed $match = '', $side = 'both')
     {
         return $this->_like($field, $match, 'OR ', $side);
     }
@@ -3337,7 +3335,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      * @param	string $side One of 'both', 'before', or 'after'
      * @return	DataMapper Returns self for method chaining.
      */
-    public function or_not_like($field, $match = '', $side = 'both')
+    public function or_not_like(mixed $field, mixed $match = '', $side = 'both')
     {
         return $this->_like($field, $match, 'OR ', $side, 'NOT');
     }
@@ -3354,7 +3352,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      * @param	string $side One of 'both', 'before', or 'after'
      * @return	DataMapper Returns self for method chaining.
      */
-    public function ilike($field, $match = '', $side = 'both')
+    public function ilike(mixed $field, mixed $match = '', $side = 'both')
     {
         return $this->_like($field, $match, 'AND ', $side, '', true);
     }
@@ -3372,7 +3370,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      * @param	string $side One of 'both', 'before', or 'after'
      * @return	DataMapper Returns self for method chaining.
      */
-    public function not_ilike($field, $match = '', $side = 'both')
+    public function not_ilike(mixed $field, mixed $match = '', $side = 'both')
     {
         return $this->_like($field, $match, 'AND ', $side, 'NOT', true);
     }
@@ -3390,7 +3388,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      * @param	string $side One of 'both', 'before', or 'after'
      * @return	DataMapper Returns self for method chaining.
      */
-    public function or_ilike($field, $match = '', $side = 'both')
+    public function or_ilike(mixed $field, mixed $match = '', $side = 'both')
     {
         return $this->_like($field, $match, 'OR ', $side, '', true);
     }
@@ -3408,7 +3406,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      * @param	string $side One of 'both', 'before', or 'after'
      * @return	DataMapper Returns self for method chaining.
      */
-    public function or_not_ilike($field, $match = '', $side = 'both')
+    public function or_not_ilike(mixed $field, mixed $match = '', $side = 'both')
     {
         return $this->_like($field, $match, 'OR ', $side, 'NOT', true);
     }
@@ -3430,7 +3428,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      * @param	bool $no_case If TRUE, configure to ignore case.
      * @return	DataMapper Returns self for method chaining.
      */
-    protected function _like($field, $match = '', $type = 'AND ', $side = 'both', $not = '', $no_case = false)
+    protected function _like(mixed $field, mixed $match = '', $type = 'AND ', $side = 'both', $not = '', $no_case = false)
     {
         if (! is_array($field)) {
             $field = array($field => $match);
@@ -3876,10 +3874,10 @@ class DataMapper extends stdClass implements IteratorAggregate
      * @param	bool $try_singular If TRUE, automatically tries to look for a singular name if not found.
      * @return	array Associative array of related properties.
      */
-    public function _get_related_properties(&$related_field, $try_singular = false)
+    public function _get_related_properties(mixed &$related_field, $try_singular = false)
     {
         // Handle deep relationships
-        if (strpos($related_field, '/') !== false) {
+        if (str_contains($related_field, '/')) {
             $rfs = explode('/', $related_field);
             $last = $this;
             $prop = null;
@@ -3939,7 +3937,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      * @param	string $this_table  Private, do not use.
      * @return	string Name of the related table, or table.field if ID_Only
      */
-    public function _add_related_table($object, $related_field = '', $id_only = false, $db = null, &$query_related = null, $name_prepend = '', $this_table = null)
+    public function _add_related_table(mixed $object, $related_field = '', $id_only = false, $db = null, &$query_related = null, $name_prepend = '', $this_table = null)
     {
         if (is_string($object)) {
             // only a model was passed in, not an object
@@ -3953,7 +3951,7 @@ class DataMapper extends stdClass implements IteratorAggregate
         $related_field = strtolower($related_field);
 
         // Handle deep relationships
-        if (strpos($related_field, '/') !== false) {
+        if (str_contains($related_field, '/')) {
             $rfs = explode('/', $related_field);
             $last = $this;
             $prepend = '';
@@ -4099,7 +4097,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      * @param	mixed $extra Used to prevent escaping in special circumstances.
      * @return	DataMapper Returns self for method chaining.
      */
-    private function _related($query, $arguments = array(), $extra = null)
+    private function _related($query, $arguments = array(), mixed $extra = null)
     {
         if (! empty($query) && ! empty($arguments)) {
             $object = $field = $value = null;
@@ -4145,7 +4143,7 @@ class DataMapper extends stdClass implements IteratorAggregate
                 $field = $object_table . '.' . $field;
             }
 
-            if (is_string($value) && strpos($value, '${parent}') !== false) {
+            if (is_string($value) && str_contains($value, '${parent}')) {
                 $extra = false;
             }
 
@@ -4225,7 +4223,7 @@ class DataMapper extends stdClass implements IteratorAggregate
             // see 25_activerecord.php
             $value = $this->_parse_subquery_object($value);
         }
-        if (strpos($query, 'where_in') !== false) {
+        if (str_contains($query, 'where_in')) {
             $query = str_replace('_in', '', $query);
             $field .= ' IN ';
         }
@@ -4244,7 +4242,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      * @param	int $id ID to compare to if $related_field is a string
      * @return	bool TRUE or FALSE if this object is related to $related_field
      */
-    public function is_related_to($related_field, $id = null)
+    public function is_related_to(mixed $related_field, $id = null)
     {
         if (is_object($related_field)) {
             $id = $related_field->id;
@@ -4271,7 +4269,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      * @param	bool $instantiate If TRUE, the results are instantiated into objects
      * @return	DataMapper Returns self for method chaining.
      */
-    public function include_related($related_field, $fields = null, $append_name = true, $instantiate = false)
+    public function include_related(mixed $related_field, $fields = null, $append_name = true, $instantiate = false)
     {
         if (is_object($related_field)) {
             $object = $related_field;
@@ -4368,7 +4366,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      */
 
     // HACK to add where option for this
-    public function include_related_count($related_field, $alias = null, $where = null)
+    public function include_related_count(mixed $related_field, $alias = null, $where = null)
     {
         if (is_object($related_field)) {
             $object = $related_field;
@@ -4418,7 +4416,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      * @param	int $id ID of related field or object
      * @return	bool Sucess or Failure
      */
-    private function _get_relation($related_field, $id)
+    private function _get_relation(mixed $related_field, $id)
     {
         // No related items
         if (empty($related_field) || empty($id)) {
@@ -4577,7 +4575,7 @@ class DataMapper extends stdClass implements IteratorAggregate
         }
         // This should be a one-to-one relationship with an ITFK if we got this far.
         $other_column = $related_properties['join_other_as'] . '_id';
-        $c = get_class($this);
+        $c = static::class;
         $update = new $c();
 
         $update->where($other_column, $object->id);
@@ -4724,7 +4722,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      * @param	mixed $object Object or array to include in the count.
      * @return	int Number of related items.
      */
-    protected function _count_related($related_field, $object = '')
+    protected function _count_related($related_field, mixed $object = '')
     {
         $count = 0;
 
@@ -4773,7 +4771,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      * @param	array $ids list of IDs we've already found.
      * @return	int Number of items found.
      */
-    private function _count_related_objects($compare, $object, $related_field, &$ids)
+    private function _count_related_objects($compare, mixed $object, $related_field, &$ids)
     {
         $count = 0;
         if (is_array($object)) {
@@ -4830,7 +4828,7 @@ class DataMapper extends stdClass implements IteratorAggregate
      * @param	mixed $object Private for recursion, do not use.
      * @return	DataMapper Returns self for method chaining.
      */
-    public function set_join_field($related_field, $field, $value = null, $object = null)
+    public function set_join_field(mixed $related_field, mixed $field, mixed $value = null, mixed $object = null)
     {
         $related_ids = [];
 
@@ -5398,7 +5396,7 @@ class DataMapper extends stdClass implements IteratorAggregate
                     $label = $field;
                 }
             }
-        } elseif (strpos($label, 'lang:') === 0) {
+        } elseif (str_starts_with($label, 'lang:')) {
             $label = $this->localize_by_model(substr($label, 5), $field);
         }
         return $label;
@@ -5459,7 +5457,7 @@ class DataMapper extends stdClass implements IteratorAggregate
                 $cache_folder = APPPATH . DataMapper::$config['production_cache'];
             }
             if (file_exists($cache_folder) && is_dir($cache_folder) && is_writeable($cache_folder)) {
-                $common_key = DataMapper::$common[DMZ_CLASSNAMES_KEY][strtolower(get_class($this))];
+                $common_key = DataMapper::$common[DMZ_CLASSNAMES_KEY][strtolower(static::class)];
                 $cache_file = $cache_folder . '/' . $common_key . EXT;
                 $cache = "<"."?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed'); \n";
 
@@ -5534,7 +5532,7 @@ class DataMapper extends stdClass implements IteratorAggregate
         }
         if (isset($definition['reciprocal'])) {
             // only allow a reciprocal relationship to be defined if this is a has_many self relationship
-            $definition['reciprocal'] = ($definition['reciprocal'] && $type == 'has_many' && $definition['class'] == strtolower(get_class($this)));
+            $definition['reciprocal'] = ($definition['reciprocal'] && $type == 'has_many' && $definition['class'] == strtolower(static::class));
         } else {
             $definition['reciprocal'] = false;
         }
@@ -5611,7 +5609,7 @@ class DataMapper extends stdClass implements IteratorAggregate
             $this->all[$index] = $this->get_clone();
 
             if ($query->num_rows() > 1) {
-                $model = get_class($this);
+                $model = static::class;
 
                 $first = true;
 
@@ -5911,11 +5909,6 @@ class DM_Error_Object
 class DM_DatasetIterator implements Iterator, Countable
 {
     /**
-     * The parent DataMapper object that contains important info.
-     * @var DataMapper
-     */
-    protected $parent;
-    /**
      * The temporary DM object used in the loops.
      * @var DataMapper
      */
@@ -5937,16 +5930,16 @@ class DM_DatasetIterator implements Iterator, Countable
     protected $pos;
 
     /**
-     * @param DataMapper $object Should be cloned ahead of time
+     * @param DataMapper $parent Should be cloned ahead of time
      * @param DB_result $query result from a CI DB query
      */
-    public function __construct($object, $query)
+    public function __construct(/**
+     * The parent DataMapper object that contains important info.
+     */
+    protected $parent, $query)
     {
-        // store the object as a main object
-        $this->parent = $object;
-
         // clone the parent object, so it can be manipulated safely.
-        $this->object = $object->get_clone();
+        $this->object = $this->parent->get_clone();
 
         // Now get the information on the current query object
         $this->result = $query->result();

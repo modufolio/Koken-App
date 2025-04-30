@@ -73,16 +73,12 @@ class CI_Trackback
                 return false;
             }
 
-            switch ($item) {
-                case 'ping_url': $$item = $this->extract_urls($tb_data[$item]);
-                    break;
-                case 'excerpt': $$item = $this->limit_characters($this->convert_xml(strip_tags(stripslashes($tb_data[$item]))));
-                    break;
-                case 'url': $$item = str_replace('&#45;', '-', $this->convert_xml(strip_tags(stripslashes($tb_data[$item]))));
-                    break;
-                default: $$item = $this->convert_xml(strip_tags(stripslashes($tb_data[$item])));
-                    break;
-            }
+            $$item = match ($item) {
+                'ping_url' => $this->extract_urls($tb_data[$item]),
+                'excerpt' => $this->limit_characters($this->convert_xml(strip_tags(stripslashes($tb_data[$item])))),
+                'url' => str_replace('&#45;', '-', $this->convert_xml(strip_tags(stripslashes($tb_data[$item])))),
+                default => $this->convert_xml(strip_tags(stripslashes($tb_data[$item]))),
+            };
 
             // Convert High ASCII Characters
             if ($this->convert_ascii == true) {
@@ -289,7 +285,7 @@ class CI_Trackback
         $urls = str_replace(",,", ",", $urls);
 
         // Remove any comma that might be at the end
-        if (substr($urls, -1) == ",") {
+        if (str_ends_with($urls, ",")) {
             $urls = substr($urls, 0, -1);
         }
 
@@ -319,7 +315,7 @@ class CI_Trackback
     {
         $url = trim($url);
 
-        if (substr($url, 0, 4) != "http") {
+        if (!str_starts_with($url, "http")) {
             $url = "http://".$url;
         }
     }
@@ -337,7 +333,7 @@ class CI_Trackback
     {
         $tb_id = "";
 
-        if (strpos($url, '?') !== false) {
+        if (str_contains($url, '?')) {
             $tb_array = explode('/', $url);
             $tb_end   = $tb_array[count($tb_array)-1];
 

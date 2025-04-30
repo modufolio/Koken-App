@@ -142,7 +142,7 @@ class Unzip
                 }
             }
 
-            if (substr($file, -1, 1) == '/') {
+            if (str_ends_with($file, '/')) {
                 continue;
             }
 
@@ -290,7 +290,7 @@ class Unzip
             return false;
         }
 
-        if (substr($compressed_file_name, -1) == '/') {
+        if (str_ends_with($compressed_file_name, '/')) {
             $this->set_error('Trying to unzip a folder name "<strong>$compressed_file_name</strong>".');
             return false;
         }

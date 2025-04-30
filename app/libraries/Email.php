@@ -224,7 +224,7 @@ class CI_Email
             $name = $replyto;
         }
 
-        if (strncmp($name, '"', 1) != 0) {
+        if (!str_starts_with($name, '"')) {
             $name = '"'.$name.'"';
         }
 
@@ -415,7 +415,7 @@ class CI_Email
     protected function _str_to_array($email)
     {
         if (! is_array($email)) {
-            if (strpos($email, ',') !== false) {
+            if (str_contains($email, ',')) {
                 $email = preg_split('/[\s,]/', $email, -1, PREG_SPLIT_NO_EMPTY);
             } else {
                 $email = trim($email);
@@ -658,7 +658,7 @@ class CI_Email
     protected function _set_date()
     {
         $timezone = date("Z");
-        $operator = (strncmp($timezone, '-', 1) == 0) ? '-' : '+';
+        $operator = (str_starts_with($timezone, '-')) ? '-' : '+';
         $timezone = abs($timezone);
         $timezone = floor($timezone/3600) * 100 + ($timezone % 3600) / 60;
 
@@ -813,7 +813,7 @@ class CI_Email
         $str = preg_replace("| +|", " ", $str);
 
         // Standardize newlines
-        if (strpos($str, "\r") !== false) {
+        if (str_contains($str, "\r")) {
             $str = str_replace(array("\r\n", "\r"), "\n", $str);
         }
 
@@ -1113,7 +1113,7 @@ class CI_Email
         $str = preg_replace('/\x00+/', '', $str);
 
         // Standardize newlines
-        if (strpos($str, "\r") !== false) {
+        if (str_contains($str, "\r")) {
             $str = str_replace(array("\r\n", "\r"), "\n", $str);
         }
 
@@ -1348,7 +1348,7 @@ class CI_Email
      */
     protected function _remove_nl_callback($matches)
     {
-        if (strpos($matches[1], "\r") !== false or strpos($matches[1], "\n") !== false) {
+        if (str_contains($matches[1], "\r") or str_contains($matches[1], "\n")) {
             $matches[1] = str_replace(array("\r\n", "\r", "\n"), '', $matches[1]);
         }
 
@@ -1510,7 +1510,7 @@ class CI_Email
 
         $this->_set_error_message($reply);
 
-        if (strncmp($reply, '250', 3) != 0) {
+        if (!str_starts_with($reply, '250')) {
             $this->_set_error_message('lang:email_smtp_error', $reply);
             return false;
         }
@@ -1652,7 +1652,7 @@ class CI_Email
 
         $reply = $this->_get_smtp_data();
 
-        if (strncmp($reply, '334', 3) != 0) {
+        if (!str_starts_with($reply, '334')) {
             $this->_set_error_message('lang:email_failed_smtp_login', $reply);
             return false;
         }
@@ -1661,7 +1661,7 @@ class CI_Email
 
         $reply = $this->_get_smtp_data();
 
-        if (strncmp($reply, '334', 3) != 0) {
+        if (!str_starts_with($reply, '334')) {
             $this->_set_error_message('lang:email_smtp_auth_un', $reply);
             return false;
         }
@@ -1670,7 +1670,7 @@ class CI_Email
 
         $reply = $this->_get_smtp_data();
 
-        if (strncmp($reply, '235', 3) != 0) {
+        if (!str_starts_with($reply, '235')) {
             $this->_set_error_message('lang:email_smtp_auth_pw', $reply);
             return false;
         }
@@ -1760,7 +1760,7 @@ class CI_Email
             $this->_IP = $fip;
         }
 
-        if (strpos($this->_IP, ',') !== false) {
+        if (str_contains($this->_IP, ',')) {
             $x = explode(',', $this->_IP);
             $this->_IP = end($x);
         }
@@ -1812,7 +1812,7 @@ class CI_Email
         $CI =& get_instance();
         $CI->lang->load('email');
 
-        if (substr($msg, 0, 5) != 'lang:' || false === ($line = $CI->lang->line(substr($msg, 5)))) {
+        if (!str_starts_with($msg, 'lang:') || false === ($line = $CI->lang->line(substr($msg, 5)))) {
             $this->_debug_msg[] = str_replace('%s', $val, $msg)."<br />";
         } else {
             $this->_debug_msg[] = str_replace('%s', $val, $line)."<br />";

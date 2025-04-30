@@ -200,7 +200,7 @@ class CI_Image_lib
             $this->dest_image = $this->source_image;
             $this->dest_folder = $this->source_folder;
         } else {
-            if (strpos($this->new_image, '/') === false and strpos($this->new_image, '\\') === false) {
+            if (!str_contains($this->new_image, '/') and !str_contains($this->new_image, '\\')) {
                 $this->dest_folder = $this->source_folder;
                 $this->dest_image = $this->new_image;
             } else {
@@ -526,14 +526,11 @@ class CI_Image_lib
         if ($action == 'crop') {
             $cmd .= " -crop ".$this->width."x".$this->height."+".$this->x_axis."+".$this->y_axis." \"$this->full_src_path\" \"$this->full_dst_path\" 2>&1";
         } elseif ($action == 'rotate') {
-            switch ($this->rotation_angle) {
-                case 'hor': $angle = '-flop';
-                    break;
-                case 'vrt': $angle = '-flip';
-                    break;
-                default: $angle = '-rotate '.$this->rotation_angle;
-                    break;
-            }
+            $angle = match ($this->rotation_angle) {
+                'hor' => '-flop',
+                'vrt' => '-flip',
+                default => '-rotate '.$this->rotation_angle,
+            };
 
             $cmd .= " ".$angle." \"$this->full_src_path\" \"$this->full_dst_path\" 2>&1";
         } else {  // Resize

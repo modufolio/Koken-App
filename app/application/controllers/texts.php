@@ -234,7 +234,7 @@ class Texts extends Koken_Controller
                             ->group_end()
                         ->group_end();
 
-                    if (strpos($options['context'], 'tag-') === 0) {
+                    if (str_starts_with($options['context'], 'tag-')) {
                         $tag = str_replace('tag-', '', urldecode($options['context']));
                         $t = new Tag();
                         $t->where('name', $tag)->get();
@@ -255,7 +255,7 @@ class Texts extends Koken_Controller
                                 list($final['context']['__koken_url'], $final['context']['url']) = $url;
                             }
                         }
-                    } elseif (strpos($options['context'], 'category-') === 0) {
+                    } elseif (str_starts_with($options['context'], 'category-')) {
                         $category = str_replace('category-', '', $options['context']);
                         $cat = new Category();
                         $cat->where('slug', $category)->get();
@@ -342,7 +342,7 @@ class Texts extends Koken_Controller
             $t = $text->get_by_id($text_id);
 
             if (isset($_POST['file'])) {
-                if (strpos($_POST['file'], 'http') === 0) {
+                if (str_starts_with($_POST['file'], 'http')) {
                     if ($text->custom_featured_image) {
                         delete_files(FCPATH . 'storage' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'custom' . DIRECTORY_SEPARATOR . str_replace('.', '-', $text->custom_featured_image), true, 1);
                     }

@@ -85,7 +85,7 @@ class Draft extends DataMapper
                 }
 
                 if ($u['type'] === 'content' && !$content_regex && isset($d['url'])) {
-                    $content_regex = strpos($d['url'], 'slug') === false ? ':content_id' : ':content_slug';
+                    $content_regex = !str_contains($d['url'], 'slug') ? ':content_id' : ':content_slug';
                 }
             }
 
@@ -160,10 +160,10 @@ class Draft extends DataMapper
 
                 if ($has_detail && isset($type_data['url'])) {
                     $url = $type_data['url'];
-                    if (strpos($url, 'date') !== false) {
+                    if (str_contains($url, 'date')) {
                         $template .= '/:year/:month';
                     }
-                    if (strpos($url, 'slug') !== false) {
+                    if (str_contains($url, 'slug')) {
                         $template .= '/:slug';
                     } else {
                         $template .= '/:id';
@@ -229,7 +229,7 @@ class Draft extends DataMapper
                         } else {
                             $arr['path'] = '/' . $segments[$u['type']] . '/' . $segments['tag'] . '/:tag_slug/';
                         }
-                        $arr['path'] .= (strpos($type_data['url'], 'slug') === false ? ':id' : ':slug') . $lbox;
+                        $arr['path'] .= (!str_contains($type_data['url'], 'slug') ? ':id' : ':slug') . $lbox;
                         $this->_push($arr, $routes, 'tag_' . $u['type'], $level);
 
                         if ($level === 1) {
@@ -242,7 +242,7 @@ class Draft extends DataMapper
                             $arr['path'] = '/' . $segments[$u['type']] . '/' . $segments['category'] . '/:category_slug/';
                         }
 
-                        $arr['path'] .= (strpos($type_data['url'], 'slug') === false ? ':id' : ':slug') . $lbox;
+                        $arr['path'] .= (!str_contains($type_data['url'], 'slug') ? ':id' : ':slug') . $lbox;
                         $this->_push($arr, $routes, 'category_' . $u['type'], $level);
 
                         if ($level === 1) {
@@ -452,7 +452,7 @@ class Draft extends DataMapper
             $data['category']['order'] = 'title ASC';
         }
 
-        if (strpos($data['album']['order'], 'captured_on') === 0) {
+        if (str_starts_with($data['album']['order'], 'captured_on')) {
             $data['album']['order'] = 'published_on DESC';
         }
 

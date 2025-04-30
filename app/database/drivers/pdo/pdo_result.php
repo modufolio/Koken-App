@@ -102,7 +102,7 @@ class CI_DB_pdo_result extends CI_DB_result
             }
 
             return $data;
-        } catch (Exception $e) {
+        } catch (Exception) {
             if ($this->db->db_debug) {
                 return $this->db->display_error('db_unsuported_feature');
             }

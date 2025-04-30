@@ -70,7 +70,7 @@ class CI_Typography
         }
 
         // Standardize Newlines to make matching easier
-        if (strpos($str, "\r") !== false) {
+        if (str_contains($str, "\r")) {
             $str = str_replace(array("\r\n", "\r"), "\n", $str);
         }
 
@@ -82,7 +82,7 @@ class CI_Typography
 
         // HTML comment tags don't conform to patterns of normal tags, so pull them out separately, only if needed
         $html_comments = [];
-        if (strpos($str, '<!--') !== false) {
+        if (str_contains($str, '<!--')) {
             if (preg_match_all("#(<!\-\-.*?\-\->)#s", $str, $matches)) {
                 for ($i = 0, $total = count($matches[0]); $i < $total; $i++) {
                     $html_comments[] = $matches[0][$i];
@@ -93,7 +93,7 @@ class CI_Typography
 
         // match and yank <pre> tags if they exist.  It's cheaper to do this separately since most content will
         // not contain <pre> tags, and it keeps the PCRE patterns below simpler and faster
-        if (strpos($str, '<pre') !== false) {
+        if (str_contains($str, '<pre')) {
             $str = preg_replace_callback("#<pre.*?>.*?</pre>#si", array($this, '_protect_characters'), $str);
         }
 
@@ -305,7 +305,7 @@ class CI_Typography
             return $str;
         }
 
-        if (strpos($str, "\n") === false  && ! in_array($this->last_block_element, $this->inner_block_required)) {
+        if (!str_contains($str, "\n")  && ! in_array($this->last_block_element, $this->inner_block_required)) {
             return $str;
         }
 

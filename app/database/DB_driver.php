@@ -539,7 +539,7 @@ class CI_DB_driver
      */
     public function compile_binds($sql, $binds)
     {
-        if (strpos($sql, $this->bind_marker) === false) {
+        if (!str_contains($sql, $this->bind_marker)) {
             return $sql;
         }
 
@@ -922,7 +922,7 @@ class CI_DB_driver
     {
         $driver = ($this->dbdriver == 'postgre') ? 'pg_' : $this->dbdriver.'_';
 
-        if (false === strpos($driver, $function)) {
+        if (!str_contains($driver, $function)) {
             $function = $driver.$function;
         }
 
@@ -1089,7 +1089,7 @@ class CI_DB_driver
         $trace = debug_backtrace();
 
         foreach ($trace as $call) {
-            if (isset($call['file']) && strpos($call['file'], BASEPATH.'database') === false) {
+            if (isset($call['file']) && !str_contains($call['file'], BASEPATH.'database')) {
                 // Found it - use a relative path for safety
                 $message[] = 'Filename: '.str_replace(array(BASEPATH, APPPATH), '', $call['file']);
                 $message[] = 'Line Number: '.$call['line'];
@@ -1165,7 +1165,7 @@ class CI_DB_driver
         }
 
         // HACK to allow fns in datamapper selects
-        if (strpos($item, '(') !== false) {
+        if (str_contains($item, '(')) {
             return $item; // Note this is different!
         }
 
@@ -1174,7 +1174,7 @@ class CI_DB_driver
 
         // If the item has an alias declaration we remove it and set it aside.
         // Basically we remove everything to the right of the first space
-        if (strpos($item, ' ') !== false) {
+        if (str_contains($item, ' ')) {
             $alias = strstr($item, ' ');
             $item = substr($item, 0, - strlen($alias));
         } else {
@@ -1185,14 +1185,14 @@ class CI_DB_driver
         // If a parenthesis is found we know that we do not need to
         // escape the data or add a prefix.  There's probably a more graceful
         // way to deal with this, but I'm not thinking of it -- Rick
-        if (strpos($item, '(') !== false) {
+        if (str_contains($item, '(')) {
             return $item.$alias;
         }
 
         // Break the string apart if it contains periods, then insert the table prefix
         // in the correct location, assuming the period doesn't indicate that we're dealing
         // with an alias. While we're at it, we will escape the components
-        if (strpos($item, '.') !== false) {
+        if (str_contains($item, '.')) {
             $parts	= explode('.', $item);
 
             // Does the first segment of the exploded item match
@@ -1237,12 +1237,12 @@ class CI_DB_driver
                 }
 
                 // Verify table prefix and replace if necessary
-                if ($this->swap_pre != '' && strncmp($parts[$i], $this->swap_pre, strlen($this->swap_pre)) === 0) {
+                if ($this->swap_pre != '' && str_starts_with($parts[$i], $this->swap_pre)) {
                     $parts[$i] = preg_replace("/^".$this->swap_pre."(\S+?)/", $this->dbprefix."\\1", $parts[$i]);
                 }
 
                 // We only add the table prefix if it does not already exist
-                if (substr($parts[$i], 0, strlen($this->dbprefix)) != $this->dbprefix) {
+                if (!str_starts_with($parts[$i], $this->dbprefix)) {
                     $parts[$i] = $this->dbprefix.$parts[$i];
                 }
 
@@ -1260,12 +1260,12 @@ class CI_DB_driver
         // Is there a table prefix?  If not, no need to insert it
         if ($this->dbprefix != '') {
             // Verify table prefix and replace if necessary
-            if ($this->swap_pre != '' && strncmp($item, $this->swap_pre, strlen($this->swap_pre)) === 0) {
+            if ($this->swap_pre != '' && str_starts_with($item, $this->swap_pre)) {
                 $item = preg_replace("/^".$this->swap_pre."(\S+?)/", $this->dbprefix."\\1", $item);
             }
 
             // Do we prefix an item with no segments?
-            if ($prefix_single == true and substr($item, 0, strlen($this->dbprefix)) != $this->dbprefix) {
+            if ($prefix_single == true and !str_starts_with($item, $this->dbprefix)) {
                 $item = $this->dbprefix.$item;
             }
         }

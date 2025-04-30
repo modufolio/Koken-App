@@ -33,19 +33,12 @@ class System extends Koken_Controller
             $val = strtolower($val);
             if (preg_match('/(k|m|g)/', $val, $match)) {
                 $val = (int) str_replace($match[1], '', $val);
-                switch ($match[1]) {
-                    case 'k':
-                        $val *= 1024;
-                        break;
-
-                    case 'm':
-                        $val *= 1048576;
-                        break;
-
-                    case 'g':
-                        $val *= 1073741824;
-                        break;
-                }
+                match ($match[1]) {
+                    'k' => $val *= 1024,
+                    'm' => $val *= 1048576,
+                    'g' => $val *= 1073741824,
+                    default => $val,
+                };
                 return $val;
             } else {
                 return (int) $val;

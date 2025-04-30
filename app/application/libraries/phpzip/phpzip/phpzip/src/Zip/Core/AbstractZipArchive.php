@@ -66,8 +66,6 @@ abstract class AbstractZipArchive extends AbstractZipWriter
     protected $offset = 0;
     protected $isFinalized = false;
     protected $addExtraField = true;
-
-    protected $streamChunkSize = 0;
     protected $streamFilePath = null;
     protected $streamTimestamp = null;
     protected $streamFileComment = null;
@@ -97,10 +95,8 @@ abstract class AbstractZipArchive extends AbstractZipWriter
      *
      * @throws \PHPZip\Zip\Exception\InvalidPhpConfiguration In case of errors
      */
-    protected function __construct($streamChunkSize)
+    protected function __construct(protected $streamChunkSize)
     {
-        $this->streamChunkSize = $streamChunkSize;
-
         if (count($this->_phpConfigurationWatch) > 0) {
             foreach ($this->_phpConfigurationWatch as $k => $v) {
                 $s = (string)$v;

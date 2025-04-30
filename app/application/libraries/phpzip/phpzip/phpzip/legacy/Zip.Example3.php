@@ -1,5 +1,7 @@
 <?php
 
+use com\grandt\php\LipsumGenerator;
+
 set_error_handler("customError");
 error_reporting(E_ALL | E_STRICT);
 ini_set('error_reporting', E_ALL | E_STRICT);
@@ -40,7 +42,7 @@ $zip->addFile("Hello World!", "hello.txt");
 if ($handle) {
     /* This is the correct way to loop over the directory. */
     while (false !== ($file = readdir($handle))) {
-        if (strpos($file, ".php") !== false) {
+        if (str_contains($file, ".php")) {
             $pathData = pathinfo($fileDir . $file);
             $fileName = $pathData['filename'];
 
@@ -52,7 +54,7 @@ if ($handle) {
 // Uses my Lipsum generator from https://github.com/Grandt/PHPLipsumGenerator
 if (file_exists('./LipsumGenerator.php')) {
     require_once './LipsumGenerator.php';
-    $lg = new com\grandt\php\LipsumGenerator();
+    $lg = new LipsumGenerator();
     $zip->openStream("big one3.txt");
     for ($i = 1 ; $i <= 20 ; $i++) {
         $zip->addStreamData("Chapter $i\r\n\r\n" . $lg->generate(300, 2500) . "\r\n");

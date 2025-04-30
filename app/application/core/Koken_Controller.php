@@ -61,7 +61,7 @@ class Koken_Controller extends CI_Controller
 
                 if (file_exists($file)) {
                     $existing = file_get_contents($file);
-                    if (strpos($existing, '#MARK#') !== false) {
+                    if (str_contains($existing, '#MARK#')) {
                         preg_match('/#MARK#.*/s', $htaccess, $match);
                         $htaccess = preg_replace('/#MARK#.*/s', str_replace('$', '\\$', $match[0]), $existing);
                     } else {
@@ -76,7 +76,7 @@ class Koken_Controller extends CI_Controller
                     if (file_exists($root_htaccess)) {
                         $current = file_get_contents($root_htaccess);
                         $redirect = create_htaccess($s->value, true);
-                        if (strpos($current, '#MARK#') !== false) {
+                        if (str_contains($current, '#MARK#')) {
                             preg_match('/#MARK#.*/s', $redirect, $match);
                             $redirect = preg_replace('/#MARK#.*/s', str_replace('$', '\\$', $match[0]), $current);
                         } else {
@@ -105,7 +105,7 @@ class Koken_Controller extends CI_Controller
                 curl_close($cp);
                 return false;
             } else {
-                if (strpos($f, 'https://') === 0) {
+                if (str_starts_with($f, 'https://')) {
                     curl_setopt($cp, CURLOPT_SSL_VERIFYHOST, 2);
                     curl_setopt($cp, CURLOPT_SSL_VERIFYPEER, false);
                 } elseif (!$force_content_mimes) {
@@ -189,7 +189,7 @@ class Koken_Controller extends CI_Controller
             if ($auth) {
                 $this->auth = true;
                 list($this->auth_user_id, $this->auth_token, $this->auth_role) = $auth;
-                if (strpos($this->cache_path, '/token:') === false && isset($this->auth_token)) {
+                if (!str_contains($this->cache_path, '/token:') && isset($this->auth_token)) {
                     $this->cache_path .= '/token:' . $this->auth_token;
                 }
             }
@@ -446,7 +446,7 @@ class Koken_Controller extends CI_Controller
             return KOKEN_REWRITE;
         }
 
-        if (!file_exists(FCPATH . '.htaccess') && strpos($_SERVER['SERVER_SOFTWARE'], 'Apache') === 0) {
+        if (!file_exists(FCPATH . '.htaccess') && str_starts_with($_SERVER['SERVER_SOFTWARE'], 'Apache')) {
             define('KOKEN_REWRITE', false);
             return false;
         }
@@ -488,7 +488,7 @@ class Koken_Controller extends CI_Controller
         curl_setopt($curl, CURLOPT_HEADER, 0);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
 
-        if (strpos($url, 'https://') === 0) {
+        if (str_starts_with($url, 'https://')) {
             curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2);
             curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
         }

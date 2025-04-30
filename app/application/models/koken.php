@@ -246,7 +246,7 @@ class Koken extends DataMapper
                 return;
             }
 
-            $base = strtolower(get_class($this));
+            $base = strtolower(static::class);
 
             if ($base === 'text') {
                 $base = $this->page_type < 1 ? 'essay' : 'page';

@@ -433,11 +433,11 @@ if (! function_exists('human_to_unix')) {
         if (isset($split['2'])) {
             $ampm = strtolower($split['2']);
 
-            if (substr($ampm, 0, 1) == 'p' and $hour < 12) {
+            if (str_starts_with($ampm, 'p') and $hour < 12) {
                 $hour = $hour + 12;
             }
 
-            if (substr($ampm, 0, 1) == 'a' and $hour == 12) {
+            if (str_starts_with($ampm, 'a') and $hour == 12) {
                 $hour =  '00';
             }
 

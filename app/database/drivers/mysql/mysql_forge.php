@@ -88,21 +88,11 @@ class CI_DB_mysql_forge extends CI_DB_forge
                     $sql .=  ' '.$attributes['TYPE'];
 
                     if (array_key_exists('CONSTRAINT', $attributes)) {
-                        switch ($attributes['TYPE']) {
-                            case 'decimal':
-                            case 'float':
-                            case 'numeric':
-                                $sql .= '('.implode(',', $attributes['CONSTRAINT']).')';
-                            break;
-
-                            case 'enum':
-                            case 'set':
-                                $sql .= '("'.implode('","', $attributes['CONSTRAINT']).'")';
-                            break;
-
-                            default:
-                                $sql .= '('.$attributes['CONSTRAINT'].')';
-                        }
+                        match ($attributes['TYPE']) {
+                            'decimal', 'float', 'numeric' => $sql .= '('.implode(',', $attributes['CONSTRAINT']).')',
+                            'enum', 'set' => $sql .= '("'.implode('","', $attributes['CONSTRAINT']).'")',
+                            default => $sql .= '('.$attributes['CONSTRAINT'].')',
+                        };
                     }
                 }
 

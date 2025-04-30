@@ -29,7 +29,7 @@
 function &DB($params = '', $active_record_override = null)
 {
     // Load the DB config file if a DSN string wasn't passed
-    if (is_string($params) and strpos($params, '://') === false) {
+    if (is_string($params) and !str_contains($params, '://')) {
         // Is the config file in the environment folder?
         if (! defined('ENVIRONMENT') or ! file_exists($file_path = APPPATH.'config/'.ENVIRONMENT.'/database.php')) {
             if (! file_exists($file_path = APPPATH.'config/database.php')) {

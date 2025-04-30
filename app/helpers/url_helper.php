@@ -486,12 +486,10 @@ if (! function_exists('redirect')) {
             $uri = site_url($uri);
         }
 
-        switch ($method) {
-            case 'refresh': header("Refresh:0;url=".$uri);
-                break;
-            default: header("Location: ".$uri, true, $http_response_code);
-                break;
-        }
+        match ($method) {
+            'refresh' => header("Refresh:0;url=".$uri),
+            default => header("Location: ".$uri, true, $http_response_code),
+        };
         exit;
     }
 }

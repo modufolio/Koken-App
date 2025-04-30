@@ -114,7 +114,7 @@ if (! function_exists('create_captcha')) {
                     for ($i = 0; $i < $word_length; $i++) {
                         $word .= $pool[random_int(0, $rand_max)];
                     }
-                } catch (Exception $e) {
+                } catch (Exception) {
                     // This means fallback to the next possible
                     // alternative to random_int()
                     $word = '';

@@ -177,7 +177,7 @@ class CI_Jquery extends CI_Javascript
      * @param	string	- Javascript code for mouse out
      * @return	string
      */
-    public function _hover($element = 'this', $over, $out)
+    public function _hover($over, $out, $element = 'this')
     {
         $event = "\n\t$(" . $this->_prep_element($element) . ").hover(\n\t\tfunction()\n\t\t{\n\t\t\t{$over}\n\t\t}, \n\t\tfunction()\n\t\t{\n\t\t\t{$out}\n\t\t});\n";
 
@@ -696,11 +696,11 @@ class CI_Jquery extends CI_Javascript
      * @return	string
      */
 
-    public function _updater($container = 'this', $controller, $options = '')
+    public function _updater($controller, $container = 'this', $options = '')
     {
         $container = $this->_prep_element($container);
 
-        $controller = (strpos('://', $controller) === false) ? $controller : $this->CI->config->site_url($controller);
+        $controller = (!str_contains('://', $controller)) ? $controller : $this->CI->config->site_url($controller);
 
         // ajaxStart and ajaxStop are better choices here... but this is a stop gap
         if ($this->CI->config->item('javascript_ajax_img') == '') {

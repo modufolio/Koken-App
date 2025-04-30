@@ -14,7 +14,7 @@ class DDI_DatabaseConfig extends KokenPlugin implements KokenDatabaseConfigurati
 
     private function set_driver()
     {
-        $socket = strpos($this->config['hostname'], ':') !== false;
+        $socket = str_contains($this->config['hostname'], ':');
         $this->config['driver'] = function_exists('mysqli_connect') && !$socket ? 'mysqli' : 'mysql';
     }
 

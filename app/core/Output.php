@@ -208,7 +208,7 @@ class CI_Output
      */
     public function set_content_type($mime_type)
     {
-        if (strpos($mime_type, '/') === false) {
+        if (!str_contains($mime_type, '/')) {
             $extension = ltrim($mime_type, '.');
 
             // Is this extension supported?
@@ -361,7 +361,7 @@ class CI_Output
         // Is compression requested?
         if ($CFG->item('compress_output') === true && $this->_zlib_oc == false) {
             if (extension_loaded('zlib')) {
-                if (isset($_SERVER['HTTP_ACCEPT_ENCODING']) and strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') !== false) {
+                if (isset($_SERVER['HTTP_ACCEPT_ENCODING']) and str_contains($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip')) {
                     ob_start('ob_gzhandler');
                 }
             }

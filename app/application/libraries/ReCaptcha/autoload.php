@@ -6,7 +6,7 @@
  */
 
 spl_autoload_register(function ($class) {
-    if (substr($class, 0, 10) !== 'ReCaptcha\\') {
+    if (!str_starts_with($class, 'ReCaptcha\\')) {
         /* If the class does not lie under the "ReCaptcha" namespace,
          * then we can exit immediately.
          */

@@ -172,7 +172,7 @@ class CI_Exceptions
         $filepath = str_replace("\\", "/", $filepath);
 
         // For safety reasons we do not show the full file path
-        if (false !== strpos($filepath, '/')) {
+        if (str_contains($filepath, '/')) {
             $x = explode('/', $filepath);
             $filepath = $x[count($x)-2].'/'.end($x);
         }

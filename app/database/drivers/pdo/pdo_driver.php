@@ -58,7 +58,7 @@ class CI_DB_pdo_driver extends CI_DB
         parent::__construct($params);
 
         // clause and character used for LIKE escape sequences
-        if (strpos($this->hostname, 'mysql') !== false) {
+        if (str_contains($this->hostname, 'mysql')) {
             $this->_like_escape_str = '';
             $this->_like_escape_chr = '';
 
@@ -69,7 +69,7 @@ class CI_DB_pdo_driver extends CI_DB
 
             //Set the charset with the connection options
             $this->options['PDO::MYSQL_ATTR_INIT_COMMAND'] = "SET NAMES {$this->char_set}";
-        } elseif (strpos($this->hostname, 'odbc') !== false) {
+        } elseif (str_contains($this->hostname, 'odbc')) {
             $this->_like_escape_str = " {escape '%s'} ";
             $this->_like_escape_chr = '!';
         } else {
@@ -316,7 +316,7 @@ class CI_DB_pdo_driver extends CI_DB
         $str = $this->conn_id->quote($str);
 
         //If there are duplicated quotes, trim them away
-        if (strpos($str, "'") === 0) {
+        if (str_starts_with($str, "'")) {
             $str = substr($str, 1, -1);
         }
 
@@ -356,7 +356,7 @@ class CI_DB_pdo_driver extends CI_DB
     public function insert_id($name=null)
     {
         //Convenience method for postgres insertid
-        if (strpos($this->hostname, 'pgsql') !== false) {
+        if (str_contains($this->hostname, 'pgsql')) {
             $v = $this->_version();
 
             $table	= func_num_args() > 0 ? func_get_arg(0) : null;
@@ -501,7 +501,7 @@ class CI_DB_pdo_driver extends CI_DB
         }
 
         foreach ($this->_reserved_identifiers as $id) {
-            if (strpos($item, '.'.$id) !== false) {
+            if (str_contains($item, '.'.$id)) {
                 $str = $this->_escape_char. str_replace('.', $this->_escape_char.'.', $item);
 
                 // remove duplicates if the user already included the escape
@@ -509,7 +509,7 @@ class CI_DB_pdo_driver extends CI_DB
             }
         }
 
-        if (strpos($item, '.') !== false) {
+        if (str_contains($item, '.')) {
             $str = $this->_escape_char.str_replace('.', $this->_escape_char.'.'.$this->_escape_char, $item).$this->_escape_char;
         } else {
             $str = $this->_escape_char.$item.$this->_escape_char;
@@ -723,7 +723,7 @@ class CI_DB_pdo_driver extends CI_DB
      */
     public function _limit($sql, $limit, $offset)
     {
-        if (strpos($this->hostname, 'cubrid') !== false || strpos($this->hostname, 'sqlite') !== false) {
+        if (str_contains($this->hostname, 'cubrid') || str_contains($this->hostname, 'sqlite')) {
             if ($offset == 0) {
                 $offset = '';
             } else {

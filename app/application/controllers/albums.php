@@ -92,16 +92,11 @@ class Albums extends Koken_Controller
                 $levels['_' . $album->level] = [];
             }
 
-            switch ($album->album_type) {
-                case 2:
-                    $type = 'set';
-                    break;
-                case 1:
-                    $type = 'smart';
-                    break;
-                default:
-                    $type = 'standard';
-            }
+            $type = match ($album->album_type) {
+                2 => 'set',
+                1 => 'smart',
+                default => 'standard',
+            };
 
             $arr = array(
                 'id' => $album->id,
@@ -173,7 +168,7 @@ class Albums extends Koken_Controller
         $params['auth'] = $this->auth;
         $params['limit_to'] = 'albums';
 
-        if (strpos($id, ',') === false) {
+        if (!str_contains($id, ',')) {
             $final = $c->where_related('album', 'id', $id)->listing($params);
         } else {
             $final = $c->get_grouped_status(explode(',', $id), 'Album');

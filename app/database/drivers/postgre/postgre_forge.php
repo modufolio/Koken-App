@@ -134,7 +134,7 @@ class CI_DB_postgre_forge extends CI_DB_forge
                 }
 
                 // Modified to prevent constraints with integer data types
-                if (array_key_exists('CONSTRAINT', $attributes) && strpos($attributes['TYPE'], 'INT') === false) {
+                if (array_key_exists('CONSTRAINT', $attributes) && !str_contains($attributes['TYPE'], 'INT')) {
                     $sql .= '('.$attributes['CONSTRAINT'].')';
                 }
 

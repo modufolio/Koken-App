@@ -53,7 +53,7 @@ if (! function_exists('form_open')) {
         }
 
         // If an action is not a full URL then turn it into one
-        if ($action && strpos($action, '://') === false) {
+        if ($action && !str_contains($action, '://')) {
             $action = $CI->config->site_url($action);
         }
 
@@ -67,7 +67,7 @@ if (! function_exists('form_open')) {
         $form .= '>';
 
         // Add CSRF field if enabled, but leave it out for GET requests and requests to external websites
-        if ($CI->config->item('csrf_protection') === true and ! (strpos($action, $CI->config->base_url()) === false or strpos($form, 'method="get"'))) {
+        if ($CI->config->item('csrf_protection') === true and ! (!str_contains($action, $CI->config->base_url()) or strpos($form, 'method="get"'))) {
             $hidden[$CI->security->get_csrf_token_name()] = $CI->security->get_csrf_hash();
         }
 
@@ -299,7 +299,7 @@ if (! function_exists('form_dropdown')) {
             $extra = ' '.$extra;
         }
 
-        $multiple = (count($selected) > 1 && strpos($extra, 'multiple') === false) ? ' multiple="multiple"' : '';
+        $multiple = (count($selected) > 1 && !str_contains($extra, 'multiple')) ? ' multiple="multiple"' : '';
 
         $form = '<select name="'.$name.'"'.$extra.$multiple.">\n";
 
@@ -871,11 +871,11 @@ if (! function_exists('_attributes_to_string')) {
     function _attributes_to_string($attributes, $formtag = false)
     {
         if (is_string($attributes) and strlen($attributes) > 0) {
-            if ($formtag == true and strpos($attributes, 'method=') === false) {
+            if ($formtag == true and !str_contains($attributes, 'method=')) {
                 $attributes .= ' method="post"';
             }
 
-            if ($formtag == true and strpos($attributes, 'accept-charset=') === false) {
+            if ($formtag == true and !str_contains($attributes, 'accept-charset=')) {
                 $attributes .= ' accept-charset="'.strtolower(config_item('charset')).'"';
             }
 

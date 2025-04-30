@@ -92,7 +92,7 @@ class Contents extends Koken_Controller
         $params['auth'] = $this->auth;
         $params['limit_to'] = 'content';
 
-        if (strpos($id, ',') === false) {
+        if (!str_contains($id, ',')) {
             $final = $c->where_related('content', 'id', $id)->listing($params);
         } else {
             $final = $c->get_grouped_status(explode(',', $id), 'Content');
@@ -184,7 +184,7 @@ class Contents extends Koken_Controller
                             $contentType = '';
                         }
 
-                        if (strpos($contentType, "multipart") !== false) {
+                        if (str_contains($contentType, "multipart")) {
                             if (isset($_FILES['file']['tmp_name']) && is_uploaded_file($_FILES['file']['tmp_name'])) {
                                 $out = fopen($tmp_path, $chunk == 0 ? "wb" : "ab");
                                 if ($out) {
@@ -479,7 +479,7 @@ class Contents extends Koken_Controller
             }
         }
         $c = new Content();
-        if ($slug || (isset($id) && strpos($id, ',') === false)) {
+        if ($slug || (isset($id) && !str_contains($id, ','))) {
             $options = array(
                 'context' => false,
                 'neighbors' => false
@@ -488,7 +488,7 @@ class Contents extends Koken_Controller
 
             $original_context = $options['context'];
 
-            if ($options['context'] && !in_array($options['context'], array('stream', 'favorites', 'features')) && strpos($options['context'], 'tag-') !== 0 && strpos($options['context'], 'category-') !== 0) {
+            if ($options['context'] && !in_array($options['context'], array('stream', 'favorites', 'features')) && !str_starts_with($options['context'], 'tag-') && !str_starts_with($options['context'], 'category-')) {
                 if (is_numeric($options['context'])) {
                     $context_field = 'id';
                 } else {
@@ -554,7 +554,7 @@ class Contents extends Koken_Controller
                     $single_neighbors = true;
                 }
 
-                if ($options['context'] && !in_array($original_context, array('stream', 'favorites', 'features')) && strpos($original_context, 'tag-') !== 0 && strpos($original_context, 'category-') !== 0) {
+                if ($options['context'] && !in_array($original_context, array('stream', 'favorites', 'features')) && !str_starts_with($original_context, 'tag-') && !str_starts_with($original_context, 'category-')) {
                     $options['in_album'] = $a;
                 }
 
@@ -571,7 +571,7 @@ class Contents extends Koken_Controller
 
                     $options['context'] = urldecode($options['context']);
 
-                    if (!in_array($original_context, array('stream', 'favorites', 'features')) && strpos($original_context, 'tag-') !== 0 && strpos($original_context, 'category-') !== 0) {
+                    if (!in_array($original_context, array('stream', 'favorites', 'features')) && !str_starts_with($original_context, 'tag-') && !str_starts_with($original_context, 'category-')) {
                         if (!isset($options['context_order'])) {
                             list($options['context_order'], $options['context_order_direction']) = explode(' ', $a->sort);
                         }
@@ -669,7 +669,7 @@ class Contents extends Koken_Controller
                                 ->group_end()
                             ->group_end();
 
-                        if (strpos($original_context, 'tag-') === 0) {
+                        if (str_starts_with($original_context, 'tag-')) {
                             $tag = str_replace('tag-', '', urldecode($original_context));
                             $t = new Tag();
                             $t->where('name', $tag)->get();
@@ -688,7 +688,7 @@ class Contents extends Koken_Controller
                                     list($final['context']['__koken_url'], $final['context']['url']) = $url;
                                 }
                             }
-                        } elseif (strpos($original_context, 'category-') === 0) {
+                        } elseif (str_starts_with($original_context, 'category-')) {
                             $category = str_replace('category-', '', $original_context);
                             $cat = new Category();
                             $cat->where('slug', $category)->get();

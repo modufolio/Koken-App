@@ -216,7 +216,7 @@ class CI_DB_active_record extends CI_DB_driver
      */
     protected function _create_alias_from_table($item)
     {
-        if (strpos($item, '.') !== false) {
+        if (str_contains($item, '.')) {
             $array = explode('.', $item);
             return end($array);
         }
@@ -253,7 +253,7 @@ class CI_DB_active_record extends CI_DB_driver
     public function from($from)
     {
         foreach ((array) $from as $val) {
-            if (strpos($val, ',') !== false) {
+            if (str_contains($val, ',')) {
                 foreach (explode(',', $val) as $v) {
                     $v = trim($v);
                     $this->_track_aliases($v);
@@ -773,7 +773,7 @@ class CI_DB_active_record extends CI_DB_driver
         }
 
 
-        if (strpos($orderby, ',') !== false) {
+        if (str_contains($orderby, ',')) {
             $temp = [];
             foreach (explode(',', $orderby) as $part) {
                 $part = trim($part);
@@ -1481,12 +1481,12 @@ class CI_DB_active_record extends CI_DB_driver
 
         // Does the string contain a comma?  If so, we need to separate
         // the string into discreet statements
-        if (strpos($table, ',') !== false) {
+        if (str_contains($table, ',')) {
             return $this->_track_aliases(explode(',', $table));
         }
 
         // if a table alias is used we can recognize it by a space
-        if (strpos($table, " ") !== false) {
+        if (str_contains($table, " ")) {
             // if the alias is written with the AS keyword, remove it
             $table = preg_replace('/\s+AS\s+/i', ' ', $table);
 

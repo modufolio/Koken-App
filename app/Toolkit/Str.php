@@ -862,7 +862,7 @@ class Str
      */
     public static function reverse(string $value): string
     {
-        return implode(array_reverse(mb_str_split($value)));
+        return implode('', array_reverse(mb_str_split($value)));
     }
 
     /**
@@ -1250,7 +1250,7 @@ class Str
             if (str_contains($query, '.')) {
                 try {
                     $result = (new Query($match[1], $data))->result();
-                } catch (Exception $e) {
+                } catch (Exception) {
                     $result = null;
                 }
             } else {
@@ -1305,10 +1305,9 @@ class Str
      * Convert the string to the given type
      *
      * @param string $string
-     * @param mixed $type
      * @return mixed
      */
-    public static function toType(string $string, $type = null)
+    public static function toType(string $string, mixed $type = null)
     {
         if ($type === null) {
             $type = self::getType($string);

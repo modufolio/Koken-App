@@ -294,14 +294,12 @@ class CI_Migration
     }
 
     // --------------------------------------------------------------------
-
     /**
      * Enable the use of CI super-global
      *
-     * @param	mixed	$var
      * @return	mixed
      */
-    public function __get($var)
+    public function __get(mixed $var)
     {
         return get_instance()->$var;
     }

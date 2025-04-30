@@ -60,15 +60,15 @@ class WebhostWhois
         // Tests for each webhost go here. Each test should evaluate to a boolean.
         // Keep tests in alphabetical order by key.
         $this->results = array(
-            'bluehost'          => strpos($options['uname'], 'hostmonster.com ') !== false,
+            'bluehost'          => str_contains($options['uname'], 'hostmonster.com '),
             'dreamhost'         => isset($options['server']['DH_USER']),
-            'go-daddy'          => strpos($options['uname'], 'secureserver.net') !== false,
-            'in-motion'         => strpos($options['uname'], '.inmotionhosting.com') !== false,
+            'go-daddy'          => str_contains($options['uname'], 'secureserver.net'),
+            'in-motion'         => str_contains($options['uname'], '.inmotionhosting.com'),
             'media-temple-grid' => isset($options['server']['ACCESS_DOMAIN']) && preg_match('/\.gridserver\.com$/', $options['server']['ACCESS_DOMAIN']) === 1,
-            'ovh'               => strpos($options['uname'], '.ovh.net ') !== false,
-            'rackspace-cloud'   => strpos($options['uname'], 'stabletransit.com ') !== false,
-            'site5'             => strpos($options['uname'], '.accountservergroup.com ') !== false,
-            'strato'            => strpos($options['uname'], '.stratoserver.net ') !== false,
+            'ovh'               => str_contains($options['uname'], '.ovh.net '),
+            'rackspace-cloud'   => str_contains($options['uname'], 'stabletransit.com '),
+            'site5'             => str_contains($options['uname'], '.accountservergroup.com '),
+            'strato'            => str_contains($options['uname'], '.stratoserver.net '),
         );
 
         // Separate definitions for hosts that can only be detected via DNS nameservers.

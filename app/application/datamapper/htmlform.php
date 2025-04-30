@@ -104,7 +104,7 @@ class DMZ_HTMLForm
             if (! isset($options['list']) || is_object($options['list'])) {
                 if (! isset($options['list'])) {
                     // look up all of the related values
-                    $c = get_class($object->{$field});
+                    $c = $object->{$field}::class;
                     $total_items = new $c();
                     // See if the custom method is defined
                     if (method_exists($total_items, 'get_htmlform_list')) {

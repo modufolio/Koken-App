@@ -67,7 +67,7 @@ META;
 
     public static function get_setting($name)
     {
-        if (strpos($name, '.') !== false) {
+        if (str_contains($name, '.')) {
             $parts = explode('.', $name);
             if ($parts[0] === 'language') {
                 return Koken::$language[$parts[1]];
@@ -847,23 +847,13 @@ META;
 
     private static function case_convert($str, $case)
     {
-        switch ($case) {
-            case 'lower':
-                $str = function_exists('mb_strtolower') ? mb_strtolower($str) : strtolower($str);
-                break;
-
-            case 'upper':
-                $str = function_exists('mb_strtoupper') ? mb_strtoupper($str) : strtoupper($str);
-                break;
-
-            case 'title':
-                $str = function_exists('mb_convert_case') ? mb_convert_case($str, MB_CASE_TITLE) : ucwords($str);
-                break;
-
-            case 'sentence':
-                $str = function_exists('mb_substr') ? mb_strtoupper(mb_substr($str, 0, 1)) . mb_strtolower(mb_substr($str, 1)) : ucfirst($str);
-                break;
-        }
+        $str = match ($case) {
+            'lower' => function_exists('mb_strtolower') ? mb_strtolower($str) : strtolower($str),
+            'upper' => function_exists('mb_strtoupper') ? mb_strtoupper($str) : strtoupper($str),
+            'title' => function_exists('mb_convert_case') ? mb_convert_case($str, MB_CASE_TITLE) : ucwords($str),
+            'sentence' => function_exists('mb_substr') ? mb_strtoupper(mb_substr($str, 0, 1)) . mb_strtolower(mb_substr($str, 1)) : ucfirst($str),
+            default => $str,
+        };
         return $str;
     }
     public static function out($key)
@@ -879,11 +869,11 @@ META;
             $parameters[$name] = $matches[2][$i];
         }
 
-        $is_archive = strpos($key, 'archive.type') !== false;
+        $is_archive = str_contains($key, 'archive.type');
 
         $key = str_replace(' ', '', $key);
         $count = $plural = $singular = $math = $to_json = false;
-        if (strpos($key, '|') === false) {
+        if (!str_contains($key, '|')) {
             $globals = array(
                 'site', 'location', '_parent', 'rss', 'profile', 'source', 'settings', 'routed_variables', 'page_variables', 'pjax', 'labels', 'messages', 'language'
             );
@@ -1345,7 +1335,7 @@ META;
             }
 
             if ($image) {
-                if (strpos($image, 'http') !== 0) {
+                if (!str_starts_with($image, 'http')) {
                     $image = Koken::$location['site_url'] . $image;
                 }
 
@@ -1698,7 +1688,7 @@ META;
                 $params .= '/context_order:' . $order[0] . '/context_order_direction:' . strtolower($order[1]);
             } else {
                 $featured_regex = isset(self::$site['urls']['feature']) ? preg_replace('/:([a-z_]+)/', '[^/]+', self::$site['urls']['feature']) : false;
-                if (isset(self::$site['urls']['favorites']) && strpos(self::$location['here'], self::$site['urls']['favorites']) === 0) {
+                if (isset(self::$site['urls']['favorites']) && str_starts_with(self::$location['here'], self::$site['urls']['favorites'])) {
                     $order = explode(' ', self::$site['url_data']['favorite']['order']);
                     $params .= 'favorites';
                 } elseif ($featured_regex && preg_match('~' . $featured_regex . '~', self::$location['here'])) {
@@ -1783,7 +1773,7 @@ META;
 
             if (preg_match('~\.rss$~', $value['path'])) {
                 $o .= ' target="_blank"';
-            } elseif (strpos($value['path'], 'http') === false && strpos($value['path'], 'mailto:') !== 0 && !preg_match('~/lightbox/$~', $value['path'])) {
+            } elseif (!str_contains($value['path'], 'http') && !str_starts_with($value['path'], 'mailto:') && !preg_match('~/lightbox/$~', $value['path'])) {
                 $o .= ' data-koken-internal';
             }
 
@@ -1911,7 +1901,7 @@ META;
         }
 
 
-        if ((isset($params['class']) && strpos($params['class'], 'k-lazy-load') !== false) || $options['hidpi']) {
+        if ((isset($params['class']) && str_contains($params['class'], 'k-lazy-load')) || $options['hidpi']) {
             $params['data-src'] = $url;
             $noscript = true;
             $params['src'] = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
@@ -1988,7 +1978,7 @@ META;
         $pee = preg_replace('!(<' . $allblocks . '[^>]*>)!', "\n$1", $pee);
         $pee = preg_replace('!(</' . $allblocks . '>)!', "$1\n\n", $pee);
         $pee = str_replace(array("\r\n", "\r"), "\n", $pee); // cross-platform newlines
-        if (strpos($pee, '<object') !== false) {
+        if (str_contains($pee, '<object')) {
             $pee = preg_replace('|\s*<param([^>]*)>\s*|', "<param$1>", $pee); // no pee inside object/embed
             $pee = preg_replace('|\s*</embed>\s*|', '</embed>', $pee);
         }
@@ -2179,7 +2169,7 @@ META;
             $defaults['filters'] = array_merge($defaults['filters'], $customs);
 
             foreach ($defaults['filters'] as $filter) {
-                if (strpos($filter, '=') !== false) {
+                if (str_contains($filter, '=')) {
                     $bits = explode('=', $filter);
                     if ($bits[0] === 'id' && $bits[1][0] !== '!') {
                         $__id = str_starts_with($bits[1], '"') ? $bits[1] : urlencode($bits[1]);
@@ -2327,7 +2317,7 @@ META;
 
         if ($options['list'] && isset($__id) && !$options['id']) {
             $url .= '/' . urldecode($__id);
-            if (strpos(urldecode($__id), ',') === false) {
+            if (!str_contains(urldecode($__id), ',')) {
                 $options['list'] = false;
             }
         }
@@ -2578,7 +2568,7 @@ OUT;
     private static function fallback_load($base, $params)
     {
         foreach ($params as $key => $val) {
-            if ($key === 'limit_to' || $key === 'order_by' || strpos($key, 'filter:') === 0) {
+            if ($key === 'limit_to' || $key === 'order_by' || str_starts_with($key, 'filter:')) {
                 $base .= '/' . str_replace('filter:', '', $key) . ':' . $val;
             }
         }

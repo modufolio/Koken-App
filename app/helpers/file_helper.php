@@ -128,7 +128,7 @@ if (! function_exists('delete_files')) {
             if ($filename != "." and $filename != "..") {
                 if (is_dir($path.DIRECTORY_SEPARATOR.$filename)) {
                     // Ignore empty folders
-                    if (substr($filename, 0, 1) != '.') {
+                    if (!str_starts_with($filename, '.')) {
                         delete_files($path.DIRECTORY_SEPARATOR.$filename, $del_dir, $level + 1);
                     }
                 } else {
@@ -173,9 +173,9 @@ if (! function_exists('get_filenames')) {
             }
 
             while (false !== ($file = readdir($fp))) {
-                if (@is_dir($source_dir.$file) && strncmp($file, '.', 1) !== 0) {
+                if (@is_dir($source_dir.$file) && !str_starts_with($file, '.')) {
                     get_filenames($source_dir.$file.DIRECTORY_SEPARATOR, $include_path, true);
-                } elseif (strncmp($file, '.', 1) !== 0) {
+                } elseif (!str_starts_with($file, '.')) {
                     $_filedata[] = ($include_path == true) ? $source_dir.$file : $file;
                 }
             }
@@ -217,9 +217,9 @@ if (! function_exists('get_dir_file_info')) {
 
             // Used to be foreach (scandir($source_dir, 1) as $file), but scandir() is simply not as fast
             while (false !== ($file = readdir($fp))) {
-                if (@is_dir($source_dir.$file) and strncmp($file, '.', 1) !== 0 and $top_level_only === false) {
+                if (@is_dir($source_dir.$file) and !str_starts_with($file, '.') and $top_level_only === false) {
                     get_dir_file_info($source_dir.$file.DIRECTORY_SEPARATOR, $top_level_only, true);
-                } elseif (strncmp($file, '.', 1) !== 0) {
+                } elseif (!str_starts_with($file, '.')) {
                     $_filedata[$file] = get_file_info($source_dir.$file);
                     $_filedata[$file]['relative_path'] = $relative_path;
                 }

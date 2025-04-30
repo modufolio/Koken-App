@@ -94,9 +94,9 @@ class DMZ_CSV
      * @param	mixed $callback A callback method for each row.  Can return FALSE on failure to save, or 'stop' to stop the import.
      * @return	array Array of imported objects, or FALSE if unable to import.
      */
-    public function csv_import($object, $filename, $fields = '', $header_row = true, $callback = null)
+    public function csv_import($object, mixed $filename, $fields = '', $header_row = true, mixed $callback = null)
     {
-        $class = get_class($object);
+        $class = $object::class;
 
         if (empty($fields)) {
             $fields = $object->fields;

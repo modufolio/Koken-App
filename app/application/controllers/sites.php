@@ -102,7 +102,7 @@ class Sites extends Koken_Controller
                         if (is_array($arr['value'])) {
                             $v = [];
                             foreach ($arr['value'] as $_key => $val) {
-                                if (strpos($_key, ',') === false) {
+                                if (!str_contains($_key, ',')) {
                                     $v[$_key] = $val;
                                 } else {
                                     $keys = explode(',', $_key);
@@ -331,7 +331,7 @@ class Sites extends Koken_Controller
                                             'selector' => trim(str_replace("\n", '', $selector)),
                                             'property' => trim($property),
                                             'template' => trim(str_replace('url(', "url(storage/themes/{$draft->path}/", $rule)),
-                                            'lightbox' => strpos($file, 'lightbox-settings.css.lens') !== false,
+                                            'lightbox' => str_contains($file, 'lightbox-settings.css.lens'),
                                         );
                                     }
                                 }
@@ -421,7 +421,7 @@ class Sites extends Koken_Controller
                                 }
                             } else {
                                 foreach ($r['filters'] as $f) {
-                                    if (strpos($f, 'id=') === 0) {
+                                    if (str_starts_with($f, 'id=')) {
                                         $array = explode('=', $f);
                                         $id = array_pop($array);
                                         break;
@@ -523,7 +523,7 @@ class Sites extends Koken_Controller
                                 }
                             }
 
-                            if (strpos($item['auto'], '_') !== false) {
+                            if (str_contains($item['auto'], '_')) {
                                 foreach (array('id', 'slug', 'month', 'year', 'day') as $id) {
                                     if ($id === 'month') {
                                         if (!isset($item['month']) || $item['month'] === 'any' || $item['month'] === false) {
@@ -536,7 +536,7 @@ class Sites extends Koken_Controller
                                         $item['day'] = '';
                                     }
                                     if ($id === 'slug' && !isset($item['slug']) && isset($item['id'])) {
-                                        if (strpos($item['auto'], 'tag_') === 0) {
+                                        if (str_starts_with($item['auto'], 'tag_')) {
                                             $item['slug'] = $item['id'];
                                         } else {
                                             $c = new Category();

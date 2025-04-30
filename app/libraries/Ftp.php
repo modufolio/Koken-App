@@ -497,9 +497,9 @@ class CI_FTP
 
             // Recursively read the local directory
             while (false !== ($file = readdir($fp))) {
-                if (@is_dir($locpath.$file) && substr($file, 0, 1) != '.') {
+                if (@is_dir($locpath.$file) && !str_starts_with($file, '.')) {
                     $this->mirror($locpath.$file."/", $rempath.$file."/");
-                } elseif (substr($file, 0, 1) != ".") {
+                } elseif (!str_starts_with($file, ".")) {
                     // Get the file extension so we can se the upload type
                     $ext = $this->_getext($file);
                     $mode = $this->_settype($ext);
@@ -525,7 +525,7 @@ class CI_FTP
      */
     public function _getext($filename)
     {
-        if (false === strpos($filename, '.')) {
+        if (!str_contains($filename, '.')) {
             return 'txt';
         }
 

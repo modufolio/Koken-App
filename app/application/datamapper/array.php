@@ -112,7 +112,7 @@ class DMZ_Array
             foreach ($fields as $f) {
                 if (array_key_exists($f, $object->has_one)) {
                     // Store $has_one relationships
-                    $c = get_class($object->{$f});
+                    $c = $object->{$f}::class;
                     $rel = new $c();
                     $id = isset($data[$f]) ? $data[$f] : 0;
                     $rel->get_by_id($id);
@@ -125,7 +125,7 @@ class DMZ_Array
                     }
                 } elseif (array_key_exists($f, $object->has_many)) {
                     // Store $has_many relationships
-                    $c = get_class($object->{$f});
+                    $c = $object->{$f}::class;
                     $rels = new $c();
                     $ids = isset($data[$f]) ? $data[$f] : false;
                     if (empty($ids)) {

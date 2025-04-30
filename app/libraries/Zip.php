@@ -282,7 +282,7 @@ class CI_Zip
         }
 
         while (false !== ($file = readdir($fp))) {
-            if (substr($file, 0, 1) == '.') {
+            if (str_starts_with($file, '.')) {
                 continue;
             }
 

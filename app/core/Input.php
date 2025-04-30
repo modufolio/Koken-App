@@ -310,7 +310,7 @@ class CI_Input extends stdClass
                     // Some proxies typically list the whole chain of IP
                     // addresses through which the client has reached us.
                     // e.g. client_ip, proxy_ip1, proxy_ip2, etc.
-                    if (strpos($spoof, ',') !== false) {
+                    if (str_contains($spoof, ',')) {
                         $spoof = explode(',', $spoof, 2);
                         $spoof = $spoof[0];
                     }
@@ -415,7 +415,7 @@ class CI_Input extends stdClass
         }
 
         // PHP supports IPv4-mapped IPv6 addresses, so we'll expect those as well
-        if (strpos(end($chunks), '.') !== false) {
+        if (str_contains(end($chunks), '.')) {
             $ipv4 = array_pop($chunks);
 
             if (! $this->_valid_ipv4($ipv4)) {
@@ -617,7 +617,7 @@ class CI_Input extends stdClass
 
         // Standardize newlines if needed
         if ($this->_standardize_newlines == true) {
-            if (strpos($str, "\r") !== false) {
+            if (str_contains($str, "\r")) {
                 $str = str_replace(array("\r\n", "\r", "\r\n\n"), PHP_EOL, $str);
             }
         }
@@ -673,7 +673,7 @@ class CI_Input extends stdClass
             $headers['Content-Type'] = (isset($_SERVER['CONTENT_TYPE'])) ? $_SERVER['CONTENT_TYPE'] : @getenv('CONTENT_TYPE');
 
             foreach ($_SERVER as $key => $val) {
-                if (strncmp($key, 'HTTP_', 5) === 0) {
+                if (str_starts_with($key, 'HTTP_')) {
                     $headers[substr($key, 5)] = $this->_fetch_from_array($_SERVER, $key, $xss_clean);
                 }
             }

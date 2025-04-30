@@ -147,7 +147,7 @@ class CI_DB_forge
                                 ));
                 $this->add_key('id', true);
             } else {
-                if (strpos($field, ' ') === false) {
+                if (!str_contains($field, ' ')) {
                     show_error('Field information is required for that operation.');
                 }
 

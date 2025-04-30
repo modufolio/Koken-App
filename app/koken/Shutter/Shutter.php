@@ -37,7 +37,7 @@ class Shutter
 
     private static function plugin_is_active($callback)
     {
-        return in_array(get_class($callback[0]), self::$active_plugins);
+        return in_array($callback[0]::class, self::$active_plugins);
     }
 
     public static function get_php_object($class_name)
@@ -248,7 +248,7 @@ class Shutter
 
         $compiled = self::get_cache('plugins/compiled.cache');
 
-        if (!$compiled && strpos($_SERVER['QUERY_STRING'], 'plugins/compile') === false) {
+        if (!$compiled && !str_contains($_SERVER['QUERY_STRING'], 'plugins/compile')) {
             include dirname(__DIR__) . '/Utils/KokenAPI.php';
             $api = new KokenAPI();
             $api->get('/plugins/compile');
@@ -256,21 +256,12 @@ class Shutter
 
         $compiled = self::get_cache('plugins/compiled.cache');
 
-        Shutter::$email_provider = self::$class_map['DDI_Email'];
-
         if ($compiled) {
             $compiled_plugins = unserialize($compiled['data']);
             foreach ($compiled_plugins['plugins'] as $plugin) {
                 self::parse($root . '/storage/plugins/' . $plugin['path'], true, false, isset($plugin['data']) ? $plugin['data'] : array());
             }
-
-            if (isset($compiled_plugins['info']['email_handler']) && isset(self::$class_map[$compiled_plugins['info']['email_handler']])) {
-                self::$email_provider = self::$class_map[$compiled_plugins['info']['email_handler']];
-            }
-
-            if (isset($compiled_plugins['info']['email_delivery_address'])) {
-                self::$email_delivery_address = $compiled_plugins['info']['email_delivery_address'];
-            }
+            
         }
     }
 
@@ -367,7 +358,7 @@ class Shutter
     {
         $root = dirname(dirname(dirname(dirname(__FILE__))));
 
-        if (substr($directory, 0, 1) !== '/') {
+        if (!str_starts_with($directory, '/')) {
             $directory = $root . '/' . $directory;
         }
 
@@ -572,7 +563,7 @@ class Shutter
 
     public static function register_cache_handler($handler, $target)
     {
-        if (in_array(get_class($handler), self::$active_plugins) && in_array('KokenCache', class_implements($handler))) {
+        if (in_array($handler::class, self::$active_plugins) && in_array('KokenCache', class_implements($handler))) {
             if ($target === 'all') {
                 $target = array('site', 'api', 'core', 'images', 'locks', 'plugins', 'icc', 'albums');
             }
@@ -589,10 +580,10 @@ class Shutter
 
     public static function register_email_handler($handler, $label)
     {
-        $class = get_class($handler);
+        $class = $handler::class;
 
         if (in_array($class, self::$active_plugins) && in_array('KokenEmail', class_implements($handler))) {
-            self::$email_providers[get_class($handler)] = compact('class', 'label', 'handler');
+            self::$email_providers[$handler::class] = compact('class', 'label', 'handler');
         }
     }
 
@@ -608,21 +599,21 @@ class Shutter
 
     public static function register_db_config_handler($handler)
     {
-        if (in_array(get_class($handler), self::$active_plugins) && in_array('KokenDatabaseConfiguration', class_implements($handler))) {
+        if (in_array($handler::class, self::$active_plugins) && in_array('KokenDatabaseConfiguration', class_implements($handler))) {
             self::$db_config_provider = $handler;
         }
     }
 
     public static function register_encryption_key_handler($handler)
     {
-        if (in_array(get_class($handler), self::$active_plugins) && in_array('KokenEncryptionKey', class_implements($handler))) {
+        if (in_array($handler::class, self::$active_plugins) && in_array('KokenEncryptionKey', class_implements($handler))) {
             self::$encryption_key_provider = $handler;
         }
     }
 
     public static function register_storage_handler($handler)
     {
-        if (in_array(get_class($handler), self::$active_plugins) && in_array('KokenOriginalStore', class_implements($handler))) {
+        if (in_array($handler::class, self::$active_plugins) && in_array('KokenOriginalStore', class_implements($handler))) {
             self::$original_storage_handler = $handler;
         }
     }
@@ -635,7 +626,7 @@ class Shutter
             }
         }
 
-        if (in_array(get_class($handler), self::$active_plugins) && is_dir($path)) {
+        if (in_array($handler::class, self::$active_plugins) && is_dir($path)) {
             self::$template_folders[] = $path;
         }
     }

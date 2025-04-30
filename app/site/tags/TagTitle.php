@@ -13,7 +13,7 @@
             $sep = " $sep ";
 
             if (Koken::$source && Koken::$source['type'] && !Koken::$custom_page_title) {
-                $list = Koken::$source['type'] === 'timeline' || substr(strrev(Koken::$source['type']), 0, 1) === 's';
+                $list = Koken::$source['type'] === 'timeline' || str_starts_with(strrev(Koken::$source['type']), 's');
 
                 if ($list) {
                     $obj = Koken::$source['type'] === 'categories' ? 'category' : rtrim(Koken::$source['type'], 's');

@@ -107,7 +107,7 @@ class DMZ_Koken
             $model = 'album';
             $content_template = $this->get_url('content');
             $content_url = $this->url_data['content']['url'];
-            $tail = $this->segments['content'] . '/' . (strpos($content_url, 'slug') === false ? ':content_id' : ':content_slug') . '/';
+            $tail = $this->segments['content'] . '/' . (!str_contains($content_url, 'slug') ? ':content_id' : ':content_slug') . '/';
             if (!$content_template) {
                 $tail .= 'lightbox/';
             }
@@ -118,7 +118,7 @@ class DMZ_Koken
             $date = $options['date']['timestamp'];
         }
 
-        if (isset($options['tag']) && $options['tag'] && strpos($options['tag'], ',') === false && $model !== 'set' && $this->get_url("tag_$model")) {
+        if (isset($options['tag']) && $options['tag'] && !str_contains($options['tag'], ',') && $model !== 'set' && $this->get_url("tag_$model")) {
             $content_template = $this->get_url($model);
             $content_url = $this->url_data[$model]['url'];
             if (is_numeric($options['tag'])) {
