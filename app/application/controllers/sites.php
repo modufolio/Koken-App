@@ -924,6 +924,7 @@ class Sites extends Koken_Controller
                 $draft->live_data = $draft->data;
                 $draft->current = 1;
                 $draft->save();
+                Shutter::clear_cache(array('site'));
                 exit;
             } else {
                 $this->error('404', "Draft not found.");
