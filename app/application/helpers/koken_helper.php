@@ -6,8 +6,8 @@
 
 function koken_rand()
 {
-    $base = function_exists('mt_rand') ? mt_rand() : rand();
-    return md5(uniqid($base, true));
+    // Use cryptographically secure random bytes
+    return bin2hex(random_bytes(16));
 }
 
 function koken_format_tags($tags)
@@ -138,12 +138,21 @@ function make_child_dir($path)
     if (is_dir($path) || mkdir($path, octdec($permissions), true)) {
         $created = true;
     }
-    // If above doesn't work, chmod to 777 and try again
-    elseif ($permissions == '0755' &&
-                chmod($parent, 0777) &&
-                mkdir($path, 0777, true)
-            ) {
-        $created = true;
+    // Security: Only use 0777 as last resort fallback for problematic hosting environments
+    // Prefer 0755 which prevents world-write access
+    elseif ($permissions == '0755') {
+        // Try 0775 first (group writable but not world writable)
+        if (mkdir($path, 0775, true)) {
+            $created = true;
+        }
+        // Last resort: 0777 (security risk but needed for some shared hosts)
+        elseif (chmod($parent, 0777) && mkdir($path, 0777, true)) {
+            $created = true;
+            // Log security warning if logging is available
+            if (function_exists('log_message')) {
+                log_message('warning', 'Created directory with 0777 permissions (world-writable): ' . $path);
+            }
+        }
     }
     umask($old);
     return $created;
@@ -199,7 +208,8 @@ if (!function_exists('directory_copy')) {
 
         //creating the destination directory
         if (!is_dir($dstdir)) {
-            mkdir($dstdir, 0777, true);
+            // Security: Use 0755 instead of 0777 to prevent world-write access
+            mkdir($dstdir, 0755, true);
         }
 
         //Mapping the directory

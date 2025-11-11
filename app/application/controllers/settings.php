@@ -17,6 +17,21 @@ class Settings extends Koken_Controller
         $email = $this->input->post('delivery_address');
         $sender = $this->input->post('sender');
 
+        // Security: Validate email addresses to prevent email header injection
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $this->error('400', 'Invalid delivery email address');
+            return;
+        }
+
+        if (!empty($sender) && !filter_var($sender, FILTER_VALIDATE_EMAIL)) {
+            $this->error('400', 'Invalid sender email address');
+            return;
+        }
+
+        // Additional protection: Strip newlines from email inputs to prevent header injection
+        $email = str_replace(["\r", "\n", "%0a", "%0d"], '', $email);
+        $sender = str_replace(["\r", "\n", "%0a", "%0d"], '', $sender);
+
         Shutter::email($email, $email, $email, '[' . $_SERVER['HTTP_HOST'] . '] Koken email test', 'Message received! Your Koken email configuration appears to be working fine.', $sender);
 
         exit;

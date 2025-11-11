@@ -191,6 +191,16 @@ class Albums extends Koken_Controller
     public function _order($order, $album = false)
     {
         $ids = explode(',', $order);
+
+        // Security: Validate that all IDs are positive integers to prevent SQL injection
+        $ids = array_map('intval', $ids);
+        $ids = array_filter($ids, function($id) { return $id > 0; });
+
+        if (empty($ids)) {
+            $this->error('400', 'Invalid album IDs provided');
+            return;
+        }
+
         $new_order_map = [];
 
         foreach ($ids as $key => $val) {

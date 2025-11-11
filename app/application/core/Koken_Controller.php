@@ -96,8 +96,78 @@ class Koken_Controller extends CI_Controller
         }
     }
 
+    /**
+     * Validate URL to prevent SSRF attacks
+     */
+    private function _validate_url_for_ssrf($url)
+    {
+        // Parse URL
+        $parsed = parse_url($url);
+        if ($parsed === false || !isset($parsed['host'])) {
+            return false;
+        }
+
+        // Only allow http and https protocols
+        if (!isset($parsed['scheme']) || !in_array(strtolower($parsed['scheme']), ['http', 'https'])) {
+            return false;
+        }
+
+        $host = $parsed['host'];
+
+        // Resolve hostname to IP
+        $ip = gethostbyname($host);
+
+        // Check if resolution failed (returns hostname if failed)
+        if ($ip === $host && !filter_var($host, FILTER_VALIDATE_IP)) {
+            // Could not resolve, block for safety
+            return false;
+        }
+
+        // Block private/internal IP ranges
+        if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+            // Convert IP to long for range checking
+            $ip_long = ip2long($ip);
+
+            // Block private ranges
+            $private_ranges = [
+                ['10.0.0.0', '10.255.255.255'],       // 10.0.0.0/8
+                ['172.16.0.0', '172.31.255.255'],     // 172.16.0.0/12
+                ['192.168.0.0', '192.168.255.255'],   // 192.168.0.0/16
+                ['127.0.0.0', '127.255.255.255'],     // 127.0.0.0/8 (localhost)
+                ['169.254.0.0', '169.254.255.255'],   // 169.254.0.0/16 (link-local)
+                ['0.0.0.0', '0.255.255.255'],         // 0.0.0.0/8
+            ];
+
+            foreach ($private_ranges as $range) {
+                $start = ip2long($range[0]);
+                $end = ip2long($range[1]);
+                if ($ip_long >= $start && $ip_long <= $end) {
+                    return false;
+                }
+            }
+        }
+
+        // Block cloud metadata endpoints
+        $blocked_hosts = [
+            '169.254.169.254',  // AWS/Azure/GCP metadata
+            'metadata.google.internal',
+            'metadata',
+        ];
+
+        if (in_array(strtolower($host), $blocked_hosts) || in_array($ip, $blocked_hosts)) {
+            return false;
+        }
+
+        return true;
+    }
+
     public function _download($f, $to, $force_content_mimes = false)
     {
+        // Security: Validate URL to prevent SSRF attacks
+        if (!$this->_validate_url_for_ssrf($f)) {
+            return false;
+        }
+
         if (extension_loaded('curl')) {
             $cp = curl_init($f);
             $fp = fopen($to, "w+");
@@ -107,7 +177,8 @@ class Koken_Controller extends CI_Controller
             } else {
                 if (str_starts_with($f, 'https://')) {
                     curl_setopt($cp, CURLOPT_SSL_VERIFYHOST, 2);
-                    curl_setopt($cp, CURLOPT_SSL_VERIFYPEER, false);
+                    // Security: Enable SSL verification (commented out the insecure setting)
+                    curl_setopt($cp, CURLOPT_SSL_VERIFYPEER, true);
                 } elseif (!$force_content_mimes) {
                     curl_setopt($cp, CURLOPT_HTTPHEADER, array(
                         'Accept: application/octet-stream'
@@ -115,6 +186,7 @@ class Koken_Controller extends CI_Controller
                 }
                 curl_setopt($cp, CURLOPT_FILE, $fp);
                 curl_setopt($cp, CURLOPT_CONNECTTIMEOUT, 15);
+                curl_setopt($cp, CURLOPT_FOLLOWLOCATION, false); // Security: Disable redirects to prevent bypass
                 curl_exec($cp);
                 if ($force_content_mimes) {
                     $mime = curl_getinfo($cp, CURLINFO_CONTENT_TYPE);
@@ -284,8 +356,31 @@ class Koken_Controller extends CI_Controller
                 $cookie = true;
             }
         } elseif (isset($_COOKIE['koken_session']) && !$this->strict_cookie_auth) {
-            $cookie = unserialize($_COOKIE['koken_session']);
-            $token = $cookie['token'];
+            // Security: Use json_decode instead of unserialize to prevent PHP Object Injection
+            $cookie = json_decode($_COOKIE['koken_session'], true);
+
+            // Fallback for legacy sessions (temporary - for migration period only)
+            if ($cookie === null && json_last_error() !== JSON_ERROR_NONE) {
+                // Attempt to unserialize old cookie format, but validate structure
+                $cookie = @unserialize($_COOKIE['koken_session']);
+
+                // Security: Validate that unserialized data is an array with expected structure
+                if (!is_array($cookie) || !isset($cookie['token']) || !is_string($cookie['token'])) {
+                    $cookie = null;
+                    $token = null;
+                } else {
+                    $token = $cookie['token'];
+                    // TODO: Issue a new JSON-based cookie to migrate away from serialize
+                }
+            } else {
+                // Security: Validate JSON structure
+                if (!is_array($cookie) || !isset($cookie['token']) || !is_string($cookie['token'])) {
+                    $cookie = null;
+                    $token = null;
+                } else {
+                    $token = $cookie['token'];
+                }
+            }
         } elseif ($this->method == 'get' && preg_match("/token:([a-zA-Z0-9]{32})/", $this->uri->uri_string(), $matches)) {
             // TODO: deprecate this in favor of X-KOKEN-TOKEN
             $token = $matches[1];
@@ -490,7 +585,8 @@ class Koken_Controller extends CI_Controller
 
         if (str_starts_with($url, 'https://')) {
             curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2);
-            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+            // Security: Enable SSL certificate verification
+            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, true);
         }
 
         curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);

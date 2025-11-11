@@ -52,8 +52,9 @@ class KokenAPI
             curl_setopt($this->curl, CURLOPT_HTTPHEADER, $headers);
 
             if ($this->protocol === 'https') {
-                curl_setopt($this->curl, CURLOPT_SSL_VERIFYHOST, 0);
-                curl_setopt($this->curl, CURLOPT_SSL_VERIFYPEER, false);
+                curl_setopt($this->curl, CURLOPT_SSL_VERIFYHOST, 2);
+                // Security: Enable SSL certificate verification
+                curl_setopt($this->curl, CURLOPT_SSL_VERIFYPEER, true);
             }
 
             $data = json_decode(curl_exec($this->curl), true);

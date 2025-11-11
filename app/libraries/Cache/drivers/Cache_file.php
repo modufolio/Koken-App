@@ -91,7 +91,8 @@ class CI_Cache_file extends CI_Driver
             );
 
         if (write_file($this->_cache_path.$id, serialize($contents))) {
-            @chmod($this->_cache_path.$id, 0777);
+            // Security: Use 0644 instead of 0777 for cache files (owner write, others read-only)
+            @chmod($this->_cache_path.$id, 0644);
             return true;
         }
 

@@ -649,8 +649,10 @@ META;
         }
 
         if (self::$protocol === 'https') {
-            curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
-            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2);
+            // Security: Enable SSL certificate verification for loopback calls
+            // Note: If this causes issues, ensure your server has valid SSL certificates
+            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, true);
         }
         return $curl;
     }

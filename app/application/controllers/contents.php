@@ -35,7 +35,8 @@ class Contents extends Koken_Controller
                         CURLOPT_CONNECTTIMEOUT => 10,
                         CURLOPT_RETURNTRANSFER => 1,
                         CURLOPT_SSL_VERIFYHOST => 2,
-                        CURLOPT_SSL_VERIFYPEER => false,
+                        // Security: Enable SSL certificate verification
+                        CURLOPT_SSL_VERIFYPEER => true,
                     );
 
                 foreach ($contents as $c) {
@@ -154,10 +155,25 @@ class Contents extends Koken_Controller
                                         DIRECTORY_SEPARATOR;
                                 $internal_id = false;
                             } elseif (isset($_REQUEST['plugin'])) {
+                                $plugin_name = $_REQUEST['plugin'];
+
+                                // Security: Validate plugin name to prevent path traversal
+                                // Only allow alphanumeric characters, hyphens, and underscores
+                                if (!preg_match('/^[a-zA-Z0-9_-]+$/', $plugin_name)) {
+                                    $this->error('400', 'Invalid plugin name provided.');
+                                    return;
+                                }
+
+                                // Security: Additional check for directory traversal attempts
+                                if (strpos($plugin_name, '..') !== false || strpos($plugin_name, '/') !== false || strpos($plugin_name, '\\') !== false) {
+                                    $this->error('400', 'Invalid plugin name provided.');
+                                    return;
+                                }
+
                                 $info = pathinfo($_REQUEST['name']);
                                 $path = FCPATH . 'storage' .
                                         DIRECTORY_SEPARATOR . 'plugins' .
-                                        DIRECTORY_SEPARATOR . $_REQUEST['plugin'] .
+                                        DIRECTORY_SEPARATOR . $plugin_name .
                                         DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR;
                                 $file_name = $_REQUEST['basename'] . '.' . $info['extension'];
                                 $internal_id = false;
@@ -249,19 +265,40 @@ class Contents extends Koken_Controller
                         $from['internal_id'] = $internal_id;
                         $from['file_modified_on'] = time();
                     } elseif (isset($_POST['localfile'])) {
-                        $filename = basename($_REQUEST['localfile']);
-                        list($internal_id, $path) = $c->generate_internal_id();
-                        if (!file_exists($_REQUEST['localfile'])) {
-                            $this->error('500', '"localfile" does not exist.');
+                        $localfile = $_REQUEST['localfile'];
+
+                        // Security: Validate local file path to prevent path traversal attacks
+                        $realpath = realpath($localfile);
+
+                        // Check if file exists and path is valid
+                        if ($realpath === false || !file_exists($realpath)) {
+                            $this->error('400', '"localfile" does not exist or path is invalid.');
                             return;
                         }
+
+                        // Security: Ensure the file is within allowed directories (storage directory only)
+                        $allowed_base = realpath(FCPATH . 'storage');
+                        if (strpos($realpath, $allowed_base) !== 0) {
+                            $this->error('403', 'Access to files outside storage directory is not allowed.');
+                            return;
+                        }
+
+                        // Security: Additional checks for directory traversal attempts
+                        if (strpos($localfile, '..') !== false || strpos($localfile, './') !== false) {
+                            $this->error('400', 'Invalid file path provided.');
+                            return;
+                        }
+
+                        $filename = basename($realpath);
+                        list($internal_id, $path) = $c->generate_internal_id();
+
                         if ($path) {
                             $path .= $filename;
                         } else {
                             $this->error('500', 'Unable to create directory for upload.');
                             return;
                         }
-                        copy($_REQUEST['localfile'], $path);
+                        copy($realpath, $path);
                         $from = [];
                         $from['filename'] = $filename;
                         $from['internal_id'] = $internal_id;

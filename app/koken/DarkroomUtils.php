@@ -100,7 +100,14 @@ class DarkroomUtils
 
             function testShell($path)
             {
-                $out = shell_exec($path . ' -version 2');
+                // Security: Escape shell argument to prevent command injection
+                // Only allow paths that don't contain suspicious characters
+                if (preg_match('/[;&|`$()]/', $path)) {
+                    return false;
+                }
+
+                $escaped_path = escapeshellcmd($path);
+                $out = shell_exec($escaped_path . ' -version 2');
 
                 if (!empty($out) && preg_match('/\d+\.\d+\.\d+/', $out, $matches)) {
                     return array('key' => $path, 'label' => $matches[0]);
@@ -208,8 +215,14 @@ class DarkroomUtils
                 $versionString = 'Imagick ' . $matches[0];
                 $className = 'DarkroomImagick';
             } elseif (self::isCallable('shell_exec') && (DIRECTORY_SEPARATOR == '/' || (DIRECTORY_SEPARATOR == '\\' && MAGICK_PATH_FINAL != 'convert'))) {
-                $out = shell_exec(MAGICK_PATH_FINAL . ' -version');
-                preg_match('/(?:Image|Graphics)Magick\s(\d+\.\d+\.\d+([^\s]+))?/', $out, $matches);
+                // Security: Validate and escape MAGICK_PATH_FINAL before shell execution
+                if (!preg_match('/[;&|`$()]/', MAGICK_PATH_FINAL)) {
+                    $escaped_path = escapeshellcmd(MAGICK_PATH_FINAL);
+                    $out = shell_exec($escaped_path . ' -version');
+                    preg_match('/(?:Image|Graphics)Magick\s(\d+\.\d+\.\d+([^\s]+))?/', $out, $matches);
+                } else {
+                    $matches = false;
+                }
                 if ($matches) {
                     $versionString = $matches[0];
                     $className = 'DarkroomImageMagick';
