@@ -351,11 +351,52 @@
 
 
     if (!is_array($site_api)) {
-        die(file_get_contents(Koken::$fallback_path . $ds . 'error' . $ds . 'api.html'));
+        $error_msg = 'The API returned an invalid response. The theme is not able to make contact with your Koken installation.';
+        $detailed_error = '<p><strong>Possible causes:</strong></p><ul><li>Your host may be blocking loopback connections</li><li>The API endpoint may be unavailable</li><li>There may be a network connectivity issue</li></ul>';
+        $error_html = str_replace(
+            'The theme is not able to make contact with your Koken installation. Contact your host to see if they are blocking loopback connections.',
+            $error_msg . $detailed_error,
+            file_get_contents(Koken::$fallback_path . $ds . 'error' . $ds . 'api.html')
+        );
+        die($error_html);
     }
 
     if (isset($site_api['error'])) {
-        die(str_replace('<!-- ERROR -->', $site_api['error'], file_get_contents(Koken::$fallback_path . $ds . 'error' . $ds . 'json.html')));
+        // Build detailed error message
+        $error_details = '<p><strong>Error:</strong> ' . htmlspecialchars($site_api['error']) . '</p>';
+
+        if (isset($site_api['error_type'])) {
+            $error_details .= '<p><strong>Error Type:</strong> ' . htmlspecialchars($site_api['error_type']) . '</p>';
+        }
+
+        if (isset($site_api['curl_errno']) && $site_api['curl_errno'] !== 0) {
+            $error_details .= '<p><strong>cURL Error Code:</strong> ' . htmlspecialchars($site_api['curl_errno']) . '</p>';
+            $error_details .= '<p><strong>cURL Error Message:</strong> ' . htmlspecialchars($site_api['curl_error']) . '</p>';
+
+            // Add helpful suggestions based on common curl errors
+            $suggestions = '';
+            switch ($site_api['curl_errno']) {
+                case 6: // CURLE_COULDNT_RESOLVE_HOST
+                    $suggestions = '<p><strong>Suggestion:</strong> DNS resolution failed. Check your server\'s DNS settings.</p>';
+                    break;
+                case 7: // CURLE_COULDNT_CONNECT
+                    $suggestions = '<p><strong>Suggestion:</strong> Could not connect to the API. Your host may be blocking loopback connections. Contact your hosting provider.</p>';
+                    break;
+                case 28: // CURLE_OPERATION_TIMEDOUT
+                    $suggestions = '<p><strong>Suggestion:</strong> The request timed out. The server may be overloaded or there may be network issues.</p>';
+                    break;
+                case 35: // CURLE_SSL_CONNECT_ERROR
+                    $suggestions = '<p><strong>Suggestion:</strong> SSL connection error. Check your SSL certificate configuration.</p>';
+                    break;
+            }
+            $error_details .= $suggestions;
+        }
+
+        if (isset($site_api['response_preview'])) {
+            $error_details .= '<p><strong>Response Preview:</strong></p><pre style="background:#f5f5f5;padding:10px;overflow:auto;max-height:200px;">' . htmlspecialchars($site_api['response_preview']) . '</pre>';
+        }
+
+        die(str_replace('<!-- ERROR -->', $error_details, file_get_contents(Koken::$fallback_path . $ds . 'error' . $ds . 'json.html')));
     }
 
     Koken::$site = $site_api;

@@ -733,7 +733,35 @@ META;
 
                         foreach ($curls as $c) {
                             $timer_urls[] = $c['url'];
-                            $return[$c['index']] = json_decode(curl_multi_getcontent($c['curl']), true);
+                            $response = curl_multi_getcontent($c['curl']);
+
+                            // Check for curl errors in multi-curl
+                            if ($response === false || curl_errno($c['curl']) !== 0) {
+                                $curl_error = curl_error($c['curl']);
+                                $curl_errno = curl_errno($c['curl']);
+                                $return[$c['index']] = [
+                                    'error' => 'cURL Error: ' . $curl_error . ' (Error code: ' . $curl_errno . ')',
+                                    'error_type' => 'curl',
+                                    'curl_errno' => $curl_errno,
+                                    'curl_error' => $curl_error
+                                ];
+                            } else {
+                                $decoded = json_decode($response, true);
+
+                                // Check for JSON decode errors
+                                if ($decoded === null && json_last_error() !== JSON_ERROR_NONE) {
+                                    $json_error = json_last_error_msg();
+                                    $return[$c['index']] = [
+                                        'error' => 'JSON Decode Error: ' . $json_error . '. Response: ' . substr($response, 0, 500),
+                                        'error_type' => 'json',
+                                        'json_error' => $json_error,
+                                        'response_preview' => substr($response, 0, 500)
+                                    ];
+                                } else {
+                                    $return[$c['index']] = $decoded;
+                                }
+                            }
+
                             curl_multi_remove_handle($mh, $c['curl']);
                         }
 
@@ -766,8 +794,33 @@ META;
                 $curl = self::curl_setup($data, self::$curl_handle, $method, $params);
 
                 $start = microtime(true);
-                $data = json_decode(curl_exec($curl), true);
+                $response = curl_exec($curl);
                 $end = microtime(true);
+
+                // Check for curl errors
+                if ($response === false) {
+                    $curl_error = curl_error($curl);
+                    $curl_errno = curl_errno($curl);
+                    $data = [
+                        'error' => 'cURL Error: ' . $curl_error . ' (Error code: ' . $curl_errno . ')',
+                        'error_type' => 'curl',
+                        'curl_errno' => $curl_errno,
+                        'curl_error' => $curl_error
+                    ];
+                } else {
+                    $data = json_decode($response, true);
+
+                    // Check for JSON decode errors
+                    if ($data === null && json_last_error() !== JSON_ERROR_NONE) {
+                        $json_error = json_last_error_msg();
+                        $data = [
+                            'error' => 'JSON Decode Error: ' . $json_error . '. Response: ' . substr($response, 0, 500),
+                            'error_type' => 'json',
+                            'json_error' => $json_error,
+                            'response_preview' => substr($response, 0, 500)
+                        ];
+                    }
+                }
 
                 if ($curl !== self::$curl_handle) {
                     curl_close($curl);
