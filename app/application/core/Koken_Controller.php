@@ -329,6 +329,9 @@ class Koken_Controller extends CI_Controller
     // Ignore $data, it will always be empty. Use our response_data var instead
     public function _output($data, $code = 200)
     {
+        while (ob_get_level() > 0) {
+            ob_end_clean();
+        }
         switch ($this->format) {
             // TODO: Other formats (XML, ATOM, Media RSS)?
             case 'php':

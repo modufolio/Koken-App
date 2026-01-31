@@ -92,11 +92,14 @@ class Albums extends Koken_Controller
                 $levels['_' . $album->level] = [];
             }
 
-            $type = match ($album->album_type) {
+            $type = match ((int)$album->album_type) {
                 2 => 'set',
                 1 => 'smart',
                 default => 'standard',
             };
+            $arr['album_type'] = $type;
+            $arr['type'] = $type; 
+
 
             $arr = array(
                 'id' => $album->id,
