@@ -1138,11 +1138,13 @@ Q;
         $data['__koken__'] = 'album';
 
         if (array_key_exists('album_type', $data)) {
-            $data['album_type'] = match ($data['album_type']) {
+            $mapped = match ((int)$data['album_type']) {
                 2 => 'set',
                 1 => 'smart',
                 default => 'standard',
             };
+            $data['album_type'] = $mapped;
+            $data['type'] = $mapped;   // alias pour l’UI
         }
 
         if ($this->album_type == 2) {
