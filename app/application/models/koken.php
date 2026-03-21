@@ -249,7 +249,7 @@ class Koken extends DataMapper
             $base = strtolower(static::class);
 
             if ($base === 'text') {
-                $base = $this->page_type < 1 ? 'essay' : 'page';
+                $base = (int) $this->page_type < 1 ? 'essay' : 'page';
             }
 
             if (preg_match('/[^a-z0-9\-]/', $this->slug)) {

@@ -931,7 +931,7 @@ class Content extends Koken
         }
 
         if (array_key_exists('visibility', $data)) {
-            $raw = match ($data['visibility']) {
+            $raw = match ((int) $data['visibility']) {
                 1 => 'unlisted',
                 2 => 'private',
                 default => 'public',

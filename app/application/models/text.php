@@ -151,7 +151,7 @@ class Text extends Koken
             $locked = false;
         }
 
-        $page_type = is_numeric($this->page_type) ? $this->page_type : 0;
+        $page_type = (int) $this->page_type;
         $prefix = $page_type === 1 ? 'page' : 'essay';
 
         while ($s->where('id', "$prefix.$slug")->count() > 0) {
@@ -418,7 +418,7 @@ class Text extends Koken
         }
 
         if (array_key_exists('page_type', $data)) {
-            $data['page_type'] = match ($data['page_type']) {
+            $data['page_type'] = match ((int) $data['page_type']) {
                 1 => 'page',
                 default => 'essay',
             };
