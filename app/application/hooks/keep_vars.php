@@ -14,8 +14,4 @@ function keep_vars($vars = array())
     foreach ($vars as $var) {
         $raw_input_data = array_merge($raw_input_data, $var);
     }
-
-    foreach ($raw_input_data as &$value) {
-        $value = stripslashes($value);
-    }
 }
