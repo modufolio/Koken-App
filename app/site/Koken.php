@@ -46,6 +46,7 @@ class Koken
     public static $has_video = false;
     public static $link_tail = '';
     public static $public = true;
+    public static $last_api_error = null;
 
     private static $start_time = false;
     private static $last;
@@ -624,9 +625,8 @@ META;
         curl_setopt($curl, CURLOPT_HEADER, 0);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($curl, CURLOPT_USERAGENT, 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1944.0 Safari/537.36');
-
-        curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 5);
-        curl_setopt($curl, CURLOPT_TIMEOUT, 10);
+        curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 10);
+        curl_setopt($curl, CURLOPT_TIMEOUT, 30);
 
         curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
 
@@ -733,7 +733,23 @@ META;
 
                         foreach ($curls as $c) {
                             $timer_urls[] = $c['url'];
-                            $return[$c['index']] = json_decode(curl_multi_getcontent($c['curl']), true);
+                            $raw = curl_multi_getcontent($c['curl']);
+                            $decoded = json_decode($raw, true);
+                            if ($decoded === null) {
+                                $curl_errno = curl_errno($c['curl']);
+                                self::$last_api_error = $curl_errno ? [
+                                    'type'       => 'connection',
+                                    'curl_errno' => $curl_errno,
+                                    'curl_error' => curl_error($c['curl']),
+                                    'url'        => curl_getinfo($c['curl'], CURLINFO_EFFECTIVE_URL),
+                                ] : [
+                                    'type'      => 'invalid_response',
+                                    'http_code' => curl_getinfo($c['curl'], CURLINFO_HTTP_CODE),
+                                    'url'       => curl_getinfo($c['curl'], CURLINFO_EFFECTIVE_URL),
+                                    'preview'   => substr(strip_tags((string) $raw), 0, 400),
+                                ];
+                            }
+                            $return[$c['index']] = $decoded;
                             curl_multi_remove_handle($mh, $c['curl']);
                         }
 
@@ -766,8 +782,28 @@ META;
                 $curl = self::curl_setup($data, self::$curl_handle, $method, $params);
 
                 $start = microtime(true);
-                $data = json_decode(curl_exec($curl), true);
+                $response = curl_exec($curl);
                 $end = microtime(true);
+
+                if ($response === false || $response === '') {
+                    self::$last_api_error = [
+                        'type'       => 'connection',
+                        'curl_errno' => curl_errno($curl),
+                        'curl_error' => curl_error($curl),
+                        'url'        => curl_getinfo($curl, CURLINFO_EFFECTIVE_URL),
+                    ];
+                }
+
+                $data = json_decode($response, true);
+
+                if ($data === null && $response !== false && $response !== '') {
+                    self::$last_api_error = [
+                        'type'      => 'invalid_response',
+                        'http_code' => curl_getinfo($curl, CURLINFO_HTTP_CODE),
+                        'url'       => curl_getinfo($curl, CURLINFO_EFFECTIVE_URL),
+                        'preview'   => substr(strip_tags($response), 0, 400),
+                    ];
+                }
 
                 if ($curl !== self::$curl_handle) {
                     curl_close($curl);

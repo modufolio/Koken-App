@@ -51,10 +51,27 @@ class Content extends Koken
         $this->file_modified_on = time();
     }
 
+    private static array $allowed_upload_extensions = [
+        'jpg', 'jpeg', 'png', 'gif',
+        'mp4', 'mov', 'm4v', 'flv', 'f4v', '3gp', '3g2',
+        'mp3',
+    ];
+
+    public static function is_allowed_extension(string $ext): bool
+    {
+        return in_array(strtolower($ext), self::$allowed_upload_extensions, true);
+    }
+
     public function clean_filename($file)
     {
         $this->load->helper(array('url', 'text', 'string'));
         $info = pathinfo($file);
+        $ext = strtolower($info['extension'] ?? '');
+
+        if (!self::is_allowed_extension($ext)) {
+            return false;
+        }
+
         return reduce_multiples(
             str_replace(
                 '_',
@@ -66,7 +83,7 @@ class Content extends Koken
             ),
             '-',
             true
-        ) . '.' . $info['extension'];
+        ) . '.' . $ext;
     }
 
     public function _title_to_slug($field)

@@ -14,11 +14,34 @@
 		h1 {
 			color:#000;
 		}
+		.detail {
+			margin-top: 16px;
+			padding: 12px 16px;
+			background: #f5f5f5;
+			border-left: 4px solid #c00;
+			font-size: 14px;
+			line-height: 1.6;
+		}
+		pre {
+			background: #eee;
+			padding: 8px;
+			overflow-x: auto;
+			font-size: 12px;
+			white-space: pre-wrap;
+			word-break: break-all;
+		}
+		code {
+			font-family: monospace;
+			background: #eee;
+			padding: 1px 4px;
+		}
 	</style>
 </head>
 
 <body>
 	<h1>API Error</h1>
-	The theme is not able to make contact with your Koken installation. Contact your host to see if they are blocking loopback connections.
+	<p>The theme is not able to make contact with your Koken installation.</p>
+	<!-- DETAILS -->
+	<p>Common causes: loopback connections blocked by the host, a PHP fatal error in the API, or a misconfigured server name. Check your web server and PHP error logs for more details.</p>
 </body>
 </html>

@@ -772,10 +772,15 @@ class Koken_Controller extends CI_Controller
 
         $load = array_slice($aggregate, ($stream['page']-1)*$options['limit'], $options['limit']);
 
+        $updated_content_count = 0;
+        foreach ($updated_album_ids as $info) {
+            $updated_content_count += count($info['items']);
+        }
+
         $counts = array(
             'essays' => count($essay_ids),
             'albums' => count($album_ids),
-            'content' => count($content_ids)
+            'content' => count($content_ids) + $updated_content_count
         );
 
         $counts['total'] = $counts['essays'] + $counts['albums'] + $counts['content'];

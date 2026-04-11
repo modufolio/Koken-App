@@ -139,6 +139,11 @@ class Contents extends Koken_Controller
 
                         $file_name = $c->clean_filename($_REQUEST['name']);
 
+                        if ($file_name === false) {
+                            $this->error('403', 'File type not allowed.');
+                            return;
+                        }
+
                         $chunk = isset($_REQUEST["chunk"]) ? $_REQUEST["chunk"] : 0;
                         $chunks = isset($_REQUEST["chunks"]) ? $_REQUEST["chunks"] : 0;
 
@@ -182,6 +187,19 @@ class Contents extends Koken_Controller
                             $contentType = $_SERVER["CONTENT_TYPE"];
                         } else {
                             $contentType = '';
+                        }
+
+                        $content_length = isset($_SERVER['CONTENT_LENGTH']) ? (int) $_SERVER['CONTENT_LENGTH'] : 0;
+                        $post_max = ini_get('post_max_size');
+                        $post_max_bytes = (int) $post_max * match (strtolower(substr($post_max, -1))) {
+                            'g' => 1073741824,
+                            'm' => 1048576,
+                            'k' => 1024,
+                            default => 1,
+                        };
+                        if ($content_length > 0 && $post_max_bytes > 0 && $content_length > $post_max_bytes) {
+                            $this->error('413', 'Upload too large. The file exceeds the server\'s post_max_size limit (' . $post_max . '). Ask your host to raise post_max_size.');
+                            return;
                         }
 
                         if (str_contains($contentType, "multipart")) {
@@ -250,6 +268,11 @@ class Contents extends Koken_Controller
                         $from['file_modified_on'] = time();
                     } elseif (isset($_POST['localfile'])) {
                         $filename = basename($_REQUEST['localfile']);
+                        $localfile_ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+                        if (!Content::is_allowed_extension($localfile_ext)) {
+                            $this->error('403', 'File type not allowed.');
+                            return;
+                        }
                         list($internal_id, $path) = $c->generate_internal_id();
                         if (!file_exists($_REQUEST['localfile'])) {
                             $this->error('500', '"localfile" does not exist.');
@@ -267,7 +290,12 @@ class Contents extends Koken_Controller
                         $from['internal_id'] = $internal_id;
                         $from['file_modified_on'] = time();
                     } elseif (isset($_POST['from_url'])) {
-                        $filename = basename($_POST['from_url']);
+                        $filename = basename(strtok($_POST['from_url'], '?'));
+                        $url_ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+                        if (!Content::is_allowed_extension($url_ext)) {
+                            $this->error('403', 'File type not allowed.');
+                            return;
+                        }
                         list($internal_id, $path) = $c->generate_internal_id();
                         if ($path) {
                             $path .= $filename;

@@ -351,7 +351,28 @@
 
 
     if (!is_array($site_api)) {
-        die(file_get_contents(Koken::$fallback_path . $ds . 'error' . $ds . 'api.html'));
+        $api_error = Koken::$last_api_error;
+        $details = '';
+        if ($api_error) {
+            if ($api_error['type'] === 'connection') {
+                $details = 'Connection failed'
+                    . (isset($api_error['url']) ? ' to <code>' . htmlspecialchars($api_error['url']) . '</code>' : '')
+                    . (isset($api_error['curl_error']) && $api_error['curl_error'] !== ''
+                        ? ': ' . htmlspecialchars($api_error['curl_error'])
+                          . ' (errno ' . (int) $api_error['curl_errno'] . ')'
+                        : '.');
+            } elseif ($api_error['type'] === 'invalid_response') {
+                $details = 'The API returned a non-JSON response'
+                    . (isset($api_error['http_code']) ? ' (HTTP ' . (int) $api_error['http_code'] . ')' : '')
+                    . (isset($api_error['url']) ? ' from <code>' . htmlspecialchars($api_error['url']) . '</code>' : '')
+                    . '.'
+                    . (isset($api_error['preview']) && $api_error['preview'] !== ''
+                        ? '<br><br><strong>Server output:</strong><br><pre>' . htmlspecialchars($api_error['preview']) . '</pre>'
+                        : '');
+            }
+        }
+        $html = file_get_contents(Koken::$fallback_path . $ds . 'error' . $ds . 'api.html');
+        die(str_replace('<!-- DETAILS -->', $details, $html));
     }
 
     if (isset($site_api['error'])) {
