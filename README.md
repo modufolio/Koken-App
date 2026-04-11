@@ -10,7 +10,7 @@ Let me know if you encounter some bugs with installing or updating koken.
 
 ### Setup instructions
 
-1. download the zip with the tag 1.3.2 / unpack
+1. download the zip with the tag 1.3.3 / unpack
 
 2. Go to the url wwww.yourdomain.com/install.html
 
